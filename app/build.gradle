@@ -1,0 +1,107 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+//UNCOMMENT TO ENABLE TESTS - REMEMBER TO DO BUILD BEFORE
+//apply plugin: 'groovyx.android'
+apply plugin: 'kotlin-kapt'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+/*
+buildscript {
+    dependencies {
+        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:1.1.0'
+    }
+}
+*/
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+    defaultConfig {
+        applicationId "com.jereksel.libresubstratum"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    //Support library
+    compile "com.android.support:appcompat-v7:$support_library_version"
+    compile "com.android.support:recyclerview-v7:$support_library_version"
+    compile "com.android.support:cardview-v7:$support_library_version"
+
+    //RxStuff
+    compile 'io.reactivex:rxjava:1.2.4'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxkotlin:0.60.0'
+
+    //Dagger
+    compile 'com.google.dagger:dagger:2.8'
+    kapt 'com.google.dagger:dagger-compiler:2.8'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.8'
+
+    //Kotterknife
+    compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+
+    //Testing
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+        exclude group: 'junit'
+    }
+    testCompile 'cglib:cglib-nodep:3.2.4'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+/*    androidTestCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'
+    androidTestCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+        exclude group: 'junit'
+    }
+    androidTestCompile 'cglib:cglib-nodep:3.2.4'*/
+    androidTestCompile(group: 'org.mockito', name: 'mockito-core', version: '1.10.19') {
+    }
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+}
+
+kapt {
+    generateStubs = true
+}
