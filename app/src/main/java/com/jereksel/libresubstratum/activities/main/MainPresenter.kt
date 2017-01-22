@@ -7,9 +7,8 @@ import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import javax.inject.Inject
 
-class MainPresenter @Inject constructor(val packageManager: IPackageManager) : IMainPresenter {
+class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
 
     companion object {
         val SUBSTRATUM_LEGACY = "Substratum_Legacy"

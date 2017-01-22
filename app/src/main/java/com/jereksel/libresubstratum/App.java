@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum;
 
-
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
@@ -16,11 +15,15 @@ public class App extends Application {
     @VisibleForTesting
     protected AppComponent createComponent() {
         return DaggerAppComponent.builder()
-                .appModule(new AppModule(this))
+                .appModule(getAppModule())
                 .build();
     }
 
-    public static AppComponent getAppComponent(Context context) {
+    protected AppModule getAppModule() {
+        return new AppModule(this);
+    }
+
+    public AppComponent getAppComponent(Context context) {
         App app = (App) context.getApplicationContext();
         if (app.component == null) {
             app.component = app.createComponent();

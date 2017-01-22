@@ -11,17 +11,18 @@ import com.jereksel.libresubstratum.data.DetailedApplication
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-
 class MainView : AppCompatActivity(), IMainView {
 
-    @Inject lateinit var presenter : MainPresenter
+    @Inject lateinit var presenter : IMainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        App.getAppComponent(this).inject(this)
+//        App.getAppComponent(this).inject(this)
 //        (application as App).appComponent.inject(this)
+        (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
+        swiperefresh.isRefreshing = true
         presenter.getApplications()
     }
 
@@ -31,6 +32,7 @@ class MainView : AppCompatActivity(), IMainView {
         recyclerView.layoutManager = mLayoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
+        swiperefresh.isRefreshing = false
     }
 
     override fun onDestroy() {

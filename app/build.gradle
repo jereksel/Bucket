@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //UNCOMMENT TO ENABLE TESTS - REMEMBER TO DO BUILD BEFORE
-//apply plugin: 'groovyx.android'
+apply plugin: 'groovyx.android'
 apply plugin: 'kotlin-kapt'
 
 repositories {
@@ -29,8 +29,8 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -74,7 +74,6 @@ dependencies {
     //Dagger
     compile 'com.google.dagger:dagger:2.8'
     kapt 'com.google.dagger:dagger-compiler:2.8'
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.8'
 
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
@@ -87,17 +86,12 @@ dependencies {
         exclude group: 'junit'
     }
     testCompile 'cglib:cglib-nodep:3.2.4'
+    testCompile "org.robolectric:robolectric:3.2.2"
+    testCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-/*    androidTestCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'
-    androidTestCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
-        exclude group: 'org.codehaus.groovy'
-        exclude group: 'junit'
-    }
-    androidTestCompile 'cglib:cglib-nodep:3.2.4'*/
-    androidTestCompile(group: 'org.mockito', name: 'mockito-core', version: '1.10.19') {
-    }
+    androidTestCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
 }
