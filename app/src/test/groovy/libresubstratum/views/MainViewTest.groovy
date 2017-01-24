@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.views
+package libresubstratum.views
 
 import android.app.Activity
 import android.os.Build
@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.views.MockedApp
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

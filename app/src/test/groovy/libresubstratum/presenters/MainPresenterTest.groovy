@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.presenters
+package libresubstratum.presenters
 
 import android.os.Bundle
 import com.jereksel.libresubstratum.activities.main.IMainView
