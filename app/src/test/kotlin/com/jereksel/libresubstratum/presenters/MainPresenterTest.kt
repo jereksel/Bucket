@@ -29,7 +29,7 @@ class MainPresenterTest : FunSpec() {
         presenter = MainPresenter(packageManager);
         presenter.setView(view)
         RxJavaHooks.clear()
-        RxJavaHooks.setOnIOScheduler({ Schedulers.immediate() })
+        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
 
         val hook = object : RxAndroidSchedulersHook() {
             override fun getMainThreadScheduler() = Schedulers.immediate()
@@ -54,6 +54,9 @@ class MainPresenterTest : FunSpec() {
                 presenter.getApplications()
                 verify(view).addApplications(argThat { size == num })
             }
+        }
+        test("removeView with nulls") {
+            presenter.removeView()
         }
     }
 

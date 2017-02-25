@@ -6,6 +6,7 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.lang.kotlin.filterNotNull
 import rx.schedulers.Schedulers
 
 class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
@@ -21,9 +22,10 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
 
     override fun getApplications() {
 
-        subscription = Observable.from(packageManager.getApplications())
+        subscription = Observable.fromCallable {packageManager.getApplications()}
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
+                .flatMapIterable { it }
                 .filter { it.metadata.has(SUBSTRATUM_LEGACY) }
                 .filter { it.metadata.has(SUBSTRATUM_AUTHOR) }
                 .filter { it.metadata.has(SUBSTRATUM_NAME) }
@@ -33,7 +35,6 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
                 }
                 .toList()
                 .subscribe { mainView?.addApplications(it) }
-
     }
 
     override fun setView(view: IMainView) {
@@ -42,7 +43,7 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
 
     override fun removeView() {
         mainView = null
-        if (subscription?.isUnsubscribed!!) {
+        if (subscription?.isUnsubscribed ?: false) {
            subscription?.unsubscribe()
         }
     }

@@ -23,6 +23,7 @@ class MainView : AppCompatActivity(), IMainView {
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         swiperefresh.isRefreshing = true
+        swiperefresh.setOnRefreshListener { presenter.getApplications() }
         presenter.getApplications()
     }
 
