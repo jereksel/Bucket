@@ -1,6 +1,8 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
+import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
+import com.jereksel.libresubstratum.activities.detailed.IDetailedPresenter
 import com.jereksel.libresubstratum.activities.main.IMainPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.domain.AppPackageManager
@@ -28,4 +30,9 @@ open class AppModule(private val application: Application) {
         return MainPresenter(packageManager)
     }
 
+    @Provides
+    @Singleton
+    open fun providesDetailedPresenter(packageManager: IPackageManager) : IDetailedPresenter {
+        return DetailedPresenter()
+    }
 }

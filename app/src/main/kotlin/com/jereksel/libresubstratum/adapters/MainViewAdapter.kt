@@ -10,13 +10,17 @@ import android.widget.TextView
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.DetailedApplication
-
+import rx.subjects.PublishSubject
 
 class MainViewAdapter(val apps: List<DetailedApplication>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+
+    val onClickSubject = PublishSubject.create<DetailedApplication>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.appName.text = apps[position].name
         holder.heroImage.setImageDrawable(apps[position].heroimage ?: ColorDrawable(android.R.color.black))
+        val element = apps[position]
+        holder.view.setOnClickListener { onClickSubject.onNext(element) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,5 +34,7 @@ class MainViewAdapter(val apps: List<DetailedApplication>) : RecyclerView.Adapte
         val appName: TextView by bindView(R.id.textView)
         val heroImage: ImageView by bindView(R.id.heroimage)
     }
+
+    fun getClickObservable() = onClickSubject.asObservable()!!
 
 }

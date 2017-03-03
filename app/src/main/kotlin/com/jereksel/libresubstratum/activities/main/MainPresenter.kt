@@ -1,12 +1,11 @@
 package com.jereksel.libresubstratum.activities.main
 
-import android.os.Bundle
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.extensions.has
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.filterNotNull
 import rx.schedulers.Schedulers
 
 class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
@@ -48,5 +47,4 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
         }
     }
 
-    fun Bundle.has(key: String) = this.get(key) != null
 }
