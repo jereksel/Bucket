@@ -68,6 +68,5 @@ class MainViewTest {
         assertFalse(swipeToRefresh.isRefreshing)
         assertEquals(0, recyclerView.adapter.itemCount)
     }
-
 }
 
