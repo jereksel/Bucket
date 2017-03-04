@@ -5,6 +5,11 @@ apply plugin: 'kotlin-android-extensions'
 //apply plugin: 'groovyx.android'
 apply plugin: 'kotlin-kapt'
 
+//apply plugin: 'com.github.kt3k.coveralls'
+//apply plugin: 'net.saliman.cobertura'
+
+apply plugin: 'jacoco-android'
+
 repositories {
     mavenCentral()
     maven {
@@ -63,6 +68,13 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
     }
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
 
 }
 
@@ -115,4 +127,10 @@ dependencies {
 /*    androidTestCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'*/
+}
+
+jacocoAndroidUnitTestReport {
+    csv.enabled false
+    html.enabled true
+    xml.enabled true
 }
