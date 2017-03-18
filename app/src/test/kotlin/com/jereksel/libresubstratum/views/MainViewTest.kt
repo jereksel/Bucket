@@ -2,6 +2,8 @@ package com.jereksel.libresubstratum.views
 
 import android.app.Activity
 import android.os.Build
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.RecyclerView
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.main.MainView
@@ -20,6 +22,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.util.ActivityController
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
