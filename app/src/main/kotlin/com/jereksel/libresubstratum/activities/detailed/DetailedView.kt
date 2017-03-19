@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.activities.detailed
 
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
@@ -34,7 +35,7 @@ open class DetailedView : AppCompatActivity(), IDetailedView {
 
     override fun addThemes(themePack: ThemePack) {
         with(recyclerView) {
-            layoutManager = LinearLayoutManager(this@DetailedView)
+            layoutManager = GridLayoutManager(this@DetailedView, 5)
             itemAnimator = DefaultItemAnimator()
             adapter = ThemePackAdapter(themePack, pManager)
         }

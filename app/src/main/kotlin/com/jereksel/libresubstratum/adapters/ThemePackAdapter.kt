@@ -11,7 +11,9 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 
-class ThemePackAdapter(val themePack : ThemePack, val packageManager: IPackageManager) : RecyclerView.Adapter<ThemePackAdapter.ViewHolder>() {
+class ThemePackAdapter(_themePack : ThemePack, val packageManager: IPackageManager) : RecyclerView.Adapter<ThemePackAdapter.ViewHolder>() {
+
+    val themePack: ThemePack = ThemePack(_themePack.themes.sortedBy { packageManager.getAppName(it.application) }, _themePack.type3)
 
 //    val onClickSubject = PublishSubject.create<DetailedApplication>()!!
 
@@ -19,8 +21,6 @@ class ThemePackAdapter(val themePack : ThemePack, val packageManager: IPackageMa
         val appId = themePack.themes[position].application
         holder.appName.text = packageManager.getAppName(appId)
         holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
-//        holder.appName.text = apps[position].name
-//        holder.heroImage.setImageDrawable(apps[position].heroimage ?: ColorDrawable(android.R.color.black))
 //        val element = apps[position]
 //        holder.view.setOnClickListener { onClickSubject.onNext(element) }
     }

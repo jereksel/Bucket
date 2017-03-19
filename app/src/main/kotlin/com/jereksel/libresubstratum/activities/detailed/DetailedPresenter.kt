@@ -28,6 +28,7 @@ class DetailedPresenter(val packageManager : IPackageManager) : IDetailedPresent
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .map {
+                    //Remove apps that are not installed
                     val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
                     ThemePack(installedApps, it.type3)
                 }
