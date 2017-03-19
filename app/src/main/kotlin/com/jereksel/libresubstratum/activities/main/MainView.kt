@@ -43,9 +43,13 @@ class MainView : AppCompatActivity(), IMainView {
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
                 .subscribe {
-                    DetailedView_.intent(this).appId(it.id).start()
+                    presenter.openThemeScreen(it.id)
                 }
         swiperefresh.isRefreshing = false
+    }
+
+    override fun openThemeFragment(appId: String) {
+        DetailedView_.intent(this).appId(appId).start()
     }
 
     override fun onDestroy() {

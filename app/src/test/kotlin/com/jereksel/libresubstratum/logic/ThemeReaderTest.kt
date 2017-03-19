@@ -6,7 +6,7 @@ import org.junit.Test
 import java.io.File
 
 
-class DirectoryReading {
+class ThemeReaderTest {
 
     val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
 

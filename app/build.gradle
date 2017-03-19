@@ -104,7 +104,6 @@ dependencies {
     kapt "org.androidannotations:androidannotations:$aa_version"
     compile "org.androidannotations:androidannotations-api:$aa_version"
 
-
     //Testing
     testCompile 'junit:junit:4.12'
 /*    testCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'

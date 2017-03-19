@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.ThemeReader
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EActivity
@@ -18,6 +19,7 @@ open class DetailedView : AppCompatActivity(), IDetailedView {
 
     @Inject lateinit var presenter : IDetailedPresenter
     @Inject lateinit var pManager : IPackageManager
+    val themeReader = ThemeReader()
 
     @AfterViews
     fun init() {
