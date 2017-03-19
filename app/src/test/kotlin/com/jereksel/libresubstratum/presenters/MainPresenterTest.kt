@@ -11,17 +11,21 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
+import junit.framework.Assert.assertEquals
+import org.apache.commons.io.FileUtils
 import org.mockito.stubbing.OngoingStubbing
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
+import java.io.File
 
 class MainPresenterTest : FunSpec() {
 
     lateinit var presenter : MainPresenter
     lateinit var packageManager : IPackageManager
     lateinit var view : IMainView
+    val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
 
     override fun beforeEach() {
         view = mock()
@@ -57,6 +61,22 @@ class MainPresenterTest : FunSpec() {
         }
         test("removeView with nulls") {
             presenter.removeView()
+        }
+        test("unzip") {
+            val temp = File.createTempFile("presenter", "unzip")
+            println("Temp dir location: $temp")
+            presenter.extractZip(File(resources, "Theme.apk"), temp)
+
+            val expectedFile = listOf(
+                    "android/type1a",
+                    "android/type1a_Green.xml",
+                    "android/type1a_Red.xml"
+            )
+                    .map { "assets/overlays/" + it }
+                    .map { File(temp, it) }
+                    .sorted()
+
+            assertEquals(expectedFile, FileUtils.listFiles(temp, null, true).sorted())
         }
     }
 

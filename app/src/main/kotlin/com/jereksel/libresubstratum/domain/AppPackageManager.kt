@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.domain
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
 import android.graphics.drawable.Drawable
 import com.jereksel.libresubstratum.data.Application
@@ -29,7 +30,29 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .find { it.packageName == appId }!!.sourceDir)
     }
 
+    override fun isPackageInstalled(appId: String): Boolean {
+        try {
+            context.packageManager.getApplicationInfo(appId, 0)
+            return true
+        } catch (ignored: PackageManager.NameNotFoundException) {
+            return false
+        }
+    }
+
     override fun getCacheFolder(): File {
         return context.cacheDir
+    }
+
+    override fun getAppName(appId: String): String {
+        val appInfo =  context.packageManager.getApplicationInfo(appId, GET_META_DATA)
+        return context.packageManager.getApplicationLabel(appInfo).toString()
+    }
+
+    override fun getAppIcon(appId: String): Drawable? {
+        try {
+            return context.packageManager.getApplicationIcon(appId)
+        } catch (e: PackageManager.NameNotFoundException) {
+            return null
+        }
     }
 }

@@ -33,6 +33,6 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesDetailedPresenter(packageManager: IPackageManager) : IDetailedPresenter {
-        return DetailedPresenter()
+        return DetailedPresenter(packageManager)
     }
 }

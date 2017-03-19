@@ -4,7 +4,6 @@ import android.util.Log
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.has
-import kotlinx.coroutines.experimental.async
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -81,7 +80,7 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
 
             val fileName = ze.name
 
-            Log.d("extractZip", fileName)
+//            Log.d("extractZip", fileName)
 
             if (!fileName.startsWith("assets")) {
                 return@forEach
@@ -97,9 +96,11 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
             val fout = FileOutputStream(File(dest, fileName))
 
             zis.copyTo(fout, 1024 * 8)
+            fout.close()
 
         }
         zis.close()
+        fis.close()
     }
 
     //We can't just use second function alone - we will close entry when there is no entry opened yet

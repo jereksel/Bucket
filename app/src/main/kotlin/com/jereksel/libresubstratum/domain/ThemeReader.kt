@@ -13,7 +13,7 @@ class ThemeReader {
         val overlaysLocation = File(location, "overlays")
 
         if (!overlaysLocation.exists()) {
-            throw IllegalArgumentException("Overlays directory doesn't exists")
+            throw IllegalArgumentException("Overlays directory doesn't exists: ${overlaysLocation}")
         }
 
         val themedPackages = overlaysLocation
