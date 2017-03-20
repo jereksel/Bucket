@@ -42,7 +42,7 @@ class ThemeReader {
                     }
                 }
 
-        return typeMap.map { Type1Data(it.value, it.key) }
+        return typeMap.map { Type1Data(it.value, it.key) }.sortedBy { it.suffix }
     }
 
     @VisibleForTesting
@@ -60,6 +60,7 @@ class ThemeReader {
                 .filter { it.name.startsWith("type3") }
                 .map { it.name.removePrefix("type3_") }
                 .map { Type3Extension(it, false) }
+                .sortedBy { it.name }
                 .toTypedArray()
 
         return Type3Data(listOf(firstType, *rest))

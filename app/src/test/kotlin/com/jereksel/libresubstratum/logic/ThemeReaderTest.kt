@@ -5,7 +5,6 @@ import junit.framework.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 
-
 class ThemeReaderTest {
 
     val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
@@ -15,7 +14,7 @@ class ThemeReaderTest {
     @Test
     fun `simple theme pack test`() {
         val themeLocation = themeReader.readThemePack(File(resources, "VerySimpleTheme"))
-        assertEquals(listOf("android", "com.android.settings", "com.android.systemui"), themeLocation.themes.map { it.application })
+        assertEquals(listOf("android", "com.android.settings", "com.android.systemui"), themeLocation.themes.map { it.application }.sorted())
     }
 
     @Test
@@ -28,6 +27,12 @@ class ThemeReaderTest {
     fun `type 1 test`() {
         val theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "android"))
         assertEquals(listOf("a"), theme1.map { it.suffix })
+    }
+
+    @Test
+    fun `type 1 test 2`() {
+        val theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "com.android.dialer"))
+        assertEquals(listOf("a", "b"), theme1.map { it.suffix })
     }
 
     fun File(init: File, vararg sub: String) : File {
