@@ -1,5 +1,5 @@
 package com.jereksel.libresubstratum
 
-interface View {
+interface MVPView {
 }
 

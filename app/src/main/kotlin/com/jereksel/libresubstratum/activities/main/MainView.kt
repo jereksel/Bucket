@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.DetailedApplication
@@ -16,9 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import rx.Subscription
 import javax.inject.Inject
 
-class MainView : AppCompatActivity(), IMainView {
+class MainView : AppCompatActivity(), View {
 
-    @Inject lateinit var presenter : IMainPresenter
+    @Inject lateinit var presenter : Presenter
     var clickSubscriptions: Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

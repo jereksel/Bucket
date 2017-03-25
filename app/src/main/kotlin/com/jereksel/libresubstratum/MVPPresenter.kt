@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum
 
-interface Presenter<in T> where T: View {
+interface MVPPresenter<in T> where T: MVPView {
     fun setView(view: T)
     fun removeView()
 }

@@ -8,11 +8,11 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
 
-class DetailedPresenter(val packageManager : IPackageManager) : IDetailedPresenter {
+class DetailedPresenter(val packageManager : IPackageManager) : Presenter {
 
-    var detailedView : IDetailedView? = null
+    var detailedView : View? = null
 
-    override fun setView(view: IDetailedView) {
+    override fun setView(view: View) {
         detailedView = view
     }
 

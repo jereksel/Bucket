@@ -3,13 +3,11 @@ package com.jereksel.libresubstratum.activities.detailed
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.adapters.ThemePackAdapter
 import com.jereksel.libresubstratum.data.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.ThemeReader
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EActivity
@@ -17,12 +15,12 @@ import org.androidannotations.annotations.Extra
 import javax.inject.Inject
 
 @EActivity(R.layout.activity_detailed)
-open class DetailedView : AppCompatActivity(), IDetailedView {
+open class DetailedView : AppCompatActivity(), View {
 
     @Extra
     lateinit var appId : String
 
-    @Inject lateinit var presenter : IDetailedPresenter
+    @Inject lateinit var presenter : Presenter
     @Inject lateinit var pManager : IPackageManager
 
     @AfterViews

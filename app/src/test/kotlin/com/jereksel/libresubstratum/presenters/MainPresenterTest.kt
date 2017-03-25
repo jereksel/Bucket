@@ -1,8 +1,8 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.os.Bundle
-import com.jereksel.libresubstratum.activities.main.IMainView
 import com.jereksel.libresubstratum.activities.main.MainPresenter
+import com.jereksel.libresubstratum.activities.main.View
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.nhaarman.mockito_kotlin.argThat
@@ -24,7 +24,7 @@ class MainPresenterTest : FunSpec() {
 
     lateinit var presenter : MainPresenter
     lateinit var packageManager : IPackageManager
-    lateinit var view : IMainView
+    lateinit var view : View
     val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
 
     override fun beforeEach() {

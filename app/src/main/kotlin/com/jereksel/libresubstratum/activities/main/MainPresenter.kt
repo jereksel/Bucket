@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.main
 
-import android.util.Log
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.has
@@ -15,7 +14,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
+class MainPresenter(val packageManager: IPackageManager) : Presenter {
 
     companion object {
         val SUBSTRATUM_LEGACY = "Substratum_Legacy"
@@ -23,7 +22,7 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
         val SUBSTRATUM_AUTHOR = "Substratum_Author"
     }
 
-    private var mainView: IMainView? = null
+    private var mainView: View? = null
     private var subscription: Subscription? = null
 
     override fun getApplications() {
@@ -43,7 +42,7 @@ class MainPresenter(val packageManager: IPackageManager) : IMainPresenter {
                 .subscribe { mainView?.addApplications(it) }
     }
 
-    override fun setView(view: IMainView) {
+    override fun setView(view: View) {
         mainView = view
     }
 
