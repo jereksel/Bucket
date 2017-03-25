@@ -2,13 +2,13 @@ package com.jereksel.libresubstratum.activities.detailed
 
 import com.jereksel.libresubstratum.data.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.ThemeReader
+import com.jereksel.libresubstratum.domain.IThemeReader
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
 
-class DetailedPresenter(val packageManager : IPackageManager) : Presenter {
+class DetailedPresenter(val packageManager : IPackageManager, val themeReader: IThemeReader) : Presenter {
 
     var detailedView : View? = null
 
@@ -24,7 +24,7 @@ class DetailedPresenter(val packageManager : IPackageManager) : Presenter {
 
         val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
-        Observable.fromCallable { ThemeReader().readThemePack(location) }
+        Observable.fromCallable { themeReader.readThemePack(location) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .map {

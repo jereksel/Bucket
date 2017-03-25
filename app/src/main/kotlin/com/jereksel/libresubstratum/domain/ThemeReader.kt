@@ -4,11 +4,11 @@ import android.support.annotation.VisibleForTesting
 import com.jereksel.libresubstratum.data.*
 import java.io.File
 
-class ThemeReader {
+class ThemeReader: IThemeReader {
 
-    fun readThemePack(location: String) : ThemePack = readThemePack(File(location))
+    override fun readThemePack(location: String) : ThemePack = readThemePack(File(location))
 
-    fun readThemePack(location: File) : ThemePack {
+    override fun readThemePack(location: File) : ThemePack {
 
         val overlaysLocation = File(location, "overlays")
 

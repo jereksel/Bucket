@@ -6,6 +6,8 @@ import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.activities.main.Presenter
 import com.jereksel.libresubstratum.domain.AppPackageManager
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.ThemeReader
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -25,13 +27,20 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesThemeReader(): IThemeReader {
+        return ThemeReader()
+    }
+
+    @Provides
+    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager): Presenter {
         return MainPresenter(packageManager)
     }
 
     @Provides
     @Singleton
-    open fun providesDetailedPresenter(packageManager: IPackageManager) : com.jereksel.libresubstratum.activities.detailed.Presenter {
-        return DetailedPresenter(packageManager)
+    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader)
+            : com.jereksel.libresubstratum.activities.detailed.Presenter {
+        return DetailedPresenter(packageManager, themeReader)
     }
 }
