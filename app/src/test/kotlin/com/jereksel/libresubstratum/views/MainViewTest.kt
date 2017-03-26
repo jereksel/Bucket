@@ -5,10 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
-import com.jereksel.libresubstratum.BuildConfig
-import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.ResettableLazy
+import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.DetailedApplication
@@ -96,6 +93,6 @@ class MainViewTest {
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
         assertSame(d1, (recyclerView.getChildAt(0).findViewById(R.id.heroimage) as ImageView).drawable)
-        assertEquals(ColorDrawable::class.java, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable.javaClass)
+        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable)
     }
 }

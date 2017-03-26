@@ -67,10 +67,10 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     //TODO: Implement caching
     fun extractZip(zip: File, dest: File) {
-        dest.parentFile.mkdirs()
         if (dest.exists()) {
             dest.deleteRecursively()
         }
+        dest.mkdirs()
 
         val fis = FileInputStream(zip)
         val zis = ZipInputStream(BufferedInputStream(fis))

@@ -1,8 +1,8 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.os.Bundle
+import com.google.common.io.Files
 import com.jereksel.libresubstratum.activities.main.MainContract
-import com.jereksel.libresubstratum.activities.main.MainContract.*
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.domain.IPackageManager
@@ -10,7 +10,6 @@ import com.nhaarman.mockito_kotlin.argThat
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import junit.framework.Assert.assertEquals
 import org.apache.commons.io.FileUtils
@@ -67,10 +66,14 @@ class MainPresenterTest : FunSpec() {
         test("removeView with nulls") {
             presenter.removeView()
         }
-        test("unzip") {
-            val temp = File.createTempFile("presenter", "unzip")
-            println("Temp dir location: $temp")
-            presenter.extractZip(File(resources, "Theme.apk"), temp)
+        test("extraction test") {
+            val id = "appId"
+            val zipLocation = File(resources, "Theme.apk")
+            val tempFolder = Files.createTempDir()
+            whenever(packageManager.getCacheFolder()).thenReturn(tempFolder)
+            whenever(packageManager.getAppLocation(id)).thenReturn(zipLocation)
+            println("Temp dir location: $tempFolder")
+            presenter.openThemeScreen(id)
 
             val expectedFile = listOf(
                     "android/type1a",
@@ -78,10 +81,12 @@ class MainPresenterTest : FunSpec() {
                     "android/type1a_Red.xml"
             )
                     .map { "assets/overlays/" + it }
-                    .map { File(temp, it) }
+                    .map { File(File(tempFolder, id), it) }
                     .sorted()
 
-            assertEquals(expectedFile, FileUtils.listFiles(temp, null, true).sorted())
+            assertEquals(expectedFile, FileUtils.listFiles(tempFolder, null, true).sorted())
+            verify(view).openThemeFragment(id)
+            tempFolder.deleteRecursively()
         }
     }
 
