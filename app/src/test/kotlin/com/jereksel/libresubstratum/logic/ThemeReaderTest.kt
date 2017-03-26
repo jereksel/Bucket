@@ -1,7 +1,7 @@
 package com.jereksel.libresubstratum.logic
 
 import com.jereksel.libresubstratum.domain.ThemeReader
-import junit.framework.Assert.assertEquals
+import junit.framework.Assert.*
 import org.junit.Test
 import java.io.File
 

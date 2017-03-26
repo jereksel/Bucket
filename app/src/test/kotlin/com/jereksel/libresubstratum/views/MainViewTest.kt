@@ -1,34 +1,31 @@
 package com.jereksel.libresubstratum.views
 
-import android.app.Activity
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
+import android.support.v7.app.AppCompatActivity
+import android.widget.ImageView
 import com.jereksel.libresubstratum.BuildConfig
+import com.jereksel.libresubstratum.MockedApp
+import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.ResettableLazy
+import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.nhaarman.mockito_kotlin.mockingDetails
+import com.jereksel.libresubstratum.data.DetailedApplication
 import com.nhaarman.mockito_kotlin.verify
-import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_main.*
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
-import org.robolectric.util.ActivityController
-import rx.android.plugins.RxAndroidPlugins
-import rx.android.plugins.RxAndroidSchedulersHook
-import rx.plugins.RxJavaHooks
-import rx.schedulers.Schedulers
-import rx.schedulers.TestScheduler
-
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -36,40 +33,69 @@ import rx.schedulers.TestScheduler
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class MainViewTest {
 
-    lateinit var packageManager : IPackageManager
-    lateinit var activity : Activity
-    lateinit var scheduler : TestScheduler
+    lateinit var activityController : ActivityController<MainView>
+    lateinit var activity : MainContract.View
+    lateinit var presenter: MainContract.Presenter
 
-    var swipeToRefresh by ResettableLazy { activity.swiperefresh }
-    var recyclerView by ResettableLazy { activity.recyclerView }
+    var activityCasted by ResettableLazy { activity as AppCompatActivity? }
+    var swipeToRefresh by ResettableLazy { activityCasted!!.swiperefresh }
+    var recyclerView by ResettableLazy { activityCasted!!.recyclerView }
 
     @Before
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
-        packageManager = app.mockedPackageManager
+        presenter = app.mockedMainPresenter
+        activityController = Robolectric.buildActivity(MainView::class.java).create()
+        activity = activityController.get()
+    }
+
+    @After
+    fun cleanup() {
+        activityController.destroy()
+        activityCasted = null
         swipeToRefresh = null
         recyclerView = null
-        scheduler = TestScheduler()
-
-        RxJavaHooks.clear()
-        RxJavaHooks.setOnIOScheduler({ Schedulers.immediate() })
-        val hook = object : RxAndroidSchedulersHook() {
-            override fun getMainThreadScheduler() = scheduler
-        }
-
-        RxAndroidPlugins.getInstance().reset()
-        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
     }
 
     @Test
-    fun noApps() {
-        `when`(packageManager.getApplications()).thenReturn(mutableListOf())
-        activity = Robolectric.buildActivity(MainView::class.java).create().get();
+    fun `SwipeToRefresh should be active after opening activity`() {
         assertTrue(swipeToRefresh.isRefreshing)
-        scheduler.triggerActions()
-        verify(packageManager).getApplications()
+    }
+
+    @Test
+    fun `getApplication() should be invoked after opening activity`() {
+        verify(presenter).getApplications()
+    }
+
+    @Test
+    fun `SwipeToRefresh should be unactive after returning themes`() {
+        activity = Robolectric.buildActivity(MainView::class.java).create().get()
+        activity.addApplications(mutableListOf())
         assertFalse(swipeToRefresh.isRefreshing)
+    }
+
+    //TODO: Add message that there ara no themes
+    @Test
+    fun `RecyclerView should be empty when no themes are returned`() {
+        activity.addApplications(mutableListOf())
         assertEquals(0, recyclerView.adapter.itemCount)
     }
-}
 
+    @Test
+    fun `RecyclewView should show returned themes`() {
+        val d1 : Drawable = mock()
+
+        val apps = mutableListOf(
+                DetailedApplication("id1", "name1", "author1", d1),
+                DetailedApplication("id2", "name2", "author2", null)
+        )
+
+        activity.addApplications(apps)
+        assertEquals(2, recyclerView.adapter.itemCount)
+        recyclerView.measure(0,0)
+        recyclerView.layout(0, 0, 100, 10000)
+        assertEquals(2, recyclerView.childCount)
+        assertSame(d1, (recyclerView.getChildAt(0).findViewById(R.id.heroimage) as ImageView).drawable)
+        assertEquals(ColorDrawable::class.java, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable.javaClass)
+    }
+}
