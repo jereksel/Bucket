@@ -15,12 +15,12 @@ import org.androidannotations.annotations.Extra
 import javax.inject.Inject
 
 @EActivity(R.layout.activity_detailed)
-open class DetailedView : AppCompatActivity(), View {
+open class DetailedView : AppCompatActivity(), DetailedContract.View {
 
     @Extra
     lateinit var appId : String
 
-    @Inject lateinit var presenter : Presenter
+    @Inject lateinit var presenter : DetailedContract.Presenter
     @Inject lateinit var pManager : IPackageManager
 
     @AfterViews

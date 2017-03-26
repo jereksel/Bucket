@@ -3,7 +3,8 @@ package com.jereksel.libresubstratum.dagger.modules
 import android.app.Application
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
-import com.jereksel.libresubstratum.activities.main.Presenter
+import com.jereksel.libresubstratum.activities.main.MainContract
+import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.domain.AppPackageManager
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
@@ -33,14 +34,13 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesMainPresenter(packageManager: IPackageManager): Presenter {
+    open fun providesMainPresenter(packageManager: IPackageManager): MainContract.Presenter {
         return MainPresenter(packageManager)
     }
 
     @Provides
     @Singleton
-    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader)
-            : com.jereksel.libresubstratum.activities.detailed.Presenter {
+    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader) : DetailedContract.Presenter {
         return DetailedPresenter(packageManager, themeReader)
     }
 }

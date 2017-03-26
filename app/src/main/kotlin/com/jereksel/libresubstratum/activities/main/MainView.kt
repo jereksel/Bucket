@@ -14,9 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import rx.Subscription
 import javax.inject.Inject
 
-class MainView : AppCompatActivity(), View {
+class MainView : AppCompatActivity(), MainContract.View {
 
-    @Inject lateinit var presenter : Presenter
+    @Inject lateinit var presenter : MainContract.Presenter
     var clickSubscriptions: Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

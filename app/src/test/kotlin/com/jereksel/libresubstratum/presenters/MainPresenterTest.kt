@@ -1,8 +1,9 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.os.Bundle
+import com.jereksel.libresubstratum.activities.main.MainContract
+import com.jereksel.libresubstratum.activities.main.MainContract.*
 import com.jereksel.libresubstratum.activities.main.MainPresenter
-import com.jereksel.libresubstratum.activities.main.View
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.nhaarman.mockito_kotlin.argThat
@@ -13,6 +14,8 @@ import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import junit.framework.Assert.assertEquals
 import org.apache.commons.io.FileUtils
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.mockito.stubbing.OngoingStubbing
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
@@ -22,14 +25,16 @@ import java.io.File
 
 class MainPresenterTest : FunSpec() {
 
-    lateinit var presenter : MainPresenter
+    @Mock
+    lateinit var view : MainContract.View
+    @Mock
     lateinit var packageManager : IPackageManager
-    lateinit var view : View
+
+    lateinit var presenter : MainPresenter
     val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
 
     override fun beforeEach() {
-        view = mock()
-        packageManager = mock()
+        MockitoAnnotations.initMocks(this);
         presenter = MainPresenter(packageManager);
         presenter.setView(view)
         RxJavaHooks.clear()

@@ -14,7 +14,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class MainPresenter(val packageManager: IPackageManager) : Presenter {
+class MainPresenter(val packageManager: IPackageManager) : MainContract.Presenter {
 
     companion object {
         val SUBSTRATUM_LEGACY = "Substratum_Legacy"
@@ -22,7 +22,7 @@ class MainPresenter(val packageManager: IPackageManager) : Presenter {
         val SUBSTRATUM_AUTHOR = "Substratum_Author"
     }
 
-    private var mainView: View? = null
+    private var mainView: MainContract.View? = null
     private var subscription: Subscription? = null
 
     override fun getApplications() {
@@ -42,7 +42,7 @@ class MainPresenter(val packageManager: IPackageManager) : Presenter {
                 .subscribe { mainView?.addApplications(it) }
     }
 
-    override fun setView(view: View) {
+    override fun setView(view: MainContract.View) {
         mainView = view
     }
 
