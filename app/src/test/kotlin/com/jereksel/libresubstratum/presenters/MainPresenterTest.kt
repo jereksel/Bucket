@@ -2,7 +2,7 @@ package com.jereksel.libresubstratum.presenters
 
 import android.os.Bundle
 import com.google.common.io.Files
-import com.jereksel.libresubstratum.activities.main.MainContract
+import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.domain.IPackageManager
@@ -25,7 +25,7 @@ import java.io.File
 class MainPresenterTest : FunSpec() {
 
     @Mock
-    lateinit var view : MainContract.View
+    lateinit var view : View
     @Mock
     lateinit var packageManager : IPackageManager
 

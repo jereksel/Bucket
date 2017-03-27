@@ -6,4 +6,3 @@ import kotlin.reflect.KClass
 fun assertType(clz: KClass<out Any>, obj: Any) {
     assertEquals(clz.java, obj.javaClass)
 }
-
