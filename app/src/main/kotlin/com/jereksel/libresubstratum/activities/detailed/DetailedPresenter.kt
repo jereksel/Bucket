@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import rx.Observable

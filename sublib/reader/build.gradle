@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'groovy'
+apply plugin: "jacoco"
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile project(":sublib:models")
+
+    testCompile(
+            'junit:junit:4.12',
+            'org.codehaus.groovy:groovy-all:2.4.4',
+            'org.spockframework:spock-core:1.0-groovy-2.4'
+    )
+}
+
+// https://stackoverflow.com/questions/24870464/android-studio-with-java-library-module-unable-to-load-test-resources
+sourceSets {
+    test {
+        output.resourcesDir = output.classesDir
+    }
+}
+
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+jacocoTestReport {
+    reports {
+        csv.enabled false
+        html.enabled true
+        xml.enabled true
+    }
+}

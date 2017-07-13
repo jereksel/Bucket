@@ -30,7 +30,6 @@ class MainPresenterTest : FunSpec() {
     lateinit var packageManager : IPackageManager
 
     lateinit var presenter : MainPresenter
-    val resources : File = File(javaClass.classLoader.getResource("resource.json").path).parentFile
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this);
@@ -65,28 +64,6 @@ class MainPresenterTest : FunSpec() {
         }
         test("removeView with nulls") {
             presenter.removeView()
-        }
-        test("extraction test") {
-            val id = "appId"
-            val zipLocation = File(resources, "Theme.apk")
-            val tempFolder = Files.createTempDir()
-            whenever(packageManager.getCacheFolder()).thenReturn(tempFolder)
-            whenever(packageManager.getAppLocation(id)).thenReturn(zipLocation)
-            println("Temp dir location: $tempFolder")
-            presenter.openThemeScreen(id)
-
-            val expectedFile = listOf(
-                    "android/type1a",
-                    "android/type1a_Green.xml",
-                    "android/type1a_Red.xml"
-            )
-                    .map { "assets/overlays/" + it }
-                    .map { File(File(tempFolder, id), it) }
-                    .sorted()
-
-            assertEquals(expectedFile, FileUtils.listFiles(tempFolder, null, true).sorted())
-            verify(view).openThemeFragment(id)
-            tempFolder.deleteRecursively()
         }
     }
 

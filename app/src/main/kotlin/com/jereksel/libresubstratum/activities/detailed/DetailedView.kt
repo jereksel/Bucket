@@ -6,7 +6,7 @@ import android.support.v7.widget.GridLayoutManager
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.adapters.ThemePackAdapter
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.androidannotations.annotations.AfterViews
