@@ -17,12 +17,12 @@ class ThemeReaderTest extends Specification {
         ["android", "com.android.settings", "com.android.systemui"] == themeLocation.themes.collect {it.application}.sort()
     }
 
-    def "simple type3 test"() {
+    def "simple type2 test"() {
         when:
-        def theme3 = themeReader.readType3Data(File(resources, "Type3Test", "overlays"))
+        def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays"))
 
         then:
-        ["Light", "Black", "Dark"] == theme3.extensions.collect { it.name }
+        ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }
     }
 
 
