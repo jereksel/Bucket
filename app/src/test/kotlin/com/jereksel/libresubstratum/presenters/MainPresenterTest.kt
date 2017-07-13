@@ -65,28 +65,6 @@ class MainPresenterTest : FunSpec() {
         test("removeView with nulls") {
             presenter.removeView()
         }
-//        test("extraction test") {
-//            val id = "appId"
-//            val zipLocation = File(resources, "Theme.apk")
-//            val tempFolder = Files.createTempDir()
-//            whenever(packageManager.getCacheFolder()).thenReturn(tempFolder)
-//            whenever(packageManager.getAppLocation(id)).thenReturn(zipLocation)
-//            println("Temp dir location: $tempFolder")
-//            presenter.openThemeScreen(id)
-//
-//            val expectedFile = listOf(
-//                    "android/type1a",
-//                    "android/type1a_Green.xml",
-//                    "android/type1a_Red.xml"
-//            )
-//                    .map { "assets/overlays/" + it }
-//                    .map { File(File(tempFolder, id), it) }
-//                    .sorted()
-//
-//            assertEquals(expectedFile, FileUtils.listFiles(tempFolder, null, true).sorted())
-//            verify(view).openThemeFragment(id)
-//            tempFolder.deleteRecursively()
-//        }
     }
 
     fun packageFactory(id: String, name: String?, author: String?): Application {
