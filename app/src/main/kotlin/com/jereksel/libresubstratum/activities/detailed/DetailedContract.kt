@@ -2,7 +2,7 @@ package com.jereksel.libresubstratum.activities.detailed
 
 import com.jereksel.libresubstratum.MVPPresenter
 import com.jereksel.libresubstratum.MVPView
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.ThemePack
 
 interface DetailedContract {
 

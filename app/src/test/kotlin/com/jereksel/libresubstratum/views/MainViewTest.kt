@@ -79,7 +79,7 @@ class MainViewTest {
     }
 
     @Test
-    fun `RecyclewView should show returned themes`() {
+    fun `RecyclerView should show returned themes`() {
         val d1 : Drawable = mock()
 
         val apps = mutableListOf(

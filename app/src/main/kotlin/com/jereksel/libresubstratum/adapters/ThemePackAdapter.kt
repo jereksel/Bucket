@@ -8,12 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 
-class ThemePackAdapter(_themePack : ThemePack, val packageManager: IPackageManager) : RecyclerView.Adapter<ThemePackAdapter.ViewHolder>() {
+class ThemePackAdapter(themePack : ThemePack, val packageManager: IPackageManager) : RecyclerView.Adapter<ThemePackAdapter.ViewHolder>() {
 
-    val themePack: ThemePack = ThemePack(_themePack.themes.sortedBy { packageManager.getAppName(it.application) }, _themePack.type3)
+    val themePack: ThemePack = ThemePack(themePack.themes.sortedBy { packageManager.getAppName(it.application) }, themePack.type3)
 
 //    val onClickSubject = PublishSubject.create<DetailedApplication>()!!
 

@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.domain
 
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.ThemePack
 import java.io.File
 
 interface IThemeReader {

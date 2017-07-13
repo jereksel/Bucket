@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.main
 
+import android.util.Log
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.has
@@ -79,7 +80,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
             val fileName = ze.name
 
-//            Log.d("extractZip", fileName)
+            Log.d("extractZip", fileName)
 
             if (!fileName.startsWith("assets")) {
                 return@forEach

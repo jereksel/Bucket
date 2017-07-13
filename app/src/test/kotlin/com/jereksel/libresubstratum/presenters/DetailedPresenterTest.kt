@@ -3,8 +3,8 @@ package com.jereksel.libresubstratum.presenters
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
-import com.jereksel.libresubstratum.data.Theme
-import com.jereksel.libresubstratum.data.ThemePack
+import com.jereksel.libresubstratumlib.Theme
+import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import com.nhaarman.mockito_kotlin.any
