@@ -19,7 +19,7 @@ class ThemeReaderTest extends Specification {
 
     def "simple type2 test"() {
         when:
-        def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays"))
+        def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays", "android"))
 
         then:
         ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }

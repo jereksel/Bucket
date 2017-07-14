@@ -44,11 +44,11 @@ class ThemeReader {
         return typeMap.map { Type1Data(it.value, it.key) }.sortedBy { it.suffix }
     }
 
-    fun readType2Data(dir: File) : Type2Data {
+    fun readType2Data(dir: File) : Type2Data? {
         val type2File = File(dir, "type2")
         if (!type2File.exists()) {
-            return Type2Data()
-        }
+            return null
+                }
 
         val firstType = Type2Extension(type2File.readText().trim(), true)
         val rest = dir.listFiles()
