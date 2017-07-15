@@ -35,7 +35,7 @@ class ThemeReaderTest extends Specification {
 
     def "simple type2 test"() {
         when:
-        def theme2 = themeReader.readType2Data(File(resources, "type2test", "overlays", "android"))
+        def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays", "android"))
 
         then:
         ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }
@@ -43,7 +43,7 @@ class ThemeReaderTest extends Specification {
 
     def "simple type3 test"() {
         when:
-        def theme3 = themeReader.readType3Data(File(resources, "type3test", "overlays"))
+        def theme3 = themeReader.readType3Data(File(resources, "Type3Test", "overlays"))
 
         then:
         ["Light", "Black", "Dark"] == theme3.extensions.collect { it.name }
