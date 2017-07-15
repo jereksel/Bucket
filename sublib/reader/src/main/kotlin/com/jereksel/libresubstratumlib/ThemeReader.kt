@@ -48,7 +48,7 @@ class ThemeReader {
         val type2File = File(dir, "type2")
         if (!type2File.exists()) {
             return null
-                }
+        }
 
         val firstType = Type2Extension(type2File.readText().trim(), true)
         val rest = dir.listFiles()

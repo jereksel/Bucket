@@ -17,16 +17,7 @@ class ThemeReaderTest extends Specification {
         ["android", "com.android.settings", "com.android.systemui"] == themeLocation.themes.collect {it.application}.sort()
     }
 
-    def "simple type2 test"() {
-        when:
-        def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays", "android"))
-
-        then:
-        ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }
-    }
-
-
-    def "type 1 test"() {
+    def "type 1 android test"() {
         when:
         def theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "android"))
 
@@ -34,7 +25,7 @@ class ThemeReaderTest extends Specification {
         ["a"] == theme1.collect { it.suffix }
     }
 
-    def "type 1 test 2"() {
+    def "type 1 com.android.dialer test"() {
         when:
         def theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "com.android.dialer"))
 
@@ -42,20 +33,25 @@ class ThemeReaderTest extends Specification {
         ["a", "b"] == theme1.collect {it.suffix}
     }
 
-//    fun File(init: File, vararg sub: String) : File {
-//
-//        return sub.fold(init) {
-//            acc, elem ->
-//            java.io.File(acc, elem)
-//        }
-//
-//    }
+    def "simple type2 test"() {
+        when:
+        def theme2 = themeReader.readType2Data(File(resources, "type2test", "overlays", "android"))
 
+        then:
+        ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }
+    }
+
+    def "simple type3 test"() {
+        when:
+        def theme3 = themeReader.readType3Data(File(resources, "type3test", "overlays"))
+
+        then:
+        ["Light", "Black", "Dark"] == theme3.extensions.collect { it.name }
+
+    }
 
     @Ignore
     def File(File init, String... sub) {
-         sub.inject(init) { file, s -> new File(file, s) }
+        sub.inject(init) { file, s -> new File(file, s) }
     }
-
-
 }
