@@ -12,17 +12,18 @@ import com.jereksel.libresubstratum.data.DetailedApplication
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_main.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowDialog
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -82,7 +83,7 @@ class MainViewTest {
     fun `RecyclerView should show returned themes`() {
         val d1 : Drawable = mock()
 
-        val apps = mutableListOf(
+        val apps = listOf(
                 DetailedApplication("id1", "name1", "author1", d1),
                 DetailedApplication("id2", "name2", "author2", null)
         )
@@ -95,4 +96,44 @@ class MainViewTest {
         assertSame(d1, (recyclerView.getChildAt(0).findViewById(R.id.heroimage) as ImageView).drawable)
         assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable)
     }
+
+    @Test
+    fun `OpenThemeScreen should be called after view click`() {
+        val apps = listOf(
+                DetailedApplication("id1", "name1", "author1", null),
+                DetailedApplication("id2", "name2", "author2", null)
+        )
+
+        activity.addApplications(apps)
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0)
+        view.performClick()
+
+        Mockito.verify(presenter).openThemeScreen("id1")
+    }
+
+    @Test
+    fun `Dialog should be shown after view click`() {
+        val apps = listOf(
+                DetailedApplication("id1", "name1", "author1", null),
+                DetailedApplication("id2", "name2", "author2", null)
+        )
+
+        activity.addApplications(apps)
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0)
+        view.performClick()
+
+        val dialog = ShadowDialog.getLatestDialog()
+        assertNotNull(dialog)
+        assertTrue(dialog.isShowing)
+    }
+
+    //TODO: Test for dialog hide after extracting
+
+    //TODO: Test for activity changing
 }

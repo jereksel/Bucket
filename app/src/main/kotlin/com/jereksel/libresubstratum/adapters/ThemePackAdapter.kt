@@ -13,6 +13,7 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 import android.widget.ArrayAdapter
+import com.jereksel.libresubstratum.data.Type1ExtensionToString
 
 class ThemePackAdapter(
         themePack : ThemePack,
@@ -30,7 +31,7 @@ class ThemePackAdapter(
         holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
 
         holder.type1Spinners.zip(theme.type1).forEach { (spinner, type1) ->
-            val spinnerArrayAdapter = ArrayAdapter(spinner.context, android.R.layout.simple_spinner_item, type1.extension.map { it.name })
+            val spinnerArrayAdapter = ArrayAdapter(spinner.context, android.R.layout.simple_spinner_item, type1.extension.map(::Type1ExtensionToString))
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = spinnerArrayAdapter
             spinner.visibility = VISIBLE
