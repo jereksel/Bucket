@@ -1,11 +1,15 @@
 package com.jereksel.libresubstratum.views
 
+import android.app.Activity
+import android.content.ComponentName
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
+import com.jereksel.libresubstratum.activities.detailed.DetailedContract
+import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.DetailedApplication
@@ -21,8 +25,11 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import org.robolectric.shadow.api.Shadow
+import org.robolectric.shadows.ShadowDialog
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -95,4 +102,59 @@ class MainViewTest {
         assertSame(d1, (recyclerView.getChildAt(0).findViewById(R.id.heroimage) as ImageView).drawable)
         assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable)
     }
+
+    @Test
+    fun `OpenThemeScreen should be called after view click`() {
+        val apps = listOf(
+                DetailedApplication("id1", "name1", "author1", null),
+                DetailedApplication("id2", "name2", "author2", null)
+        )
+
+        activity.addApplications(apps)
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0)
+        view.performClick()
+
+        verify(presenter).openThemeScreen("id1")
+    }
+
+    @Test
+    fun `Dialog should be shown after view click`() {
+        val apps = listOf(
+                DetailedApplication("id1", "name1", "author1", null),
+                DetailedApplication("id2", "name2", "author2", null)
+        )
+
+        activity.addApplications(apps)
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0)
+        view.performClick()
+
+        val dialog = ShadowDialog.getLatestDialog()
+        assertNotNull(dialog)
+        assertTrue(dialog.isShowing)
+    }
+
+    @Test
+    fun `Dialog should be hidden after openThemeFragment call`() {
+        `Dialog should be shown after view click`()
+        activity.openThemeFragment("1")
+        val dialog = ShadowDialog.getLatestDialog()
+        assertNotNull(dialog)
+        assertFalse(dialog.isShowing)
+    }
+
+    @Test
+    fun `DetailedView should be opened after openThemeFragmentCall`() {
+        `Dialog should be shown after view click`()
+        activity.openThemeFragment("id1")
+        val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
+        assertEquals(nextIntent.getStringExtra(DetailedView_.APP_ID_EXTRA), "id1")
+        assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, DetailedView_::class.java))
+    }
+
 }
