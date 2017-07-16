@@ -55,7 +55,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
         }
     }
 
-    override fun openThemeScreen(appId: String) {
+        override fun openThemeScreen(appId: String) {
 
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)

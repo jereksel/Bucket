@@ -1,19 +1,21 @@
 package com.jereksel.libresubstratum.adapters
 
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratum.domain.IPackageManager
-import android.widget.ArrayAdapter
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
+import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.extensions.list
+import com.jereksel.libresubstratumlib.ThemePack
 
 class ThemePackAdapter(
         themePack : ThemePack,
@@ -22,32 +24,25 @@ class ThemePackAdapter(
 
     val themePack: ThemePack = ThemePack(themePack.themes.sortedBy { packageManager.getAppName(it.application) }, themePack.type3)
 
-//    val onClickSubject = PublishSubject.create<DetailedApplication>()!!
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val theme = themePack.themes[position]
         val appId = theme.application
         holder.appName.text = packageManager.getAppName(appId)
+        holder.appId.text = theme.application
         holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
+        holder.card.setOnClickListener { holder.checkbox.performClick() }
 
         holder.type1Spinners.zip(theme.type1).forEach { (spinner, type1) ->
-            val spinnerArrayAdapter = ArrayAdapter(spinner.context, android.R.layout.simple_spinner_item, type1.extension.map(::Type1ExtensionToString))
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = spinnerArrayAdapter
             spinner.visibility = VISIBLE
+            spinner.list = type1.extension.map(::Type1ExtensionToString)
         }
 
         val type2 = theme.type2
         if (type2 != null) {
             val spinner = holder.type2Spinner
-            val spinnerArrayAdapter = ArrayAdapter(spinner.context, android.R.layout.simple_spinner_item, type2.extensions.map { it.name })
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = spinnerArrayAdapter
-            holder.type2Spinner.visibility = VISIBLE
+            spinner.visibility = VISIBLE
+            spinner.list = type2.extensions.map { it.name }
         }
-
-//        val element = apps[position]
-//        holder.view.setOnClickListener { onClickSubject.onNext(element) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -58,7 +53,12 @@ class ThemePackAdapter(
     override fun getItemCount() = themePack.themes.size
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        val appName: TextView by bindView(R.id.textView)
+
+        val card: CardView by bindView(R.id.card_view)
+        val checkbox: CheckBox by bindView(R.id.checkbox)
+
+        val appName: TextView by bindView(R.id.appName)
+        val appId: TextView by bindView(R.id.appId)
         val appIcon: ImageView by bindView(R.id.imageView)
 
         val type1aSpinner: Spinner by bindView(R.id.spinner_1a)
@@ -68,7 +68,5 @@ class ThemePackAdapter(
 
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
     }
-
-//    fun getClickObservable() = onClickSubject.asObservable()!!
 
 }

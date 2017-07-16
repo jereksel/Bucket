@@ -70,6 +70,11 @@ class AppPackageManager(val context: Context) : IPackageManager {
     }
 
     override fun getAppIcon(appId: String): Drawable? {
+
+        if (SYSTEMUI.contains(appId)) {
+            return getAppIcon("android")
+        }
+
         try {
             return context.packageManager.getApplicationIcon(appId)
         } catch (e: PackageManager.NameNotFoundException) {
