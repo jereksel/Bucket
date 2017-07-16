@@ -19,7 +19,7 @@ class MainView : AppCompatActivity(), MainContract.View {
 
     @Inject lateinit var presenter : MainContract.Presenter
     var clickSubscriptions: Subscription? = null
-    private lateinit var dialog: ProgressDialog
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class MainView : AppCompatActivity(), MainContract.View {
     }
 
     override fun openThemeFragment(appId: String) {
-        dialog.dismiss()
+        dialog?.dismiss()
         DetailedView_.intent(this).appId(appId).start()
     }
 

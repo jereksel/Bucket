@@ -150,7 +150,6 @@ class MainViewTest {
 
     @Test
     fun `DetailedView should be opened after openThemeFragmentCall`() {
-        `Dialog should be shown after view click`()
         activity.openThemeFragment("id1")
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
         assertEquals(nextIntent.getStringExtra(DetailedView_.APP_ID_EXTRA), "id1")
