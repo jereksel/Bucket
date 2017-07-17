@@ -69,6 +69,7 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
     }
     testOptions {
+        unitTests.returnDefaultValues = true
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
