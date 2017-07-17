@@ -63,6 +63,7 @@ class MainPresenterTest : FunSpec() {
             }
         }
         test("removeView with nulls") {
+            //We check if exception is not thrown
             presenter.removeView()
         }
     }

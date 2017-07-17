@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.adapters.ThemePackAdapter
+import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
@@ -42,7 +43,7 @@ open class DetailedView : AppCompatActivity(), DetailedContract.View {
         val type3 = themePack.type3
         if (type3 != null) {
             spinner.visibility = VISIBLE
-            spinner.list = type3.extensions.map { it.name }
+            spinner.list = type3.extensions.map { Type3ExtensionToString(it) }
         }
     }
 

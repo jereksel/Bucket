@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.views
 
-import android.app.Activity
 import android.content.ComponentName
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -8,10 +7,10 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
+import com.jereksel.libresubstratum.activities.main.MainView_
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.mock
@@ -21,14 +20,12 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
-import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowDialog
 
 @RunWith(RobolectricTestRunner::class)
@@ -37,7 +34,7 @@ import org.robolectric.shadows.ShadowDialog
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class MainViewTest {
 
-    lateinit var activityController : ActivityController<MainView>
+    lateinit var activityController : ActivityController<MainView_>
     lateinit var activity : MainContract.View
     lateinit var presenter: MainContract.Presenter
 
@@ -49,7 +46,7 @@ class MainViewTest {
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
         presenter = app.mockedMainPresenter
-        activityController = Robolectric.buildActivity(MainView::class.java).create()
+        activityController = Robolectric.buildActivity(MainView_::class.java).create()
         activity = activityController.get()
     }
 
@@ -73,7 +70,6 @@ class MainViewTest {
 
     @Test
     fun `SwipeToRefresh should be unactive after returning themes`() {
-        activity = Robolectric.buildActivity(MainView::class.java).create().get()
         activity.addApplications(mutableListOf())
         assertFalse(swipeToRefresh.isRefreshing)
     }

@@ -1,7 +1,6 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.ProgressDialog
-import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -12,20 +11,20 @@ import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import kotlinx.android.synthetic.main.activity_main.*
+import org.androidannotations.annotations.AfterViews
+import org.androidannotations.annotations.EActivity
 import rx.Subscription
 import javax.inject.Inject
 
-class MainView : AppCompatActivity(), MainContract.View {
+@EActivity(R.layout.activity_main)
+open class MainView : AppCompatActivity(), MainContract.View {
 
     @Inject lateinit var presenter : MainContract.Presenter
     var clickSubscriptions: Subscription? = null
     private var dialog: ProgressDialog? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-//        App.getAppComponent(this).inject(this)
-//        (application as App).appComponent.inject(this)
+    @AfterViews
+    fun init() {
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         swiperefresh.isRefreshing = true
