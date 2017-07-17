@@ -17,6 +17,14 @@ class ThemeReaderTest extends Specification {
         ["android", "com.android.settings", "com.android.systemui"] == themeLocation.themes.collect {it.application}.sort()
     }
 
+    def "type 1 empty theme test"() {
+        when:
+        def theme1 = themeReader.readType1Data(File(resources, "VerySimpleTheme", "overlays", "android"))
+
+        then:
+        theme1.empty
+    }
+
     def "type 1 android test"() {
         when:
         def theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "android"))
@@ -41,13 +49,28 @@ class ThemeReaderTest extends Specification {
         ["Light", "Black", "Dark"] == theme2.extensions.collect { it.name }
     }
 
+    def "simple type2 empty theme test"() {
+        when:
+        def theme2 = themeReader.readType2Data(File(resources, "VerySimpleTheme", "overlays", "android"))
+
+        then:
+        theme2 == null
+    }
+
     def "simple type3 test"() {
         when:
         def theme3 = themeReader.readType3Data(File(resources, "Type3Test", "overlays"))
 
         then:
         ["Light", "Black", "Dark"] == theme3.extensions.collect { it.name }
+    }
 
+    def "simple type3 empty theme test"() {
+        when:
+        def theme3 = themeReader.readType3Data(File(resources, "VerySimpleTheme", "overlays"))
+
+        then:
+        theme3 == null
     }
 
     @Ignore
