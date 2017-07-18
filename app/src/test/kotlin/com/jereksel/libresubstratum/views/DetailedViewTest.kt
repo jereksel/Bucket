@@ -76,6 +76,10 @@ class DetailedViewTest {
         assertEquals(type3.extensions.map { Type3ExtensionToString(it) }, (spinner.adapter as ArrayAdapter<*>).getAllItems())
     }
 
+    fun `all spinners should be hidden for theme with no type1 and type2 extensions`() {
+
+    }
+
     private fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }
 }
 
