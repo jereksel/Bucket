@@ -23,3 +23,7 @@ build_script:
 
 test_script: 
   - gradlew test
+ 
+cache:
+  - %HOMEPATH%\.m2
+  - %HOMEPATH%\.gradle
