@@ -25,5 +25,5 @@ test_script:
   - gradlew test
  
 cache:
-  - '%HOMEPATH%\.m2'
-  - '%HOMEPATH%\.gradle'
+  - 'C:\Users\appveyor\.m2'
+  - 'C:\Users\appveyor\.gradle
