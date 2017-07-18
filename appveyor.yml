@@ -6,6 +6,7 @@ init:
   - cd "%ANDROID_HOME%"
   - appveyor DownloadFile "https://dl.google.com/android/repository/tools_r25.2.3-windows.zip"
   - 7z x "tools_r25.2.3-windows.zip" > nul
+  - cd "C:\projects\libresubstratum"
 
 install: off
 build: off
