@@ -1,5 +1,5 @@
 environment:
-  ANDROID_HOME: "C:\\android"
+  ANDROID_HOME: 'C:\android'
 
 init:
   - mkdir "%ANDROID_HOME%"
