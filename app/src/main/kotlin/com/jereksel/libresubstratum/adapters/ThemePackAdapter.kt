@@ -4,6 +4,7 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -31,6 +32,9 @@ class ThemePackAdapter(
         holder.appId.text = theme.application
         holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
         holder.card.setOnClickListener { holder.checkbox.performClick() }
+
+        listOf(*holder.type1Spinners.toTypedArray(), holder.type2Spinner)
+                .forEach { it.visibility = GONE }
 
         holder.type1Spinners.zip(theme.type1).forEach { (spinner, type1) ->
             spinner.visibility = VISIBLE

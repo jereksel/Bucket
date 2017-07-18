@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.main
 
-import android.util.Log
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.has
@@ -9,12 +8,7 @@ import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.io.BufferedInputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 class MainPresenter(val packageManager: IPackageManager) : MainContract.Presenter {
 
@@ -29,7 +23,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     override fun getApplications() {
 
-        subscription = Observable.fromCallable {packageManager.getApplications()}
+        subscription = Observable.fromCallable { packageManager.getApplications() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .flatMapIterable { it }
@@ -51,11 +45,11 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
     override fun removeView() {
         mainView = null
         if (subscription?.isUnsubscribed ?: false) {
-           subscription?.unsubscribe()
+            subscription?.unsubscribe()
         }
     }
 
-        override fun openThemeScreen(appId: String) {
+    override fun openThemeScreen(appId: String) {
 
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)

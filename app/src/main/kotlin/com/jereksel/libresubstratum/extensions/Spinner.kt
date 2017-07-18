@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.extensions
 
+import android.widget.Adapter
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 
@@ -12,3 +13,8 @@ inline set(list) {
 get() {
     throw UnsupportedOperationException()
 }
+
+fun Spinner.getAllStrings() = this.adapter.getAllStrings()
+fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }
+fun <T> ArrayAdapter<T>.getAllStrings() = getAllItems().map { it.toString() }
+fun Adapter.getAllStrings() = (0..count-1).map { this.getItem(it) }.map { it.toString() }
