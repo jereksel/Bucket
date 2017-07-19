@@ -24,5 +24,9 @@ build_script:
 test_script: 
   - gradlew test
  
+after_test:
+  - gradlew --stop
+ 
 cache:
   - 'C:\Users\appveyor\.m2'
+  - 'C:\Users\appveyor\.gradle'
