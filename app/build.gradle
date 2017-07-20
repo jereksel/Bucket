@@ -130,16 +130,16 @@ dependencies {
     testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
 
     //assertj android
-    testCompile 'com.squareup.assertj:assertj-android:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-support-v4:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-play-services:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-appcompat-v7:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-design:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-mediarouter-v7:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-gridlayout-v7:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-cardview-v7:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar'
-    testCompile 'com.squareup.assertj:assertj-android-palette-v7:1.1.1@aar'
+    testCompile "com.squareup.assertj:assertj-android:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
 
 /*    androidTestCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
