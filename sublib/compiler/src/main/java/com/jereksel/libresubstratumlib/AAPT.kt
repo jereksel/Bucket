@@ -27,7 +27,6 @@ object AAPT {
                 .mapNotNull {
                     val matcher = COLOR_PATTERN.matcher(it)
                     if (matcher.find()) {
-                        println(matcher.groupCount())
                         Color(matcher.group(1), matcher.group(2))
                     } else {
                         null
