@@ -4,10 +4,13 @@ import com.jereksel.libresubstratumlib.AAPT.compileTheme
 import com.jereksel.libresubstratumlib.AndroidManifestGenerator.generateManifest
 import java.io.File
 import java.nio.file.Files
+import java.util.regex.Pattern
 
 object AAPT {
 
-    fun getColorsValues(apk: File): Sequence<String> {
+    private val COLOR_PATTERN = Pattern.compile(":color/(.*):.*?d=(\\S*)")
+
+    fun getColorsValues(apk: File): Sequence<Color> {
 
         val cmd = listOf("aapt", "d", "resources", apk.absolutePath)
         val proc = ProcessBuilder(cmd).start()
@@ -21,24 +24,35 @@ object AAPT {
         }
 
         return output.lineSequence()
+                .mapNotNull {
+                    val matcher = COLOR_PATTERN.matcher(it)
+                    if (matcher.find()) {
+                        println(matcher.groupCount())
+                        Color(matcher.group(1), matcher.group(2))
+                    } else {
+                        null
+                    }
+                }
     }
 
-    fun getColorValue(apk: File, color: String) {
+    fun getColorValue(apk: File, color: String): String {
 
-        val cmd = listOf("aapt", "d", "resources", apk.absolutePath)
+        return getColorsValues(apk).first { it.name == color }.value
 
-        val proc = ProcessBuilder(cmd).start()
-
-        proc.waitFor()
-        val statusCode = proc.exitValue()
-        val output = proc.inputStream.bufferedReader().use { it.readText() }
-        val error = proc.errorStream.bufferedReader().use { it.readText() }
-
-        if (statusCode != 0) {
-            throw InvalidInvocationException(error)
-        }
-
-        println(output)
+//        val cmd = listOf("aapt", "d", "resources", apk.absolutePath)
+//
+//        val proc = ProcessBuilder(cmd).start()
+//
+//        proc.waitFor()
+//        val statusCode = proc.exitValue()
+//        val output = proc.inputStream.bufferedReader().use { it.readText() }
+//        val error = proc.errorStream.bufferedReader().use { it.readText() }
+//
+//        if (statusCode != 0) {
+//            throw InvalidInvocationException(error)
+//        }
+//
+//        println(output)
 
 //        return output.lineSequence()
 

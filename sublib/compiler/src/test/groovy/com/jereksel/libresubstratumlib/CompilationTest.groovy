@@ -1,25 +1,40 @@
 package com.jereksel.libresubstratumlib
 
-import groovy.transform.CompileStatic
-import org.junit.Test
+import spock.lang.Specification
 
-import java.nio.file.Files
+class CompilationTest extends Specification {
 
-@CompileStatic
-class CompilationTest {
+    def resources = new File(getClass().classLoader.getResource("resource.json").path).parentFile
 
-    @Test
-    def void test1() {
-        def f = Files.createTempDirectory(null).toFile()
+    def "Color from apk reading test"() {
 
-        println(f)
+        when:
+        def apk = new File(resources, "Theme.apk")
 
-//        AAPT.INSTANCE.compileTheme()
-        AAPT.INSTANCE.compileTheme("com.jereksel.test", new File("D:\\MojeProgramy\\LibreSubstratum\\sublib\\compiler\\src\\test\\resources\\basicTheme"), f)
+        then:
+        AAPT.INSTANCE.getColorsValues(apk).iterator().toList() == [new Color("my_color", "0xffabcdef")]
+    }
 
-//
-//        def manifest = AndroidManifestGenerator.INSTANCE.generateManifest("com.jereksel.testtheme")
-//
-//        println(f)
+    def "When color is available it's value is returned"() {
+        setup:
+        def apk = new File(resources, "Theme.apk")
+
+        when:
+        def color = AAPT.INSTANCE.getColorValue(apk, "my_color")
+
+        then:
+        "0xffabcdef" == color
+    }
+
+    def "When color doesn't exist exception is throws"() {
+        setup:
+        def apk = new File(resources, "Theme.apk")
+
+        when:
+        AAPT.INSTANCE.getColorValue(apk, "color_that_doesnt_exist")
+
+        then:
+        thrown NoSuchElementException
+
     }
 }
