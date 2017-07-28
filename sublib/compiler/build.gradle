@@ -8,12 +8,14 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile project(":sublib:models")
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 
     testCompile(
             'junit:junit:4.12',
             'org.codehaus.groovy:groovy-all:2.4.4',
             'org.spockframework:spock-core:1.0-groovy-2.4'
     )
+    testCompile group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.25'
 }
 
 // https://stackoverflow.com/questions/24870464/android-studio-with-java-library-module-unable-to-load-test-resources

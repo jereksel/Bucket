@@ -21,7 +21,8 @@ install:
 build_script: 
   - gradlew assembleDebug
 
-test_script: 
+test_script:
+  - cmd: SET PATH="%PATH%;%ANDROID_HOME%\build-tools\26.0.0"
   - gradlew test
  
 after_test:

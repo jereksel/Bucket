@@ -1,12 +1,13 @@
 package com.jereksel.libresubstratumlib
 
-import com.jereksel.libresubstratumlib.AAPT.compileTheme
 import com.jereksel.libresubstratumlib.AndroidManifestGenerator.generateManifest
+import org.slf4j.LoggerFactory
 import java.io.File
-import java.nio.file.Files
 import java.util.regex.Pattern
 
 object AAPT {
+
+    private val logger = LoggerFactory.getLogger(javaClass.name)
 
     private val COLOR_PATTERN = Pattern.compile(":color/(.*):.*?d=(\\S*)")
 
@@ -82,6 +83,14 @@ object AAPT {
 
     fun compileTheme(appId: String, dir: File, tempDir: File): String {
 
+        if (!dir.exists()) {
+            throw IllegalArgumentException("$dir doesn't exist")
+        }
+
+        if (!tempDir.exists()) {
+            throw IllegalArgumentException("$tempDir doesn't exist")
+        }
+
         val manifest = generateManifest(appId)
         val manifestFile = File(tempDir, "AndroidManifest.xml")
 
@@ -92,10 +101,13 @@ object AAPT {
 
         File(tempDir, "gen").mkdir()
 
-//        val command = listOf("aapt", "package", "-m", "-J", "gen", "-M", "AndroidManifest.xml", "-S", res.absolutePath)
-        val command = listOf("aapt", "package", "-f", "-M", "AndroidManifest.xml", "-S", res.absolutePath, "-F", "Theme.apk.unaligned")
 
-        println(command.joinToString(separator = " "))
+//        val command = listOf("aapt", "package", "-m", "-J", "gen", "-M", "AndroidManifest.xml", "-S", res.absolutePath)
+        val command = listOf("aapt", "package", "-f", "-M", "AndroidManifest.xml", "-S", res.absolutePath, "-F", "Theme.apk")
+
+//        println(command.joinToString(separator = " "))
+
+        logger.debug("Invoking: {}", command.joinToString(separator = " "))
 
         val proc = ProcessBuilder(command)
                 .directory(tempDir)
