@@ -23,6 +23,8 @@ build_script:
 
 test_script:
   - cmd: SET PATH="%PATH%;%ANDROID_HOME%\build-tools\26.0.0"
+  - cmd: ECHO %PATH%
+  - cmd: aapt v
   - gradlew test
  
 after_test:
