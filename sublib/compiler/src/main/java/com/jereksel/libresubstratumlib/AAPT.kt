@@ -59,7 +59,7 @@ class AAPT(val aaptPath: String) {
         return output
     }
 
-    fun compileTheme(appId: String, dir: File, tempDir: File): String {
+    fun compileTheme(appId: String, dir: File, tempDir: File): File {
 
         if (!dir.exists()) {
             throw IllegalArgumentException("$dir doesn't exist")
@@ -101,7 +101,7 @@ class AAPT(val aaptPath: String) {
             throw InvalidInvocationException(error)
         }
 
-        return output
+        return File(tempDir, "Theme.apk")
 
         //aapt package -m -J gen/ -M ./AndroidManifest.xml -S res1/ -S res2 ... -I android.jar
 
