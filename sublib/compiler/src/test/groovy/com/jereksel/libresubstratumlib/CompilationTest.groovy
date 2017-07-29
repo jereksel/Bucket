@@ -1,14 +1,25 @@
 package com.jereksel.libresubstratumlib
 
+import spock.lang.Shared
 import spock.lang.Specification
+
+import java.nio.file.Files
 
 class CompilationTest extends Specification {
 
+    @Shared
     def resources = new File(getClass().classLoader.getResource("resource.json").path).parentFile
+
+    @Shared
     def aapt = TestAaptFactory.get()
 
-    def "Color from apk reading test"() {
+    def temp = Files.createTempDirectory(null).toFile()
 
+    def cleanup() {
+        temp.deleteDir()
+    }
+
+    def "Color from apk reading test"() {
         when:
         def apk = new File(resources, "Theme.apk")
 
@@ -36,6 +47,23 @@ class CompilationTest extends Specification {
 
         then:
         thrown NoSuchElementException
+    }
 
+    def "Theme compilation should be successful"() {
+        when:
+        def file = aapt.compileTheme("com.jereksel.testtheme", new File(resources, "basicTheme"), temp)
+
+        then:
+        file.exists()
+        file.size() > 10
+    }
+
+    def "Compiled theme should have all colors"() {
+        when:
+        def file = aapt.compileTheme("com.jereksel.testtheme", new File(resources, "basicTheme"), temp)
+        def colors = aapt.getColorsValues(file)
+
+        then:
+        colors.iterator().toList() == [new Color("color1", "0xffabcdef"), new Color("color2", "0x12345678")]
     }
 }
