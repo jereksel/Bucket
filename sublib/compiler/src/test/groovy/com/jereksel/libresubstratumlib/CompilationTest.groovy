@@ -119,7 +119,6 @@ class CompilationTest extends Specification {
         type3 != null
         apk.exists()
         colors.iterator().toList() == [new Color("color1", "0x00000000"), new Color("color2", "0x00abcdef")]
-
     }
 
     def "Type3 with non default value compilation test"() {
