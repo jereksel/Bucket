@@ -16,6 +16,7 @@ dependencies {
             'org.spockframework:spock-core:1.0-groovy-2.4'
     )
     testCompile "org.slf4j:slf4j-nop:$slf4j_version"
+    testCompile project(":sublib:reader")
 }
 
 // https://stackoverflow.com/questions/24870464/android-studio-with-java-library-module-unable-to-load-test-resources

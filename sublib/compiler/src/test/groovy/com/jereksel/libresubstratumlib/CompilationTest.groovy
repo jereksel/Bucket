@@ -4,6 +4,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import java.nio.file.Files
+import java.nio.file.Paths
 
 class CompilationTest extends Specification {
 
@@ -65,5 +66,41 @@ class CompilationTest extends Specification {
 
         then:
         colors.iterator().toList() == [new Color("color1", "0xffabcdef"), new Color("color2", "0x12345678")]
+    }
+
+    def "Type2 with default value compilation test"() {
+        given:
+        def themeLoc = new File(resources, "type2Theme")
+        def compilationDir = Paths.get(resources.absolutePath, "type2Theme", "overlays", "android").toFile()
+
+        when:
+        def theme = new ThemeReader().readThemePack(themeLoc)
+        def type2 = theme.themes[0].type2.extensions[0]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", type2, null), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        type2 != null
+        apk.exists()
+        colors.iterator().toList() == [new Color("color1", "0x00000000"), new Color("color2", "0x00abcdef")]
+
+    }
+
+    def "Type2 with non default value compilation test"() {
+        given:
+        def themeLoc = new File(resources, "type2Theme")
+        def compilationDir = Paths.get(resources.absolutePath, "type2Theme", "overlays", "android").toFile()
+
+        when:
+        def theme = new ThemeReader().readThemePack(themeLoc)
+        def type2 = theme.themes[0].type2.extensions[1]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", type2, null), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        type2 != null
+        apk.exists()
+        colors.iterator().toList() == [new Color("color1", "0xffffffff"), new Color("color2", "0x00abcdef")]
+
     }
 }

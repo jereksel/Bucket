@@ -37,30 +37,7 @@ class AAPT(val aaptPath: String) {
 
     fun getColorValue(apk: File, color: String) = getColorsValues(apk).first { it.name == color }.value
 
-    private fun aapt0(argsList: List<String> = listOf(), argsMap: Map<String, String> = mapOf()): String {
-
-        val args = argsMap.map { listOf(it.key, it.value) }.fold(listOf<String>(), {l1, l2 -> l1 + l2 })
-
-        val proc = ProcessBuilder(listOf(aaptPath, "package") + argsList + args)
-                .directory(File("D://"))
-//                .redirectOutput(ProcessBuilder.Redirect.PIPE)
-//                .redirectError(ProcessBuilder.Redirect.PIPE)
-                .start()
-
-        proc.waitFor()
-        val statusCode = proc.exitValue()
-        val output = proc.inputStream.bufferedReader().use { it.readText() }
-        val error = proc.errorStream.bufferedReader().use { it.readText() }
-
-        if (statusCode != 0) {
-            throw InvalidInvocationException(error)
-        }
-
-        return output
-    }
-
-    fun compileTheme(appId: String, dir: File, tempDir: File): File {
-
+    fun compileTheme(themeDate: ThemeToCompile, dir: File, tempDir: File): File {
         if (!dir.exists()) {
             throw IllegalArgumentException("$dir doesn't exist")
         }
@@ -69,7 +46,7 @@ class AAPT(val aaptPath: String) {
             throw IllegalArgumentException("$tempDir doesn't exist")
         }
 
-        val manifest = generateManifest(appId)
+        val manifest = generateManifest(themeDate.appId)
         val manifestFile = File(tempDir, "AndroidManifest.xml")
 
         manifestFile.createNewFile()
@@ -79,11 +56,13 @@ class AAPT(val aaptPath: String) {
 
         File(tempDir, "gen").mkdir()
 
+        val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", "AndroidManifest.xml", "-F", "Theme.apk")
 
-//        val command = listOf("aapt", "package", "-m", "-J", "gen", "-M", "AndroidManifest.xml", "-S", res.absolutePath)
-        val command = listOf(aaptPath, "package", "-f", "-M", "AndroidManifest.xml", "-S", res.absolutePath, "-F", "Theme.apk")
+        if (themeDate.type2 != null && !themeDate.type2.default) {
+            command.addAll(listOf("-S", File(File(dir.absolutePath, "type2_${themeDate.type2.name}"), "res").absolutePath))
+        }
 
-//        println(command.joinToString(separator = " "))
+        command.addAll(listOf("-S", res.absolutePath))
 
         logger.debug("Invoking: {}", command.joinToString(separator = " "))
 
@@ -102,23 +81,7 @@ class AAPT(val aaptPath: String) {
         }
 
         return File(tempDir, "Theme.apk")
-
-        //aapt package -m -J gen/ -M ./AndroidManifest.xml -S res1/ -S res2 ... -I android.jar
-
-//        val temp = Files.createTempDirectory(null)
-
-//        aapt0(argsMap = )
-
-
-//        "aapt d resources"
-
-
     }
 
+    fun compileTheme(appId: String, dir: File, tempDir: File) = compileTheme(ThemeToCompile(appId), dir, tempDir)
 }
-
-//fun main(args: Array<String>) {
-//        val temp = Files.createTempDirectory(null)
-//
-//
-//}
