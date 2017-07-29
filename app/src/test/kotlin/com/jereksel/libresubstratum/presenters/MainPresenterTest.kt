@@ -1,7 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.os.Bundle
-import com.google.common.io.Files
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
@@ -11,8 +10,6 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.specs.FunSpec
-import junit.framework.Assert.assertEquals
-import org.apache.commons.io.FileUtils
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.stubbing.OngoingStubbing
@@ -20,7 +17,6 @@ import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
-import java.io.File
 
 class MainPresenterTest : FunSpec() {
 
@@ -32,8 +28,8 @@ class MainPresenterTest : FunSpec() {
     lateinit var presenter : MainPresenter
 
     override fun beforeEach() {
-        MockitoAnnotations.initMocks(this);
-        presenter = MainPresenter(packageManager);
+        MockitoAnnotations.initMocks(this)
+        presenter = MainPresenter(packageManager)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }

@@ -46,6 +46,10 @@ class AAPT(val aaptPath: String) {
             throw IllegalArgumentException("$tempDir doesn't exist")
         }
 
+        if (themeDate.type1.any { !it.excension.default }) {
+            //There will we file replacing required - let's copy theme source dir
+        }
+
         val manifest = generateManifest(themeDate.appId)
         val manifestFile = File(tempDir, "AndroidManifest.xml")
 

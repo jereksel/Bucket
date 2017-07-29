@@ -76,7 +76,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type2 = theme.themes[0].type2.extensions[0]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", type2, null), compilationDir, temp)
+        def apk = aapt.compileTheme(new ThemeToCompile("a", [], type2, null), compilationDir, temp)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -94,7 +94,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type2 = theme.themes[0].type2.extensions[1]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", type2, null), compilationDir, temp)
+        def apk = aapt.compileTheme(new ThemeToCompile("a", [], type2, null), compilationDir, temp)
         def colors = aapt.getColorsValues(apk)
 
         then:
