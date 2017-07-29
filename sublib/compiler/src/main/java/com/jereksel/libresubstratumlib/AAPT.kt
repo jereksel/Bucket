@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.regex.Pattern
 
-object AAPT {
+class AAPT(val aaptPath: String) {
 
     private val logger = LoggerFactory.getLogger(javaClass.name)
 
@@ -13,7 +13,7 @@ object AAPT {
 
     fun getColorsValues(apk: File): Sequence<Color> {
 
-        val cmd = listOf("aapt", "d", "resources", apk.absolutePath)
+        val cmd = listOf(aaptPath, "d", "resources", apk.absolutePath)
         val proc = ProcessBuilder(cmd).start()
 
         val statusCode = proc.waitFor()
@@ -63,7 +63,7 @@ object AAPT {
 
         val args = argsMap.map { listOf(it.key, it.value) }.fold(listOf<String>(), {l1, l2 -> l1 + l2 })
 
-        val proc = ProcessBuilder(listOf("aapt", "package") + argsList + args)
+        val proc = ProcessBuilder(listOf(aaptPath, "package") + argsList + args)
                 .directory(File("D://"))
 //                .redirectOutput(ProcessBuilder.Redirect.PIPE)
 //                .redirectError(ProcessBuilder.Redirect.PIPE)
@@ -103,7 +103,7 @@ object AAPT {
 
 
 //        val command = listOf("aapt", "package", "-m", "-J", "gen", "-M", "AndroidManifest.xml", "-S", res.absolutePath)
-        val command = listOf("aapt", "package", "-f", "-M", "AndroidManifest.xml", "-S", res.absolutePath, "-F", "Theme.apk")
+        val command = listOf(aaptPath, "package", "-f", "-M", "AndroidManifest.xml", "-S", res.absolutePath, "-F", "Theme.apk")
 
 //        println(command.joinToString(separator = " "))
 

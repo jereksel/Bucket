@@ -5,6 +5,7 @@ import spock.lang.Specification
 class CompilationTest extends Specification {
 
     def resources = new File(getClass().classLoader.getResource("resource.json").path).parentFile
+    def aapt = TestAaptFactory.get()
 
     def "Color from apk reading test"() {
 
@@ -12,7 +13,7 @@ class CompilationTest extends Specification {
         def apk = new File(resources, "Theme.apk")
 
         then:
-        AAPT.INSTANCE.getColorsValues(apk).iterator().toList() == [new Color("my_color", "0xffabcdef")]
+        aapt.getColorsValues(apk).iterator().toList() == [new Color("my_color", "0xffabcdef")]
     }
 
     def "When color is available it's value is returned"() {
@@ -20,7 +21,7 @@ class CompilationTest extends Specification {
         def apk = new File(resources, "Theme.apk")
 
         when:
-        def color = AAPT.INSTANCE.getColorValue(apk, "my_color")
+        def color = aapt.getColorValue(apk, "my_color")
 
         then:
         "0xffabcdef" == color
@@ -31,7 +32,7 @@ class CompilationTest extends Specification {
         def apk = new File(resources, "Theme.apk")
 
         when:
-        AAPT.INSTANCE.getColorValue(apk, "color_that_doesnt_exist")
+        aapt.getColorValue(apk, "color_that_doesnt_exist")
 
         then:
         thrown NoSuchElementException
