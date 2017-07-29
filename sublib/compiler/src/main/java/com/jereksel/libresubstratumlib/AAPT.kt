@@ -62,6 +62,10 @@ class AAPT(val aaptPath: String) {
 
         val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", "AndroidManifest.xml", "-F", "Theme.apk")
 
+        if (themeDate.type3 != null && !themeDate.type3.default) {
+            command.addAll(listOf("-S", File(File(dir.absolutePath, "type3_${themeDate.type3.name}"), "res").absolutePath))
+        }
+
         if (themeDate.type2 != null && !themeDate.type2.default) {
             command.addAll(listOf("-S", File(File(dir.absolutePath, "type2_${themeDate.type2.name}"), "res").absolutePath))
         }

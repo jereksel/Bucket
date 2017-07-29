@@ -101,6 +101,41 @@ class CompilationTest extends Specification {
         type2 != null
         apk.exists()
         colors.iterator().toList() == [new Color("color1", "0xffffffff"), new Color("color2", "0x00abcdef")]
+    }
 
+
+    def "Type3 with default value compilation test"() {
+        given:
+        def themeLoc = new File(resources, "type3Theme")
+        def compilationDir = Paths.get(resources.absolutePath, "type3Theme", "overlays", "android").toFile()
+
+        when:
+        def theme = new ThemeReader().readThemePack(themeLoc)
+        def type3 = theme.type3.extensions[0]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", [], null, type3), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        type3 != null
+        apk.exists()
+        colors.iterator().toList() == [new Color("color1", "0x00000000"), new Color("color2", "0x00abcdef")]
+
+    }
+
+    def "Type3 with non default value compilation test"() {
+        given:
+        def themeLoc = new File(resources, "type3Theme")
+        def compilationDir = Paths.get(resources.absolutePath, "type3Theme", "overlays", "android").toFile()
+
+        when:
+        def theme = new ThemeReader().readThemePack(themeLoc)
+        def type3 = theme.type3.extensions[1]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", [], null, type3), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        type3 != null
+        apk.exists()
+        colors.iterator().toList() == [new Color("color1", "0xffffffff"), new Color("color2", "0x00abcdef")]
     }
 }
