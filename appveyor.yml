@@ -22,9 +22,7 @@ build_script:
   - gradlew assembleDebug
 
 test_script:
-  - cmd: SET PATH="%PATH%;%ANDROID_HOME%\build-tools\26.0.0"
-  - cmd: ECHO %PATH%
-  - cmd: aapt v
+  - cmd: "%ANDROID_HOME%\build-tools\26.0.0\aapt.exe v"
   - gradlew test
  
 after_test:

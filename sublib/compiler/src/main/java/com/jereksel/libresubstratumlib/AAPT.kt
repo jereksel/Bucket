@@ -35,29 +35,7 @@ class AAPT(val aaptPath: String) {
                 }
     }
 
-    fun getColorValue(apk: File, color: String): String {
-
-        return getColorsValues(apk).first { it.name == color }.value
-
-//        val cmd = listOf("aapt", "d", "resources", apk.absolutePath)
-//
-//        val proc = ProcessBuilder(cmd).start()
-//
-//        proc.waitFor()
-//        val statusCode = proc.exitValue()
-//        val output = proc.inputStream.bufferedReader().use { it.readText() }
-//        val error = proc.errorStream.bufferedReader().use { it.readText() }
-//
-//        if (statusCode != 0) {
-//            throw InvalidInvocationException(error)
-//        }
-//
-//        println(output)
-
-//        return output.lineSequence()
-
-
-    }
+    fun getColorValue(apk: File, color: String) = getColorsValues(apk).first { it.name == color }.value
 
     private fun aapt0(argsList: List<String> = listOf(), argsMap: Map<String, String> = mapOf()): String {
 

@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratumlib
 
-
 class TestAaptFactory {
 
     public static AAPT get() {
