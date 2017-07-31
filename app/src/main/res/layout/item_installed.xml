@@ -10,16 +10,16 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/target_icon"
+            android:id="@+id/theme_icon"
             android:layout_width="48dp"
             android:layout_height="48dp" />
 
         <ImageView
-            android:id="@+id/theme_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="32dp" />
+            android:id="@+id/target_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp" />
 
     </RelativeLayout>
 
@@ -27,8 +27,18 @@
         android:id="@+id/target_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:text="Target name"
+        android:layout_above="@+id/enable_button"
         android:layout_toEndOf="@+id/icons"
-        android:text="Target name" />
+        android:layout_marginBottom="15dp" />
+
+    <Button
+        android:id="@+id/enable_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/icons"
+        android:text="Enable" />
 
 </RelativeLayout>

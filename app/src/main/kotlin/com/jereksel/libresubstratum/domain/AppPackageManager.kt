@@ -43,8 +43,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return context.cacheDir
     }
 
+    override fun stringIdToString(stringId: Int): String = context.getString(stringId)
+
     override fun getAppName(appId: String): String {
-        val appInfo =  context.packageManager.getApplicationInfo(appId, GET_META_DATA)
+        val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
         return context.packageManager.getApplicationLabel(appInfo).toString()
     }
 

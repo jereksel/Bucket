@@ -29,7 +29,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     override fun getApplications() {
 
-        subscription = Observable.fromCallable {packageManager.getApplications()}
+        subscription = Observable.fromCallable { packageManager.getApplications() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .flatMapIterable { it }

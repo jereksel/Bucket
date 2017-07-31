@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LibreSubstratum</string>
+    <string name="settings_icons">Settings Icons</string>
+    <string name="systemui_headers">System UI Headers</string>
+    <string name="systemui_navigation">System UI Navigation</string>
+    <string name="systemui_qs_tiles">System UI QS Tile Icons</string>
+    <string name="systemui_statusbar">System UI Status Bar Icons</string>
 </resources>

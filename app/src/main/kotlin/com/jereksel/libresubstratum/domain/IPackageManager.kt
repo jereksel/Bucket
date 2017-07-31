@@ -11,5 +11,6 @@ interface IPackageManager {
     fun getAppName(appId: String): String
     fun isPackageInstalled(appId: String): Boolean
     fun getAppLocation(appId: String): File
+    fun stringIdToString(stringId: Int): String
     fun getCacheFolder(): File
 }

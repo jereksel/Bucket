@@ -37,7 +37,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.jereksel.libresubstratum"
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -104,6 +104,8 @@ dependencies {
     //AndroidAnnotations
     kapt "org.androidannotations:androidannotations:$aa_version"
     compile "org.androidannotations:androidannotations-api:$aa_version"
+
+    compile 'com.jereksel:omslib:1.0.2'
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
