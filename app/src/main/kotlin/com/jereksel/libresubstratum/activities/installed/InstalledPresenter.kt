@@ -22,6 +22,12 @@ class InstalledPresenter(val packageManager: IPackageManager): Presenter {
     val metadataOverlayTarget = "Substratum_Target"
     val metadataOverlayParent = "Substratum_Parent"
 
+    val metadataOverlayType1a = "Substratum_Type1a"
+    val metadataOverlayType1b = "Substratum_Type1b"
+    val metadataOverlayType1c = "Substratum_Type1c"
+    val metadataOverlayType2 = "Substratum_Type2"
+    val metadataOverlayType3 = "Substratum_Type3"
+
     private var subscription: Subscription? = null
 
     override fun getInstalledOverlays() {
@@ -38,9 +44,16 @@ class InstalledPresenter(val packageManager: IPackageManager): Presenter {
                     val parentName = packageManager.getAppName(parent)
                     val target = it.metadata.getString(metadataOverlayTarget)
                     val targetIcon = packageManager.getAppIcon(target)!!
+
+                    val type1a = it.metadata.getString(metadataOverlayType1a)
+                    val type1b = it.metadata.getString(metadataOverlayType1b)
+                    val type1c = it.metadata.getString(metadataOverlayType1c)
+                    val type2 = it.metadata.getString(metadataOverlayType2)
+                    val type3 = it.metadata.getString(metadataOverlayType3)
 //                    val targetName = packageManager.getAppName(target)
                     val targetName = getTargetName(overlay, target)
-                    InstalledOverlay(overlay, parent, parentName, parentIcon, target, targetName, targetIcon)
+                    InstalledOverlay(overlay, parent, parentName, parentIcon, target, targetName,
+                            targetIcon, type1a, type1b, type1c, type2, type3)
                 }
                 .toList()
                 .subscribe { view?.addOverlays(it) }

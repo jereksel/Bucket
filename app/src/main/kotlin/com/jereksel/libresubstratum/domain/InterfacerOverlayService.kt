@@ -7,9 +7,12 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
+import com.jereksel.omslib.OMSLib
 import projekt.substratum.IInterfacerInterface
 
 class InterfacerOverlayService(context: Context): OverlayService {
+
+    val oms = OMSLib.getOMS()!!
 
     private lateinit var service: IInterfacerInterface
 
@@ -43,6 +46,11 @@ class InterfacerOverlayService(context: Context): OverlayService {
 
     override fun disableOverlay(id: String) {
         service.disableOverlay(listOf(id), false)
+    }
+
+    override fun getOverlayInfo(id: String): OverlayInfo {
+        val info = oms.getOverlayInfo(id, 0)
+        return OverlayInfo(id, info.isEnabled)
     }
 
 }

@@ -1,11 +1,13 @@
 package com.jereksel.libresubstratum.activities.installed
 
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
-import com.jereksel.libresubstratum.adapters.InstalledAdapter
+import com.jereksel.libresubstratum.adapters.InstalledRecyclerViewAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayService
 import kotlinx.android.synthetic.main.activity_installed.*
@@ -24,10 +26,17 @@ open class InstalledView: AppCompatActivity(), View {
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         presenter.getInstalledOverlays()
+//        swiperefresh.isRefreshing = true
+//        swiperefresh.setOnRefreshListener { presenter.getInstalledOverlays() }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        val adapter = InstalledAdapter(this, overlays, overlay)
-        listView.adapter = adapter
+        val adapter_ = InstalledRecyclerViewAdapter(this, overlays, overlay)
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(this@InstalledView)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+        }
+//        swiperefresh.isRefreshing = false
     }
 }

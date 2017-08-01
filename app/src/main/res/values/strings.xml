@@ -5,4 +5,16 @@
     <string name="systemui_navigation">System UI Navigation</string>
     <string name="systemui_qs_tiles">System UI QS Tile Icons</string>
     <string name="systemui_statusbar">System UI Status Bar Icons</string>
+
+    <string name="theme_name_list">Theme: %1$s</string>
+    <!--<string name="theme_type1a_list"><b>Type1a:</b> %1$s</string>-->
+    <!--<string name="theme_type1b_list"><b>Type1b:</b> %1$s</string>-->
+    <!--<string name="theme_type1c_list"><b>Type1c:</b> %1$s</string>-->
+    <!--<string name="theme_type2_list"><b>Type2:</b> %1$s</string>-->
+    <!--<string name="theme_type3_list"><b>Type3:</b> %1$s</string>-->
+    <string name="theme_type1a_list"><b>Type1a</b></string>
+    <string name="theme_type1b_list"><b>Type1b</b></string>
+    <string name="theme_type1c_list"><b>Type1c</b></string>
+    <string name="theme_type2_list"><b>Type2</b></string>
+    <string name="theme_type3_list"><b>Type3</b></string>
 </resources>

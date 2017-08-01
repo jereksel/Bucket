@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:padding="8dp"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -23,22 +25,61 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/target_name"
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/recText"
+        android:layout_marginLeft="16dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/icons"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Target name"
-        android:layout_above="@+id/enable_button"
-        android:layout_toEndOf="@+id/icons"
-        android:layout_marginBottom="15dp" />
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/enable_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/icons"
-        android:text="Enable" />
+        <TextView
+            android:id="@+id/target_name"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target name" />
+
+        <TextView
+            android:id="@+id/theme_type1a"
+            android:layout_width="wrap_content"
+            android:text="@string/theme_type1a_list"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/theme_type1b"
+            android:layout_width="wrap_content"
+            android:text="@string/theme_type1b_list"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/theme_type1c"
+            android:layout_width="wrap_content"
+            android:text="@string/theme_type1c_list"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/theme_type2"
+            android:layout_width="wrap_content"
+            android:text="@string/theme_type2_list"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/theme_type3"
+            android:layout_width="wrap_content"
+            android:text="@string/theme_type3_list"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <!--<Button-->
+        <!--android:id="@+id/enable_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@id/icons"-->
+        <!--android:text="Enable" />-->
 
 </RelativeLayout>
