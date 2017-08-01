@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.Prese
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.adapters.InstalledAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.domain.OverlayService
 import kotlinx.android.synthetic.main.activity_installed.*
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EActivity
@@ -16,6 +17,7 @@ import javax.inject.Inject
 open class InstalledView: AppCompatActivity(), View {
 
     @Inject lateinit var presenter : Presenter
+    @Inject lateinit var overlay : OverlayService
 
     @AfterViews
     fun init() {
@@ -25,7 +27,7 @@ open class InstalledView: AppCompatActivity(), View {
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        val adapter = InstalledAdapter(this, overlays)
+        val adapter = InstalledAdapter(this, overlays, overlay)
         listView.adapter = adapter
     }
 }

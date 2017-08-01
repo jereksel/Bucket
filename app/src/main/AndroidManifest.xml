@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jereksel.libresubstratum">
 
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-    <uses-permission android:name="android.permission.MODIFY_OVERLAYS" />
-    <uses-permission android:name="oms.permission.MODIFY_OVERLAYS" />
+    <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE"/>
 
     <application
         android:name=".App"

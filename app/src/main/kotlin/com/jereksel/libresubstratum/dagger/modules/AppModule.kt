@@ -7,10 +7,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
-import com.jereksel.libresubstratum.domain.AppPackageManager
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.ThemeReader
+import com.jereksel.libresubstratum.domain.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -32,6 +29,12 @@ open class AppModule(private val application: Application) {
     @Singleton
     open fun providesThemeReader(): IThemeReader {
         return ThemeReader()
+    }
+
+    @Provides
+    @Singleton
+    open fun providesOverlayService(): OverlayService {
+        return InterfacerOverlayService(application)
     }
 
     @Provides

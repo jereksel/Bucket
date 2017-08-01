@@ -11,11 +11,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.omslib.OMSLib
 
 class InstalledAdapter(
         context: Context,
-        apps: List<InstalledOverlay>
+        apps: List<InstalledOverlay>,
+        val overlay: OverlayService
 ): ArrayAdapter<InstalledOverlay>(context, 0, apps.sortedBy { it.targetName })  {
 
     val oms = OMSLib.getOMS()!!
@@ -43,7 +45,9 @@ class InstalledAdapter(
     }
 
     fun toggle(info: OverlayInfo) {
-        oms.setEnabled(info.packageName, !info.isEnabled, 0, false)
+        overlay.toggleOverlay(info.packageName, !info.isEnabled)
         notifyDataSetInvalidated()
+//        oms.setEnabled(info.packageName, !info.isEnabled, 0, false)
+//        notifyDataSetInvalidated()
     }
 }
