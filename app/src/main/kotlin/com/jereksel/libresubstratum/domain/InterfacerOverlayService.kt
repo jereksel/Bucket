@@ -53,4 +53,7 @@ class InterfacerOverlayService(context: Context): OverlayService {
         return OverlayInfo(id, info.isEnabled)
     }
 
+    override fun restartSystemUI() {
+        service.restartSystemUI()
+    }
 }

@@ -88,6 +88,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_library_version"
     compile "com.android.support:recyclerview-v7:$support_library_version"
     compile "com.android.support:cardview-v7:$support_library_version"
+    compile "com.android.support:design:$support_library_version"
 
     //RxStuff
     compile 'io.reactivex:rxjava:1.2.4'
