@@ -68,6 +68,52 @@ class CompilationTest extends Specification {
         colors.iterator().toList() == [new Color("color1", "0xffabcdef"), new Color("color2", "0x12345678")]
     }
 
+    def "Type1 when all default compilation is in place"() {
+        given:
+        def themeLoc = new File(resources, "type1Theme")
+        def compilationDir = Paths.get(resources.absolutePath, "type1Theme", "overlays", "android").toFile()
+
+        when:
+        def theme = new ThemeReader().readThemePack(themeLoc)
+        def types1 = theme.themes[0].type1.collect { new Type1DataToCompile(it.extension.find { it.default }, it.suffix) }
+        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+
+        then:
+        apk.exists()
+        !new File(temp, "overlay").exists()
+    }
+
+    def "Type1 type1.xml should be replaced"() {
+        given:
+        def compilationDir = Paths.get(resources.absolutePath, "type1Theme", "overlays", "android").toFile()
+
+        when:
+        def types1 = [new Type1DataToCompile(new Type1Extension("ATYPE1", false), "a")]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        apk.exists()
+        new File(temp, "overlay").exists()
+        colors.iterator().toList() == [new Color("color1", "0x12345678"), new Color("color2", "0x00000000"), new Color("color3", "0x00000000")]
+    }
+
+    def "Type1 multiple types test"() {
+        given:
+        def compilationDir = Paths.get(resources.absolutePath, "type1Theme", "overlays", "android").toFile()
+
+        when:
+        def types1 = [new Type1DataToCompile(new Type1Extension("BTYPE1", false), "b"), new Type1DataToCompile(new Type1Extension("CTYPE2", false), "c"),]
+        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+        def colors = aapt.getColorsValues(apk)
+
+        then:
+        apk.exists()
+        new File(temp, "overlay").exists()
+        colors.iterator().toList() == [new Color("color1", "0x00000000"), new Color("color2", "0x12345678"), new Color("color3", "0xffffffff")]
+
+    }
+
     def "Type2 with default value compilation test"() {
         given:
         def themeLoc = new File(resources, "type2Theme")
