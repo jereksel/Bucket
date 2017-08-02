@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import com.jereksel.libresubstratum.data.Application
+import com.jereksel.libresubstratum.data.SimpleMap
 import java.io.File
 
 class AppPackageManager(val context: Context) : IPackageManager {
@@ -13,7 +15,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
         val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
         return packages
                 .filter { it.applicationInfo.metaData != null }
-                .map { Application(it.packageName, it.applicationInfo.metaData) }
+                .map { Application(it.packageName, BundleMap(it.applicationInfo.metaData)) }
     }
 
     override fun getHeroImage(appId: String): Drawable? {
@@ -55,4 +57,15 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return null
         }
     }
+
+    class BundleMap(val bundle:Bundle): SimpleMap<String, String> {
+
+        override fun contains(key: String): Boolean {
+            return bundle.containsKey(key) && bundle.getString(key) != null
+        }
+
+        override fun get(key: String): String? = bundle.getString(key)
+
+    }
+
 }
