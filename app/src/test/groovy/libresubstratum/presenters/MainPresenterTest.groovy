@@ -55,6 +55,6 @@ class MainPresenterTest extends Specification {
         bundle.get(MainPresenter.SUBSTRATUM_LEGACY) >> new Object()
         bundle.get(MainPresenter.SUBSTRATUM_AUTHOR) >> author
         bundle.getString(MainPresenter.SUBSTRATUM_AUTHOR) >> author
-        new Application(id, bundle)
+        new Application.Application(id, bundle)
     }
 }
