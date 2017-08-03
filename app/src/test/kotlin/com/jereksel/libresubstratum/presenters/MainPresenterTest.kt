@@ -69,7 +69,7 @@ class MainPresenterTest : FunSpec() {
         return Application(id, SimpleMapFromMap(mapOf(
                 SUBSTRATUM_NAME to name,
                 SUBSTRATUM_AUTHOR to author
-        )))
+        ).filterValues { it != null }))
     }
 
     infix operator fun <T> OngoingStubbing<T>.minus(t: T): OngoingStubbing<T> = thenReturn(t)
