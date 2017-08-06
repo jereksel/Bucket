@@ -3,20 +3,39 @@ package com.jereksel.libresubstratum.domain
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
+import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.extensions.has
 import java.io.File
 
 class AppPackageManager(val context: Context) : IPackageManager {
 
-    override fun getApplications(): List<Application> {
+    override fun getInstalledThemes(): List<InstalledTheme> {
+        return getApplications()
+                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_AUTHOR) }
+                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_NAME) }
+                .map {
+                    val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
+                    val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+                    val heroImage = getHeroImage(it.appId)
+                    InstalledTheme(it.appId, name, author, heroImage)
+                }
+                .toList()
+    }
+
+    fun getApplications(): Sequence<Application> {
         val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
         return packages
+                .asSequence()
                 .filter { it.applicationInfo.metaData != null }
                 .map { Application(it.packageName, it.applicationInfo.metaData) }
     }
 
-    override fun getHeroImage(appId: String): Drawable? {
+    fun getHeroImage(appId: String): Drawable? {
         val res = context.packageManager.getResourcesForApplication(appId)
         val resId = res.getIdentifier("heroimage", "drawable", appId)
         if (resId == 0) {

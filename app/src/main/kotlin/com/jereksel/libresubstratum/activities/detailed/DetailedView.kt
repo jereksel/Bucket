@@ -26,7 +26,7 @@ open class DetailedView : AppCompatActivity(), DetailedContract.View {
     @AfterViews
     fun init() {
         (application as App).getAppComponent(this).inject(this)
-        imageView.setImageDrawable(pManager.getHeroImage(appId))
+//        imageView.setImageDrawable(pManager.getHeroImage(appId))
         presenter.setView(this)
         presenter.readTheme(appId)
     }
