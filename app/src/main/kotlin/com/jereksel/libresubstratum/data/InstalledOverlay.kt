@@ -4,10 +4,11 @@ import android.graphics.drawable.Drawable
 
 data class InstalledOverlay (
         val overlayId: String,
-//        val appName: String,
+        //Source theme
         val sourceThemeId: String,
         val sourceThemeName: String,
         val sourceThemeDrawable: Drawable,
+        //Target app
         val targetId: String,
         val targetName: String,
         val targetDrawable: Drawable,

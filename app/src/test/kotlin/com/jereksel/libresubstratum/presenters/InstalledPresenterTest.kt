@@ -1,18 +1,14 @@
 package com.jereksel.libresubstratum.presenters
 
-import android.graphics.drawable.Drawable
-import android.os.Bundle
-import com.google.common.io.Files
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
-import com.jereksel.libresubstratum.data.Application
+import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IPackageManager
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
+import org.junit.Assert.*
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.stubbing.OngoingStubbing
@@ -20,7 +16,7 @@ import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
-import java.io.File
+
 
 class InstalledPresenterTest : FunSpec() {
 
@@ -52,6 +48,29 @@ class InstalledPresenterTest : FunSpec() {
 
     init {
 
+        test("sorting") {
+
+            val captor: KArgumentCaptor<List<InstalledOverlay>> = argumentCaptor()
+
+            val overlay1 = InstalledOverlay("id1", "id1", "Source A", mock(), "id1", "Target A", mock())
+            val overlay2 = InstalledOverlay("id2", "id2", "Source B", mock(), "id2", "Target B", mock())
+
+            whenever(packageManager.getInstalledOverlays()).thenReturn(listOf(overlay2, overlay1))
+
+            presenter.getInstalledOverlays()
+            verify(view).addOverlays(captor.capture())
+
+            val l = captor.firstValue
+
+            assertNotNull(l)
+            assertEquals(2, l.size)
+            assertEquals(listOf(overlay1, overlay2), l)
+
+        }
+
+
+    }
+
 
 
 
@@ -73,35 +92,35 @@ class InstalledPresenterTest : FunSpec() {
 //        test("removeView with nulls") {
 //            presenter.removeView()
 //        }
-    }
-
-    fun packageFactory(overlayId: String, parentId: String, parentName: String, targetId: String, targetName: String,
-                       type1a: String? = null, type1b: String? = null, type1c: String? = null,
-                       type2: String? = null, type3: String? = null): Application {
-
-
-        val bundle = mock<Bundle> {
-            on { get(InstalledPresenter.metadataOverlayParent) } - parentId
-            on { getString(InstalledPresenter.metadataOverlayParent) } - parentId
-
-            on { get(InstalledPresenter.metadataOverlayTarget) } - targetId
-            on { getString(InstalledPresenter.metadataOverlayTarget) } - targetId
-
-            listOf(
-                    Pair(InstalledPresenter.metadataOverlayType1a, type1a),
-                    Pair(InstalledPresenter.metadataOverlayType1b, type1b),
-                    Pair(InstalledPresenter.metadataOverlayType1c, type1c),
-                    Pair(InstalledPresenter.metadataOverlayType2, type2),
-                    Pair(InstalledPresenter.metadataOverlayType3, type3)
-            ).forEach {
-                on { getString(it.first) } - it.second
-            }
-
-
-        }
-
-        return Application(overlayId, bundle)
-    }
+//    }
+//
+//    fun packageFactory(overlayId: String, parentId: String, parentName: String, targetId: String, targetName: String,
+//                       type1a: String? = null, type1b: String? = null, type1c: String? = null,
+//                       type2: String? = null, type3: String? = null): Application {
+//
+//
+//        val bundle = mock<Bundle> {
+//            on { get(InstalledPresenter.metadataOverlayParent) } - parentId
+//            on { getString(InstalledPresenter.metadataOverlayParent) } - parentId
+//
+//            on { get(InstalledPresenter.metadataOverlayTarget) } - targetId
+//            on { getString(InstalledPresenter.metadataOverlayTarget) } - targetId
+//
+//            listOf(
+//                    Pair(InstalledPresenter.metadataOverlayType1a, type1a),
+//                    Pair(InstalledPresenter.metadataOverlayType1b, type1b),
+//                    Pair(InstalledPresenter.metadataOverlayType1c, type1c),
+//                    Pair(InstalledPresenter.metadataOverlayType2, type2),
+//                    Pair(InstalledPresenter.metadataOverlayType3, type3)
+//            ).forEach {
+//                on { getString(it.first) } - it.second
+//            }
+//
+//
+//        }
+//
+//        return Application(overlayId, bundle)
+//    }
 
 //    fun packageFactory(id: String, name: String?, author: String?): Application {
 //

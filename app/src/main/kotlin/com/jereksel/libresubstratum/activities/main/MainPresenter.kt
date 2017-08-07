@@ -24,11 +24,8 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
         subscription?.safeUnsubscribe()
 
-        subscription = Observable.fromCallable {packageManager.getApplications()}
-                .observeOn(AndroidSchedulers.mainThread())
+        subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
                 .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .map { it }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { mainView?.addApplications(it) }
     }
