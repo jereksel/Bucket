@@ -10,15 +10,16 @@ import android.widget.TextView
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.DetailedApplication
+import com.jereksel.libresubstratum.data.InstalledTheme
 import rx.subjects.PublishSubject
 
-class MainViewAdapter(val apps: List<DetailedApplication>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+class MainViewAdapter(val apps: List<InstalledTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
-    val onClickSubject = PublishSubject.create<DetailedApplication>()!!
+    val onClickSubject = PublishSubject.create<InstalledTheme>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.appName.text = apps[position].name
-        holder.heroImage.setImageDrawable(apps[position].heroimage ?: ColorDrawable(android.R.color.black))
+        holder.heroImage.setImageDrawable(apps[position].heroImage ?: ColorDrawable(android.R.color.black))
         val element = apps[position]
         holder.view.setOnClickListener { onClickSubject.onNext(element) }
     }

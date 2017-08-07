@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.views
 
-import android.app.Activity
 import android.content.ComponentName
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -8,15 +7,14 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.DetailedApplication
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_main.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -28,7 +26,6 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
-import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowDialog
 
 @RunWith(RobolectricTestRunner::class)
@@ -90,8 +87,8 @@ class MainViewTest {
         val d1 : Drawable = mock()
 
         val apps = mutableListOf(
-                DetailedApplication("id1", "name1", "author1", d1),
-                DetailedApplication("id2", "name2", "author2", null)
+                InstalledTheme("id1", "name1", "author1", d1),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps)
@@ -106,8 +103,8 @@ class MainViewTest {
     @Test
     fun `OpenThemeScreen should be called after view click`() {
         val apps = listOf(
-                DetailedApplication("id1", "name1", "author1", null),
-                DetailedApplication("id2", "name2", "author2", null)
+                InstalledTheme("id1", "name1", "author1", null),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps)
@@ -123,8 +120,8 @@ class MainViewTest {
     @Test
     fun `Dialog should be shown after view click`() {
         val apps = listOf(
-                DetailedApplication("id1", "name1", "author1", null),
-                DetailedApplication("id2", "name2", "author2", null)
+                InstalledTheme("id1", "name1", "author1", null),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps)
