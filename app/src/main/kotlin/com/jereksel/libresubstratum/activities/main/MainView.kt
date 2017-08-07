@@ -12,7 +12,7 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.activities.installed.InstalledView_
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
-import com.jereksel.libresubstratum.data.DetailedApplication
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import kotlinx.android.synthetic.main.activity_main.*
 import rx.Subscription
@@ -37,7 +37,7 @@ class MainView : AppCompatActivity(), MainContract.View {
         presenter.getApplications()
     }
 
-    override fun addApplications(list: List<DetailedApplication>) {
+    override fun addApplications(list: List<InstalledTheme>) {
         clickSubscriptions?.safeUnsubscribe()
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
@@ -48,7 +48,7 @@ class MainView : AppCompatActivity(), MainContract.View {
                 .getClickObservable()
                 .subscribe {
                     dialog = ProgressDialog.show(this@MainView, "Extracting", "Extracting theme", true)
-                    presenter.openThemeScreen(it.id)
+                    presenter.openThemeScreen(it.appId)
                 }
         swiperefresh.isRefreshing = false
     }
