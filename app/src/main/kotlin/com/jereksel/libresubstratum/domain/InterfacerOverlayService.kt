@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.domain
 
-import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -50,7 +49,7 @@ class InterfacerOverlayService(context: Context): OverlayService {
 
     override fun getOverlayInfo(id: String): OverlayInfo {
         val info = oms.getOverlayInfo(id, 0)
-        return OverlayInfo(id, info.isEnabled)
+        return OverlayInfo(info.isEnabled)
     }
 
     override fun restartSystemUI() {

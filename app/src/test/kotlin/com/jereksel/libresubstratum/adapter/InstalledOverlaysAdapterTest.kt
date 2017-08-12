@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.adapter
 
+import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -17,8 +18,10 @@ import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
+import io.kotlintest.properties.TableTesting
 import kotlinx.android.synthetic.main.activity_reconly.*
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,8 +39,8 @@ import org.robolectric.annotation.Config
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class InstalledOverlaysAdapterTest {
 
-    lateinit var activityController : ActivityController<RecViewActivity>
-    lateinit var activity : AppCompatActivity
+    lateinit var activityController: ActivityController<RecViewActivity>
+    lateinit var activity: AppCompatActivity
 
     @Mock
     lateinit var packageManager: IPackageManager
@@ -67,12 +70,11 @@ class InstalledOverlaysAdapterTest {
     @Test
     fun `toggleOverlay is called after clicking on item`() {
 
-        val apps = listOf(InstalledOverlay("id", "","", mock(), "", "", mock()))
+        val apps = listOf(InstalledOverlay("id", "", "", mock(), "", "", mock(), "type1"))
 
         val adapter_ = InstalledOverlaysAdapter(activity, apps, overlayService, presenter)
 
-//        `when`(overlayService.getOverlayInfo(any())).thenThrow(RuntimeException())
-        `when`(overlayService.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
+        `when`(overlayService.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -88,5 +90,35 @@ class InstalledOverlaysAdapterTest {
 
     }
 
+    @Test
+    fun `Text color is red when overlay is disabled and green when enabled`() {
+
+        mapOf(
+                "id1" to true,
+                "id2" to false
+        ).forEach { id, enabled ->
+
+            val color = if(enabled) Color.GREEN else Color.RED
+
+            val apps = listOf(InstalledOverlay(id, "", "", mock(), "", "", mock()))
+
+            val adapter_ = InstalledOverlaysAdapter(activity, apps, overlayService, presenter)
+
+            `when`(overlayService.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
+
+            recyclerView.run {
+                layoutManager = LinearLayoutManager(context)
+                itemAnimator = DefaultItemAnimator()
+                adapter = adapter_
+                measure(0, 0)
+                layout(0, 0, 100, 10000)
+            }
+
+            val child = recyclerView.layoutManager.findViewByPosition(0)
+            val viewHolder = recyclerView.getChildViewHolder(child) as InstalledOverlaysAdapter.ViewHolder
+            assertEquals(color, viewHolder.targetName.currentTextColor)
+        }
+
+    }
 
 }
