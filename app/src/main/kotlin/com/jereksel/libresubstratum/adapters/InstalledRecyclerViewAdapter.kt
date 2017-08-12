@@ -14,21 +14,20 @@ import android.widget.TextView
 import android.widget.Toast
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledRecyclerViewAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView.SectionedAdapter
+import kotlinx.android.synthetic.main.activity_installed.*
 
 class InstalledRecyclerViewAdapter(
         val activity: AppCompatActivity,
         apps: List<InstalledOverlay>,
-        val overlayService: OverlayService
-): RecyclerView.Adapter<ViewHolder>(), SectionedAdapter {
+        val overlayService: OverlayService,
+        val presenter: Presenter
+): RecyclerView.Adapter<ViewHolder>() {
 
     val apps = apps.sortedBy { it.targetName }
-
-//    val addedToQueue = BooleanArray(apps.size)
 
     override fun getItemCount() = apps.size
 
@@ -44,9 +43,10 @@ class InstalledRecyclerViewAdapter(
         holder.targetName.setTextColor(color)
 
         holder.view.setOnClickListener {
-            toggle(position, info)
-            Snackbar.make(holder.view, "Your Snackbar", Snackbar.LENGTH_LONG)
-                    .setAction("Restart SystemUI", {overlayService.restartSystemUI()}).show();
+            presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            notifyItemChanged(position)
+//            Snackbar.make(activity.recyclerView, "This change requires SystemUI restart", Snackbar.LENGTH_INDEFINITE)
+//                    .setAction("Restart SystemUI", {overlayService.restartSystemUI()}).show()
         }
 
         holder.view.setOnLongClickListener {
@@ -85,13 +85,6 @@ class InstalledRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_installed, parent, false)
         return ViewHolder(v)
-    }
-
-    override fun getSectionName(position: Int) = apps[position].targetName[0].toString()
-
-    fun toggle(position: Int, info: OverlayInfo) {
-        overlayService.toggleOverlay(info.overlayId, !info.enabled)
-        notifyItemChanged(position)
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {

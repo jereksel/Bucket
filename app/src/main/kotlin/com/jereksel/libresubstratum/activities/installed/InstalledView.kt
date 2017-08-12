@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.installed
 
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -16,10 +17,10 @@ import org.androidannotations.annotations.EActivity
 import javax.inject.Inject
 
 @EActivity(R.layout.activity_installed)
-open class InstalledView: AppCompatActivity(), View {
+open class InstalledView : AppCompatActivity(), View {
 
-    @Inject lateinit var presenter : Presenter
-    @Inject lateinit var overlay : OverlayService
+    @Inject lateinit var presenter: Presenter
+    @Inject lateinit var overlay: OverlayService
 
     @AfterViews
     fun init() {
@@ -31,12 +32,17 @@ open class InstalledView: AppCompatActivity(), View {
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        val adapter_ = InstalledRecyclerViewAdapter(this, overlays, overlay)
+        val adapter_ = InstalledRecyclerViewAdapter(this, overlays, overlay, presenter)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@InstalledView)
             itemAnimator = DefaultItemAnimator()
             adapter = adapter_
         }
 //        swiperefresh.isRefreshing = false
+    }
+
+    override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
+        Snackbar.make(recyclerView, message, Snackbar.LENGTH_INDEFINITE)
+                .setAction(buttonText, { _ -> callback() }).show()
     }
 }

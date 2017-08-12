@@ -8,10 +8,12 @@ interface InstalledContract {
 
     interface View : MVPView {
         fun addOverlays(overlays: List<InstalledOverlay>)
+        fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
     }
 
     interface Presenter : MVPPresenter<View> {
         fun getInstalledOverlays()
+        fun toggleOverlay(overlayId: String, enabled: Boolean)
     }
 
 }

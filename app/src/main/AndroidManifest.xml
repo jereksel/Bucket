@@ -3,6 +3,7 @@
     package="com.jereksel.libresubstratum">
 
     <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE"/>
+    <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE_INNER"/>
 
     <application
         android:name=".App"

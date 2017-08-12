@@ -3,13 +3,17 @@ package com.jereksel.libresubstratum.activities.installed
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.OverlayService
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.lang.ref.WeakReference
 
-class InstalledPresenter(val packageManager: IPackageManager): Presenter {
+class InstalledPresenter(
+        val packageManager: IPackageManager,
+        val overlayService: OverlayService
+) : Presenter {
 
     private var view = WeakReference<View>(null)
     private var subscription: Subscription? = null
@@ -24,11 +28,18 @@ class InstalledPresenter(val packageManager: IPackageManager): Presenter {
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
-                    it.sortedWith(compareBy({it.targetName}, {it.sourceThemeName}, {it.type1a},
-                            {it.type1b}, {it.type1c}, {it.type2}, {it.type3}) )
+                    it.sortedWith(compareBy({ it.targetName }, { it.sourceThemeName }, { it.type1a },
+                            { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 }))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { view.get()?.addOverlays(it) }
+    }
+
+    override fun toggleOverlay(overlayId: String, enabled: Boolean) {
+        overlayService.toggleOverlay(overlayId, enabled)
+        if (overlayId.startsWith("com.android.systemui")) {
+            view.get()?.showSnackBar("This change requires SystemUI restart", "Restart SystemUI", { overlayService.restartSystemUI() })
+        }
     }
 
     override fun removeView() = Unit

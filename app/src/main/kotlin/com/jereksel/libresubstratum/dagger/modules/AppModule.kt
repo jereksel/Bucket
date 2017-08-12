@@ -51,8 +51,8 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesInstalledPresenter(packageManager: IPackageManager) : InstalledContract.Presenter {
-        return InstalledPresenter(packageManager)
+    open fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService) : InstalledContract.Presenter {
+        return InstalledPresenter(packageManager, overlayService)
     }
 
 }
