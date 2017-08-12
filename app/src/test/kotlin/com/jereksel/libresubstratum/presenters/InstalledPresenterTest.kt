@@ -4,11 +4,10 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.junit.Assert.*
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.stubbing.OngoingStubbing
@@ -21,15 +20,17 @@ import rx.schedulers.Schedulers
 class InstalledPresenterTest : FunSpec() {
 
     @Mock
-    lateinit var view : InstalledContract.View
+    lateinit var view: InstalledContract.View
     @Mock
-    lateinit var packageManager : IPackageManager
+    lateinit var packageManager: IPackageManager
+    @Mock
+    lateinit var overlayService: OverlayService
 
-    lateinit var presenter : InstalledPresenter
+    lateinit var presenter: InstalledPresenter
 
     override fun beforeEach() {
-        MockitoAnnotations.initMocks(this);
-        presenter = InstalledPresenter(packageManager);
+        MockitoAnnotations.initMocks(this)
+        presenter = InstalledPresenter(packageManager, overlayService)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
@@ -42,13 +43,9 @@ class InstalledPresenterTest : FunSpec() {
         RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
     }
 
-    override fun afterEach() {
-
-    }
-
     init {
 
-        test("sorting") {
+        test("GetInstalledOverlays should returned sorted overlays") {
 
             val captor: KArgumentCaptor<List<InstalledOverlay>> = argumentCaptor()
 
@@ -68,10 +65,31 @@ class InstalledPresenterTest : FunSpec() {
 
         }
 
+        test("Snackbar is shown when overlays for com.android.systemui.* is enabled/disabled") {
+            presenter.toggleOverlay("com.android.systemui.navbar", true)
+            verify(view).showSnackBar(any(), any(), any())
+        }
+
+        test("Snackbar is not shown for other overlays") {
+            presenter.toggleOverlay("com.jereksel.libresubstratum", true)
+            verify(view, never()).showSnackBar(any(), any(), any())
+        }
+
+        test("Enabled parameter is passed to OverlayService") {
+
+            forAll(table(
+                    headers("Enabled"),
+                    row(true),
+                    row(false)
+            )) { enabled ->
+                presenter.toggleOverlay("app", enabled)
+                verify(overlayService).toggleOverlay("app", enabled)
+            }
+
+        }
+
 
     }
-
-
 
 
 //        test("filtering") {

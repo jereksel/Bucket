@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.adapters
 
 import android.content.Intent
 import android.graphics.Color
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -18,7 +17,6 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.Prese
 import com.jereksel.libresubstratum.adapters.InstalledRecyclerViewAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayService
-import kotlinx.android.synthetic.main.activity_installed.*
 
 class InstalledRecyclerViewAdapter(
         val activity: AppCompatActivity,
@@ -45,8 +43,6 @@ class InstalledRecyclerViewAdapter(
         holder.view.setOnClickListener {
             presenter.toggleOverlay(overlay.overlayId, !info.enabled)
             notifyItemChanged(position)
-//            Snackbar.make(activity.recyclerView, "This change requires SystemUI restart", Snackbar.LENGTH_INDEFINITE)
-//                    .setAction("Restart SystemUI", {overlayService.restartSystemUI()}).show()
         }
 
         holder.view.setOnLongClickListener {
