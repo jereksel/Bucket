@@ -14,11 +14,11 @@ import android.widget.Toast
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
-import com.jereksel.libresubstratum.adapters.InstalledRecyclerViewAdapter.ViewHolder
+import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayService
 
-class InstalledRecyclerViewAdapter(
+class InstalledOverlaysAdapter(
         val activity: AppCompatActivity,
         apps: List<InstalledOverlay>,
         val overlayService: OverlayService,

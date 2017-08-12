@@ -8,7 +8,7 @@ import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
-import com.jereksel.libresubstratum.adapters.InstalledRecyclerViewAdapter
+import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayService
 import kotlinx.android.synthetic.main.activity_installed.*
@@ -32,7 +32,7 @@ open class InstalledView : AppCompatActivity(), View {
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        val adapter_ = InstalledRecyclerViewAdapter(this, overlays, overlay, presenter)
+        val adapter_ = InstalledOverlaysAdapter(this, overlays, overlay, presenter)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@InstalledView)
             itemAnimator = DefaultItemAnimator()
