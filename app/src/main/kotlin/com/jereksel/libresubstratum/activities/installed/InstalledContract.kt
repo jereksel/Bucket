@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.activities.installed
 import com.jereksel.libresubstratum.MVPPresenter
 import com.jereksel.libresubstratum.MVPView
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.domain.OverlayInfo
 
 interface InstalledContract {
 
@@ -14,6 +15,7 @@ interface InstalledContract {
     interface Presenter : MVPPresenter<View> {
         fun getInstalledOverlays()
         fun toggleOverlay(overlayId: String, enabled: Boolean)
+        fun getOverlayInfo(overlayId: String): OverlayInfo
     }
 
 }

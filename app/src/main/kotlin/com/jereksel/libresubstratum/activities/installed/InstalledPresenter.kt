@@ -42,6 +42,8 @@ class InstalledPresenter(
         }
     }
 
+    override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId)
+
     override fun removeView() = Unit
 
 }

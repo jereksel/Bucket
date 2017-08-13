@@ -12,16 +12,13 @@ import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
-import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
-import io.kotlintest.properties.TableTesting
 import kotlinx.android.synthetic.main.activity_reconly.*
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,10 +39,6 @@ class InstalledOverlaysAdapterTest {
     lateinit var activityController: ActivityController<RecViewActivity>
     lateinit var activity: AppCompatActivity
 
-    @Mock
-    lateinit var packageManager: IPackageManager
-    @Mock
-    lateinit var overlayService: OverlayService
     @Mock
     lateinit var presenter: Presenter
 
@@ -72,9 +65,9 @@ class InstalledOverlaysAdapterTest {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, overlayService, presenter)
+        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-        `when`(overlayService.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -102,9 +95,9 @@ class InstalledOverlaysAdapterTest {
 
             val apps = listOf(InstalledOverlay(id, "", "", mock(), "", "", mock()))
 
-            val adapter_ = InstalledOverlaysAdapter(activity, apps, overlayService, presenter)
+            val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-            `when`(overlayService.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
+            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
 
             recyclerView.run {
                 layoutManager = LinearLayoutManager(context)

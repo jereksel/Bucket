@@ -21,7 +21,6 @@ import com.jereksel.libresubstratum.domain.OverlayService
 class InstalledOverlaysAdapter(
         val activity: AppCompatActivity,
         apps: List<InstalledOverlay>,
-        val overlayService: OverlayService,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
 
@@ -32,7 +31,7 @@ class InstalledOverlaysAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val overlay = apps[position]
 
-        val info = overlayService.getOverlayInfo(overlay.overlayId)
+        val info = presenter.getOverlayInfo(overlay.overlayId)
 
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)

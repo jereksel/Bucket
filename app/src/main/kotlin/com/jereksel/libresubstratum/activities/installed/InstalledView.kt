@@ -20,7 +20,6 @@ import javax.inject.Inject
 open class InstalledView : AppCompatActivity(), View {
 
     @Inject lateinit var presenter: Presenter
-    @Inject lateinit var overlay: OverlayService
 
     @AfterViews
     fun init() {
@@ -32,7 +31,7 @@ open class InstalledView : AppCompatActivity(), View {
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        val adapter_ = InstalledOverlaysAdapter(this, overlays, overlay, presenter)
+        val adapter_ = InstalledOverlaysAdapter(this, overlays, presenter)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@InstalledView)
             itemAnimator = DefaultItemAnimator()
