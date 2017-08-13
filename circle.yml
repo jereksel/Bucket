@@ -4,7 +4,7 @@ dependencies:
     - echo y | android update sdk --no-ui --filter extra-android-m2repository
 
 test:
-  pre :
+  pre:
     - ./gradlew --stop
   post:
     - ./gradlew jacocoTestReport
