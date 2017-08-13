@@ -74,6 +74,10 @@ android {
             jacoco {
                 includeNoLocationClasses = true
             }
+            beforeTest { desc ->
+                testLogging.showStandardStreams = true
+                println "Executing test ${desc.name} [${desc.className}] with result: STARTED"
+            }
             afterTest { desc, result ->
                 testLogging.showStandardStreams = true
                 println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
