@@ -1,0 +1,13 @@
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
+    - echo y | android update sdk --no-ui --filter extra-android-m2repository
+
+test:
+  pre :
+    - ./gradlew --stop
+  post:
+    - ./gradlew jacocoTestReport
+    - bash <(curl -s https://codecov.io/bash)
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
