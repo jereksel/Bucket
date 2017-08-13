@@ -32,7 +32,7 @@ import org.robolectric.shadows.ShadowDialog
 @Config(constants = BuildConfig::class,
         application = MockedApp::class,
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
-class MainViewTest {
+class MainViewTest: BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<MainView>
     lateinit var activity : MainContract.View

@@ -1,7 +1,8 @@
-package com.jereksel.libresubstratum
+package com.jereksel.libresubstratum.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.jereksel.libresubstratum.R
 
 class RecViewActivity: AppCompatActivity() {
 

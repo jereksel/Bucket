@@ -2,10 +2,7 @@ package com.jereksel.libresubstratum.views
 
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
-import com.jereksel.libresubstratum.BuildConfig
-import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.ResettableLazy
-import com.jereksel.libresubstratum.ShadowSnackbar
+import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.activities.installed.InstalledView_
@@ -26,7 +23,7 @@ import org.robolectric.annotation.Config
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
         shadows = arrayOf(ShadowSnackbar::class)
 )
-class InstalledViewTest {
+class InstalledViewTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<InstalledView_>
     lateinit var activity: View
