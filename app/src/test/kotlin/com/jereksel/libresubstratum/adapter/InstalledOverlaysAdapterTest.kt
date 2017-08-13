@@ -19,6 +19,7 @@ import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_reconly.*
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,6 +30,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowToast
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -103,6 +105,32 @@ class InstalledOverlaysAdapterTest {
         val child = recyclerView.layoutManager.findViewByPosition(0)
         child.performLongClick()
         verify(presenter).openActivity("targetid")
+
+    }
+
+    @Test
+    fun `Toast is shown when openActivity was unsuccessful`() {
+
+        val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
+
+        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.openActivity("targetid")).thenReturn(false)
+
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        child.performLongClick()
+        verify(presenter).openActivity("targetid")
+        assertNotNull(ShadowToast.getLatestToast())
+        assertEquals(1, ShadowToast.shownToastCount())
 
     }
 
