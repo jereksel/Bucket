@@ -84,6 +84,29 @@ class InstalledOverlaysAdapterTest {
     }
 
     @Test
+    fun `openActivity is called after long clicking on item`() {
+
+        val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
+
+        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        child.performLongClick()
+        verify(presenter).openActivity("targetid")
+
+    }
+
+    @Test
     fun `Text color is red when overlay is disabled and green when enabled`() {
 
         mapOf(

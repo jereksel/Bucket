@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.activities.installed
 
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
+import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import rx.Observable
@@ -12,7 +13,8 @@ import java.lang.ref.WeakReference
 
 class InstalledPresenter(
         val packageManager: IPackageManager,
-        val overlayService: OverlayService
+        val overlayService: OverlayService,
+        val activityProxy: IActivityProxy
 ) : Presenter {
 
     private var view = WeakReference<View>(null)
@@ -43,6 +45,8 @@ class InstalledPresenter(
     }
 
     override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId)
+
+    override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
     override fun removeView() = Unit
 

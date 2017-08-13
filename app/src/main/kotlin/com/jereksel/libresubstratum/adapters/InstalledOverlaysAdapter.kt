@@ -45,18 +45,9 @@ class InstalledOverlaysAdapter(
         }
 
         holder.view.setOnLongClickListener {
-            val targetApp = overlay.targetId
-            val intent = activity.packageManager.getLaunchIntentForPackage(targetApp)
-
-            if (intent != null) {
-                intent
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
-                activity.startActivity(Intent.createChooser(intent, "Split"));
-            } else {
+            if (!presenter.openActivity(overlay.targetId)) {
                 Toast.makeText(activity, "Application cannot be opened", Toast.LENGTH_SHORT).show()
             }
-
             true
         }
 

@@ -39,20 +39,28 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesActivityProxy(): IActivityProxy = ActivityProxy(application)
+
+    @Provides
+    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager): MainContract.Presenter {
         return MainPresenter(packageManager)
     }
 
     @Provides
     @Singleton
-    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader) : DetailedContract.Presenter {
+    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader): DetailedContract.Presenter {
         return DetailedPresenter(packageManager, themeReader)
     }
 
     @Provides
     @Singleton
-    open fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService) : InstalledContract.Presenter {
-        return InstalledPresenter(packageManager, overlayService)
+    open fun providesInstalledPresenter(
+            packageManager: IPackageManager,
+            overlayService: OverlayService,
+            activityProxy: IActivityProxy
+    ): InstalledContract.Presenter {
+        return InstalledPresenter(packageManager, overlayService, activityProxy)
     }
 
 }

@@ -16,6 +16,7 @@ interface InstalledContract {
         fun getInstalledOverlays()
         fun toggleOverlay(overlayId: String, enabled: Boolean)
         fun getOverlayInfo(overlayId: String): OverlayInfo
+        fun openActivity(appId: String): Boolean
     }
 
 }

@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.presenters
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.*
@@ -24,12 +25,14 @@ class InstalledPresenterTest : FunSpec() {
     lateinit var packageManager: IPackageManager
     @Mock
     lateinit var overlayService: OverlayService
+    @Mock
+    lateinit var activityProxy: IActivityProxy
 
     lateinit var presenter: InstalledPresenter
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = InstalledPresenter(packageManager, overlayService)
+        presenter = InstalledPresenter(packageManager, overlayService, activityProxy)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
@@ -72,6 +75,11 @@ class InstalledPresenterTest : FunSpec() {
         test("Snackbar is not shown for other overlays") {
             presenter.toggleOverlay("com.jereksel.libresubstratum", true)
             verify(view, never()).showSnackBar(any(), any(), any())
+        }
+
+        test("openActivity invocation is passed to activityproxy") {
+            presenter.openActivity("id")
+            verify(activityProxy).openActivityInSplit("id")
         }
 
         test("Enabled parameter is passed to OverlayService") {
