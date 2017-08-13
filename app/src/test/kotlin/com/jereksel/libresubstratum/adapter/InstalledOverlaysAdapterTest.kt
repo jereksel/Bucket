@@ -57,7 +57,8 @@ class InstalledOverlaysAdapterTest {
 
     @After
     fun cleanup() {
-//        activityController.destroy()
+        activityCasted?.finish()
+        activityController.destroy()
         activityCasted = null
         recyclerView = null
     }

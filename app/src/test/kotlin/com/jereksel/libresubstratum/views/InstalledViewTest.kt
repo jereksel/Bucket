@@ -46,6 +46,7 @@ class InstalledViewTest {
 
     @After
     fun cleanup() {
+        activityCasted?.finish()
         activityController.destroy()
         activityCasted = null
         swipeToRefresh = null
