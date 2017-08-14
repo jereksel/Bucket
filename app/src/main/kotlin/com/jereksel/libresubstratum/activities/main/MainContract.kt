@@ -14,6 +14,7 @@ interface MainContract {
     interface View : MVPView {
         fun addApplications(list: List<InstalledTheme>)
         fun openThemeFragment(appId: String)
+        fun setDialogProgress(progress: Int)
     }
 
 }

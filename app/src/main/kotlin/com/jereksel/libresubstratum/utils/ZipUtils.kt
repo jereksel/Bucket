@@ -1,37 +1,40 @@
 package com.jereksel.libresubstratum.utils
 
-import android.util.Log
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.logging.Logger
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
 object ZipUtils {
 
-    fun File.extractZip(dest: File) {
+    fun File.extractZip(dest: File, progressCallback: (Int) -> Unit = {}) {
         if (dest.exists()) {
             dest.deleteRecursively()
         }
         dest.mkdirs()
 
+        val length = ZipFile(this).size()
+
         FileInputStream(this).use { fis ->
             ZipInputStream(BufferedInputStream(fis)).use { zis ->
-                zis.generateSequence().forEach { ze ->
+                zis.generateSequence().forEachIndexed { index, ze ->
 
                     val fileName = ze.name
 
-                    Log.d("extractZip", fileName)
+                    progressCallback((index * 100) / length)
+
+//                    Log.d("extractZip", fileName)
 
                     if (!fileName.startsWith("assets")) {
-                        return@forEach
+                        return@forEachIndexed
                     }
 
                     if (ze.isDirectory) {
                         File(dest, fileName).mkdirs()
-                        return@forEach
+                        return@forEachIndexed
                     }
 
                     val destFile = File(dest, fileName)

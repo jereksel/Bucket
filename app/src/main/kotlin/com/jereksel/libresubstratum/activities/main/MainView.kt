@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
@@ -47,14 +48,29 @@ open class MainView : AppCompatActivity(), MainContract.View {
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
                 .subscribe {
-                    dialog = ProgressDialog.show(this@MainView, "Extracting", "Extracting theme", true)
+                    val pDialog = ProgressDialog(this@MainView)
+                    pDialog.setCancelable(false)
+                    pDialog.isIndeterminate = false
+                    pDialog.setTitle("Extracting")
+                    pDialog.setMessage("Extracting theme")
+                    pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+                    pDialog.max = 100
+                    pDialog.show()
+                    dialog = pDialog
                     presenter.openThemeScreen(it.appId)
                 }
         swiperefresh.isRefreshing = false
     }
 
+    override fun setDialogProgress(progress: Int) {
+        runOnUiThread {
+            dialog?.progress = progress
+        }
+    }
+
     override fun openThemeFragment(appId: String) {
         dialog?.dismiss()
+        dialog = null
         DetailedView_.intent(this).appId(appId).start()
     }
 

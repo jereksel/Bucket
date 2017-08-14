@@ -1,13 +1,11 @@
 package com.jereksel.libresubstratum.activities.main
 
-import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.flatMapSequence
 import rx.schedulers.Schedulers
 import java.io.File
 
@@ -51,7 +49,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)
 
-        Observable.fromCallable { source.extractZip(dest) }
+        Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { mainView?.openThemeFragment(appId) }
