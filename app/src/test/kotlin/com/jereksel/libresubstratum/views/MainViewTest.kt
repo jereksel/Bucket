@@ -93,8 +93,8 @@ class MainViewTest: BaseRobolectricTest() {
         val d1 : Drawable = mock()
 
         val apps = listOf(
-                DetailedApplication("id1", "name1", "author1", d1),
-                DetailedApplication("id2", "name2", "author2", null)
+                InstalledTheme("id1", "name1", "author1", d1),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps)

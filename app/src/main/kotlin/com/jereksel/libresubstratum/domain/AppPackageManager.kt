@@ -26,16 +26,14 @@ class AppPackageManager(val context: Context) : IPackageManager {
         )
     }
 
-    override fun getApplications(): List<Application> {
-        val metadataOverlayTarget = "Substratum_Target"
-        val metadataOverlayParent = "Substratum_Parent"
+    val metadataOverlayTarget = "Substratum_Target"
+    val metadataOverlayParent = "Substratum_Parent"
 
-        val metadataOverlayType1a = "Substratum_Type1a"
-        val metadataOverlayType1b = "Substratum_Type1b"
-        val metadataOverlayType1c = "Substratum_Type1c"
-        val metadataOverlayType2 = "Substratum_Type2"
-        val metadataOverlayType3 = "Substratum_Type3"
-    }
+    val metadataOverlayType1a = "Substratum_Type1a"
+    val metadataOverlayType1b = "Substratum_Type1b"
+    val metadataOverlayType1c = "Substratum_Type1c"
+    val metadataOverlayType2 = "Substratum_Type2"
+    val metadataOverlayType3 = "Substratum_Type3"
 
     override fun getInstalledOverlays(): List<InstalledOverlay> {
         return getApplications()

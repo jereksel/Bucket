@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.lang.kotlin.flatMapSequence
 import rx.schedulers.Schedulers
 import java.io.File
 
@@ -28,6 +29,9 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
         subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable { it }
+                .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
+                .toList()
                 .subscribe { mainView?.addApplications(it) }
     }
 
