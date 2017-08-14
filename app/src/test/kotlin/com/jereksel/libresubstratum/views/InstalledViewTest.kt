@@ -67,7 +67,6 @@ class InstalledViewTest: BaseRobolectricTest() {
     }
 
     @Test
-    @Ignore("Causes issues with CircleCI")
     fun `Snackbar is shown after showSnackbar is invoked`() {
         assertNull(ShadowSnackbar.getLatestSnackbar())
         activity.showSnackBar("message", "button", {})

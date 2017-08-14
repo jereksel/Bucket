@@ -12,7 +12,9 @@ test:
   pre:
     - ./gradlew --stop
   override:
-    - ./gradlew test:
+    - ./gradlew testDebugUnitTest:
+        timeout: 900
+    - ./gradlew :sublib:test:
         timeout: 900
   post:
     - ./gradlew jacocoTestReport
