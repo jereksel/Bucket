@@ -17,7 +17,7 @@ test:
     - ./gradlew sublib:reader:test:
         timeout: 900
   post:
-    - ./gradlew jacocoDebugUnitTestReport
+    - ./gradlew jacocoTestDebugUnitTestReport
     - ./gradlew sublib:reader:jacocoTestReport
     - bash <(curl -s https://codecov.io/bash)
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
