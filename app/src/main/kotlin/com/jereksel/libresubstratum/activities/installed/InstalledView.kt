@@ -41,7 +41,7 @@ open class InstalledView : AppCompatActivity(), View {
     }
 
     override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
-        Snackbar.make(recyclerView, message, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG)
                 .setAction(buttonText, { _ -> callback() }).show()
     }
 }
