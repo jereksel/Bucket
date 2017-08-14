@@ -11,6 +11,7 @@ import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.jereksel.libresubstratum.activities.installed.InstalledView_
+import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 class MainView : AppCompatActivity(), MainContract.View {
 
-    @Inject lateinit var presenter : MainContract.Presenter
+    @Inject lateinit var presenter: Presenter
     var clickSubscriptions: Subscription? = null
     private var dialog: ProgressDialog? = null
 
@@ -64,19 +65,18 @@ class MainView : AppCompatActivity(), MainContract.View {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_installed -> {
-                // User chose the "Settings" item, show the app settings UI...
-                InstalledView_.intent(this).start()
-                return true
+    override fun onOptionsItemSelected(item: MenuItem) =
+            when (item.itemId) {
+                R.id.action_installed -> {
+                    // User chose the "Settings" item, show the app settings UI...
+                    InstalledView_.intent(this).start()
+                    true
+                }
+                else ->
+                    // If we got here, the user's action was not recognized.
+                    // Invoke the superclass to handle it.
+                    super.onOptionsItemSelected(item)
             }
-            else ->
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item)
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

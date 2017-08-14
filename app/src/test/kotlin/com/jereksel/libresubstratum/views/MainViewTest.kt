@@ -5,14 +5,18 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
+import com.jereksel.libresubstratum.activities.installed.InstalledView
+import com.jereksel.libresubstratum.activities.installed.InstalledView_
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.nhaarman.mockito_kotlin.verify
+import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
 import org.junit.After
@@ -20,6 +24,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -152,6 +157,15 @@ class MainViewTest: BaseRobolectricTest() {
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
         assertEquals(nextIntent.getStringExtra(DetailedView_.APP_ID_EXTRA), "id1")
         assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, DetailedView_::class.java))
+    }
+
+    @Test
+    fun `InstalledView should be opened after clicking on actionbar item`() {
+        val item = mock<MenuItem>()
+        `when`(item.itemId).thenReturn(R.id.action_installed)
+        (activity as AppCompatActivity).onOptionsItemSelected(item)
+        val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
+        assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, InstalledView_::class.java))
     }
 
 }
