@@ -1,0 +1,24 @@
+machine:
+  environment:
+    _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
+    - echo y | android update sdk --no-ui --filter extra-android-m2repository
+
+test:
+  pre:
+    - ./gradlew --stop
+  override:
+    - ./gradlew testDebugUnitTest:
+        timeout: 900
+    - ./gradlew sublib:reader:test:
+        timeout: 900
+  post:
+    - ./gradlew jacocoTestDebugUnitTestReport
+    - ./gradlew sublib:reader:jacocoTestReport
+    - bash <(curl -s https://codecov.io/bash)
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

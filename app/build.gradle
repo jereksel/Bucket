@@ -37,7 +37,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.jereksel.libresubstratum"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -74,6 +74,14 @@ android {
             jacoco {
                 includeNoLocationClasses = true
             }
+            beforeTest { desc ->
+                testLogging.showStandardStreams = true
+                println "Executing test ${desc.name} [${desc.className}] with result: STARTED"
+            }
+            afterTest { desc, result ->
+                testLogging.showStandardStreams = true
+                println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+            }
         }
     }
 
@@ -88,6 +96,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_library_version"
     compile "com.android.support:recyclerview-v7:$support_library_version"
     compile "com.android.support:cardview-v7:$support_library_version"
+    compile "com.android.support:design:$support_library_version"
 
     //RxStuff
     compile 'io.reactivex:rxjava:1.2.4'
@@ -104,6 +113,12 @@ dependencies {
     //AndroidAnnotations
     kapt "org.androidannotations:androidannotations:$aa_version"
     compile "org.androidannotations:androidannotations-api:$aa_version"
+
+    //UI
+    compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
+    compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
+
+    compile 'com.jereksel:omslib:1.0.2'
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
