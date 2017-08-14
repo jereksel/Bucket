@@ -5,10 +5,9 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
-import com.jereksel.libresubstratum.domain.AppPackageManager
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.ThemeReader
+import com.jereksel.libresubstratum.activities.installed.InstalledContract
+import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
+import com.jereksel.libresubstratum.domain.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -34,13 +33,34 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesOverlayService(): OverlayService {
+        return InterfacerOverlayService(application)
+    }
+
+    @Provides
+    @Singleton
+    open fun providesActivityProxy(): IActivityProxy = ActivityProxy(application)
+
+    @Provides
+    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager): MainContract.Presenter {
         return MainPresenter(packageManager)
     }
 
     @Provides
     @Singleton
-    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader) : DetailedContract.Presenter {
+    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader): DetailedContract.Presenter {
         return DetailedPresenter(packageManager, themeReader)
     }
+
+    @Provides
+    @Singleton
+    open fun providesInstalledPresenter(
+            packageManager: IPackageManager,
+            overlayService: OverlayService,
+            activityProxy: IActivityProxy
+    ): InstalledContract.Presenter {
+        return InstalledPresenter(packageManager, overlayService, activityProxy)
+    }
+
 }
