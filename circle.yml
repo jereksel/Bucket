@@ -16,9 +16,12 @@ test:
         timeout: 900
     - ./gradlew sublib:reader:test:
         timeout: 900
+    - ./gradlew sublib:compiler:test:
+        timeout: 900
   post:
     - ./gradlew jacocoTestDebugUnitTestReport
     - ./gradlew sublib:reader:jacocoTestReport
+    - ./gradlew sublib:compiler:jacocoTestReport
     - bash <(curl -s https://codecov.io/bash)
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
