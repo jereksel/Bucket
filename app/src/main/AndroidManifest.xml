@@ -24,7 +24,6 @@
         </activity>
         <activity android:name=".activities.detailed.DetailedView_" />
         <activity android:name=".activities.installed.InstalledView_" />
-        <activity android:name=".activities.RecViewActivity" />
     </application>
 
 </manifest>

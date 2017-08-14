@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.activities
+package com.jereksel.libresubstratum
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

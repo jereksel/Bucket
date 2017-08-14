@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.activities.RecViewActivity
+import com.jereksel.libresubstratum.RecViewActivity
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
@@ -22,7 +22,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
