@@ -8,6 +8,9 @@ import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.RecViewActivity
 import com.jereksel.libresubstratum.ResettableLazy
+import com.jereksel.libresubstratum.activities.detailed.DetailedContract
+import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
+import com.jereksel.libresubstratum.domain.IActivityProxy
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_reconly.*
 import org.assertj.android.api.Assertions.assertThat
@@ -23,7 +26,13 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import com.jereksel.libresubstratum.extensions.*
 import com.jereksel.libresubstratumlib.*
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.reset
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.*
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -37,9 +46,12 @@ class ThemePackAdapterTest {
     var activityCasted by ResettableLazy { activity as AppCompatActivity? }
     var recyclerView by ResettableLazy { activityCasted!!.recyclerView }
 
+    @Mock
+    lateinit var presenter: Presenter
+
     @Before
     fun setup() {
-        val app = RuntimeEnvironment.application as MockedApp
+        MockitoAnnotations.initMocks(this)
         activityController = Robolectric.buildActivity(RecViewActivity::class.java).create()
         activity = activityController.get()
     }
@@ -51,6 +63,53 @@ class ThemePackAdapterTest {
         recyclerView = null
     }
 
+    @Test
+    fun `Checkbox invokes should be passed to presenter`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ThemePackAdapter.ViewHolder
+
+        viewHolder.checkbox.performClick()
+        verify(presenter).setCheckbox(0, true)
+        verify(presenter, never()).setCheckbox(0, false)
+
+        reset(presenter)
+
+        viewHolder.checkbox.performClick()
+        verify(presenter).setCheckbox(0, false)
+        verify(presenter, never()).setCheckbox(0, true)
+    }
+
+    @Test
+    fun `Clicking on card itself should toggle checkbox`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ThemePackAdapter.ViewHolder
+
+        viewHolder.card.performClick()
+        verify(presenter).setCheckbox(0, true)
+        verify(presenter, never()).setCheckbox(0, false)
+    }
+
+/*
     @Test
     fun `Theme without extensions shouldn't have spinners`() {
         val theme = ThemePack(listOf(Theme("app1")))
@@ -110,5 +169,5 @@ class ThemePackAdapterTest {
         assertThat(viewHolder.type1cSpinner).isGone
         assertThat(viewHolder.type2Spinner).isGone
         assertThat(viewHolder.type1aSpinner.getAllStrings()).isEqualTo(type1s)
-    }
+    }*/
 }

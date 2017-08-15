@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.adapter
+package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
 import android.os.Build
@@ -11,7 +11,6 @@ import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.RecViewActivity
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
-import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.nhaarman.mockito_kotlin.verify

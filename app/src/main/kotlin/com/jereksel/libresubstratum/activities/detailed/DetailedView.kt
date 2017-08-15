@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.VISIBLE
+import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -31,8 +32,10 @@ open class DetailedView : AppCompatActivity(), View {
     @AfterViews
     fun init() {
         (application as App).getAppComponent(this).inject(this)
+        presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
 //        imageView.setImageDrawable(pManager.getHeroImage(appId))
         title = presenter.getAppName(appId)
+        Toast.makeText(this, presenter.toString(), Toast.LENGTH_SHORT).show()
         presenter.setView(this)
         presenter.readTheme(appId)
     }
@@ -41,18 +44,24 @@ open class DetailedView : AppCompatActivity(), View {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@DetailedView)
             itemAnimator = DefaultItemAnimator()
-            adapter = ThemePackAdapter(themePack, pManager)
+            adapter = ThemePackAdapter(presenter)
         }
         val type3 = themePack.type3
         if (type3 != null) {
             spinner.visibility = VISIBLE
-            spinner.list = type3.extensions.map { Type3ExtensionToString(it) }
+            spinner.list = type3.extensions.map(::Type3ExtensionToString)
         }
+    }
+
+    override fun refreshHolder(position: Int) {
+        recyclerView.post { recyclerView.adapter.notifyItemChanged(position) }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         presenter.removeView()
     }
+
+    override fun onRetainCustomNonConfigurationInstance() = presenter
 
 }

@@ -48,7 +48,6 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
-    @Singleton
     open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader): DetailedContract.Presenter {
         return DetailedPresenter(packageManager, themeReader)
     }
