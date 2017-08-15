@@ -183,4 +183,30 @@ class CompilationTest extends Specification {
         apk.exists()
         colors.iterator().toList() == [new Color("color1", "0xffffffff"), new Color("color2", "0x00abcdef")]
     }
+
+    def "IllegalArgumentException is thrown when folder with theme doesn't exist"() {
+        given:
+        def folder = Files.createTempDirectory()
+        folder.deleteDir()
+
+        when:
+        aapt.compileTheme("a", folder, Files.createTempDirectory())
+
+        then:
+        thrown IllegalArgumentException
+
+    }
+
+    def "IllegalArgumentException is thrown when temp folder doesn't exist"() {
+        given:
+        def folder = Files.createTempDirectory()
+        folder.deleteDir()
+
+        when:
+        aapt.compileTheme("a", Files.createTempDirectory(), folder)
+
+        then:
+        thrown IllegalArgumentException
+
+    }
 }
