@@ -6,6 +6,7 @@ machine:
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-26.0.0"
     - echo y | android update sdk --no-ui --filter extra-android-m2repository
 
 test:
@@ -16,9 +17,12 @@ test:
         timeout: 900
     - ./gradlew sublib:reader:test:
         timeout: 900
+    - ./gradlew sublib:compiler:test:
+        timeout: 900
   post:
     - ./gradlew jacocoTestDebugUnitTestReport
     - ./gradlew sublib:reader:jacocoTestReport
+    - ./gradlew sublib:compiler:jacocoTestReport
     - bash <(curl -s https://codecov.io/bash)
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

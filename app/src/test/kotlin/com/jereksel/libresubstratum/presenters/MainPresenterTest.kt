@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import android.os.Bundle
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
@@ -26,8 +27,8 @@ class MainPresenterTest : FunSpec() {
     lateinit var presenter : MainPresenter
 
     override fun beforeEach() {
-        MockitoAnnotations.initMocks(this);
-        presenter = MainPresenter(packageManager);
+        MockitoAnnotations.initMocks(this)
+        presenter = MainPresenter(packageManager)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
