@@ -186,11 +186,11 @@ class CompilationTest extends Specification {
 
     def "IllegalArgumentException is thrown when folder with theme doesn't exist"() {
         given:
-        def folder = Files.createTempDirectory()
+        def folder = new File(resources, "asdasdasd")
         folder.deleteDir()
 
         when:
-        aapt.compileTheme("a", folder, Files.createTempDirectory())
+        aapt.compileTheme("a", folder, resources)
 
         then:
         thrown IllegalArgumentException
@@ -199,11 +199,11 @@ class CompilationTest extends Specification {
 
     def "IllegalArgumentException is thrown when temp folder doesn't exist"() {
         given:
-        def folder = Files.createTempDirectory()
+        def folder = new File(resources, "asdadaddassdasda")
         folder.deleteDir()
 
         when:
-        aapt.compileTheme("a", Files.createTempDirectory(), folder)
+        aapt.compileTheme("a", resources, folder)
 
         then:
         thrown IllegalArgumentException
