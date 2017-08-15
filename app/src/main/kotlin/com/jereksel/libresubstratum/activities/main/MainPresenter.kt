@@ -19,6 +19,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     private var mainView: MainContract.View? = null
     private var subscription: Subscription? = null
+    private var extractSubs: Subscription? = null
 
     override fun getApplications() {
 
@@ -39,9 +40,8 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     override fun removeView() {
         mainView = null
-        if (subscription?.isUnsubscribed ?: false) {
-            subscription?.unsubscribe()
-        }
+        subscription?.safeUnsubscribe()
+        extractSubs?.safeUnsubscribe()
     }
 
     override fun openThemeScreen(appId: String) {
@@ -49,11 +49,10 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)
 
-        Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
+        extractSubs = Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { mainView?.openThemeFragment(appId) }
 
     }
-
 }

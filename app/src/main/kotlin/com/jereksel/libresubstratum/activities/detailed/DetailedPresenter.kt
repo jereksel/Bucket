@@ -35,4 +35,6 @@ class DetailedPresenter(val packageManager : IPackageManager, val themeReader: I
                 .subscribe { detailedView?.addThemes(it) }
     }
 
+    override fun getAppName(appId: String) = packageManager.getAppName(appId)
+
 }

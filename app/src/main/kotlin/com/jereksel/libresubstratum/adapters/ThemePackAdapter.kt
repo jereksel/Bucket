@@ -33,7 +33,7 @@ class ThemePackAdapter(
         holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
         holder.card.setOnClickListener { holder.checkbox.performClick() }
 
-        listOf(*holder.type1Spinners.toTypedArray(), holder.type2Spinner)
+        (holder.type1Spinners + holder.type2Spinner)
                 .forEach { it.visibility = GONE }
 
         holder.type1Spinners.zip(theme.type1).forEach { (spinner, type1) ->

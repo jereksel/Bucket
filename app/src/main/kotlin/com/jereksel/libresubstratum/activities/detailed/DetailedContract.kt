@@ -12,6 +12,7 @@ interface DetailedContract {
 
     interface Presenter : MVPPresenter<View> {
         fun readTheme(appId: String)
+        fun getAppName(appId: String): String
     }
 
 }
