@@ -4,10 +4,11 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
-import com.jereksel.libresubstratumlib.Theme
-import com.jereksel.libresubstratumlib.ThemePack
+import com.jereksel.libresubstratum.data.Type1ExtensionToString
+import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
@@ -120,6 +121,118 @@ class DetailedPresenterTest : FunSpec() {
             val view2 = mock<ThemePackAdapterView>()
             presenter.setAdapterView(0, view2)
             verify(view2).setCheckbox(true)
+        }
+        test("Setting type1a test") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type1a = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "a")
+            val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1a))))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            presenter.readTheme("id")
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(type1a.extension.map(::Type1ExtensionToString), 0)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(listOf(), 0)
+
+            presenter.setType1a(0, 1)
+            reset(view)
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(type1a.extension.map(::Type1ExtensionToString), 1)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(listOf(), 0)
+        }
+        test("Setting type1b test") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type1b = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "b")
+            val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1b))))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            presenter.readTheme("id")
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(type1b.extension.map(::Type1ExtensionToString), 0)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(listOf(), 0)
+
+            presenter.setType1b(0, 1)
+            reset(view)
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(type1b.extension.map(::Type1ExtensionToString), 1)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(listOf(), 0)
+        }
+        test("Setting type1c test") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type1c = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "c")
+            val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1c))))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            presenter.readTheme("id")
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(type1c.extension.map(::Type1ExtensionToString), 0)
+            verify(view).type2Spinner(listOf(), 0)
+
+            presenter.setType1c(0, 1)
+            reset(view)
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(type1c.extension.map(::Type1ExtensionToString), 1)
+            verify(view).type2Spinner(listOf(), 0)
+        }
+        test("Setting type2 test") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
+            val themes = ThemePack(listOf(Theme("a", type2 = type2)))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            presenter.readTheme("id")
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(type2.extensions.map(::Type2ExtensionToString), 0)
+
+            presenter.setType2(0, 1)
+            reset(view)
+
+            presenter.setAdapterView(0, view)
+            verify(view).type1aSpinner(listOf(), 0)
+            verify(view).type1bSpinner(listOf(), 0)
+            verify(view).type1cSpinner(listOf(), 0)
+            verify(view).type2Spinner(type2.extensions.map(::Type2ExtensionToString), 1)
         }
     }
 }
