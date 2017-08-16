@@ -8,11 +8,9 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratumlib.*
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.reset
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import org.mockito.ArgumentMatchers.anyString
@@ -32,12 +30,14 @@ class DetailedPresenterTest : FunSpec() {
     lateinit var packageManager: IPackageManager
     @Mock
     lateinit var themeReader: IThemeReader
+    @Mock
+    lateinit var overlayService: OverlayService
 
     lateinit var presenter: Presenter
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = DetailedPresenter(packageManager, themeReader)
+        presenter = DetailedPresenter(packageManager, themeReader, overlayService)
         presenter.setView(view)
 
         RxJavaHooks.clear()
@@ -78,6 +78,17 @@ class DetailedPresenterTest : FunSpec() {
             }
             presenter.readTheme("themeId")
             verify(view).addThemes(destThemePack)
+        }
+
+        //ADAPTER
+        test("After initialized once, themes are not imported again") {
+            val themes = ThemePack()
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            presenter.readTheme("id")
+            verify(themeReader).readThemePack(any<File>())
+            reset(themeReader)
+            presenter.readTheme("id")
+            verifyZeroInteractions(themeReader)
         }
         test("Setting basic information") {
             val apps = listOf("a", "b", "c")
@@ -144,6 +155,7 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setType1a(0, 1)
             reset(view)
 
+            presenter.setAdapterView(0, mock())
             presenter.setAdapterView(0, view)
             verify(view).type1aSpinner(type1a.extension.map(::Type1ExtensionToString), 1)
             verify(view).type1bSpinner(listOf(), 0)
@@ -172,6 +184,7 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setType1b(0, 1)
             reset(view)
 
+            presenter.setAdapterView(0, mock())
             presenter.setAdapterView(0, view)
             verify(view).type1aSpinner(listOf(), 0)
             verify(view).type1bSpinner(type1b.extension.map(::Type1ExtensionToString), 1)
@@ -200,6 +213,7 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setType1c(0, 1)
             reset(view)
 
+            presenter.setAdapterView(0, mock())
             presenter.setAdapterView(0, view)
             verify(view).type1aSpinner(listOf(), 0)
             verify(view).type1bSpinner(listOf(), 0)
@@ -228,11 +242,51 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setType2(0, 1)
             reset(view)
 
+            presenter.setAdapterView(0, mock())
             presenter.setAdapterView(0, view)
             verify(view).type1aSpinner(listOf(), 0)
             verify(view).type1bSpinner(listOf(), 0)
             verify(view).type1cSpinner(listOf(), 0)
             verify(view).type2Spinner(type2.extensions.map(::Type2ExtensionToString), 1)
+        }
+        test("Overlay id from theme data without spinners") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
+            val themes = ThemePack(listOf(Theme("app1", type2 = type2)))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
+            presenter.readTheme("themeid")
+
+            reset(packageManager)
+            whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
+            presenter.setAdapterView(0, view)
+            verify(packageManager).isPackageInstalled("app1.theme1")
+        }
+        test("Overlay id from theme data with type2 spinner") {
+            val apps = listOf("a")
+            val view = mock<ThemePackAdapterView>()
+            apps.forEach {
+                whenever(packageManager.getAppName(it)).thenReturn("name$it")
+                whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
+            }
+            val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
+            val themes = ThemePack(listOf(Theme("app1", type2 = type2)))
+            whenever(themeReader.readThemePack(anyString())).thenReturn(themes)
+            whenever(themeReader.readThemePack(any<File>())).thenReturn(themes)
+            whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
+            presenter.readTheme("themeid")
+            presenter.setType2(0, 1)
+
+            reset(packageManager)
+            whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
+            presenter.setAdapterView(0, view)
+            verify(packageManager).isPackageInstalled("app1.theme1.name2")
         }
     }
 }

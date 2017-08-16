@@ -6,14 +6,12 @@ import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
-import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.detailed.DetailedView_
-import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
-import io.kotlintest.mock.`when`
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.junit.*
 import org.junit.Assert.*
+import org.assertj.android.api.Assertions.assertThat
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -21,6 +19,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import android.content.Intent
+import android.provider.Settings
 import android.widget.ArrayAdapter
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
@@ -73,11 +72,13 @@ class DetailedViewTest {
         val colors = listOf("black", "white", "green")
         val type3 = Type3Data(colors.map { Type3Extension(it, false) })
         activity.addThemes(ThemePack(listOf(), type3))
+        assertThat(spinner).isVisible
         assertEquals(type3.extensions.map { Type3ExtensionToString(it) }, (spinner.adapter as ArrayAdapter<*>).getAllItems())
     }
 
-    fun `all spinners should be hidden for theme with no type1 and type2 extensions`() {
-
+    fun `type3 spinner is no visible whenno type3 extensions are available`() {
+        activity.addThemes(ThemePack(listOf()))
+        assertThat(spinner).isNotVisible
     }
 
     private fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }

@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratumlib.Type1Extension
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -15,11 +16,17 @@ import rx.schedulers.Schedulers
 import java.io.File
 import java.lang.ref.WeakReference
 
-class DetailedPresenter(val packageManager: IPackageManager, val themeReader: IThemeReader) : Presenter {
+class DetailedPresenter(
+        val packageManager: IPackageManager,
+        val themeReader: IThemeReader,
+        val overlayService: OverlayService
+) : Presenter {
 
     var detailedView: View? = null
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
+    lateinit var appId: String
+    var init = false
 
     override fun setView(view: DetailedContract.View) {
         detailedView = view
@@ -31,6 +38,13 @@ class DetailedPresenter(val packageManager: IPackageManager, val themeReader: IT
 
     override fun readTheme(appId: String) {
 
+        if (init) {
+            detailedView?.addThemes(themePack)
+            return
+        }
+        init = true
+
+        this.appId = appId
         val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
         Observable.fromCallable { themeReader.readThemePack(location) }
@@ -52,19 +66,59 @@ class DetailedPresenter(val packageManager: IPackageManager, val themeReader: IT
 
     override fun getNumberOfThemes() = themePack.themes.size
 
+    val seq = mutableSetOf<Int>()
+
     override fun setAdapterView(position: Int, view: ThemePackAdapterView) {
         val theme = themePack.themes[position]
         val state = themePackState[position]
-        view.setAppIcon(packageManager.getAppIcon(theme.application))
-        view.setAppName(packageManager.getAppName(theme.application))
-        view.setAppId(theme.application)
-        view.setCheckbox(state.checked)
 
-        view.type1aSpinner((theme.type1.find { it.suffix == "a" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1a)
-        view.type1bSpinner((theme.type1.find { it.suffix == "b" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1b)
-        view.type1cSpinner((theme.type1.find { it.suffix == "c" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1c)
-        view.type2Spinner((theme.type2?.extensions ?: listOf()).map(::Type2ExtensionToString), state.type2)
+        if (!seq.contains(position)) {
+
+            view.setAppIcon(packageManager.getAppIcon(theme.application))
+            view.setAppName(packageManager.getAppName(theme.application))
+            view.setAppId(theme.application)
+            view.setCheckbox(state.checked)
+
+            view.type1aSpinner((theme.type1.find { it.suffix == "a" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1a)
+            view.type1bSpinner((theme.type1.find { it.suffix == "b" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1b)
+            view.type1cSpinner((theme.type1.find { it.suffix == "c" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1c)
+            view.type2Spinner((theme.type2?.extensions ?: listOf()).map(::Type2ExtensionToString), state.type2)
+
+        } else {
+            seq.remove(position)
+        }
+
+        val overlay = getOverlayIdForTheme(position)
+
+        view.setInstalled(packageManager.isPackageInstalled(overlay))
     }
+
+    fun getOverlayIdForTheme(position: Int): String {
+
+        val theme = themePack.themes[position]
+        val state = themePackState[position]
+
+        val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
+        val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
+        val type1c = theme.type1.find {it.suffix == "c"}?.extension?.getOrNull(state.type1c)
+        val type2 = theme.type2?.extensions?.getOrNull(state.type2)
+
+        val suffix = listOf(type1a, type1b, type1c).mapNotNull {
+            if (it?.default?.not() ?: false) {
+                it?.name?.replace(" ", "")?.replace("-", "")?.replace("_","")
+            } else {
+                null
+            }
+        }.joinToString(separator="")
+
+        val themeName = packageManager.getAppName(appId)
+
+        val overlay = "${theme.application}.$themeName" + if (suffix.isNotEmpty()) { ".$suffix" } else { "" } + if (type2?.default?.not() ?: false) { ".${type2!!.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
+
+        return overlay
+
+    }
+
 
     override fun getAppName(appId: String) = packageManager.getAppName(appId)
 
@@ -74,22 +128,32 @@ class DetailedPresenter(val packageManager: IPackageManager, val themeReader: IT
 
     override fun setType1a(position: Int, spinnerPosition: Int) {
         themePackState[position].type1a = spinnerPosition
+        seq.add(position)
+        detailedView?.refreshHolder(position)
     }
 
     override fun setType1b(position: Int, spinnerPosition: Int) {
         themePackState[position].type1b = spinnerPosition
+        seq.add(position)
+        detailedView?.refreshHolder(position)
     }
 
     override fun setType1c(position: Int, spinnerPosition: Int) {
         themePackState[position].type1c = spinnerPosition
+        seq.add(position)
+        detailedView?.refreshHolder(position)
     }
 
     override fun setType2(position: Int, spinnerPosition: Int) {
         themePackState[position].type2 = spinnerPosition
+        seq.add(position)
+        detailedView?.refreshHolder(position)
     }
 
     override fun compileAndRun(adapterPosition: Int) {
-
+        val overlay = getOverlayIdForTheme(adapterPosition)
+        overlayService.getOverlayInfo(overlay)
+        overlayService.enableOverlay(overlay)
     }
 
     data class ThemePackAdapterState(

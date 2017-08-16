@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.adapters
 
-import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -13,7 +12,6 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
-import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.list
 
 class ThemePackAdapter(
@@ -24,6 +22,20 @@ class ThemePackAdapter(
 //    val themePack: ThemePack = ThemePack(themePack.themes.sortedBy { packageManager.getAppName(it.application) }, themePack.type3)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+//        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
+//        }
+//
+//        holder.type1aSpinner.selectListener { spinnerPosition ->
+//        }
+//        holder.type1bSpinner.selectListener { spinnerPosition ->
+//        }
+//        holder.type1cSpinner.selectListener { spinnerPosition ->
+//        }
+//        holder.type2Spinner.selectListener { spinnerPosition ->
+//        }
+
+
 
         presenter.setAdapterView(position, holder)
 
@@ -108,6 +120,8 @@ class ThemePackAdapter(
         val appId: TextView by bindView(R.id.appId)
         val appIcon: ImageView by bindView(R.id.imageView)
 
+        val upToDate: TextView by bindView(R.id.uptodate)
+
         val type1aSpinner: Spinner by bindView(R.id.spinner_1a)
         val type1bSpinner: Spinner by bindView(R.id.spinner_1b)
         val type1cSpinner: Spinner by bindView(R.id.spinner_1c)
@@ -132,12 +146,14 @@ class ThemePackAdapter(
         }
 
         override fun setCheckbox(checked: Boolean) {
+//            checkbox.setOnCheckedChangeListener(null)
             if (checkbox.isChecked != checked) {
                 checkbox.isChecked = checked
             }
         }
 
         override fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
+//            type1aSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
                 type1aSpinner.visibility = View.GONE
             } else {
@@ -148,6 +164,7 @@ class ThemePackAdapter(
         }
 
         override fun type1bSpinner(list: List<Type1ExtensionToString>, position: Int) {
+//            type1bSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
                 type1bSpinner.visibility = View.GONE
             } else {
@@ -158,6 +175,7 @@ class ThemePackAdapter(
         }
 
         override fun type1cSpinner(list: List<Type1ExtensionToString>, position: Int) {
+//            type1cSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
                 type1cSpinner.visibility = View.GONE
             } else {
@@ -168,6 +186,7 @@ class ThemePackAdapter(
         }
 
         override fun type2Spinner(list: List<Type2ExtensionToString>, position: Int) {
+//            type2Spinner.onItemSelectedListener = null
             if (list.isEmpty()) {
                 type2Spinner.visibility = View.GONE
             } else {
@@ -177,19 +196,20 @@ class ThemePackAdapter(
             }
         }
 
+        override fun setInstalled(installed: Boolean) {
+            upToDate.visibility = if (installed) View.VISIBLE else View.GONE
+        }
+
     }
 
-    private fun Spinner.selectListener(f: (Int) -> Unit) {
+    private fun Spinner.selectListener(fn: (Int) -> Unit) {
+
         this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                f(position)
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                fn(position)
             }
-
         }
     }
-
-
 }

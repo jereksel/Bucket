@@ -48,8 +48,12 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
-    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader)
+    open fun providesDetailedPresenter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService
+    ): DetailedContract.Presenter {
+        return DetailedPresenter(packageManager, themeReader, overlayService)
     }
 
     @Provides

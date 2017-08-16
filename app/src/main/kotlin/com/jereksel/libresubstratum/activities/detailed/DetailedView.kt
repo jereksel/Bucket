@@ -54,7 +54,7 @@ open class DetailedView : AppCompatActivity(), View {
     }
 
     override fun refreshHolder(position: Int) {
-        recyclerView.post { recyclerView.adapter.notifyItemChanged(position) }
+        recyclerView.post { recyclerView.adapter.notifyItemChanged(position, "") }
     }
 
     override fun onDestroy() {
