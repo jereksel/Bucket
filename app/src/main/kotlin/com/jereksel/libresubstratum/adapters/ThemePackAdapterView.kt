@@ -14,4 +14,5 @@ interface ThemePackAdapterView {
     fun type1cSpinner(list: List<Type1ExtensionToString>, position: Int)
     fun type2Spinner(list: List<Type2ExtensionToString>, position: Int)
     fun setInstalled(installed: Boolean)
+    fun setCompiling(compiling: Boolean)
 }

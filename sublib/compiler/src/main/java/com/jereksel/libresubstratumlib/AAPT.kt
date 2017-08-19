@@ -37,7 +37,7 @@ class AAPT(val aaptPath: String) {
 
     fun getColorValue(apk: File, color: String) = getColorsValues(apk).first { it.name == color }.value
 
-    fun compileTheme(themeDate: ThemeToCompile, dir: File, tempDir: File): File {
+    fun compileTheme(themeDate: ThemeToCompile, dir: File, tempDir: File, additionalApks: List<String> = listOf()): File {
         if (!dir.exists()) {
             throw IllegalArgumentException("$dir doesn't exist")
         }
@@ -73,7 +73,7 @@ class AAPT(val aaptPath: String) {
             finalTempDir = tempDir
         }
 
-        val manifest = generateManifest(themeDate.appId)
+        val manifest = generateManifest(themeDate)
         val manifestFile = File(finalTempDir, "AndroidManifest.xml")
 
         manifestFile.createNewFile()
@@ -85,12 +85,26 @@ class AAPT(val aaptPath: String) {
 
         val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", "AndroidManifest.xml", "-F", "Theme.apk")
 
+        additionalApks.forEach {
+            command.addAll(listOf("-I", it))
+        }
+
         if (themeDate.type3 != null && !themeDate.type3.default) {
-            command.addAll(listOf("-S", File(finalOverlayDir, "type3_${themeDate.type3.name}", "res").absolutePath))
+            val file = File(finalOverlayDir, "type3_${themeDate.type3.name}", "res")
+            if (file.exists()) {
+                command.addAll(listOf("-S", file.absolutePath))
+            } else {
+                command.addAll(listOf("-S", file.parentFile.absolutePath))
+            }
         }
 
         if (themeDate.type2 != null && !themeDate.type2.default) {
-            command.addAll(listOf("-S", File(finalOverlayDir, "type2_${themeDate.type2.name}", "res").absolutePath))
+            val file = File(finalOverlayDir, "type2_${themeDate.type2.name}", "res")
+            if (file.exists()) {
+                command.addAll(listOf("-S", file.absolutePath))
+            } else {
+                command.addAll(listOf("-S", file.parentFile.absolutePath))
+            }
         }
 
         command.addAll(listOf("-S", res.absolutePath))
@@ -111,12 +125,10 @@ class AAPT(val aaptPath: String) {
             throw InvalidInvocationException(error)
         }
 
-        listOf(1, 2, 3, 4).fold(0) { total, next -> total + next }
-
         return File(finalTempDir, "Theme.apk")
     }
 
-    fun compileTheme(appId: String, dir: File, tempDir: File) = compileTheme(ThemeToCompile(appId), dir, tempDir)
+    fun compileTheme(appId: String, dir: File, tempDir: File) = compileTheme(ThemeToCompile(appId, "", appId), dir, tempDir)
 
     fun File(file: File, vararg subDirs: String) = subDirs.fold(file) { total, next -> java.io.File(total, next) }
 

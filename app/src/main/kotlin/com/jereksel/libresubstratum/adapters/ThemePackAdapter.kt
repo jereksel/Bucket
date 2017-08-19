@@ -5,6 +5,8 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import butterknife.bindView
@@ -129,6 +131,7 @@ class ThemePackAdapter(
 
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
+        val overlay: RelativeLayout by bindView(R.id.overlay)
 //        init {
 //            (type1Spinners + type2Spinner).forEach { it.visibility = View.GONE }
 //        }
@@ -155,9 +158,9 @@ class ThemePackAdapter(
         override fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
 //            type1aSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1aSpinner.visibility = View.GONE
+                type1aSpinner.visibility = GONE
             } else {
-                type1aSpinner.visibility = View.VISIBLE
+                type1aSpinner.visibility = VISIBLE
                 type1aSpinner.list = list
                 type1aSpinner.setSelection(position)
             }
@@ -166,9 +169,9 @@ class ThemePackAdapter(
         override fun type1bSpinner(list: List<Type1ExtensionToString>, position: Int) {
 //            type1bSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1bSpinner.visibility = View.GONE
+                type1bSpinner.visibility = GONE
             } else {
-                type1bSpinner.visibility = View.VISIBLE
+                type1bSpinner.visibility = VISIBLE
                 type1bSpinner.list = list
                 type1bSpinner.setSelection(position)
             }
@@ -177,9 +180,9 @@ class ThemePackAdapter(
         override fun type1cSpinner(list: List<Type1ExtensionToString>, position: Int) {
 //            type1cSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1cSpinner.visibility = View.GONE
+                type1cSpinner.visibility = GONE
             } else {
-                type1cSpinner.visibility = View.VISIBLE
+                type1cSpinner.visibility = VISIBLE
                 type1cSpinner.list = list
                 type1cSpinner.setSelection(position)
             }
@@ -188,16 +191,20 @@ class ThemePackAdapter(
         override fun type2Spinner(list: List<Type2ExtensionToString>, position: Int) {
 //            type2Spinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type2Spinner.visibility = View.GONE
+                type2Spinner.visibility = GONE
             } else {
-                type2Spinner.visibility = View.VISIBLE
+                type2Spinner.visibility = VISIBLE
                 type2Spinner.list = list
                 type2Spinner.setSelection(position)
             }
         }
 
         override fun setInstalled(installed: Boolean) {
-            upToDate.visibility = if (installed) View.VISIBLE else View.GONE
+            upToDate.visibility = if (installed) VISIBLE else GONE
+        }
+
+        override fun setCompiling(compiling: Boolean) {
+            overlay.visibility = if (compiling) VISIBLE else GONE
         }
 
     }
