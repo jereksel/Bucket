@@ -77,21 +77,21 @@ class DetailedPresenter(
         val theme = themePack.themes[position]
         val state = themePackState[position]
 
-        if (!seq.contains(position)) {
+//        if (!seq.contains(position)) {
 
-            view.setAppIcon(packageManager.getAppIcon(theme.application))
-            view.setAppName(packageManager.getAppName(theme.application))
-            view.setAppId(theme.application)
-            view.setCheckbox(state.checked)
+        view.setAppIcon(packageManager.getAppIcon(theme.application))
+        view.setAppName(packageManager.getAppName(theme.application))
+        view.setAppId(theme.application)
+        view.setCheckbox(state.checked)
 
-            view.type1aSpinner((theme.type1.find { it.suffix == "a" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1a)
-            view.type1bSpinner((theme.type1.find { it.suffix == "b" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1b)
-            view.type1cSpinner((theme.type1.find { it.suffix == "c" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1c)
-            view.type2Spinner((theme.type2?.extensions ?: listOf()).map(::Type2ExtensionToString), state.type2)
+        view.type1aSpinner((theme.type1.find { it.suffix == "a" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1a)
+        view.type1bSpinner((theme.type1.find { it.suffix == "b" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1b)
+        view.type1cSpinner((theme.type1.find { it.suffix == "c" }?.extension ?: listOf()).map(::Type1ExtensionToString), state.type1c)
+        view.type2Spinner((theme.type2?.extensions ?: listOf()).map(::Type2ExtensionToString), state.type2)
 
-        } else {
-            seq.remove(position)
-        }
+//        } else {
+//            seq.remove(position)
+//        }
 
         val overlay = getOverlayIdForTheme(position)
 
@@ -161,6 +161,7 @@ class DetailedPresenter(
         val state = themePackState[adapterPosition]
         state.compiling = true
 
+        seq.add(adapterPosition)
         detailedView?.refreshHolder(adapterPosition)
 
         Thread {

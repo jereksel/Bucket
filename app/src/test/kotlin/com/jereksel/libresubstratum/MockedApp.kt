@@ -6,10 +6,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.domain.IActivityProxy
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.*
 import io.kotlintest.mock.mock
 import org.mockito.Mockito
 
@@ -26,7 +23,7 @@ class MockedApp : App() {
         return object : AppModule(this) {
             override fun providesPackageManager(application: Application) = mockedPackageManager
             override fun providesMainPresenter(packageManager: IPackageManager) = mockedMainPresenter
-            override fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService) = mockedDetailedPresenter
+            override fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService, activityProxy: IActivityProxy, themeCompiler: ThemeCompiler) = mockedDetailedPresenter
             override fun providesOverlayService() = mockedOverlayService
             override fun providesActivityProxy() = mockedActivityProxy
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy) = mockedInstalledPresenter

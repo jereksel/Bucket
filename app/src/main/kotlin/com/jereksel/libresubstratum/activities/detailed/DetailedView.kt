@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.VISIBLE
-import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -33,9 +32,7 @@ open class DetailedView : AppCompatActivity(), View {
     fun init() {
         (application as App).getAppComponent(this).inject(this)
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
-//        imageView.setImageDrawable(pManager.getHeroImage(appId))
         title = presenter.getAppName(appId)
-        Toast.makeText(this, presenter.toString(), Toast.LENGTH_SHORT).show()
         presenter.setView(this)
         presenter.readTheme(appId)
     }

@@ -37,7 +37,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = DetailedPresenter(packageManager, themeReader, overlayService)
+        presenter = DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock())
         presenter.setView(view)
 
         RxJavaHooks.clear()

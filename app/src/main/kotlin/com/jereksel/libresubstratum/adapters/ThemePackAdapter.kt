@@ -211,11 +211,17 @@ class ThemePackAdapter(
 
     private fun Spinner.selectListener(fn: (Int) -> Unit) {
 
+        var user = false
+
         this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                fn(position)
+                if (user) {
+                    fn(position)
+                } else {
+                    user = true
+                }
             }
         }
     }
