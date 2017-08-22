@@ -1,0 +1,77 @@
+package com.jereksel.libresubstratum
+
+import android.support.test.InstrumentationRegistry
+import android.support.test.espresso.Espresso
+import android.support.test.rule.ActivityTestRule
+import android.support.test.runner.AndroidJUnit4
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import com.jereksel.libresubstratum.activities.main.MainView
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import rx.android.plugins.RxAndroidPlugins
+import rx.android.plugins.RxAndroidSchedulersHook
+import rx.plugins.RxJavaHooks
+import rx.schedulers.Schedulers
+import android.support.test.espresso.Espresso.*
+import android.support.test.espresso.assertion.ViewAssertions.*
+import android.support.test.espresso.intent.Intents.*
+import android.support.test.espresso.intent.matcher.IntentMatchers.*
+import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.v7.widget.RecyclerView
+import android.support.test.espresso.intent.rule.IntentsTestRule
+
+
+
+@RunWith(AndroidJUnit4::class)
+class MainActivityTest {
+
+    @Suppress("RedundantVisibilityModifier")
+    @JvmField
+    @Rule public val main: ActivityTestRule<MainView> = ActivityTestRule(MainView::class.java)
+
+    @Suppress("RedundantVisibilityModifier")
+    @JvmField
+    @Rule
+    public var intentsTestRule = IntentsTestRule<MainView>(MainView::class.java)
+
+
+    @Before
+    fun setUp() {
+
+        RxJavaHooks.clear()
+        RxAndroidPlugins.getInstance().reset()
+
+        RxSchedulerHook.registerHooksForTesting()
+
+//        RxJavaHooks.clear()
+//        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
+//
+//        val hook = object : RxAndroidSchedulersHook() {
+//            override fun getMainThreadScheduler() = Schedulers.immediate()
+//        }
+//
+//        RxAndroidPlugins.getInstance().reset()
+//        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
+
+    }
+
+    @Test
+    fun test() {
+
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        instrumentation.waitForIdleSync()
+
+        val recyclerView = onView(withId(R.id.recyclerView)).check(matches(isDisplayed()));
+        recyclerView.perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+
+//        onView(withText("Extracting theme")).check(matches(isDisplayed()));
+
+        intended(hasComponent("DetailedView_"))
+
+
+    }
+
+}
