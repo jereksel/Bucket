@@ -13,24 +13,9 @@ test:
   pre:
     - ./gradlew --stop
   override:
-    - ./gradlew testDebugUnitTest:
-        timeout: 900
-    - ./gradlew sublib:reader:test:
-        timeout: 900
-    - ./gradlew sublib:compiler:test:
-        timeout: 900
-    - emulator -avd circleci-android24 -no-window:
-        background: true
+    - case $CIRCLE_NODE_INDEX in 0) ./unittests.sh ;; 1) ./instrumentaltests.sh ;; esac:
         parallel: true
-    # wait for it to have booted
-    - circle-android wait-for-boot
-    # run tests  against the emulator.
-    - ./gradlew connectedAndroidTest
   post:
-    - ./gradlew jacocoTestDebugUnitTestReport
-    - ./gradlew sublib:reader:jacocoTestReport
-    - ./gradlew sublib:compiler:jacocoTestReport
-
     - bash <(curl -s https://codecov.io/bash)
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
