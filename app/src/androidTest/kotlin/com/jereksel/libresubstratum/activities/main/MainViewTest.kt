@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import android.view.WindowManager
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -29,20 +30,14 @@ class MainViewTest {
 
     @Before
     fun setUp() {
-//
-//        RxJavaHooks.clear()
-//        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
-//
-//        val hook = object : RxAndroidSchedulersHook() {
-//            override fun getMainThreadScheduler() = Schedulers.immediate()
-//        }
-//
-//        RxAndroidPlugins.getInstance().reset()
-//        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
-//
-
         RxSchedulerHook.registerHooksForTesting()
-
+        val activity = mActivityTestRule.activity
+        val wakeUpDevice = Runnable {
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        activity.runOnUiThread(wakeUpDevice)
     }
 
     @Test
