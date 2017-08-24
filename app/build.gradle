@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //UNCOMMENT TO ENABLE TESTS - REMEMBER TO DO BUILD BEFORE
 //apply plugin: 'groovyx.android'
-//apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-kapt'
 
 //apply plugin: 'com.github.kt3k.coveralls'
 //apply plugin: 'net.saliman.cobertura'
