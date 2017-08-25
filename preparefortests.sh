@@ -1,5 +1,6 @@
 #!/bin/bash
 
+git submodule update --init --recursive
 cd testthemes/OmniTheme
 chmod +x gradlew
 ./gradlew assembleDebug
