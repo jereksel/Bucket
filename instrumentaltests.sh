@@ -2,5 +2,6 @@
 
 emulator -avd circleci-android24 -no-window &
 circle-android wait-for-boot
+./preparefortests.sh
 adb shell input keyevent 82
 ./gradlew connectedAndroidTest
