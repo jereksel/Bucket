@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.installed
 
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -10,25 +11,21 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.Prese
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.OverlayService
 import kotlinx.android.synthetic.main.activity_installed.*
-import org.androidannotations.annotations.AfterViews
-import org.androidannotations.annotations.EActivity
 import javax.inject.Inject
 
-@EActivity(R.layout.activity_installed)
 open class InstalledView : AppCompatActivity(), View {
 
     @Inject lateinit var presenter: Presenter
 
-    @AfterViews
-    fun init() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_installed)
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         presenter.getInstalledOverlays()
-//        swiperefresh.isRefreshing = true
-//        swiperefresh.setOnRefreshListener { presenter.getInstalledOverlays() }
     }
+
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
         val adapter_ = InstalledOverlaysAdapter(this, overlays, presenter)

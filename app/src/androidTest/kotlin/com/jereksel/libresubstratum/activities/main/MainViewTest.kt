@@ -18,6 +18,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import android.view.WindowManager
+import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
+import org.apache.commons.lang3.reflect.FieldUtils
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -56,8 +58,9 @@ class MainViewTest {
 //        intended(hasComponent(DetailedView_::javaClass.name))
 //        Intents.intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), DetailedView_::class.java)))
 //        Intents.intended(IntentMatchers.hasExtra("appId", notNull<String>()))
+        val keyName = FieldUtils.readStaticField(DetailedViewStarter::class.java, "APP_ID_KEY", true) as String
         Intents.intended(IntentMatchers.toPackage("com.jereksel.libresubstratum"))
-        Intents.intended(IntentMatchers.hasExtraWithKey("appId"))
+        Intents.intended(IntentMatchers.hasExtraWithKey(keyName))
 
     }
 }
