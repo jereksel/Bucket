@@ -6,6 +6,7 @@ machine:
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
+    - echo y | android update sdk --no-ui --all --filter "android-26"
     - echo y | android update sdk --no-ui --filter extra-android-m2repository
 
 test:
