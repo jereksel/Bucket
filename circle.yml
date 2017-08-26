@@ -2,6 +2,7 @@ machine:
   environment:
     _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
     GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+    QEMU_AUDIO_DRV: none
 
 dependencies:
   pre:
@@ -10,6 +11,8 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter "android-26"
     - echo y | android update sdk --no-ui --all --filter "android-25"
     - echo y | android update sdk --no-ui --filter extra-android-m2repository
+    - echo y | android update sdk --no-ui --all --filter "sys-img-armeabi-v7a-google_apis-24"
+    - echo no | android create avd -n circleci-android24-googleapis -t 'android-24' --abi google_apis/armeabi-v7a
 
 test:
   pre:
