@@ -69,7 +69,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -92,7 +92,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -115,7 +115,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
         `when`(presenter.openActivity("targetid")).thenReturn(false)
 
         recyclerView.run {
@@ -148,7 +148,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
             val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
 
-            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
+            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, enabled))
 
             recyclerView.run {
                 layoutManager = LinearLayoutManager(context)

@@ -13,22 +13,17 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
-import com.jereksel.libresubstratum.activities.main.MainView_
-import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
-import org.apache.commons.lang3.reflect.FieldUtils
-import org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -43,7 +38,7 @@ import org.robolectric.shadows.ShadowDialog
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class MainViewTest: BaseRobolectricTest() {
 
-    lateinit var activityController : ActivityController<MainView_>
+    lateinit var activityController : ActivityController<MainView>
     lateinit var activity : MainContract.View
     lateinit var presenter: MainContract.Presenter
 
@@ -55,7 +50,7 @@ class MainViewTest: BaseRobolectricTest() {
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
         presenter = app.mockedMainPresenter
-        activityController = Robolectric.buildActivity(MainView_::class.java).create()
+        activityController = Robolectric.buildActivity(MainView::class.java).create()
         activity = activityController.get()
     }
 

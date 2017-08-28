@@ -6,7 +6,6 @@ import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
-import com.jereksel.libresubstratum.activities.detailed.DetailedView_
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.junit.*
@@ -21,6 +20,7 @@ import org.robolectric.annotation.Config
 import android.content.Intent
 import android.provider.Settings
 import android.widget.ArrayAdapter
+import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
@@ -34,7 +34,7 @@ import org.robolectric.shadows.ShadowApplication
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class DetailedViewTest {
 
-    lateinit var activityController : ActivityController<DetailedView_>
+    lateinit var activityController : ActivityController<DetailedView>
     lateinit var activity : DetailedContract.View
     lateinit var presenter: DetailedContract.Presenter
 
@@ -48,9 +48,10 @@ class DetailedViewTest {
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
         presenter = app.mockedDetailedPresenter
-        val intent = Intent(ShadowApplication.getInstance().applicationContext, DetailedView_::class.java)
-        intent.putExtra(DetailedView_.APP_ID_EXTRA, appId)
-        activityController = Robolectric.buildActivity(DetailedView_::class.java, intent).create()
+        val intent = Intent(ShadowApplication.getInstance().applicationContext, DetailedView::class.java)
+        val APP_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.appIdStarterKey"
+        intent.putExtra(APP_ID_EXTRA, appId)
+        activityController = Robolectric.buildActivity(DetailedView::class.java, intent).create()
         activity = activityController.get()
     }
 

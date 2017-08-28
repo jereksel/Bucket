@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.ProgressDialog
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -20,15 +21,15 @@ import org.jetbrains.anko.startActivity
 import rx.Subscription
 import javax.inject.Inject
 
-@EActivity(R.layout.activity_main)
 open class MainView : AppCompatActivity(), MainContract.View {
 
     @Inject lateinit var presenter: Presenter
     var clickSubscriptions: Subscription? = null
     private var dialog: ProgressDialog? = null
 
-    @AfterViews
-    fun init() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         setSupportActionBar(toolbar)

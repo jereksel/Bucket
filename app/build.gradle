@@ -161,6 +161,7 @@ dependencies {
     compile 'com.jereksel:omslib:1.0.2'
 
     compile 'com.google.guava:guava:20.0'
+    androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
     compile project(":sublib:models")
@@ -195,7 +196,9 @@ dependencies {
     testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
 
     //assertj android
-    testCompile "com.squareup.assertj:assertj-android:$assertj_android_version@aar"
+    testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
     testCompile "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
     testCompile "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
     testCompile "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
