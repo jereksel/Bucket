@@ -121,7 +121,7 @@ class DetailedPresenter(
 
         val overlay = "${theme.application}.$themeName" + if (suffix.isNotEmpty()) { ".$suffix" } else { "" } + if (type2?.default?.not() ?: false) { ".${type2!!.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
 
-        return overlay
+        return overlay.replace(" ", "")
 
     }
 

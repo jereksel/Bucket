@@ -1,1 +1,1 @@
-include ':app', ':sublib:models', ":sublib:compiler", ":sublib:reader"
+include ':app', ':sublib:models', ":sublib:compiler", ":sublib:reader", ":bridge:lib:lib"

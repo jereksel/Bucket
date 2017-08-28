@@ -34,7 +34,7 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesOverlayService(): OverlayService {
-        return InterfacerOverlayService(application)
+        return RootlessOOverlayService(application)
     }
 
     @Provides

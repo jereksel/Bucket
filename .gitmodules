@@ -1,3 +1,8 @@
 [submodule "testthemes/OmniTheme"]
 	path = testthemes/OmniTheme
 	url = https://github.com/omnirom/android_packages_apps_OmniTheme
+
+
+[submodule "bridge/lib"]
+	path = bridge/lib
+	url = https://github.com/jereksel/LibreSubstratum-bridge-common.git
