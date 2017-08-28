@@ -22,8 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.detailed.DetailedView_" />
-        <activity android:name=".activities.installed.InstalledView_" />
+        <activity android:name=".activities.detailed.DetailedView" />
+        <activity android:name=".activities.installed.InstalledView" />
+        <activity android:name=".RecViewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
     </application>
 
 </manifest>

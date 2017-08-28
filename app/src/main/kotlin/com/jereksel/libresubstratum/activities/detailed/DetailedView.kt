@@ -1,5 +1,8 @@
 package com.jereksel.libresubstratum.activities.detailed
 
+import activitystarter.ActivityStarter
+import activitystarter.Arg
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -14,22 +17,20 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
 import kotlinx.android.synthetic.main.activity_detailed.*
-import org.androidannotations.annotations.AfterViews
-import org.androidannotations.annotations.EActivity
-import org.androidannotations.annotations.Extra
 import javax.inject.Inject
 
-@EActivity(R.layout.activity_detailed)
 open class DetailedView : AppCompatActivity(), View {
 
-    @Extra
+    @Arg
     lateinit var appId : String
 
     @Inject lateinit var presenter : Presenter
     @Inject lateinit var pManager : IPackageManager
 
-    @AfterViews
-    fun init() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detailed)
+        ActivityStarter.fill(this)
         (application as App).getAppComponent(this).inject(this)
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         title = presenter.getAppName(appId)
