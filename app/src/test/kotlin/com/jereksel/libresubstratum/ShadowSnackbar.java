@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -108,7 +108,7 @@ public class ShadowSnackbar {
 
 
     static ShadowSnackbar shadowOf(Snackbar bar) {
-        return (ShadowSnackbar) ShadowExtractor.extract(bar);
+        return (ShadowSnackbar) Shadow.extract(bar);
     }
 
     public static void reset() {

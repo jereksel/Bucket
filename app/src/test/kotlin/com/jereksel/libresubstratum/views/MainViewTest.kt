@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
-import com.jereksel.libresubstratum.activities.detailed.DetailedView_
+import com.jereksel.libresubstratum.activities.detailed.DetailedView
+import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
-import com.jereksel.libresubstratum.activities.installed.InstalledView_
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.DetailedApplication
@@ -19,6 +19,9 @@ import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
+import org.apache.commons.lang3.reflect.FieldUtils
+import org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
+import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -102,8 +105,8 @@ class MainViewTest: BaseRobolectricTest() {
         recyclerView.measure(0,0)
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
-        assertSame(d1, (recyclerView.getChildAt(0).findViewById(R.id.heroimage) as ImageView).drawable)
-        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById(R.id.heroimage) as ImageView).drawable)
+        assertSame(d1, (recyclerView.getChildAt(0).findViewById<ImageView>(R.id.heroimage).drawable))
+        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById<ImageView>(R.id.heroimage).drawable))
     }
 
     @Test
@@ -155,8 +158,9 @@ class MainViewTest: BaseRobolectricTest() {
     fun `DetailedView should be opened after openThemeFragmentCall`() {
         activity.openThemeFragment("id1")
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertEquals(nextIntent.getStringExtra(DetailedView_.APP_ID_EXTRA), "id1")
-        assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, DetailedView_::class.java))
+//        assertEquals(nextIntent.getStringExtra("appId"), "id1")
+        assertEquals("id1", nextIntent.getStringExtra(readStaticField(DetailedViewStarter::class.java, "APP_ID_KEY", true) as String))
+        assertEquals(ComponentName(activity as AppCompatActivity, DetailedView::class.java), nextIntent.component)
     }
 
     @Test
@@ -165,7 +169,9 @@ class MainViewTest: BaseRobolectricTest() {
         `when`(item.itemId).thenReturn(R.id.action_installed)
         (activity as AppCompatActivity).onOptionsItemSelected(item)
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, InstalledView_::class.java))
+        assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, InstalledView::class.java))
     }
 
 }
+
+

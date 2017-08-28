@@ -9,13 +9,14 @@ import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.detailed.DetailedView_
-import com.jereksel.libresubstratum.activities.installed.InstalledView_
+import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
+import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 import rx.Subscription
 import javax.inject.Inject
 
@@ -56,7 +57,7 @@ class MainView : AppCompatActivity(), MainContract.View {
 
     override fun openThemeFragment(appId: String) {
         dialog?.dismiss()
-        DetailedView_.intent(this).appId(appId).start()
+        DetailedViewStarter.start(this, appId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -69,7 +70,8 @@ class MainView : AppCompatActivity(), MainContract.View {
             when (item.itemId) {
                 R.id.action_installed -> {
                     // User chose the "Settings" item, show the app settings UI...
-                    InstalledView_.intent(this).start()
+                    startActivity<InstalledView>()
+//                    InstalledView_.intent(this).start()
                     true
                 }
                 else ->

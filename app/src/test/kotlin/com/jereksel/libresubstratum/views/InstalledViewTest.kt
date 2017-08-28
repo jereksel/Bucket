@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
-import com.jereksel.libresubstratum.activities.installed.InstalledView_
+import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.android.synthetic.main.activity_main.*
 import org.junit.*
@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
 )
 class InstalledViewTest: BaseRobolectricTest() {
 
-    lateinit var activityController: ActivityController<InstalledView_>
+    lateinit var activityController: ActivityController<InstalledView>
     lateinit var activity: View
     lateinit var presenter: Presenter
 
@@ -37,7 +37,7 @@ class InstalledViewTest: BaseRobolectricTest() {
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
         presenter = app.mockedInstalledPresenter
-        activityController = Robolectric.buildActivity(InstalledView_::class.java).create()
+        activityController = Robolectric.buildActivity(InstalledView::class.java).create()
         activity = activityController.get()
     }
 
