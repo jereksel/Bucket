@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "TODO"
 #emulator -avd circleci-android24-googleapis -no-window -gpu swiftshader &
 #./gradlew -PdisablePreDex assembleAndroidTest
