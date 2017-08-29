@@ -18,6 +18,7 @@ class MockedApp : App() {
     val mockedInstalledPresenter: InstalledContract.Presenter = Mockito.mock(InstalledContract.Presenter::class.java)
     val mockedOverlayService: OverlayService = mock()
     val mockedActivityProxy: IActivityProxy = mock()
+    val mockedThemeCompiler: ThemeCompiler = mock()
 
     override fun getAppModule(): AppModule {
         return object : AppModule(this) {
@@ -27,6 +28,7 @@ class MockedApp : App() {
             override fun providesOverlayService() = mockedOverlayService
             override fun providesActivityProxy() = mockedActivityProxy
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy) = mockedInstalledPresenter
+            override fun providesThemeCompiler(packageManager: IPackageManager) = mockedThemeCompiler
         }
     }
 }
