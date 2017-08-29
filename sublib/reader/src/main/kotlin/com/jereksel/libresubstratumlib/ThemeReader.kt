@@ -36,7 +36,7 @@ class ThemeReader {
                     if (it.name.length == 6) {
                         typeMap.getOrPut(type, { mutableListOf() }).add(Type1Extension(it.readText(), true))
                     } else {
-                        val name = it.name.substring(7)
+                        val name = it.name.substring(7).removeSuffix(".xml")
                         typeMap.getOrPut(type, { mutableListOf() }).add(Type1Extension(name, false))
                     }
                 }
