@@ -41,6 +41,15 @@ class ThemeReaderTest extends Specification {
         ["a", "b"] == theme1.collect {it.suffix}
     }
 
+    def "get type1a android types test"() {
+        when:
+        def theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "android"))
+        def type1a = theme1[0].extension
+
+        then:
+        ["Green", "Initial color", "Red"] == type1a.collect {it.name}.sort()
+    }
+
     def "simple type2 test"() {
         when:
         def theme2 = themeReader.readType2Data(File(resources, "Type2Test", "overlays", "android"))
