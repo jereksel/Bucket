@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.activities.installed
 
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
+import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
@@ -19,12 +20,19 @@ class InstalledPresenter(
 
     private var view = WeakReference<View>(null)
     private var subscription: Subscription? = null
+    private var overlays: List<InstalledOverlay>? = null
 
     override fun setView(view: View) {
         this.view = WeakReference(view)
     }
 
     override fun getInstalledOverlays() {
+
+        val o = overlays
+
+        if (o != null) {
+            view.get()?.addOverlays(o)
+        }
 
         subscription = Observable.fromCallable { packageManager.getInstalledOverlays() }
                 .subscribeOn(Schedulers.computation())
@@ -34,7 +42,10 @@ class InstalledPresenter(
                             { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 }))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { view.get()?.addOverlays(it) }
+                .subscribe {
+                    overlays = it
+                    view.get()?.addOverlays(it)
+                }
     }
 
     override fun toggleOverlay(overlayId: String, enabled: Boolean) {

@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import com.google.common.io.Files
+import android.os.AsyncTask.THREAD_POOL_EXECUTOR
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
@@ -8,15 +8,11 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.getFile
-import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratumlib.ThemeToCompile
-import com.jereksel.libresubstratumlib.Type1DataToCompile
-import com.jereksel.libresubstratumlib.Type1Extension
+import com.jereksel.libresubstratumlib.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
-import java.lang.ref.WeakReference
 
 class DetailedPresenter(
         val packageManager: IPackageManager,
@@ -30,6 +26,9 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
+
+    private var type3: Type3Extension? = null
+
     var init = false
 
     override fun setView(view: DetailedContract.View) {
@@ -110,19 +109,21 @@ class DetailedPresenter(
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
 
         val suffix = listOf(type1a, type1b, type1c).mapNotNull {
-            if (it?.default?.not() ?: false) {
-                it?.name?.replace(" ", "")?.replace("-", "")?.replace("_","")
+            if (it?.default?.not() == true) {
+                it.name.replace(" ", "").replace("-", "").replace("_","")
             } else {
                 null
             }
         }.joinToString(separator="")
 
+        val type2String = if (type2?.default?.not() == true) { ".${type2.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
+        val type3String = if (type3?.default?.not() == true) { ".${type3!!.name.replace(" ", "").replace("-","").replace("_", "")}" } else { "" }
+
         val themeName = packageManager.getAppName(appId)
 
-        val overlay = "${theme.application}.$themeName" + if (suffix.isNotEmpty()) { ".$suffix" } else { "" } + if (type2?.default?.not() ?: false) { ".${type2!!.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
+        val overlay = "${theme.application}.$themeName" + if (suffix.isNotEmpty()) { ".$suffix" } else { "" } + type2String + type3String
 
         return overlay
-
     }
 
 
@@ -156,6 +157,17 @@ class DetailedPresenter(
         detailedView?.refreshHolder(position)
     }
 
+    override fun setType3(type3Extension: Type3Extension) {
+        type3 = type3Extension
+    }
+
+    override fun openInSplit(adapterPosition: Int) {
+        val app = themePack.themes[adapterPosition].application
+        if (!activityProxy.openActivityInSplit(app)) {
+            detailedView?.showToast("App couldn't be opened")
+        }
+    }
+
     override fun compileAndRun(adapterPosition: Int) {
 
         val state = themePackState[adapterPosition]
@@ -164,9 +176,9 @@ class DetailedPresenter(
         seq.add(adapterPosition)
         detailedView?.refreshHolder(adapterPosition)
 
-        Thread {
+        THREAD_POOL_EXECUTOR.execute {
             compileAndRun1(adapterPosition)
-        }.start()
+        }
     }
 
     fun compileAndRun1(adapterPosition: Int) {
@@ -177,7 +189,7 @@ class DetailedPresenter(
         if (packageManager.isPackageInstalled(overlay)) {
             val info = overlayService.getOverlayInfo(overlay)
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            overlays.forEach { overlayService.disableOverlay(it.overlayId) }
+            overlayService.disableOverlays(overlays.map { it.overlayId })
             overlayService.toggleOverlay(overlay, !info.enabled)
         } else {
             val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[adapterPosition].application)
@@ -194,7 +206,7 @@ class DetailedPresenter(
                     }
             val type2 = theme.type2?.extensions?.getOrNull(state.type2)
 
-            val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2)
+            val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2, type3)
 
             val apk = themeCompiler.compileTheme(themeToCompile, location)
 
@@ -205,9 +217,9 @@ class DetailedPresenter(
             overlayService.installApk(apk)
 
 //            Thread {
-                overlayService.disableOverlays(overlays.map { it.overlayId })
+            overlayService.disableOverlays(overlays.map { it.overlayId })
 //                overlays.forEach{overlayService.disableOverlay(it.overlayId)}
-                overlayService.enableOverlay(overlay)
+            overlayService.enableOverlay(overlay)
 //            }.start()
 
 

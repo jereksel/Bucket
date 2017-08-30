@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.VISIBLE
+import android.widget.AdapterView
+import android.widget.Spinner
+import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -16,6 +19,7 @@ import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
+import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
 import javax.inject.Inject
 
@@ -25,7 +29,6 @@ open class DetailedView : AppCompatActivity(), View {
     lateinit var appId : String
 
     @Inject lateinit var presenter : Presenter
-    @Inject lateinit var pManager : IPackageManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +51,19 @@ open class DetailedView : AppCompatActivity(), View {
         if (type3 != null) {
             spinner.visibility = VISIBLE
             spinner.list = type3.extensions.map(::Type3ExtensionToString)
+            spinner.selectListener {
+                presenter.setType3(it)
+                recyclerView.adapter.notifyDataSetChanged()
+            }
         }
     }
 
     override fun refreshHolder(position: Int) {
         recyclerView.post { recyclerView.adapter.notifyItemChanged(position, "") }
+    }
+
+    override fun showToast(s: String) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
@@ -61,5 +72,16 @@ open class DetailedView : AppCompatActivity(), View {
     }
 
     override fun onRetainCustomNonConfigurationInstance() = presenter
+
+    private fun Spinner.selectListener(fn: (Type3Extension) -> Unit) {
+
+        this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
+                fn((parent.getItemAtPosition(position) as Type3ExtensionToString).type3)
+            }
+        }
+    }
 
 }

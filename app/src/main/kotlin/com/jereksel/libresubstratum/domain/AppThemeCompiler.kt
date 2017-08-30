@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Environment
 import com.google.common.io.Files
 import com.jereksel.libresubstratumlib.AAPT
+import com.jereksel.libresubstratumlib.InvalidInvocationException
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import java.io.File
 import kellinwood.security.zipsigner.ZipSigner
@@ -34,6 +35,7 @@ class AppThemeCompiler(
 
     }
 
+    @Throws(InvalidInvocationException::class)
     override fun compileTheme(themeDate: ThemeToCompile, dir: File): File {
 //        File.createTempFile("", null)
         val temp = Files.createTempDir()

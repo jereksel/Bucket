@@ -19,7 +19,7 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayService
 
 class InstalledOverlaysAdapter(
-        val activity: AppCompatActivity,
+//        val activity: AppCompatActivity,
         apps: List<InstalledOverlay>,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
@@ -46,7 +46,7 @@ class InstalledOverlaysAdapter(
 
         holder.view.setOnLongClickListener {
             if (!presenter.openActivity(overlay.targetId)) {
-                Toast.makeText(activity, "Application cannot be opened", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(activity, "Application cannot be opened", Toast.LENGTH_SHORT).show()
             }
             true
         }

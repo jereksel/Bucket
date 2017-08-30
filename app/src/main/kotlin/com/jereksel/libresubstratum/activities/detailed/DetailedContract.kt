@@ -4,12 +4,14 @@ import com.jereksel.libresubstratum.MVPPresenter
 import com.jereksel.libresubstratum.MVPView
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratumlib.ThemePack
+import com.jereksel.libresubstratumlib.Type3Extension
 
 interface DetailedContract {
 
     interface View : MVPView {
         fun addThemes(themePack: ThemePack)
         fun refreshHolder(position: Int)
+        fun showToast(s: String)
     }
 
     interface Presenter : MVPPresenter<View> {
@@ -27,7 +29,10 @@ interface DetailedContract {
         fun setType1c(position:Int, spinnerPosition: Int)
         fun setType2(position:Int, spinnerPosition: Int)
 
+        fun setType3(type3Extension: Type3Extension)
+
         fun compileAndRun(adapterPosition: Int)
+        fun openInSplit(adapterPosition: Int)
     }
 
 }

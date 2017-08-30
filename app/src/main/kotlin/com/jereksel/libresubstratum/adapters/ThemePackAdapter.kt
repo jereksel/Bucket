@@ -67,6 +67,8 @@ class ThemePackAdapter(
             presenter.setType2(holder.adapterPosition, spinnerPosition)
         }
 
+        holder.appIcon.setOnLongClickListener { presenter.openInSplit(holder.adapterPosition); true }
+
 
 //        holder.type1aSpinner.setOnItemClickListener { _, _, spinnerPosition, _ ->
 //            presenter.setType1a(holder.adapterPosition, spinnerPosition)

@@ -25,11 +25,11 @@ object AndroidManifestGenerator {
 
         //TODO: DSL
         return """<?xml version="1.0" encoding="utf-8"?>
-            <manifest xmlns:android="http://schemas.android.com/apk/lib/$appId" package="$appId">
+            <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="$appId">
 
                 <overlay android:priority="1" android:targetPackage="$target" />
 
-                <application android:label="$appId" allowBackup="false" android:hasCode="false" >
+                <application android:label="$appId" allowBackup="false" android:hasCode="false">
                     <meta-data android:name="$metadataOverlayTarget" android:value="$target" />
                     <meta-data android:name="$metadataOverlayParent" android:value="$themeId" />
 
@@ -39,22 +39,6 @@ object AndroidManifestGenerator {
                     <meta-data android:name="$metadataOverlayType2" android:value="$type2" />
                     <meta-data android:name="$metadataOverlayType3" android:value="$type3" />
                 </application>
-
-                <overlay android:priority="1" android:targetPackage="$target" />
-
-                <application android:label="$appId" allowBackup="false" android:hasCode="false" >
-
-                    <meta-data android:name="$metadataOverlayParent" android:value="$themeId" />
-                    <meta-data android:name="$metadataOverlayTarget" android:value="$target" />
-
-                    <meta-data android:name="$metadataOverlayType1a" android:value="$type1a" />
-                    <meta-data android:name="$metadataOverlayType1b" android:value="$type1b" />
-                    <meta-data android:name="$metadataOverlayType1c" android:value="$type1c" />
-                    <meta-data android:name="$metadataOverlayType2" android:value="$type2" />
-                    <meta-data android:name="$metadataOverlayType3" android:value="$type3" />
-
-                </application>
-
             </manifest>
         """
     }
