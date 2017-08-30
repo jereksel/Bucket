@@ -128,7 +128,7 @@ class AAPT(val aaptPath: String) {
         return File(finalTempDir, "Theme.apk")
     }
 
-    fun compileTheme(appId: String, dir: File, tempDir: File) = compileTheme(ThemeToCompile(appId, "", appId), dir, tempDir)
+//    fun compileTheme(appId: String, dir: File, tempDir: File) = compileTheme(ThemeToCompile(appId, "", appId), dir, tempDir)
 
     fun File(file: File, vararg subDirs: String) = subDirs.fold(file) { total, next -> java.io.File(total, next) }
 

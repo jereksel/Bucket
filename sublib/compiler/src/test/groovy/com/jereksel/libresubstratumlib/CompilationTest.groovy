@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratumlib
 
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -52,7 +53,7 @@ class CompilationTest extends Specification {
 
     def "Theme compilation should be successful"() {
         when:
-        def file = aapt.compileTheme("com.jereksel.testtheme", new File(resources, "basicTheme"), temp)
+        def file = compileTheme(compilationDir: new File(resources, "basicTheme"))
 
         then:
         file.exists()
@@ -61,7 +62,7 @@ class CompilationTest extends Specification {
 
     def "Compiled theme should have all colors"() {
         when:
-        def file = aapt.compileTheme("com.jereksel.testtheme", new File(resources, "basicTheme"), temp)
+        def file = compileTheme(compilationDir: new File(resources, "basicTheme"))
         def colors = aapt.getColorsValues(file)
 
         then:
@@ -76,7 +77,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def types1 = theme.themes[0].type1.collect { new Type1DataToCompile(it.extension.find { it.default }, it.suffix) }
-        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type1: types1)
 
         then:
         apk.exists()
@@ -89,7 +90,7 @@ class CompilationTest extends Specification {
 
         when:
         def types1 = [new Type1DataToCompile(new Type1Extension("ATYPE1", false), "a")]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type1: types1)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -104,7 +105,7 @@ class CompilationTest extends Specification {
 
         when:
         def types1 = [new Type1DataToCompile(new Type1Extension("BTYPE1", false), "b"), new Type1DataToCompile(new Type1Extension("CTYPE2", false), "c"),]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", types1, null, null), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type1: types1)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -122,7 +123,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type2 = theme.themes[0].type2.extensions[0]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", [], type2, null), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type2: type2)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -140,7 +141,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type2 = theme.themes[0].type2.extensions[1]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", [], type2, null), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type2: type2)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -158,7 +159,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type3 = theme.type3.extensions[0]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", [], null, type3), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type3: type3)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -175,7 +176,7 @@ class CompilationTest extends Specification {
         when:
         def theme = new ThemeReader().readThemePack(themeLoc)
         def type3 = theme.type3.extensions[1]
-        def apk = aapt.compileTheme(new ThemeToCompile("a", [], null, type3), compilationDir, temp)
+        def apk = compileTheme(compilationDir: compilationDir, type3: type3)
         def colors = aapt.getColorsValues(apk)
 
         then:
@@ -190,7 +191,7 @@ class CompilationTest extends Specification {
         folder.deleteDir()
 
         when:
-        aapt.compileTheme("a", folder, resources)
+        compileTheme(compilationDir: folder)
 
         then:
         thrown IllegalArgumentException
@@ -203,10 +204,20 @@ class CompilationTest extends Specification {
         folder.deleteDir()
 
         when:
-        aapt.compileTheme("a", resources, folder)
+        compileTheme(compilationDir: folder)
 
         then:
         thrown IllegalArgumentException
 
     }
+
+    @Ignore
+    def compileTheme(args) {
+        def type1 = args["type1"] ?: []
+        def type2 = args["type2"] ?: null
+        def type3 = args["type3"] ?: null
+        def compilationPath = args["compilationDir"]
+        return aapt.compileTheme(new ThemeToCompile("com.app.app", "com.app.app", "com.app.app", type1, type2, type3), compilationPath, temp, [])
+    }
+
 }
