@@ -46,12 +46,12 @@ task copyTestClasses(type: Copy) {
 //}
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 22
-        targetSdkVersion 26
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -142,8 +142,10 @@ dependencies {
 //    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
 
-    compile 'com.github.marcinmoskala.activitystarter:activitystarter:1.00-beta.2'
-    kapt 'com.github.marcinmoskala.activitystarter:activitystarter-compiler:1.00-beta.2'
+    compile 'com.github.clans:fab:1.6.4'
+
+    compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
+    kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
     compile "org.jetbrains.anko:anko-commons:$anko_version"
 

@@ -25,7 +25,8 @@ object AndroidManifestGenerator {
 
         //TODO: DSL
         return """<?xml version="1.0" encoding="utf-8"?>
-            <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="$appId">
+            <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="$appId"
+            android:versionCode="${theme.versionCode}" android:versionName="${theme.versionName}">
 
                 <overlay android:priority="1" android:targetPackage="$target" />
 

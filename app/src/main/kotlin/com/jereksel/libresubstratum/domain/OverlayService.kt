@@ -10,6 +10,7 @@ interface OverlayService {
     fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
     fun restartSystemUI()
     fun installApk(apk: File)
+    fun uninstallApk(appId: String)
     fun toggleOverlay(id: String, enabled: Boolean) {
         if (enabled) {
             enableOverlay(id)

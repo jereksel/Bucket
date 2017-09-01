@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.activities.detailed
 import activitystarter.ActivityStarter
 import activitystarter.Arg
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -64,6 +65,11 @@ open class DetailedView : AppCompatActivity(), View {
 
     override fun showToast(s: String) {
         Toast.makeText(this, s, Toast.LENGTH_LONG).show()
+    }
+
+    override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
+        Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG)
+                .setAction(buttonText, { _ -> callback() }).show()
     }
 
     override fun onDestroy() {

@@ -12,6 +12,7 @@ interface DetailedContract {
         fun addThemes(themePack: ThemePack)
         fun refreshHolder(position: Int)
         fun showToast(s: String)
+        fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
     }
 
     interface Presenter : MVPPresenter<View> {

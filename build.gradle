@@ -3,11 +3,12 @@
 buildscript {
     ext.kotlin_version = '1.1.4-3'
     ext.anko_version = '0.10.1'
-    ext.support_library_version = "26.0.1"
+    ext.support_library_version = "25.4.0"
     ext.aa_version = "4.3.1"
     ext.dagger_version = "2.10"
     ext.assertj_android_version = "1.1.1"
     ext.slf4j_version = "1.7.25"
+    ext.activity_starter_version = "1.00-beta.2"
 
     repositories {
         jcenter()

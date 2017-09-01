@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.adapters
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -17,27 +18,10 @@ import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.list
 
 class ThemePackAdapter(
-        //        themePack : ThemePack,
         val presenter: Presenter
 ) : RecyclerView.Adapter<ThemePackAdapter.ViewHolder>() {
 
-//    val themePack: ThemePack = ThemePack(themePack.themes.sortedBy { packageManager.getAppName(it.application) }, themePack.type3)
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-//        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
-//        }
-//
-//        holder.type1aSpinner.selectListener { spinnerPosition ->
-//        }
-//        holder.type1bSpinner.selectListener { spinnerPosition ->
-//        }
-//        holder.type1cSpinner.selectListener { spinnerPosition ->
-//        }
-//        holder.type2Spinner.selectListener { spinnerPosition ->
-//        }
-
-
 
         presenter.setAdapterView(position, holder)
 
@@ -69,42 +53,6 @@ class ThemePackAdapter(
 
         holder.appIcon.setOnLongClickListener { presenter.openInSplit(holder.adapterPosition); true }
 
-
-//        holder.type1aSpinner.setOnItemClickListener { _, _, spinnerPosition, _ ->
-//            presenter.setType1a(holder.adapterPosition, spinnerPosition)
-//        }
-//        holder.type1bSpinner.setOnItemClickListener { _, _, spinnerPosition, _ ->
-//            presenter.setType1b(holder.adapterPosition, spinnerPosition)
-//        }
-//        holder.type1cSpinner.setOnItemClickListener { _, _, spinnerPosition, _ ->
-//            presenter.setType1c(holder.adapterPosition, spinnerPosition)
-//        }
-//        holder.type2Spinner.setOnItemClickListener { _, _, spinnerPosition, _ ->
-//            presenter.setType2(holder.adapterPosition, spinnerPosition)
-//        }
-
-
-//        val theme = themePack.themePack[position]
-//        val appId = theme.application
-//        holder.appName.text = packageManager.getAppName(appId)
-//        holder.appId.text = theme.application
-//        holder.appIcon.setImageDrawable(packageManager.getAppIcon(appId))
-//        holder.card.setOnClickListener { holder.checkbox.performClick() }
-//
-//        (holder.type1Spinners + holder.type2Spinner)
-//                .forEach { it.visibility = GONE }
-//
-//        holder.type1Spinners.zip(theme.type1).forEach { (spinner, type1) ->
-//            spinner.visibility = VISIBLE
-//            spinner.list = type1.extension.map(::Type1ExtensionToString)
-//        }
-//
-//        val type2 = theme.type2
-//        if (type2 != null) {
-//            val spinner = holder.type2Spinner
-//            spinner.visibility = VISIBLE
-//            spinner.list = type2.extensions.map(::Type2ExtensionToString)
-//        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -117,6 +65,7 @@ class ThemePackAdapter(
 //    override fun getItemCount() = themePack.themes.size
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view), ThemePackAdapterView {
+
         val card: CardView by bindView(R.id.card_view)
         val checkbox: CheckBox by bindView(R.id.checkbox)
 
@@ -143,6 +92,7 @@ class ThemePackAdapter(
         }
 
         override fun setAppName(name: String) {
+            appName.setTextColor(Color.BLACK)
             appName.text = name
         }
 
@@ -201,12 +151,26 @@ class ThemePackAdapter(
             }
         }
 
-        override fun setInstalled(installed: Boolean) {
-            upToDate.visibility = if (installed) VISIBLE else GONE
+        override fun setEnabled(enabled: Boolean) {
+            appName.setTextColor(if (enabled) Color.GREEN else Color.RED)
         }
 
         override fun setCompiling(compiling: Boolean) {
             overlay.visibility = if (compiling) VISIBLE else GONE
+        }
+
+        override fun setInstalled(version1: String?, version2: String?) {
+            if (version1 == null && version2 == null) {
+                upToDate.setTextColor(Color.GREEN)
+                upToDate.text = "Up to date"
+            } else {
+                upToDate.setTextColor(Color.RED)
+                upToDate.text = "Update available: $version1 -> $version2"
+            }
+        }
+
+        override fun reset() {
+            upToDate.text = null
         }
 
     }

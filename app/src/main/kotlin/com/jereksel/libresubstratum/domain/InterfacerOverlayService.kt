@@ -65,4 +65,8 @@ class InterfacerOverlayService(context: Context): OverlayService {
     override fun installApk(apk: File) {
         service.installPackage(listOf(apk.absolutePath))
     }
+
+    override fun uninstallApk(appId: String) {
+        service.uninstallPackage(listOf(appId), false)
+    }
 }

@@ -125,6 +125,11 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return context.packageManager.getApplicationLabel(appInfo).toString()
     }
 
+    override fun getAppVersion(appId: String): Pair<Int, String> {
+        val appData = context.packageManager.getPackageInfo(appId, GET_META_DATA)
+        return appData.versionCode to appData.versionName
+    }
+
     override fun getAppIcon(appId: String): Drawable? {
 
         if (SYSTEMUI.contains(appId)) {

@@ -76,6 +76,8 @@ class DetailedPresenter(
         val theme = themePack.themes[position]
         val state = themePackState[position]
 
+        view.reset()
+
 //        if (!seq.contains(position)) {
 
         view.setAppIcon(packageManager.getAppIcon(theme.application))
@@ -93,9 +95,32 @@ class DetailedPresenter(
 //        }
 
         val overlay = getOverlayIdForTheme(position)
+        val isOverlayInstalled = packageManager.isPackageInstalled(overlay)
 
-        view.setInstalled(packageManager.isPackageInstalled(overlay))
+        if (isOverlayInstalled) {
+            val overlayInfo = packageManager.getAppVersion(overlay)
+            val themeInfo = packageManager.getAppVersion(appId)
+
+            if (overlayInfo.first != themeInfo.first) {
+                //Overlay can be updated
+                view.setInstalled(overlayInfo.second, themeInfo.second)
+            } else {
+                view.setInstalled(null, null)
+            }
+
+            view.setEnabled(overlayService.getOverlayInfo(overlay).enabled)
+        }
+
         view.setCompiling(state.compiling)
+    }
+
+    //TODO: Change name
+    fun areVersionsTheSame(app1: String, app2: String): Boolean {
+
+        val app1Info = packageManager.getAppVersion(app1)
+        val app2Info = packageManager.getAppVersion(app2)
+
+        return app1Info.first == app2Info.first
     }
 
     fun getOverlayIdForTheme(position: Int): String {
@@ -116,14 +141,14 @@ class DetailedPresenter(
             }
         }.joinToString(separator="")
 
+        val type1String = if (suffix.isNotEmpty()) { ".$suffix" } else { "" }
         val type2String = if (type2?.default?.not() == true) { ".${type2.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
-        val type3String = if (type3?.default?.not() == true) { ".${type3!!.name.replace(" ", "").replace("-","").replace("_", "")}" } else { "" }
+        val type3 = type3
+        val type3String = if (type3?.default?.not() == true) { ".${type3.name.replace(" ", "").replace("-","").replace("_", "")}" } else { "" }
 
         val themeName = packageManager.getAppName(appId)
 
-        val overlay = "${theme.application}.$themeName" + if (suffix.isNotEmpty()) { ".$suffix" } else { "" } + type2String + type3String
-
-        return overlay
+        return "${theme.application}.$themeName$type1String$type2String$type3String"
     }
 
 
@@ -176,23 +201,23 @@ class DetailedPresenter(
         seq.add(adapterPosition)
         detailedView?.refreshHolder(adapterPosition)
 
+        //We use it so we don't have to create thread by ourselves and so espresso will wait
         THREAD_POOL_EXECUTOR.execute {
             compileAndRun1(adapterPosition)
         }
     }
 
-    fun compileAndRun1(adapterPosition: Int) {
-        val overlay = getOverlayIdForTheme(adapterPosition)
-        val position = adapterPosition
+    fun compileAndRun1(position: Int) {
+        val overlay = getOverlayIdForTheme(position)
         val state = themePackState[position]
         val theme = themePack.themes[position]
-        if (packageManager.isPackageInstalled(overlay)) {
+        if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
             val info = overlayService.getOverlayInfo(overlay)
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.disableOverlays(overlays.map { it.overlayId })
             overlayService.toggleOverlay(overlay, !info.enabled)
         } else {
-            val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[adapterPosition].application)
+            val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[position].application)
 //            val location = File(File(packageManager.getCacheFolder(), appId), themePack.themes[adapterPosition].application)
 
             val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
@@ -206,30 +231,29 @@ class DetailedPresenter(
                     }
             val type2 = theme.type2?.extensions?.getOrNull(state.type2)
 
-            val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2, type3)
+            val themeInfo = packageManager.getAppVersion(appId)
+
+            val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2,
+                    type3, themeInfo.first, themeInfo.second)
 
             val apk = themeCompiler.compileTheme(themeToCompile, location)
-
-//            apk.setReadable(true, false)
-//            apk.setExecutable(true, false)
 
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.installApk(apk)
 
-//            Thread {
+            //Replacing substratum theme (the keys are different and overlay can't be just replaced)
+            if (!areVersionsTheSame(overlay, appId)) {
+                overlayService.uninstallApk(overlay)
+                overlayService.installApk(apk)
+            }
+
             overlayService.disableOverlays(overlays.map { it.overlayId })
-//                overlays.forEach{overlayService.disableOverlay(it.overlayId)}
             overlayService.enableOverlay(overlay)
-//            }.start()
-
-
-//            activityProxy.showToast("Overlay is not installed")
         }
 
         state.compiling = false
         seq.add(position)
         detailedView?.refreshHolder(position)
-
     }
 
     data class ThemePackAdapterState(

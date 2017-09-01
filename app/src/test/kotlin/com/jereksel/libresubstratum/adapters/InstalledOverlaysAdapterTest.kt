@@ -67,7 +67,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
         `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
@@ -90,7 +90,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
         `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
@@ -113,7 +113,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
         `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
         `when`(presenter.openActivity("targetid")).thenReturn(false)
@@ -146,7 +146,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
             val apps = listOf(InstalledOverlay(id, "", "", mock(), "", "", mock()))
 
-            val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+            val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
             `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, enabled))
 
