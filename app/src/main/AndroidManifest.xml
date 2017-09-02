@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jereksel.libresubstratum">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE"/>
     <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE_INNER"/>
 
@@ -26,6 +27,10 @@
         <activity android:name=".activities.installed.InstalledView" />
         <activity android:name=".RecViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${crashlytics}"
             />
     </application>
 
