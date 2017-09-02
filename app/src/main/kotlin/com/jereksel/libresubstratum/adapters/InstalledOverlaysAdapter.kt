@@ -29,6 +29,9 @@ class InstalledOverlaysAdapter(
     override fun getItemCount() = apps.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        if (destroyed) return
+
         val overlay = apps[position]
 
         val info = presenter.getOverlayInfo(overlay.overlayId)
@@ -82,5 +85,11 @@ class InstalledOverlaysAdapter(
         val type1c: TextView by bindView(R.id.theme_type1c)
         val type2: TextView by bindView(R.id.theme_type2)
         val type3: TextView by bindView(R.id.theme_type3)
+    }
+
+    var destroyed = false
+
+    fun destroy() {
+        destroyed = true
     }
 }

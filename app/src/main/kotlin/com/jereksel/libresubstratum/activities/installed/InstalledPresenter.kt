@@ -59,6 +59,27 @@ class InstalledPresenter(
 
     override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
+    override fun removeAll() {
+
+        val o = overlays
+        overlays = null
+
+        view.get()?.hideRecyclerView()
+        Observable.from(o ?: emptyList())
+                .observeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.computation())
+                .map {
+                    overlayService.uninstallApk(it.overlayId)
+                    it
+                }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnCompleted {
+                    view.get()?.showRecyclerView()
+                }
+                .subscribe()
+    }
+
     override fun removeView() = Unit
 
 }

@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.activities.detailed
 
 import android.os.AsyncTask.THREAD_POOL_EXECUTOR
+import android.util.Log
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
@@ -8,7 +9,10 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.getFile
-import com.jereksel.libresubstratumlib.*
+import com.jereksel.libresubstratumlib.ThemePack
+import com.jereksel.libresubstratumlib.ThemeToCompile
+import com.jereksel.libresubstratumlib.Type1DataToCompile
+import com.jereksel.libresubstratumlib.Type3Extension
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -73,6 +77,11 @@ class DetailedPresenter(
     val seq = mutableSetOf<Int>()
 
     override fun setAdapterView(position: Int, view: ThemePackAdapterView) {
+
+        if (compiling) {
+            return
+        }
+
         val theme = themePack.themes[position]
         val state = themePackState[position]
 
@@ -116,6 +125,8 @@ class DetailedPresenter(
 
     //TODO: Change name
     fun areVersionsTheSame(app1: String, app2: String): Boolean {
+
+        Log.d("areVersionTheSame", "$app1 vs $app2")
 
         val app1Info = packageManager.getAppVersion(app1)
         val app2Info = packageManager.getAppVersion(app2)
@@ -193,6 +204,66 @@ class DetailedPresenter(
         }
     }
 
+    var compiling = false
+
+    override fun compileRunSelected() {
+        compileSelected1(false)
+    }
+
+    override fun compileRunActivateSelected() {
+        compileSelected1(true)
+    }
+
+    fun compileSelected1(activate: Boolean) {
+
+        compiling = true
+
+        val themesToCompile = themePackState.mapIndexed { index, themePackAdapterState -> index to themePackAdapterState }
+                .filter { it.second.checked }
+
+        detailedView?.showCompileDialog(themesToCompile.size)
+
+        Observable.from(themesToCompile)
+                .observeOn(Schedulers.computation())
+                .flatMap { Observable.just(it)
+                        .subscribeOn(Schedulers.computation())
+                        .map {
+                            Log.d("Compiling on ", Thread.currentThread().toString())
+                            compileForPosition(it.first)
+                        }}
+                .observeOn(Schedulers.io())
+                .map {
+                    Log.d("Installing on ", Thread.currentThread().toString())
+                    overlayService.installApk(it)
+                    detailedView?.increaseDialogProgress()
+                    it.delete()
+                }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnCompleted {
+                    overlayService.enableOverlays(themesToCompile.map { getOverlayIdForTheme(it.first) })
+                    compiling = false
+                    detailedView?.hideCompileDialog()
+                }.subscribe()
+    }
+/*
+
+
+        Observable.from(themePackState.mapIndexed { index, themePackAdapterState -> index to themePackAdapterState.copy() })
+                .observeOn(Schedulers.from(THREAD_POOL_EXECUTOR))
+                .subscribeOn(Schedulers.from(THREAD_POOL_EXECUTOR))
+                .filter { it.second.checked }
+                .map {
+                    compileAndRun1(it.first)
+                }
+                .toList()
+                .toSingle()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    detailedView?.hideCompileDialog()
+                }
+*/
+
     override fun compileAndRun(adapterPosition: Int) {
 
         val state = themePackState[adapterPosition]
@@ -203,52 +274,78 @@ class DetailedPresenter(
 
         //We use it so we don't have to create thread by ourselves and so espresso will wait
         THREAD_POOL_EXECUTOR.execute {
+//            val apk = compileForPosition(adapterPosition)
+//            overlayService.installApk(apk)
             compileAndRun1(adapterPosition)
+//            val apk =
         }
     }
 
-    fun compileAndRun1(position: Int) {
+    fun activateExclusive(position: Int) {
+        val theme = themePack.themes[position]
+        val overlay = getOverlayIdForTheme(position)
+        val info = overlayService.getOverlayInfo(overlay)
+        val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
+        overlayService.disableOverlays(overlays.map { it.overlayId })
+        overlayService.toggleOverlay(overlay, !info.enabled)
+    }
+
+    fun compileForPosition(position: Int): File {
+
+        val overlay = getOverlayIdForTheme(position)
+        val state = themePackState[position]
+        val theme = themePack.themes[position]
+
+        val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[position].application)
+
+        val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
+        val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
+        val type1c = theme.type1.find {it.suffix == "c"}?.extension?.getOrNull(state.type1c)
+
+        val type1 = listOf(type1a, type1b, type1c).zip(listOf("a", "b", "c"))
+                .filter { it.first != null }
+                .map {
+                    Type1DataToCompile(it.first!!, it.second)
+                }
+        val type2 = theme.type2?.extensions?.getOrNull(state.type2)
+
+        val themeInfo = packageManager.getAppVersion(appId)
+
+        val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2,
+                type3, themeInfo.first, themeInfo.second)
+
+        return themeCompiler.compileTheme(themeToCompile, location)
+    }
+
+    fun compileAndRun1(position: Int, activate: Boolean = true) {
         val overlay = getOverlayIdForTheme(position)
         val state = themePackState[position]
         val theme = themePack.themes[position]
         if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
-            val info = overlayService.getOverlayInfo(overlay)
-            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            overlayService.disableOverlays(overlays.map { it.overlayId })
-            overlayService.toggleOverlay(overlay, !info.enabled)
+            activateExclusive(position)
         } else {
-            val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[position].application)
-//            val location = File(File(packageManager.getCacheFolder(), appId), themePack.themes[adapterPosition].application)
 
-            val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
-            val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
-            val type1c = theme.type1.find {it.suffix == "c"}?.extension?.getOrNull(state.type1c)
+            val apk = compileForPosition(position)
 
-            val type1 = listOf(type1a, type1b, type1c).zip(listOf("a", "b", "c"))
-                    .filter { it.first != null }
-                    .map {
-                        Type1DataToCompile(it.first!!, it.second)
-                    }
-            val type2 = theme.type2?.extensions?.getOrNull(state.type2)
-
-            val themeInfo = packageManager.getAppVersion(appId)
-
-            val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2,
-                    type3, themeInfo.first, themeInfo.second)
-
-            val apk = themeCompiler.compileTheme(themeToCompile, location)
-
-            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
+//            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.installApk(apk)
 
             //Replacing substratum theme (the keys are different and overlay can't be just replaced)
-            if (!areVersionsTheSame(overlay, appId)) {
+            if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
                 overlayService.uninstallApk(overlay)
                 overlayService.installApk(apk)
             }
 
-            overlayService.disableOverlays(overlays.map { it.overlayId })
-            overlayService.enableOverlay(overlay)
+            apk.delete()
+
+            if (activate) {
+                activateExclusive(position)
+            }
+//
+//            if (activate) {
+//                overlayService.disableOverlays(overlays.map { it.overlayId })
+//                overlayService.enableOverlay(overlay)
+//            }
         }
 
         state.compiling = false

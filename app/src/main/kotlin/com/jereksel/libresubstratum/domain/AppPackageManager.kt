@@ -90,6 +90,11 @@ class AppPackageManager(val context: Context) : IPackageManager {
     }
 
     override fun getAppLocation(appId: String): File {
+
+        if (SYSTEMUI.contains(appId)) {
+            return getAppLocation("com.android.systemui")
+        }
+
         return File(context.packageManager.getInstalledApplications(0)
                 .find { it.packageName == appId }!!.sourceDir)
     }

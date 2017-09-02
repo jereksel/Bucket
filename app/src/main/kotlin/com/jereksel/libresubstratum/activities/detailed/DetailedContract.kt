@@ -13,6 +13,9 @@ interface DetailedContract {
         fun refreshHolder(position: Int)
         fun showToast(s: String)
         fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
+        fun showCompileDialog(size: Int)
+        fun hideCompileDialog()
+        fun increaseDialogProgress()
     }
 
     interface Presenter : MVPPresenter<View> {
@@ -34,6 +37,8 @@ interface DetailedContract {
 
         fun compileAndRun(adapterPosition: Int)
         fun openInSplit(adapterPosition: Int)
+        fun compileRunActivateSelected()
+        fun compileRunSelected()
     }
 
 }

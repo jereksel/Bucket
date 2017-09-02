@@ -40,8 +40,8 @@ class InterfacerOverlayService(context: Context): OverlayService {
 
     }
 
-    override fun enableOverlay(id: String) {
-        service.enableOverlay(listOf(id), false)
+    override fun enableOverlays(ids: List<String>) {
+        service.enableOverlay(ids, false)
     }
 
     override fun disableOverlays(ids: List<String>) {
@@ -66,7 +66,7 @@ class InterfacerOverlayService(context: Context): OverlayService {
         service.installPackage(listOf(apk.absolutePath))
     }
 
-    override fun uninstallApk(appId: String) {
-        service.uninstallPackage(listOf(appId), false)
+    override fun uninstallApk(appIds: List<String>) {
+        service.uninstallPackage(appIds, false)
     }
 }

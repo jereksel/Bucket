@@ -29,6 +29,7 @@ open class InstalledView : AppCompatActivity(), View {
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         presenter.setView(this)
         presenter.getInstalledOverlays()
+        fab.setOnClickListener { presenter.removeAll() }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
@@ -49,6 +50,18 @@ open class InstalledView : AppCompatActivity(), View {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         layoutState = savedInstanceState.getParcelable("STATE")
+    }
+
+    override fun hideRecyclerView() {
+        (recyclerView.adapter as InstalledOverlaysAdapter).destroy()
+        recyclerView.adapter = null
+        Toast.makeText(this, "Removing all", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showRecyclerView() {
+        Toast.makeText(this, "Removing completed", Toast.LENGTH_SHORT).show()
+        presenter.getInstalledOverlays()
+        finish()
     }
 
     override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
