@@ -49,7 +49,7 @@ class InstalledOverlaysAdapter(
 
         holder.view.setOnLongClickListener {
             if (!presenter.openActivity(overlay.targetId)) {
-//                Toast.makeText(activity, "Application cannot be opened", Toast.LENGTH_SHORT).show()
+                Toast.makeText(holder.itemView.context, "Application cannot be opened", Toast.LENGTH_SHORT).show()
             }
             true
         }
