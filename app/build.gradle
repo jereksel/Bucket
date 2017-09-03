@@ -129,6 +129,8 @@ dependencies {
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
+    compile 'com.github.clans:fab:1.6.4'
+
     //AndroidAnnotations
 //    kapt "org.androidannotations:androidannotations:$aa_version"
 //    kaptTest "org.androidannotations:androidannotations:$aa_version"

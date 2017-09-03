@@ -68,9 +68,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -91,9 +91,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -114,9 +114,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
         `when`(presenter.openActivity("targetid")).thenReturn(false)
 
         recyclerView.run {
@@ -147,9 +147,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
             val apps = listOf(InstalledOverlay(id, "", "", mock(), "", "", mock()))
 
-            val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+            val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
+            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, enabled))
 
             recyclerView.run {
                 layoutManager = LinearLayoutManager(context)

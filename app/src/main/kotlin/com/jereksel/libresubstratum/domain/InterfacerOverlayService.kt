@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import com.jereksel.omslib.OMSLib
 import projekt.substratum.IInterfacerInterface
+import java.io.File
 
 class InterfacerOverlayService(context: Context): OverlayService {
 
@@ -39,20 +40,33 @@ class InterfacerOverlayService(context: Context): OverlayService {
 
     }
 
-    override fun enableOverlay(id: String) {
-        service.enableOverlay(listOf(id), false)
+    override fun enableOverlays(ids: List<String>) {
+        service.enableOverlay(ids, false)
     }
 
-    override fun disableOverlay(id: String) {
-        service.disableOverlay(listOf(id), false)
+    override fun disableOverlays(ids: List<String>) {
+        service.disableOverlay(ids, false)
     }
 
     override fun getOverlayInfo(id: String): OverlayInfo {
         val info = oms.getOverlayInfo(id, 0)
-        return OverlayInfo(info.isEnabled)
+        return OverlayInfo(id, info.isEnabled)
+    }
+
+    override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
+        val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
+        return map.map { OverlayInfo(it.packageName, it.isEnabled) }
     }
 
     override fun restartSystemUI() {
         service.restartSystemUI()
+    }
+
+    override fun installApk(apk: File) {
+        service.installPackage(listOf(apk.absolutePath))
+    }
+
+    override fun uninstallApk(appIds: List<String>) {
+        service.uninstallPackage(appIds, false)
     }
 }
