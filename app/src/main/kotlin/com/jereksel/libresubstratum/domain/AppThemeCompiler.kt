@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.domain
 
 import android.app.Application
 import android.os.Environment
-import com.google.common.io.Files
 import com.jereksel.libresubstratumlib.AAPT
 import com.jereksel.libresubstratumlib.InvalidInvocationException
 import com.jereksel.libresubstratumlib.ThemeToCompile
@@ -35,10 +34,38 @@ class AppThemeCompiler(
 
     }
 
+
+    //FROM GUAVA
+
+    private val TEMP_DIR_ATTEMPTS = 10000
+
+    fun createTempDir(): File {
+        val baseDir = File(System.getProperty("java.io.tmpdir"))
+        val baseName = System.currentTimeMillis().toString() + "-"
+
+        for (counter in 0..TEMP_DIR_ATTEMPTS - 1) {
+            val tempDir = File(baseDir, baseName + counter)
+            if (tempDir.mkdir()) {
+                return tempDir
+            }
+        }
+        throw IllegalStateException(
+                "Failed to create directory within "
+                        + TEMP_DIR_ATTEMPTS
+                        + " attempts (tried "
+                        + baseName
+                        + "0 to "
+                        + baseName
+                        + (TEMP_DIR_ATTEMPTS - 1)
+                        + ')')
+    }
+
+    //END FROM GUAVA
+
     @Throws(InvalidInvocationException::class)
     override fun compileTheme(themeDate: ThemeToCompile, dir: File): File {
 //        File.createTempFile("", null)
-        val temp = Files.createTempDir()
+        val temp = createTempDir()
 //        val finalApk = File.createTempFile("compiled", ".apk")
         val apkDir = File(Environment.getExternalStorageDirectory(), "libresubs")
         apkDir.mkdir()
