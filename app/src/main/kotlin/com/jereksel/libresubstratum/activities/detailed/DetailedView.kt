@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
+import com.crashlytics.android.Crashlytics
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.adapters.ThemePackAdapter
@@ -26,6 +27,7 @@ open class DetailedView : AppCompatActivity(), DetailedContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detailed)
         ActivityStarter.fill(this)
+        Crashlytics.setString("Theme id", appId)
         (application as App).getAppComponent(this).inject(this)
 //        imageView.setImageDrawable(pManager.getHeroImage(appId))
         presenter.setView(this)
