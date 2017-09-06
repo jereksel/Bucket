@@ -43,7 +43,6 @@ class InstalledOverlaysAdapter(
         }
 
         holder.view.setOnClickListener {
-//            presenter.setState(position, !holder.checkbox.isChecked)
             holder.checkbox.toggle()
         }
 
@@ -52,6 +51,13 @@ class InstalledOverlaysAdapter(
             notifyItemChanged(position)
             true
         }
+
+        listOf(holder.targetIcon, holder.themeIcon).forEach { it.setOnLongClickListener {
+            if(!presenter.openActivity(overlay.targetId)) {
+                Toast.makeText(it.context, "App cannot be opened", Toast.LENGTH_SHORT).show()
+            }
+            true
+        }}
 
         listOf(
                 Triple(overlay.type1a, holder.type1a, R.string.theme_type1a_list),
