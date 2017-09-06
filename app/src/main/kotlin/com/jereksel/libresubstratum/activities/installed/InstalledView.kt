@@ -53,18 +53,6 @@ open class InstalledView : AppCompatActivity(), View {
         layoutState = savedInstanceState.getParcelable("STATE")
     }
 
-    override fun hideRecyclerView() {
-        (recyclerView.adapter as InstalledOverlaysAdapter).destroy()
-        recyclerView.adapter = null
-        Toast.makeText(this, "Removing all", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showRecyclerView() {
-        Toast.makeText(this, "Removing completed", Toast.LENGTH_SHORT).show()
-        presenter.getInstalledOverlays()
-        finish()
-    }
-
     override fun refreshRecyclerView() = recyclerView.adapter.notifyDataSetChanged()
 
     override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
