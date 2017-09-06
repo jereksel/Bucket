@@ -29,13 +29,12 @@ open class InstalledView : AppCompatActivity(), View {
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         presenter.setView(this)
         presenter.getInstalledOverlays()
-        fab_uninstall.setOnClickListener { presenter.uninstallSelected() }
-        fab_enable.setOnClickListener { presenter.enableSelected() }
-        fab_disable.setOnClickListener { presenter.disableSelected() }
+        fab_uninstall.setOnClickListener { fab.close(true); presenter.uninstallSelected() }
+        fab_enable.setOnClickListener { fab.close(true); presenter.enableSelected() }
+        fab_disable.setOnClickListener { fab.close(true); presenter.disableSelected() }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
-        Toast.makeText(this, presenter.toString(), Toast.LENGTH_SHORT).show()
         mLayoutManager.onRestoreInstanceState(layoutState)
         with(recyclerView) {
             layoutManager = mLayoutManager
