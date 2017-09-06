@@ -96,21 +96,6 @@ class InstalledPresenterTest : FunSpec() {
             }
 
         }
-        test("All visible overlays are uninstalled during uninstallAll") {
-
-            whenever(packageManager.getInstalledOverlays()).thenReturn(
-                    listOf(
-                            InstalledOverlay("overlay1", "", "", mock(), "", "", mock()),
-                            InstalledOverlay("overlay2", "", "", mock(), "", "", mock())
-                    )
-            )
-
-            presenter.getInstalledOverlays()
-
-            presenter.uninstallAll()
-
-            verify(overlayService).uninstallApk(listOf("overlay1", "overlay2"))
-        }
         test("Set state is persistent") {
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
