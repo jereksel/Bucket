@@ -23,11 +23,13 @@ build_script:
 
 test_script:
   - cmd: "%ANDROID_HOME%\\build-tools\\26.0.1\\aapt.exe v"
-  - gradlew test
+  - gradlew testDebugUnitTest
+  - gradlew sublib:reader:test
+  - gradlew sublib:compiler:test
  
 after_test:
   - gradlew --stop
- 
+
 cache:
   - 'C:\Users\appveyor\.m2'
   - 'C:\Users\appveyor\.gradle'

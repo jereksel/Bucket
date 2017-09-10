@@ -10,8 +10,7 @@ interface InstalledContract {
     interface View : MVPView {
         fun addOverlays(overlays: List<InstalledOverlay>)
         fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
-        fun hideRecyclerView()
-        fun showRecyclerView()
+        fun refreshRecyclerView()
     }
 
     interface Presenter : MVPPresenter<View> {
@@ -19,7 +18,13 @@ interface InstalledContract {
         fun toggleOverlay(overlayId: String, enabled: Boolean)
         fun getOverlayInfo(overlayId: String): OverlayInfo
         fun openActivity(appId: String): Boolean
-        fun removeAll()
+        fun uninstallSelected()
+        fun disableSelected()
+        fun enableSelected()
+
+        //RecyclerView
+        fun setState(position: Int, isEnabled: Boolean)
+        fun getState(position: Int): Boolean
     }
 
 }

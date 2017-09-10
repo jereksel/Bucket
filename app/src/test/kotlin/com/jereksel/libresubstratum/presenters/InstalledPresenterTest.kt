@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import android.os.AsyncTask
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -16,6 +17,7 @@ import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
+import java.util.concurrent.ExecutorService
 
 class InstalledPresenterTest : FunSpec() {
 
@@ -94,8 +96,56 @@ class InstalledPresenterTest : FunSpec() {
             }
 
         }
+        test("Set state is persistent") {
+
+            whenever(packageManager.getInstalledOverlays()).thenReturn(
+                    listOf(
+                            InstalledOverlay("overlay1", "", "", mock(), "", "", mock()),
+                            InstalledOverlay("overlay2", "", "", mock(), "", "", mock())
+                    )
+            )
+
+            presenter.getInstalledOverlays()
+
+            presenter.setState(0, true)
+            assertTrue(presenter.getState(0))
+            presenter.setState(0, false)
+            assertFalse(presenter.getState(0))
+
+        }
+        val prepare = {
+
+            whenever(packageManager.getInstalledOverlays()).thenReturn(
+                    listOf(
+                            InstalledOverlay("overlay1", "", "", mock(), "", "", mock()),
+                            InstalledOverlay("overlay2", "", "", mock(), "", "", mock()),
+                            InstalledOverlay("overlay3", "", "", mock(), "", "", mock()),
+                            InstalledOverlay("overlay4", "", "", mock(), "", "", mock())
+                    )
+            )
+
+            presenter.getInstalledOverlays()
+
+            presenter.setState(0, false)
+            presenter.setState(1, true)
+            presenter.setState(2, true)
+            presenter.setState(3, false)
+        }
+
+        test("Selected overlays are uninstalled during uninstallSelected") {
+            prepare()
+            presenter.uninstallSelected()
+            verify(overlayService).uninstallApk(listOf("overlay2", "overlay3"))
+        }
+        test("Selected overlays are enabled during enableSelected") {
+            prepare()
+            presenter.enableSelected()
+            verify(overlayService).enableOverlays(listOf("overlay2", "overlay3"))
+        }
+        test("Selected overlays are disabled during disableSelected") {
+            prepare()
+            presenter.disableSelected()
+            verify(overlayService).disableOverlays(listOf("overlay2", "overlay3"))
+        }
     }
-
-    infix operator fun <T> OngoingStubbing<T>.minus(t: T): OngoingStubbing<T> = thenReturn(t)
-
 }

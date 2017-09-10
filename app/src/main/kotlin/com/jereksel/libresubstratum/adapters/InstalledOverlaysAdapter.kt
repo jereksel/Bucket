@@ -1,30 +1,24 @@
 package com.jereksel.libresubstratum.adapters
 
-import android.content.Intent
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.OverlayService
 
 class InstalledOverlaysAdapter(
-//        val activity: AppCompatActivity,
         apps: List<InstalledOverlay>,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
 
-    val apps = apps.sortedBy { it.targetName }
+    private val apps = apps.sortedBy { it.targetName }
 
     override fun getItemCount() = apps.size
 
@@ -42,17 +36,28 @@ class InstalledOverlaysAdapter(
         val color = if(info.enabled) Color.GREEN else Color.RED
         holder.targetName.setTextColor(color)
 
+        holder.checkbox.setOnCheckedChangeListener(null)
+        holder.checkbox.isChecked = presenter.getState(position)
+        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
+            presenter.setState(position, isChecked)
+        }
+
         holder.view.setOnClickListener {
-            presenter.toggleOverlay(overlay.overlayId, !info.enabled)
-            notifyItemChanged(position)
+            holder.checkbox.toggle()
         }
 
         holder.view.setOnLongClickListener {
-            if (!presenter.openActivity(overlay.targetId)) {
-                Toast.makeText(holder.itemView.context, "Application cannot be opened", Toast.LENGTH_SHORT).show()
-            }
+            presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            notifyItemChanged(position)
             true
         }
+
+        listOf(holder.targetIcon, holder.themeIcon).forEach { it.setOnLongClickListener {
+            if(!presenter.openActivity(overlay.targetId)) {
+                Toast.makeText(it.context, "App cannot be opened", Toast.LENGTH_SHORT).show()
+            }
+            true
+        }}
 
         listOf(
                 Triple(overlay.type1a, holder.type1a, R.string.theme_type1a_list),
@@ -80,6 +85,7 @@ class InstalledOverlaysAdapter(
         val targetIcon: ImageView by bindView(R.id.target_icon)
         val themeIcon: ImageView by bindView(R.id.theme_icon)
         val targetName: TextView by bindView(R.id.target_name)
+        val checkbox: CheckBox by bindView(R.id.checkbox)
         val type1a: TextView by bindView(R.id.theme_type1a)
         val type1b: TextView by bindView(R.id.theme_type1b)
         val type1c: TextView by bindView(R.id.theme_type1c)
