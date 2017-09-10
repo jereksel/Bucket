@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ./gradlew testDebugUnitTest
 ./gradlew sublib:reader:test
 ./gradlew sublib:compiler:test

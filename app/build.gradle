@@ -11,6 +11,23 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
 
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        // These docs use an open ended version so that our plugin
+        // can be updated quickly in response to Android tooling updates
+
+        // We recommend changing it to the latest version from our changelog:
+        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
+        classpath 'io.fabric.tools:gradle:1.24.1'
+    }
+}
+
+apply plugin: 'io.fabric'
+
 repositories {
     mavenCentral()
     maven {
@@ -22,6 +39,7 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 /*
@@ -56,6 +74,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 //        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
+        manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
     }
     buildTypes {
         release {
@@ -64,6 +83,7 @@ android {
         }
         debug {
             testCoverageEnabled true
+            ext.enableCrashlytics = false
         }
     }
 
@@ -128,6 +148,16 @@ dependencies {
 
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+
+    compile 'com.github.clans:fab:1.6.4'
+    
+    //Logging
+    compile "com.github.tony19:logback-android-core:$logback_android_version"
+    compile "com.github.tony19:logback-android-classic:$logback_android_version"
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
 
     //AndroidAnnotations
 //    kapt "org.androidannotations:androidannotations:$aa_version"

@@ -15,6 +15,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
@@ -22,6 +23,8 @@ import rx.Subscription
 import javax.inject.Inject
 
 class MainView : AppCompatActivity(), MainContract.View {
+
+    val log = getLogger()
 
     @Inject lateinit var presenter: Presenter
     var clickSubscriptions: Subscription? = null
@@ -50,6 +53,7 @@ class MainView : AppCompatActivity(), MainContract.View {
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
                 .subscribe {
+                    log.debug("Extracting {}", it)
                     dialog = ProgressDialog.show(this@MainView, "Extracting", "Extracting theme", true)
                     presenter.openThemeScreen(it.appId)
                 }
