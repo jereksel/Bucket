@@ -1,15 +1,16 @@
 package com.jereksel.libresubstratumlib
 
-import com.jereksel.libresubstratumlib.AndroidManifestGenerator.generateManifest
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.regex.Pattern
 
-class AAPT(val aaptPath: String) {
+class AAPT(val aaptPath: String, testing: Boolean = false) {
 
     private val logger = LoggerFactory.getLogger(javaClass.name)
 
     private val COLOR_PATTERN = Pattern.compile(":color/(.*):.*?d=(\\S*)")
+
+    val generator = AndroidManifestGenerator(testing)
 
     fun getColorsValues(apk: File): Sequence<Color> {
 
@@ -73,7 +74,7 @@ class AAPT(val aaptPath: String) {
             finalTempDir = tempDir
         }
 
-        val manifest = generateManifest(themeDate)
+        val manifest = generator.generateManifest(themeDate)
         val manifestFile = File(finalTempDir, "AndroidManifest.xml")
 
         manifestFile.createNewFile()
