@@ -38,7 +38,7 @@ class ThemeReaderTest extends Specification {
         def theme1 = themeReader.readType1Data(File(resources, "Type1Test", "overlays", "com.android.dialer"))
 
         then:
-        ["a", "b"] == theme1.collect {it.suffix}
+        ["a", "b"] == theme1.collect { it.suffix }
     }
 
     def "get type1a android types test"() {
@@ -47,7 +47,7 @@ class ThemeReaderTest extends Specification {
         def type1a = theme1[0].extension
 
         then:
-        ["Green", "Initial color", "Red"] == type1a.collect {it.name}.sort()
+        ["Green", "Initial color", "Red"] == type1a.collect { it.name }.sort()
     }
 
     def "simple type2 test"() {
@@ -80,6 +80,19 @@ class ThemeReaderTest extends Specification {
 
         then:
         theme3 == null
+    }
+
+    def "Encryption detection test"(file, result) {
+
+        expect:
+        def location = File(resources, "encryption", "${file}.zip")
+        themeReader.checkIfEncrypted(location) == result
+
+        where:
+        file                      | result
+        "decrypted"               | false
+        "encrypted"               | true
+        "encrypted_and_decrypted" | false
     }
 
     @Ignore

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
@@ -14,11 +15,13 @@ import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.data.MainViewTheme
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
+import org.jetbrains.anko.find
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -31,6 +34,7 @@ import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowDialog
+import org.robolectric.shadows.ShadowToast
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -111,7 +115,7 @@ class MainViewTest: BaseRobolectricTest() {
                 InstalledTheme("id2", "name2", "author2", null)
         )
 
-        activity.addApplications(apps)
+        activity.addApplications(apps.map { MainViewTheme.fromInstalledTheme(it, false) })
         recyclerView.measure(0, 0);
         recyclerView.layout(0, 0, 100, 10000);
 
@@ -128,7 +132,7 @@ class MainViewTest: BaseRobolectricTest() {
                 InstalledTheme("id2", "name2", "author2", null)
         )
 
-        activity.addApplications(apps)
+        activity.addApplications(apps.map { MainViewTheme.fromInstalledTheme(it, false) })
         recyclerView.measure(0, 0);
         recyclerView.layout(0, 0, 100, 10000);
 
@@ -165,6 +169,49 @@ class MainViewTest: BaseRobolectricTest() {
         (activity as AppCompatActivity).onOptionsItemSelected(item)
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
         assertEquals(nextIntent.component, ComponentName(activity as AppCompatActivity, InstalledView::class.java))
+    }
+
+    @Test
+    fun `Lock should be visible if theme is encrypted`() {
+
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, true)
+        activity.addApplications(listOf(encryptedApp))
+
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0).find<ImageView>(R.id.lock)
+
+        assertEquals(view.visibility, View.VISIBLE)
+    }
+
+    @Test
+    fun `Lock should not be visible if theme is not encrypted`() {
+
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, false)
+        activity.addApplications(listOf(encryptedApp))
+
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        val view = recyclerView.getChildAt(0).find<ImageView>(R.id.lock)
+
+        assertEquals(view.visibility, View.GONE)
+    }
+
+    @Test
+    fun `When clicking on log toast is shown`() {
+
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, true)
+        activity.addApplications(listOf(encryptedApp))
+
+        recyclerView.measure(0, 0);
+        recyclerView.layout(0, 0, 100, 10000);
+
+        recyclerView.getChildAt(0).find<ImageView>(R.id.lock).performClick()
+
+        assertEquals("Theme is encrypted. Ask themer to also include unencrypted files.", ShadowToast.getTextOfLatestToast())
+
     }
 
 }

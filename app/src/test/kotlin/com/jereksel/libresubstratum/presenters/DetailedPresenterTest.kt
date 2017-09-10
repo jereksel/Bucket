@@ -60,8 +60,7 @@ class DetailedPresenterTest : FunSpec() {
         test("Read empty theme") {
             val emptyThemePack = ThemePack(listOf())
             whenever(packageManager.getCacheFolder()).thenReturn(File("/tmp"))
-            whenever(themeReader.readThemePack(anyString())).thenReturn(emptyThemePack)
-            whenever(themeReader.readThemePack(any<File>())).thenReturn(emptyThemePack)
+            whenever(themeReader.readThemePack(any())).thenReturn(emptyThemePack)
             presenter.readTheme("themeId")
             verify(view).addThemes(emptyThemePack)
         }
@@ -72,8 +71,7 @@ class DetailedPresenterTest : FunSpec() {
             val themePack = ThemePack(themes)
             val destThemePack = ThemePack(installedApps.map { Theme(it) })
             whenever(packageManager.getCacheFolder()).thenReturn(File("/tmp"))
-            whenever(themeReader.readThemePack(anyString())).thenReturn(themePack)
-            whenever(themeReader.readThemePack(any<File>())).thenReturn(themePack)
+            whenever(themeReader.readThemePack(any())).thenReturn(themePack)
             allApps.forEach {
                 whenever(packageManager.isPackageInstalled(it)).thenReturn(installedApps.contains(it))
             }

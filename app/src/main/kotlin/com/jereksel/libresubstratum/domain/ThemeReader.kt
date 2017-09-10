@@ -2,9 +2,11 @@ package com.jereksel.libresubstratum.domain
 
 import java.io.File
 
-typealias ThemeReaderImpl = com.jereksel.libresubstratumlib.ThemeReader
-
 class ThemeReader: IThemeReader {
-    override fun readThemePack(location: String) = ThemeReaderImpl().readThemePack(location)
-    override fun readThemePack(location: File) = ThemeReaderImpl().readThemePack(location)
+    private val themeReaderImpl = com.jereksel.libresubstratumlib.ThemeReader()
+
+    override fun readThemePack(location: File) = themeReaderImpl.readThemePack(location)
+
+    override fun isThemeEncrypted(location: File) = themeReaderImpl.checkIfEncrypted(location)
+
 }

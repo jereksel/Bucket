@@ -15,6 +15,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import kotlinx.android.synthetic.main.activity_main.*
@@ -41,7 +42,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
         presenter.getApplications()
     }
 
-    override fun addApplications(list: List<InstalledTheme>) {
+    override fun addApplications(list: List<MainViewTheme>) {
         clickSubscriptions?.safeUnsubscribe()
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
