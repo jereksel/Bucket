@@ -73,6 +73,14 @@
 
     </LinearLayout>
 
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
     <!--<Button-->
         <!--android:id="@+id/enable_button"-->
         <!--android:layout_width="wrap_content"-->

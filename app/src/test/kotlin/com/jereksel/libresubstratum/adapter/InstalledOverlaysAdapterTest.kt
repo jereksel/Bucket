@@ -5,11 +5,8 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import com.jereksel.libresubstratum.BaseRobolectricTest
-import com.jereksel.libresubstratum.BuildConfig
-import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.RecViewActivity
-import com.jereksel.libresubstratum.ResettableLazy
+import android.view.View
+import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -64,36 +61,13 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
     }
 
     @Test
-    fun `toggleOverlay is called after clicking on item`() {
+    fun `toggleOverlay is called after long clicking on item`() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
-
-        recyclerView.run {
-            layoutManager = LinearLayoutManager(context)
-            itemAnimator = DefaultItemAnimator()
-            adapter = adapter_
-            measure(0, 0)
-            layout(0, 0, 100, 10000)
-        }
-
-        val child = recyclerView.layoutManager.findViewByPosition(0)
-        child.performClick()
-        verify(presenter).toggleOverlay("id", true)
-
-    }
-
-    @Test
-    fun `openActivity is called after long clicking on item`() {
-
-        val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
-
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
-
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -105,6 +79,29 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val child = recyclerView.layoutManager.findViewByPosition(0)
         child.performLongClick()
+        verify(presenter).toggleOverlay("id", true)
+
+    }
+
+    @Test
+    fun `openActivity is called after long clicking on image`() {
+
+        val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
+
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
+
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
+
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+
+        val child = recyclerView.layoutManager.findViewByPosition(0).findViewById<View>(R.id.theme_icon)
+        child.performLongClick()
         verify(presenter).openActivity("targetid")
 
     }
@@ -114,9 +111,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val apps = listOf(InstalledOverlay("id", "", "", mock(), "targetid", "", mock(), "type1"))
 
-        val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+        val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo(false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
         `when`(presenter.openActivity("targetid")).thenReturn(false)
 
         recyclerView.run {
@@ -127,7 +124,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
             layout(0, 0, 100, 10000)
         }
 
-        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val child = recyclerView.layoutManager.findViewByPosition(0).findViewById<View>(R.id.theme_icon)
         child.performLongClick()
         verify(presenter).openActivity("targetid")
         assertNotNull(ShadowToast.getLatestToast())
@@ -147,9 +144,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
             val apps = listOf(InstalledOverlay(id, "", "", mock(), "", "", mock()))
 
-            val adapter_ = InstalledOverlaysAdapter(activity, apps, presenter)
+            val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(enabled))
+            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, enabled))
 
             recyclerView.run {
                 layoutManager = LinearLayoutManager(context)
