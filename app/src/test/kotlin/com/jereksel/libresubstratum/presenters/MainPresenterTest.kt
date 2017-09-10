@@ -1,14 +1,16 @@
 package com.jereksel.libresubstratum.presenters
 
-import android.os.Bundle
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.IThemeReader
 import com.nhaarman.mockito_kotlin.argThat
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.specs.FunSpec
+import org.junit.Ignore
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.stubbing.OngoingStubbing
@@ -16,6 +18,7 @@ import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
+import java.io.File
 
 class MainPresenterTest : FunSpec() {
 
@@ -23,15 +26,18 @@ class MainPresenterTest : FunSpec() {
     lateinit var view : View
     @Mock
     lateinit var packageManager : IPackageManager
+    @Mock
+    lateinit var themeReader: IThemeReader
 
     lateinit var presenter : MainPresenter
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = MainPresenter(packageManager)
+        presenter = MainPresenter(packageManager, themeReader)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
+        RxJavaHooks.setOnIOScheduler { Schedulers.immediate() }
 
         val hook = object : RxAndroidSchedulersHook() {
             override fun getMainThreadScheduler() = Schedulers.immediate()
@@ -57,9 +63,47 @@ class MainPresenterTest : FunSpec() {
                 verify(view).addApplications(argThat { size == num })
             }
         }
+        test("Set isEncrypted from themeReader") {
+
+            val app1Id = "app1"
+            val app1Location = File("/app1")
+
+            val app2Id = "app2"
+            val app2Location = File("/app2")
+
+            val installed = listOf(
+                    packageFactory(app1Id, "Theme nr.1", "author1"),
+                    packageFactory(app2Id, "Theme nr.2", "author2")
+            )
+
+            whenever(packageManager.getAppLocation(app1Id)).thenReturn(app1Location)
+            whenever(packageManager.getAppLocation(app2Id)).thenReturn(app2Location)
+
+            whenever(packageManager.getInstalledThemes()).thenReturn(installed)
+
+            whenever(themeReader.isThemeEncrypted(app1Location)).thenReturn(true)
+            whenever(themeReader.isThemeEncrypted(app2Location)).thenReturn(false)
+
+            presenter.getApplications()
+
+            val expected = listOf(
+                    MainViewTheme(app1Id, "Theme nr.1", "author1", null, true),
+                    MainViewTheme(app2Id, "Theme nr.2", "author2", null, false)
+            )
+
+            verify(view).addApplications(expected)
+
+        }
         test("removeView with nulls") {
             presenter.removeView()
         }
+//        test("When checking if is encrypted app location is passed") {
+//            val appLocation = File("/data/applocation")
+//            val appId = "app"
+//            whenever(packageManager.getAppLocation(appId)).thenReturn(appLocation)
+//            presenter.isThemeEncrypted(appId)
+//            verify(themeReader).isThemeEncrypted(appLocation)
+//        }
     }
 
     fun packageFactory(id: String, name: String, author: String): InstalledTheme {
@@ -76,7 +120,5 @@ class MainPresenterTest : FunSpec() {
 //
 //        return Application(id, bundle)
     }
-
-    infix operator fun <T> OngoingStubbing<T>.minus(t: T): OngoingStubbing<T> = thenReturn(t)
 
 }

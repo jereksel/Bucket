@@ -7,21 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import butterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.data.MainViewTheme
 import rx.subjects.PublishSubject
 
-class MainViewAdapter(val apps: List<InstalledTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
-    val onClickSubject = PublishSubject.create<InstalledTheme>()!!
+    val onClickSubject = PublishSubject.create<MainViewTheme>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.appName.text = apps[position].name
         holder.heroImage.setImageDrawable(apps[position].heroImage ?: ColorDrawable(android.R.color.black))
         val element = apps[position]
         holder.view.setOnClickListener { onClickSubject.onNext(element) }
+        holder.lock.visibility = if (apps[position].isEncrypted) View.VISIBLE else View.GONE
+        holder.lock.setOnClickListener {
+            Toast.makeText(it.context, "Theme is encrypted. Ask themer to also include unencrypted files.", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,6 +40,7 @@ class MainViewAdapter(val apps: List<InstalledTheme>) : RecyclerView.Adapter<Mai
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         val appName: TextView by bindView(R.id.textView)
         val heroImage: ImageView by bindView(R.id.heroimage)
+        val lock: ImageView by bindView(R.id.lock)
     }
 
     fun getClickObservable() = onClickSubject.asObservable()!!
