@@ -22,7 +22,7 @@ class MockedApp : App() {
     override fun getAppModule(): AppModule {
         return object : AppModule(this) {
             override fun providesPackageManager(application: Application) = mockedPackageManager
-            override fun providesMainPresenter(packageManager: IPackageManager) = mockedMainPresenter
+            override fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader) = mockedMainPresenter
             override fun providesOverlayService() = mockedOverlayService
             override fun providesActivityProxy() = mockedActivityProxy
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy) = mockedInstalledPresenter

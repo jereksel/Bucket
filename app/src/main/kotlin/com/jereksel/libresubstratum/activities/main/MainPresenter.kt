@@ -1,6 +1,9 @@
 package com.jereksel.libresubstratum.activities.main
 
+import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.ThemeReader
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
 import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import rx.Observable
@@ -9,7 +12,10 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
 
-class MainPresenter(val packageManager: IPackageManager) : MainContract.Presenter {
+class MainPresenter(
+        val packageManager: IPackageManager,
+        val themeReader: IThemeReader
+) : MainContract.Presenter {
 
     companion object {
         val SUBSTRATUM_LEGACY = "Substratum_Legacy"
@@ -25,8 +31,19 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
         subscription?.safeUnsubscribe()
 
         subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
-                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .flatMapIterable { it }
+//                .flatMap { Observable.just(it)
+//                        .observeOn(Schedulers.io())
+                        .map {
+                            val appLocation = packageManager.getAppLocation(it.appId)
+                            val isEncrypted = themeReader.isThemeEncrypted(appLocation)
+                            MainViewTheme.fromInstalledTheme(it, isEncrypted)
+                        }
+//                }
+                .toList()
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe { mainView?.addApplications(it) }
     }
 
@@ -36,7 +53,7 @@ class MainPresenter(val packageManager: IPackageManager) : MainContract.Presente
 
     override fun removeView() {
         mainView = null
-        if (subscription?.isUnsubscribed ?: false) {
+        if (subscription?.isUnsubscribed == true) {
            subscription?.unsubscribe()
         }
     }

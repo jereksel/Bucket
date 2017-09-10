@@ -1,10 +1,10 @@
 package com.jereksel.libresubstratumlib
 
 import java.io.File
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
 
 class ThemeReader {
-
-    fun readThemePack(location: String) : ThemePack = readThemePack(File(location))
 
     fun readThemePack(location: File) : ThemePack {
 
@@ -82,5 +82,21 @@ class ThemeReader {
 
         return Type3Data(listOf(firstType, *rest))
 
+    }
+
+    fun checkIfEncrypted(apk: File): Boolean {
+
+        return ZipFile(apk).use { zipFile ->
+
+            val enc = zipFile.entries().asSequence().firstOrNull { it.name.endsWith(".enc") }?.name
+
+            if (enc == null) {
+                //No encrypted file
+                false
+            } else {
+                val nonEnc = enc.removeSuffix(".enc")
+                zipFile.getEntry(nonEnc) == null
+            }
+        }
     }
 }

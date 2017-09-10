@@ -43,8 +43,8 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesMainPresenter(packageManager: IPackageManager): MainContract.Presenter {
-        return MainPresenter(packageManager)
+    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader): MainContract.Presenter {
+        return MainPresenter(packageManager, themeReader)
     }
 
     @Provides

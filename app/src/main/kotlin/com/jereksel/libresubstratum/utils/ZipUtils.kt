@@ -49,8 +49,6 @@ object ZipUtils {
     }
 
     //We can't just use second function alone - we will close entry when there is no entry opened yet
-    fun ZipInputStream.generateSequence() : Sequence<ZipEntry> {
-        return generateSequence({ this.nextEntry }, { this.closeEntry(); this.nextEntry })
-    }
+    fun ZipInputStream.generateSequence() = generateSequence({ this.nextEntry }, { this.closeEntry(); this.nextEntry })
 
 }
