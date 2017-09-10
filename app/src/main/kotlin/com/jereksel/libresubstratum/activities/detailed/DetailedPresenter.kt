@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed
 
+import android.os.AsyncTask
 import android.os.AsyncTask.THREAD_POOL_EXECUTOR
 import android.util.Log
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -17,6 +18,7 @@ import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
+import java.util.concurrent.FutureTask
 
 class DetailedPresenter(
         val packageManager: IPackageManager,
