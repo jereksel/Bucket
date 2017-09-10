@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ImageView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -14,6 +15,7 @@ import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_reconly.*
+import org.jetbrains.anko.find
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -99,7 +101,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
             layout(0, 0, 100, 10000)
         }
 
-        val child = recyclerView.layoutManager.findViewByPosition(0).findViewById<View>(R.id.theme_icon)
+        val child = recyclerView.layoutManager.findViewByPosition(0).find<View>(R.id.theme_icon)
         child.performLongClick()
         verify(presenter).openActivity("targetid")
 
@@ -123,7 +125,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
             layout(0, 0, 100, 10000)
         }
 
-        val child = recyclerView.layoutManager.findViewByPosition(0).findViewById<View>(R.id.theme_icon)
+        val child = recyclerView.layoutManager.findViewByPosition(0).find<View>(R.id.theme_icon)
         child.performLongClick()
         verify(presenter).openActivity("targetid")
         assertNotNull(ShadowToast.getLatestToast())
