@@ -97,7 +97,7 @@ class MainViewTest: BaseRobolectricTest() {
         val apps = listOf(
                 InstalledTheme("id1", "name1", "author1", d1),
                 InstalledTheme("id2", "name2", "author2", null)
-        )
+        ).map { MainViewTheme.fromInstalledTheme(it, false) }
 
         activity.addApplications(apps)
         assertEquals(2, recyclerView.adapter.itemCount)
