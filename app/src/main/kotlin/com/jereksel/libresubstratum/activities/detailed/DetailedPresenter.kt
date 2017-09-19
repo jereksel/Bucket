@@ -22,7 +22,9 @@ class DetailedPresenter(val packageManager : IPackageManager, val themeReader: I
 
     override fun readTheme(appId: String) {
 
-        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
+        val location = packageManager.getAppLocation(appId)
+
+//        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
         Observable.fromCallable { themeReader.readThemePack(location) }
                 .observeOn(AndroidSchedulers.mainThread())

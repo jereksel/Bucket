@@ -1,9 +1,13 @@
 package com.jereksel.libresubstratumlib
 
+import org.slf4j.LoggerFactory
+import sun.rmi.runtime.Log
 import java.io.File
 import java.util.zip.ZipFile
 
 class ThemeReaderExtractless {
+
+    val logger = LoggerFactory.getLogger(ThemeReaderExtractless::class.java)
 
     fun readThemePack(file: File): ThemePack {
 
@@ -17,14 +21,22 @@ class ThemeReaderExtractless {
                     .map { it.name }
                     .filter { it.startsWith("assets/overlays") }
                     .map { it.removePrefix("assets/overlays/") }
-                    .map { it.split("/") }
-                    .map { it.dropLastWhile { it.isEmpty() } }
-                    .filter { it.size == 2 }
+//                    .toList()
+
+//            val a1 = overlayFiles
+                    .map { it.split("/", limit = 3) }
+//                    .map { it.dropLastWhile { it.isEmpty() } }
+
+//                    val a2 = a1
+                    .filter { it.size >= 2 }
+                    .map { it.subList(0, 2) }
+//                    .filter { it.size == 2 }
 //                    .filterNot { it.last().startsWith(".") }
 //                    .filterNot { it.contains("") }
                     .distinct()
 //                    .toList()
 //                    .sorte
+//val files = a2
 
 //            println(filesInZip)
 
@@ -35,22 +47,23 @@ class ThemeReaderExtractless {
                         it.key to it.value.map { it.second }
                     }
                     .toMap()
+                    .toSortedMap()
 
 //            println(files)
 //
 
-            val first = files.entries.first()
+            val first = files.entries.firstOrNull()
 
-            val type3List = first
-                    .value
+            val type3List = (first?.value ?: listOf())
+                    .filter { it.startsWith("type3") }
                     .mapNotNull {
                         if (it == "type3") {
-                            val entry = zipFile.getEntry("assets/overlays/${first.key}/$it")
+                            val entry = zipFile.getEntry("assets/overlays/${first?.key}/$it")
                             val name = zipFile.getInputStream(entry).bufferedReader().readText()
                             Type3Extension(name, true)
                         } else {
                             val name = it.removePrefix("type3_")
-                            val entry = zipFile.getEntry("assets/overlays/${first.key}/$name")
+                            val entry = zipFile.getEntry("assets/overlays/${first?.key}/$name")
                             if (entry == null) {
                                 //Type3 extensions are directories
                                 Type3Extension(it.removePrefix("type3_"), false)
@@ -66,6 +79,8 @@ class ThemeReaderExtractless {
 //            val
 
             val type3 = if (type3List.isNotEmpty()) {
+
+                logger.debug("Type3: {}", type3List)
 
                 val defaultType3 = type3List.first { it.default }
                 val otherType3 = (type3List - defaultType3).sortedBy { it.name }
@@ -91,10 +106,13 @@ class ThemeReaderExtractless {
                                     }
                                 }
 
+                        logger.debug("Parsing overlay: {}", entry.key)
 
                         val type2Final = if(type2.isNotEmpty()) {
 
-                            val type2Default = type2.first { it.default }
+                            logger.debug("Type2: {}", type2)
+
+                            val type2Default = type2.firstOrNull { it.default } ?: Type2Extension("Type2 Extension", true)
                             val type2Other = (type2 - type2Default).sortedBy { it.name }
 
                             Type2Data(listOf(type2Default) + type2Other)
