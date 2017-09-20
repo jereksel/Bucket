@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import android.os.AsyncTask
 import android.os.AsyncTask.THREAD_POOL_EXECUTOR
 import android.util.Log
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -18,20 +17,22 @@ import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
-import java.util.concurrent.FutureTask
+import java.util.concurrent.Future
 
 class DetailedPresenter(
         val packageManager: IPackageManager,
         val themeReader: IThemeReader,
         val overlayService: OverlayService,
         val activityProxy: IActivityProxy,
-        val themeCompiler: ThemeCompiler
+        val themeCompiler: ThemeCompiler,
+        val themeExtractor: ThemeExtractor
 ) : Presenter {
 
     var detailedView: View? = null
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
+    var future: Future<File>? = null
 
     private var type3: Type3Extension? = null
 
@@ -42,10 +43,25 @@ class DetailedPresenter(
     }
 
     override fun removeView() {
+        future?.cancel(true)
         detailedView = null
     }
 
     override fun readTheme(appId: String) {
+
+        val extractLocation = File(packageManager.getCacheFolder(), appId)
+
+        if (!extractLocation.exists()) {
+            extractLocation.mkdirs()
+        }
+
+        val apkLocation = packageManager.getAppLocation(appId)
+
+        val future = this.future
+
+        if (future == null || future.isCancelled) {
+            this.future = themeExtractor.extract(apkLocation, extractLocation)
+        }
 
         if (init) {
             detailedView?.addThemes(themePack)
@@ -54,6 +70,7 @@ class DetailedPresenter(
         init = true
 
         this.appId = appId
+
         val location = packageManager.getAppLocation(appId)
 
 //        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
@@ -163,7 +180,7 @@ class DetailedPresenter(
 
         val themeName = packageManager.getAppName(appId)
 
-        return "${theme.application}.$themeName$type1String$type2String$type3String"
+        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "")
     }
 
 
@@ -270,6 +287,7 @@ class DetailedPresenter(
 
     override fun compileAndRun(adapterPosition: Int) {
 
+        val theme = themePack.themes[adapterPosition]
         val state = themePackState[adapterPosition]
         state.compiling = true
 
@@ -282,6 +300,9 @@ class DetailedPresenter(
 //            overlayService.installApk(apk)
             compileAndRun1(adapterPosition)
 //            val apk =
+            if (theme.application.startsWith("com.android.systemui")) {
+                detailedView?.showSnackBar("SystemUI may be required", "Restart", { overlayService.restartSystemUI() })
+            }
         }
     }
 
@@ -296,11 +317,13 @@ class DetailedPresenter(
 
     fun compileForPosition(position: Int): File {
 
+        val cacheLocation = future!!.get()
+
         val overlay = getOverlayIdForTheme(position)
         val state = themePackState[position]
         val theme = themePack.themes[position]
 
-        val location = getFile(packageManager.getCacheFolder(), appId, "assets", "overlays", themePack.themes[position].application)
+        val location = getFile(cacheLocation, "assets", "overlays", theme.application)
 
         val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
         val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
@@ -315,7 +338,9 @@ class DetailedPresenter(
 
         val themeInfo = packageManager.getAppVersion(appId)
 
-        val themeToCompile = ThemeToCompile(overlay,appId,theme.application, type1, type2,
+        val fixedTargetApp = if (theme.application.startsWith("com.android.systemui.")) "com.android.systemui" else theme.application
+
+        val themeToCompile = ThemeToCompile(overlay, appId, fixedTargetApp, type1, type2,
                 type3, themeInfo.first, themeInfo.second)
 
         return themeCompiler.compileTheme(themeToCompile, location)
@@ -330,7 +355,6 @@ class DetailedPresenter(
         } else {
 
             val apk = compileForPosition(position)
-
 //            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.installApk(apk)
 

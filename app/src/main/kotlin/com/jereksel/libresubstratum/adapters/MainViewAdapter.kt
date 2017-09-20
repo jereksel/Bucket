@@ -13,15 +13,24 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.domain.BitmapLruCache
 import rx.subjects.PublishSubject
 
 class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
     val onClickSubject = PublishSubject.create<MainViewTheme>()!!
 
+    val cache = BitmapLruCache(apps)
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.appName.text = apps[position].name
-        holder.heroImage.setImageDrawable(apps[position].heroImage ?: ColorDrawable(android.R.color.black))
+//        holder.heroImage.setImageDrawable(apps[position].heroImage ?: ColorDrawable(android.R.color.black))
+        val bm = cache[position]
+        if (bm != null) {
+            holder.heroImage.setImageBitmap(bm)
+        } else {
+            holder.heroImage.setImageDrawable(ColorDrawable(android.R.color.black))
+        }
         val element = apps[position]
         holder.view.setOnClickListener { onClickSubject.onNext(element) }
         holder.lock.visibility = if (apps[position].isEncrypted) View.VISIBLE else View.GONE

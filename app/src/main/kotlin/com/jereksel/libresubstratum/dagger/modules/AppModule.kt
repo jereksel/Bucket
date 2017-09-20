@@ -54,14 +54,18 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
+    open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
+
+    @Provides
     open fun providesDetailedPresenter(
             packageManager: IPackageManager,
             themeReader: IThemeReader,
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            themeCompiler: ThemeCompiler
+            themeCompiler: ThemeCompiler,
+            themeExtractor: ThemeExtractor
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler)
+        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
     }
 
     @Provides
