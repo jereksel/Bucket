@@ -66,10 +66,16 @@ class MainPresenter(
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)
 
-        extractSubs = Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
-                .subscribe { mainView?.openThemeFragment(appId) }
+        mainView?.openThemeFragment(appId)
+
+//        Observable.fromCallable { source.extractZip(dest) }
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.computation())
+//                .subscribe { mainView?.openThemeFragment(appId) }
+//        extractSubs = Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.computation())
+//                .subscribe { mainView?.openThemeFragment(appId) }
 
     }
 }

@@ -2,11 +2,10 @@ package com.jereksel.libresubstratumlib
 
 import java.io.File
 import java.util.zip.ZipFile
-import java.util.zip.ZipInputStream
 
 class ThemeReader {
 
-    fun readThemePack(location: File) : ThemePack {
+    fun readThemePack(location: File): ThemePack {
 
         val overlaysLocation = File(location, "overlays")
 
@@ -24,7 +23,7 @@ class ThemeReader {
 
     fun readTheme(location: File) = Theme(location.name, readType1Data(location), readType2Data(location))
 
-    fun readType1Data(location: File) : List<Type1Data> {
+    fun readType1Data(location: File): List<Type1Data> {
 
         val typeMap = mutableMapOf<String, MutableList<Type1Extension>>()
 
@@ -44,7 +43,7 @@ class ThemeReader {
         return typeMap.map { Type1Data(it.value, it.key) }.sortedBy { it.suffix }
     }
 
-    fun readType2Data(dir: File) : Type2Data? {
+    fun readType2Data(dir: File): Type2Data? {
         val type2File = File(dir, "type2")
         if (!type2File.exists()) {
             return null
@@ -63,7 +62,7 @@ class ThemeReader {
 
     }
 
-    fun readType3Data(location: File) : Type3Data? {
+    fun readType3Data(location: File): Type3Data? {
         val dir = location.listFiles()[0]
 
         val type3File = File(dir, "type3")

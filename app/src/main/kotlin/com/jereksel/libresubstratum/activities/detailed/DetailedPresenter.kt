@@ -54,7 +54,9 @@ class DetailedPresenter(
         init = true
 
         this.appId = appId
-        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
+        val location = packageManager.getAppLocation(appId)
+
+//        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
         Observable.fromCallable { themeReader.readThemePack(location) }
                 .observeOn(Schedulers.computation())
