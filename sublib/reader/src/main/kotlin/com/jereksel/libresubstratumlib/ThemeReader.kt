@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratumlib
 
-import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 import java.util.zip.ZipFile
 

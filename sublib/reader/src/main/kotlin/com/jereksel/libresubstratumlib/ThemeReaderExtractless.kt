@@ -1,13 +1,13 @@
 package com.jereksel.libresubstratumlib
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import sun.rmi.runtime.Log
 import java.io.File
 import java.util.zip.ZipFile
 
 class ThemeReaderExtractless {
 
-    val logger = LoggerFactory.getLogger(ThemeReaderExtractless::class.java)
+    val logger: Logger = LoggerFactory.getLogger(ThemeReaderExtractless::class.java)
 
     fun readThemePack(file: File): ThemePack {
 
@@ -21,36 +21,17 @@ class ThemeReaderExtractless {
                     .map { it.name }
                     .filter { it.startsWith("assets/overlays") }
                     .map { it.removePrefix("assets/overlays/") }
-//                    .toList()
-
-//            val a1 = overlayFiles
                     .map { it.split("/", limit = 3) }
-//                    .map { it.dropLastWhile { it.isEmpty() } }
-
-//                    val a2 = a1
                     .filter { it.size >= 2 }
                     .map { it.subList(0, 2) }
-//                    .filter { it.size == 2 }
-//                    .filterNot { it.last().startsWith(".") }
-//                    .filterNot { it.contains("") }
                     .distinct()
-//                    .toList()
-//                    .sorte
-//val files = a2
-
-//            println(filesInZip)
-
-//            val a = filesInZip
                     .map { it[0] to it[1] }
-                    .groupBy { it.first }
-                    .map {
-                        it.key to it.value.map { it.second }
-                    }
-                    .toMap()
+                    .groupBy({ it.first }, { it.second })
+//                    .map {
+//                        it.key to it.value.map { it.second }
+//                    }
+//                    .toMap()
                     .toSortedMap()
-
-//            println(files)
-//
 
             val first = files.entries.firstOrNull()
 
@@ -145,44 +126,11 @@ class ThemeReaderExtractless {
 
                                 }
 
-//                        println(type1s)
-
-
                         Theme(entry.key, type1s, type2Final)
                     }
 
-//            val type3Final = if (type3Default == null) {
-//                val otherType3 = (type3 - type3Default).sortedBy { it.name }
-//
-//                listOf(type3Default, *otherType3.toTypedArray())
-//            } else {
-//                null
-//            }
-//
-//            println(type3Final)
-//
             ThemePack(themes, type3)
-
-//            val fileMap = filesInZip.asso
-
-
-//            ZipUtil.iterate(file, { zipEntry ->
-//
-//
-//            })
         }
     }
-//
-//    private fun getType3Data(file: File) {
-//
-//        ZipFile(file).use { zipFile ->
-//            ZipUtil.iterate(file, { zipEntry ->
-//
-//                zipEntry.
-//
-//            })
-//        }
-//
-//    }
 
 }

@@ -22,7 +22,7 @@ class ThemeReaderExtractlessTest extends Specification {
 
         then:
         true
-        ["Initial color a", "Green", "Red"] == themePack.themes[0].type1.get(0).extension.collect { it.name }
+        ["Initial color", "Green", "Red"] == themePack.themes[0].type1.get(0).extension.collect { it.name }
     }
 
     def "simple type2 test"() {
