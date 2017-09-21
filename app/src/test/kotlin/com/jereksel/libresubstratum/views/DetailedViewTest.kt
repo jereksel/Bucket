@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.views
 
+import android.app.ProgressDialog
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import com.jereksel.libresubstratum.BuildConfig
@@ -19,19 +20,29 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import android.content.Intent
 import android.provider.Settings
+import android.support.design.internal.SnackbarContentLayout
+import android.support.design.widget.Snackbar
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import com.jereksel.libresubstratum.ShadowSnackbar
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
 import com.jereksel.libresubstratumlib.Type3Extension
+import com.nhaarman.mockito_kotlin.mock
 import org.robolectric.shadows.ShadowApplication
+import org.robolectric.shadows.ShadowDialog
+import org.robolectric.shadows.ShadowToast
+import java.util.*
 
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
         application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
+        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
+        shadows = arrayOf(ShadowSnackbar::class)
+)
 class DetailedViewTest {
 
     lateinit var activityController : ActivityController<DetailedView>
@@ -77,9 +88,56 @@ class DetailedViewTest {
         assertEquals(type3.extensions.map { Type3ExtensionToString(it) }, (spinner.adapter as ArrayAdapter<*>).getAllItems())
     }
 
+    @Test
     fun `type3 spinner is no visible whenno type3 extensions are available`() {
         activity.addThemes(ThemePack(listOf()))
         assertThat(spinner).isNotVisible
+    }
+
+    @Test
+    fun `toast is shown after invoking showToast`() {
+        val text = UUID.randomUUID().toString()
+        activity.showToast(text)
+
+        assertNotNull(ShadowToast.getLatestToast())
+        assertEquals(text, ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun `hideCompileDialog doesn't crash without dialog`() {
+        activity.hideCompileDialog()
+    }
+
+    @Test
+    fun `showCompileDialog indeed shows dialog`() {
+        activity.showCompileDialog(2)
+        val dialog = ShadowDialog.getLatestDialog()
+        assertNotNull(dialog)
+        assertTrue(dialog.isShowing)
+    }
+
+    @Test
+    fun `setProgress test`() {
+        activity.showCompileDialog(4)
+        val dialog = ShadowDialog.getLatestDialog() as ProgressDialog
+        assertNotNull(dialog)
+        assertEquals(0, dialog.progress)
+        activity.increaseDialogProgress()
+        assertEquals(1, dialog.progress)
+    }
+
+    @Test
+    fun `snackBar test`() {
+//        val f: () -> Unit = mock()
+        var clicked = false
+        activity.showSnackBar("Text", "Button", { clicked = true })
+        val snackbar = ShadowSnackbar.getLatestSnackbar()
+        assertEquals("Text", ShadowSnackbar.getTextOfLatestSnackbar())
+        val button = ((snackbar.view as ViewGroup).getChildAt(0) as SnackbarContentLayout).actionView
+        assertEquals("Button", button.text)
+        assertFalse(clicked)
+        button.performClick()
+        assertTrue(clicked)
     }
 
     private fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }

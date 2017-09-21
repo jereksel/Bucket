@@ -101,7 +101,7 @@ open class DetailedView : AppCompatActivity(), View {
         if (dialog != null && dialog.isShowing) {
             dialog.dismiss()
         }
-        recyclerView.adapter.notifyDataSetChanged()
+        recyclerView.adapter?.notifyDataSetChanged()
     }
 
 
