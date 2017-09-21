@@ -1,15 +1,11 @@
 package com.jereksel.libresubstratum.domain
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.support.v4.util.LruCache
-import com.jereksel.libresubstratum.data.MainViewTheme
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-
+import android.support.v4.util.LruCache
+import com.jereksel.libresubstratum.data.MainViewTheme
 
 
 class BitmapLruCache(private val apps: List<MainViewTheme>): LruCache<Int, Bitmap>(((Runtime.getRuntime().maxMemory() / 1024) / 2).toInt()) {
@@ -22,15 +18,15 @@ class BitmapLruCache(private val apps: List<MainViewTheme>): LruCache<Int, Bitma
             return null
         }
     }
+
     override fun sizeOf(key: Int, bitmap: Bitmap) = bitmap.byteCount / 1024
 
     //https://stackoverflow.com/questions/3035692/how-to-convert-a-drawable-to-a-bitmap
     fun drawableToBitmap(drawable: Drawable): Bitmap {
 
         if (drawable is BitmapDrawable) {
-            val bitmapDrawable = drawable
-            if (bitmapDrawable.bitmap != null) {
-                return bitmapDrawable.bitmap
+            if (drawable.bitmap != null) {
+                return drawable.bitmap
             }
         }
 
