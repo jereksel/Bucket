@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import android.graphics.drawable.Drawable
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
@@ -67,13 +68,16 @@ class MainPresenterTest : FunSpec() {
 
             val app1Id = "app1"
             val app1Location = File("/app1")
+            val app1Drawable = { null }
 
             val app2Id = "app2"
             val app2Location = File("/app2")
+            val app2Drawable = { null }
+
 
             val installed = listOf(
-                    packageFactory(app1Id, "Theme nr.1", "author1"),
-                    packageFactory(app2Id, "Theme nr.2", "author2")
+                    packageFactory(app1Id, "Theme nr.1", "author1", app1Drawable),
+                    packageFactory(app2Id, "Theme nr.2", "author2", app2Drawable)
             )
 
             whenever(packageManager.getAppLocation(app1Id)).thenReturn(app1Location)
@@ -87,8 +91,8 @@ class MainPresenterTest : FunSpec() {
             presenter.getApplications()
 
             val expected = listOf(
-                    MainViewTheme(app1Id, "Theme nr.1", "author1", null, true),
-                    MainViewTheme(app2Id, "Theme nr.2", "author2", null, false)
+                    MainViewTheme(app1Id, "Theme nr.1", "author1", app1Drawable, true),
+                    MainViewTheme(app2Id, "Theme nr.2", "author2", app2Drawable, false)
             )
 
             verify(view).addApplications(expected)
@@ -107,9 +111,9 @@ class MainPresenterTest : FunSpec() {
 //        }
     }
 
-    fun packageFactory(id: String, name: String, author: String): InstalledTheme {
+    fun packageFactory(id: String, name: String, author: String, drawable: () -> Drawable? = { null }): InstalledTheme {
 
-        return InstalledTheme(id, name, author, null)
+        return InstalledTheme(id, name, author, drawable)
 
 //        val bundle = mock<Bundle> {
 //            on { get(MainPresenter.SUBSTRATUM_NAME) } - name
