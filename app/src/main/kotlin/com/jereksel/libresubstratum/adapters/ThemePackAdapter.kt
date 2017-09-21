@@ -10,7 +10,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import butterknife.bindView
+import kotterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.data.Type1ExtensionToString

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import butterknife.bindView
+import kotterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme

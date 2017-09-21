@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import butterknife.bindView
+import kotterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
