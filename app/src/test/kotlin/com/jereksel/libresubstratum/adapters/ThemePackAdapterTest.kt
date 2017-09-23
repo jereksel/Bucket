@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.adapters
 
+import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -129,6 +130,26 @@ class ThemePackAdapterTest {
 
         viewHolder.card.performLongClick()
         verify(presenter).compileAndRun(0)
+
+    }
+
+    @Test
+    fun `Long clicking on icon invokes openInSplit`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ViewHolder
+
+        viewHolder.appIcon.performLongClick()
+        verify(presenter).openInSplit(0)
 
     }
 
@@ -329,6 +350,58 @@ class ThemePackAdapterTest {
 
     }
 
+    @Test
+    fun `Invoking setEnabled sets color of appName`() {
 
+        val viewHolder = getViewHolder()
+
+        viewHolder.setEnabled(true)
+        assertThat(viewHolder.appName).hasCurrentTextColor(Color.GREEN)
+
+        viewHolder.setEnabled(false)
+        assertThat(viewHolder.appName).hasCurrentTextColor(Color.RED)
+    }
+
+    @Test
+    fun `setCompiling controlls overlay visibility`() {
+
+        val viewHolder = getViewHolder()
+
+        viewHolder.setCompiling(true)
+        assertThat(viewHolder.overlay).isVisible
+
+        viewHolder.setCompiling(false)
+        assertThat(viewHolder.overlay).isNotVisible
+    }
+
+    @Test
+    fun `When 2 nulls are passed to setInstalled "Up to Date" message is shown`() {
+
+        val viewHolder = getViewHolder()
+
+        viewHolder.setInstalled(null, null)
+
+        assertThat(viewHolder.upToDate).apply {
+            isVisible
+            hasCurrentTextColor(Color.GREEN)
+            hasText("Up to date")
+        }
+
+    }
+
+    @Test
+    fun `When when not null is passed to setInstalled updating message is shown`() {
+
+        val viewHolder = getViewHolder()
+
+        viewHolder.setInstalled("1.0", "1.1")
+
+        assertThat(viewHolder.upToDate).apply {
+            isVisible
+            hasCurrentTextColor(Color.RED)
+            hasText("Update available: 1.0 -> 1.1")
+        }
+
+    }
 
 }
