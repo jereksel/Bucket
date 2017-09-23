@@ -1,12 +1,11 @@
 package com.jereksel.libresubstratum.adapters
 
-//import org.assertj.core.api.Assertions.*
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.AdapterView
+import android.view.View.VISIBLE
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.RecViewActivity
@@ -16,6 +15,7 @@ import com.jereksel.libresubstratum.adapters.ThemePackAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.getAllStrings
+import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.Type1Extension
 import com.jereksel.libresubstratumlib.Type2Extension
 import com.nhaarman.mockito_kotlin.never
@@ -36,6 +36,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
+@Suppress("IllegalIdentifier")
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
         application = MockedApp::class,
@@ -111,9 +112,102 @@ class ThemePackAdapterTest {
         verify(presenter, never()).setCheckbox(0, false)
     }
 
-//    @Ignore
-    @Ignore
-    fun getViewHolder(): ViewHolder {
+    @Test
+    fun `Long clicking on card invokes compileAndRun`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ViewHolder
+
+        viewHolder.card.performLongClick()
+        verify(presenter).compileAndRun(0)
+
+    }
+
+    @Test
+    fun `1X Spinner selection is passes to presenter`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ViewHolder
+
+        val spinners = listOf(
+                viewHolder.type1aSpinner,
+                viewHolder.type1bSpinner,
+                viewHolder.type1cSpinner
+        )
+
+        val verifies = listOf(
+                { verify(presenter).setType1a(0, 1) },
+                { verify(presenter).setType1b(0, 1) },
+                { verify(presenter).setType1c(0, 1) }
+        )
+
+        spinners.zip(verifies).forEach { (spinner, verify) ->
+
+            val arr = listOf(
+                    Type1ExtensionToString(Type1Extension("red", true)),
+                    Type1ExtensionToString(Type1Extension("green", false))
+            )
+
+            spinner.visibility = VISIBLE
+            spinner.list = arr
+            spinner.setSelection(0)
+            reset(presenter)
+            spinner.setSelection(1)
+            verify.invoke()
+        }
+    }
+
+
+    @Test
+    fun `2 Spinner selection is passes to presenter`() {
+        whenever(presenter.getNumberOfThemes()).thenReturn(1)
+        val adapter_ = ThemePackAdapter(presenter)
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+        assertThat(adapter_).hasItemCount(1)
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val viewHolder = recyclerView.getChildViewHolder(child) as ViewHolder
+
+
+        val arr = listOf(
+                Type2ExtensionToString(Type2Extension("red", true)),
+                Type2ExtensionToString(Type2Extension("green", false))
+        )
+
+        val spinner = viewHolder.type2Spinner
+
+        spinner.visibility = View.VISIBLE
+        spinner.list = arr
+        spinner.setSelection(0)
+        reset(presenter)
+        spinner.setSelection(1)
+        verify(presenter).setType2(0, 1)
+    }
+
+    private fun getViewHolder(): ViewHolder {
         whenever(presenter.getNumberOfThemes()).thenReturn(1)
         val adapter_ = ThemePackAdapter(presenter)
         recyclerView.run {
@@ -195,15 +289,6 @@ class ThemePackAdapterTest {
                     Type1ExtensionToString(Type1Extension("green", false))
             )
 
-            holder.onItemSelectedListener= object: AdapterView.OnItemSelectedListener {
-
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
-            }
-
             setter.invoke(arr, 0)
             assertThat(holder.adapter.getAllStrings()).hasSameElementsAs(listOf("red", "green"))
             assertEquals(0, holder.selectedItemId)
@@ -223,6 +308,7 @@ class ThemePackAdapterTest {
     }
 
 
+    @Test
     fun `Passing list to type2Spinner sets it as spinner's data`() {
 
         val viewHolder = getViewHolder()
@@ -242,6 +328,7 @@ class ThemePackAdapterTest {
         assertEquals(1, holder.selectedItemId)
 
     }
+
 
 
 }
