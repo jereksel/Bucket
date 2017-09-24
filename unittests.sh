@@ -14,6 +14,7 @@ set -e
 ./gradlew sublib:reader:test --no-daemon
 ./gradlew sublib:compiler:test --no-daemon
 
-./gradlew jacocoTestDebugUnitTestReport --no-daemon
+#./gradlew jacocoTestDebugUnitTestReport --no-daemon
+./gradlew app:jacocoTestReport --no-daemon
 ./gradlew sublib:reader:jacocoTestReport --no-daemon
 ./gradlew sublib:compiler:jacocoTestReport --no-daemon
