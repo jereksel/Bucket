@@ -219,6 +219,8 @@ dependencies {
     compile files('lib/zipio-lib-1.8.jar')
     compile files('lib/zipsigner-lib-1.17.jar')
 
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     compile 'com.jereksel:omslib:1.0.2'
 
 //    compile 'com.google.guava:guava:20.0'
