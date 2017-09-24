@@ -81,7 +81,7 @@ android {
             if (System.getenv("CIRCLE_TAG")) {
                 versionName System.getenv("CIRCLE_TAG")
             } else {
-                versionName "NEXT-${"git rev-parse --short HEAD".execute().text}"
+                versionName "NEXT-${"git rev-parse --short HEAD".execute().text.trim()}"
             }
         } else {
             versionCode 1
