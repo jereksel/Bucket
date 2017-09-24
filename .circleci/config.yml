@@ -20,9 +20,9 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-          name: Run Tests
-          command: ./unittests.sh || ./unittests.sh
+#      - run:
+#          name: Run Tests
+#          command: ./unittests.sh || ./unittests.sh
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -38,6 +38,6 @@ jobs:
               cd app
               openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
               tar xvf secrets.tar
-              cd ..
               ls -al
+              cd ..
             fi
