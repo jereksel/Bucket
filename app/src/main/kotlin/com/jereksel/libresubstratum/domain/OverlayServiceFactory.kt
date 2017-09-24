@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
-import com.jereksel.libresubstratum.domain.overlayService.nougat.WODuCommitsOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
 
 
 object OverlayServiceFactory {
@@ -31,7 +31,7 @@ object OverlayServiceFactory {
         if (isNewInterfacerPermissionAvailable(context)) {
             return WDUCommitsOverlayService(context)
         } else {
-            return WODuCommitsOverlayService(context)
+            return WODUCommitsOverlayService(context)
         }
 
     }

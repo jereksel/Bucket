@@ -3,7 +3,7 @@ package com.jereksel.libresubstratum.domain.overlayService.nougat
 import android.content.Context
 import android.provider.Settings
 
-class WODuCommitsOverlayService(context: Context): InterfacerOverlayService(context) {
+class WODUCommitsOverlayService(context: Context): InterfacerOverlayService(context) {
     override fun allPermissions() = emptyList<String>()
 
     override fun additionalSteps(): String? {
