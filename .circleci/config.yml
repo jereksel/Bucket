@@ -15,10 +15,10 @@ jobs:
           command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./gradlew androidDependencies --no-daemon 
       - run:
           name: Build app
-          command: ./gradlew assembleDebug
+          command: ./gradlew assembleDebug --no-daemon
       - save_cache:
           paths:
             - ~/.gradle
@@ -42,5 +42,5 @@ jobs:
               openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
               tar xvf secrets.tar
               cd ..
-              ./gradlew publishRelease
+              ./gradlew publishRelease --no-daemon
             fi
