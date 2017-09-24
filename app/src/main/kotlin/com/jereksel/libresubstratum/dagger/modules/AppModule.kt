@@ -34,7 +34,7 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesOverlayService(): OverlayService {
-        return InterfacerOverlayService(application)
+        return OverlayServiceFactory.getOverlayService(application)
     }
 
     @Provides
@@ -49,8 +49,8 @@ open class AppModule(private val application: Application) {
 
     @Provides
 //    @Singleton
-    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader)
+    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
+        return MainPresenter(packageManager, themeReader, overlayService)
     }
 
     @Provides

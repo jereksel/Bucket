@@ -3,9 +3,8 @@ package com.jereksel.libresubstratum.activities.main
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.ThemeReader
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.safeUnsubscribe
-import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -14,7 +13,8 @@ import java.io.File
 
 class MainPresenter(
         val packageManager: IPackageManager,
-        val themeReader: IThemeReader
+        val themeReader: IThemeReader,
+        val overlayService: OverlayService
 ) : MainContract.Presenter {
 
     companion object {
@@ -53,6 +53,20 @@ class MainPresenter(
 
     override fun setView(view: MainContract.View) {
         mainView = view
+    }
+
+    override fun checkPermissions() {
+        val perms = overlayService.requiredPermissions()
+        if (perms.isNotEmpty()) {
+            mainView?.requestPermissions(perms)
+            return
+        }
+        mainView?.dismissDialog()
+        val message = overlayService.additionalSteps()
+        if (message != null) {
+            mainView?.showUndismissableDialog(message)
+            return
+        }
     }
 
     override fun removeView() {

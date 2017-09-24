@@ -10,12 +10,16 @@ interface MainContract {
     interface Presenter : MVPPresenter<View> {
         fun getApplications()
         fun openThemeScreen(appId: String)
+        fun checkPermissions()
 //        fun isThemeEncrypted(appId: String)
     }
 
     interface View : MVPView {
         fun addApplications(list: List<MainViewTheme>)
         fun openThemeFragment(appId: String)
+        fun requestPermissions(perms: List<String>)
+        fun dismissDialog()
+        fun showUndismissableDialog(message: String)
         fun setDialogProgress(progress: Int)
     }
 
