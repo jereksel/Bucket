@@ -97,10 +97,8 @@ class MainViewTest: BaseRobolectricTest() {
 
     @Test
     fun `RecyclerView should show returned themes`() {
-        val d1 : Drawable = mock()
-
         val apps = mutableListOf(
-                MainViewTheme("id1", "name1", "author1", d1, false),
+                MainViewTheme("id1", "name1", "author1", null, false),
                 MainViewTheme("id2", "name2", "author2", null, false)
         )
 
@@ -109,7 +107,6 @@ class MainViewTest: BaseRobolectricTest() {
         recyclerView.measure(0,0)
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
-        assertSame(d1, (recyclerView.getChildAt(0).findViewById<ImageView>(R.id.heroimage).drawable))
         assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById<ImageView>(R.id.heroimage).drawable))
     }
 
