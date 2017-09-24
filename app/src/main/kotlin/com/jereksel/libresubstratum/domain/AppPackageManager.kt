@@ -3,8 +3,9 @@ package com.jereksel.libresubstratum.domain
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
 import com.jereksel.libresubstratum.R
@@ -72,13 +73,55 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map { Application(it.packageName, it.applicationInfo.metaData) }
     }
 
-    fun getHeroImage(appId: String): Drawable? {
+    fun getHeroImage(appId: String): File? {
         val res = context.packageManager.getResourcesForApplication(appId)
         val resId = res.getIdentifier("heroimage", "drawable", appId)
         if (resId == 0) {
             return null
         }
-        return ResourcesCompat.getDrawable(res, resId, null)
+        val drawable = ResourcesCompat.getDrawable(res, resId, null) ?: return null
+
+        val bitmap = drawableToBitmap(drawable)
+
+        return saveBitmap(bitmap, appId)
+    }
+
+    fun saveBitmap(bitmap: Bitmap, appId: String) : File {
+
+        val file = File(context.cacheDir, "hero-$appId.jpg")
+        if (file.exists()) {
+            file.delete()
+        }
+
+        file.createNewFile()
+        file.outputStream().use { fos ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
+        }
+
+        return file
+    }
+
+    //https://stackoverflow.com/questions/3035692/how-to-convert-a-drawable-to-a-bitmap
+    fun drawableToBitmap(drawable: Drawable): Bitmap {
+
+        if (drawable is BitmapDrawable) {
+            if (drawable.bitmap != null) {
+                return drawable.bitmap
+            }
+        }
+
+        val bitmap: Bitmap
+
+        if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_4444) // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        }
+
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 
     override fun getAppLocation(appId: String): File {
