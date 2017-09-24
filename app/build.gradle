@@ -11,6 +11,7 @@ apply plugin: 'com.github.triplet.play'
 
 apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 buildscript {
     repositories {
@@ -87,7 +88,10 @@ android {
             versionCode 1
             versionName "1.0"
         }
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
 //        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
         manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
         playAccountConfig = playAccountConfigs.defaultAccountConfig
@@ -146,13 +150,17 @@ android {
             }
         }
     }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //Support library
     compile "com.android.support:appcompat-v7:$support_library_version"
@@ -172,13 +180,13 @@ dependencies {
 //    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Kotterknife
-    compile 'com.jakewharton:kotterknife:0.1.0-20160329.025248-20', {
+    compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
     compile 'com.github.clans:fab:1.6.4'
-    
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
@@ -193,8 +201,10 @@ dependencies {
 //    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
 
-    compile 'com.github.marcinmoskala.activitystarter:activitystarter:1.00-beta.2'
-    kapt 'com.github.marcinmoskala.activitystarter:activitystarter-compiler:1.00-beta.2'
+    compile 'com.github.clans:fab:1.6.4'
+
+    compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
+    kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
     compile "org.jetbrains.anko:anko-commons:$anko_version"
 
@@ -202,9 +212,20 @@ dependencies {
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
     compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
 
+    //Signing
+    compile files('lib/kellinwood-logging-android-1.4.jar')
+    compile files('lib/kellinwood-logging-lib-1.1.jar')
+    compile files('lib/kellinwood-logging-log4j-1.0.jar')
+    compile files('lib/zipio-lib-1.8.jar')
+    compile files('lib/zipsigner-lib-1.17.jar')
+
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile 'com.jereksel:omslib:1.0.2'
+
+//    compile 'com.google.guava:guava:20.0'
+    androidTestCompile 'com.google.guava:guava:20.0'
+//    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
@@ -236,6 +257,25 @@ dependencies {
     })
 
     testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    //assertj android
+    testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
+    testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
+
+    androidTestCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    compile project(path: ':sublib:compiler')
     testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
     androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 

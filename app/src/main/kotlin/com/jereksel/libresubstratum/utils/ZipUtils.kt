@@ -1,51 +1,54 @@
 package com.jereksel.libresubstratum.utils
 
-import android.util.Log
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
 object ZipUtils {
 
-    fun File.extractZip(dest: File) {
+    fun File.extractZip(dest: File, progressCallback: (Int) -> Unit = {}) {
         if (dest.exists()) {
             dest.deleteRecursively()
         }
         dest.mkdirs()
 
-        val fis = FileInputStream(this)
-        val zis = ZipInputStream(BufferedInputStream(fis))
+        val length = ZipFile(this).size()
 
-        zis.generateSequence().forEach { ze ->
+        FileInputStream(this).use { fis ->
+            ZipInputStream(BufferedInputStream(fis)).use { zis ->
+                zis.generateSequence().forEachIndexed { index, ze ->
 
-            val fileName = ze.name
+                    val fileName = ze.name
 
-//            Log.d("extractZip", fileName)
+                    progressCallback((index * 100) / length)
 
-            if (!fileName.startsWith("assets")) {
-                return@forEach
+//                    Log.d("extractZip", fileName)
+
+                    if (!fileName.startsWith("assets")) {
+                        return@forEachIndexed
+                    }
+
+                    if (ze.isDirectory) {
+                        File(dest, fileName).mkdirs()
+                        return@forEachIndexed
+                    }
+
+                    val destFile = File(dest, fileName)
+
+                    destFile.parentFile.mkdirs()
+                    destFile.createNewFile()
+                    val fout = FileOutputStream(destFile)
+
+                    zis.copyTo(fout)
+                    fout.close()
+                }
+
             }
-
-            if (ze.isDirectory) {
-                File(dest, fileName).mkdirs()
-                return@forEach
-            }
-
-            val destFile = File(dest, fileName)
-
-            destFile.parentFile.mkdirs()
-            destFile.createNewFile()
-            val fout = FileOutputStream(destFile)
-
-            zis.copyTo(fout, 1024 * 8)
-            fout.close()
-
         }
-        zis.close()
-        fis.close()
     }
 
     //We can't just use second function alone - we will close entry when there is no entry opened yet

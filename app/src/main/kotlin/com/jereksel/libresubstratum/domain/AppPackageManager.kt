@@ -15,19 +15,27 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.has
 import java.io.File
+import java.util.logging.Logger
 
 class AppPackageManager(val context: Context) : IPackageManager {
 
     companion object {
-        val metadataOverlayTarget = "Substratum_Target"
-        val metadataOverlayParent = "Substratum_Parent"
-
-        val metadataOverlayType1a = "Substratum_Type1a"
-        val metadataOverlayType1b = "Substratum_Type1b"
-        val metadataOverlayType1c = "Substratum_Type1c"
-        val metadataOverlayType2 = "Substratum_Type2"
-        val metadataOverlayType3 = "Substratum_Type3"
+        private val SYSTEMUI = mapOf(
+                "com.android.systemui.headers" to "Headers",
+                "com.android.systemui.navbars" to "Navbars",
+                "com.android.systemui.statusbars" to "Statusbars",
+                "com.android.systemui.tiles" to "Tiles"
+        )
     }
+
+    val metadataOverlayTarget = "Substratum_Target"
+    val metadataOverlayParent = "Substratum_Parent"
+
+    val metadataOverlayType1a = "Substratum_Type1a"
+    val metadataOverlayType1b = "Substratum_Type1b"
+    val metadataOverlayType1c = "Substratum_Type1c"
+    val metadataOverlayType2 = "Substratum_Type2"
+    val metadataOverlayType3 = "Substratum_Type3"
 
     override fun getInstalledOverlays(): List<InstalledOverlay> {
         return getApplications()
@@ -125,11 +133,21 @@ class AppPackageManager(val context: Context) : IPackageManager {
     }
 
     override fun getAppLocation(appId: String): File {
+
+        if (SYSTEMUI.contains(appId)) {
+            return getAppLocation("com.android.systemui")
+        }
+
         return File(context.packageManager.getInstalledApplications(0)
                 .find { it.packageName == appId }!!.sourceDir)
     }
 
     override fun isPackageInstalled(appId: String): Boolean {
+
+        if (SYSTEMUI.contains(appId)) {
+            return true
+        }
+
         try {
             context.packageManager.getApplicationInfo(appId, 0)
             return true
@@ -145,11 +163,27 @@ class AppPackageManager(val context: Context) : IPackageManager {
     fun stringIdToString(stringId: Int): String = context.getString(stringId)
 
     override fun getAppName(appId: String): String {
+
+        if (SYSTEMUI.contains(appId)) {
+            return SYSTEMUI[appId]!!
+        }
+
+
         val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
         return context.packageManager.getApplicationLabel(appInfo).toString()
     }
 
+    override fun getAppVersion(appId: String): Pair<Int, String> {
+        val appData = context.packageManager.getPackageInfo(appId, GET_META_DATA)
+        return appData.versionCode to appData.versionName
+    }
+
     override fun getAppIcon(appId: String): Drawable? {
+
+        if (SYSTEMUI.contains(appId)) {
+            return getAppIcon("android")
+        }
+
         try {
             return context.packageManager.getApplicationIcon(appId)
         } catch (e: PackageManager.NameNotFoundException) {

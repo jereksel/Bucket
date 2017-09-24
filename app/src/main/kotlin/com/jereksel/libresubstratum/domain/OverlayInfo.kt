@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.domain
 
 data class OverlayInfo(
-        val id: String,
+        val overlayId: String,
         val enabled: Boolean
 )

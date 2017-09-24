@@ -43,18 +43,33 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesThemeCompiler(
+            packageManager: IPackageManager
+    ): ThemeCompiler = AppThemeCompiler(application, packageManager)
+
+    @Provides
+//    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService)
     }
 
     @Provides
-    @Singleton
-    open fun providesDetailedPresenter(packageManager: IPackageManager, themeReader: IThemeReader): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader)
+    open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
+
+    @Provides
+    open fun providesDetailedPresenter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService,
+            activityProxy: IActivityProxy,
+            themeCompiler: ThemeCompiler,
+            themeExtractor: ThemeExtractor
+    ): DetailedContract.Presenter {
+        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
     }
 
     @Provides
-    @Singleton
+//    @Singleton
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
             overlayService: OverlayService,

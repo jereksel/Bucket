@@ -217,7 +217,7 @@ class CompilationTest extends Specification {
         def type2 = args["type2"] ?: null
         def type3 = args["type3"] ?: null
         def compilationPath = args["compilationDir"]
-        return aapt.compileTheme(new ThemeToCompile("com.app.app", "com.app.app", "com.app.app", type1, type2, type3), compilationPath, temp, [])
+        return aapt.compileTheme(new ThemeToCompile("com.app.app", "com.app.app", "com.app.app", type1, type2, type3, 0, ""), compilationPath, temp, [])
     }
 
 }

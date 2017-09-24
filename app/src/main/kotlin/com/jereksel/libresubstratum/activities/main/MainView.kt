@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog.Builder
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
@@ -27,7 +28,7 @@ import org.jetbrains.anko.startActivity
 import rx.Subscription
 import javax.inject.Inject
 
-class MainView : AppCompatActivity(), MainContract.View {
+open class MainView : AppCompatActivity(), MainContract.View {
 
     val log = getLogger()
 
@@ -38,8 +39,6 @@ class MainView : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        App.getAppComponent(this).inject(this)
-//        (application as App).appComponent.inject(this)
         (application as App).getAppComponent(this).inject(this)
         presenter.setView(this)
         setSupportActionBar(toolbar)
@@ -64,7 +63,15 @@ class MainView : AppCompatActivity(), MainContract.View {
                 .getClickObservable()
                 .subscribe {
                     log.debug("Extracting {}", it)
-                    dialog = ProgressDialog.show(this@MainView, "Extracting", "Extracting theme", true)
+                    val pDialog = ProgressDialog(this@MainView)
+                    pDialog.setCancelable(false)
+                    pDialog.isIndeterminate = false
+                    pDialog.setTitle("Extracting")
+                    pDialog.setMessage("Extracting theme")
+                    pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+                    pDialog.max = 100
+                    pDialog.show()
+                    dialog = pDialog
                     presenter.openThemeScreen(it.appId)
                 }
         swiperefresh.isRefreshing = false
@@ -72,6 +79,7 @@ class MainView : AppCompatActivity(), MainContract.View {
 
     override fun openThemeFragment(appId: String) {
         dialog?.dismiss()
+        dialog = null
         DetailedViewStarter.start(this, appId)
     }
 

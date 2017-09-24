@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratumlib
 
-object AndroidManifestGenerator {
+class AndroidManifestGenerator(val testing: Boolean = false) {
 
     val metadataOverlayTarget = "Substratum_Target"
     val metadataOverlayParent = "Substratum_Parent"
@@ -23,13 +23,20 @@ object AndroidManifestGenerator {
         val type2 = theme.getType2()
         val type3 = theme.getType3()
 
+        val xmlnsAndroid = if (testing) {
+            "http://schemas.android.com/apk/lib/$appId"
+        } else {
+            "http://schemas.android.com/apk/res/android"
+        }
+
         //TODO: DSL
         return """<?xml version="1.0" encoding="utf-8"?>
-            <manifest xmlns:android="http://schemas.android.com/apk/lib/$appId" package="$appId">
+            <manifest xmlns:android="$xmlnsAndroid" package="$appId"
+            android:versionCode="${theme.versionCode}" android:versionName="${theme.versionName}">
 
                 <overlay android:priority="1" android:targetPackage="$target" />
 
-                <application android:label="$appId" allowBackup="false" android:hasCode="false" >
+                <application android:label="$appId" allowBackup="false" android:hasCode="false">
                     <meta-data android:name="$metadataOverlayTarget" android:value="$target" />
                     <meta-data android:name="$metadataOverlayParent" android:value="$themeId" />
 
@@ -39,7 +46,6 @@ object AndroidManifestGenerator {
                     <meta-data android:name="$metadataOverlayType2" android:value="$type2" />
                     <meta-data android:name="$metadataOverlayType3" android:value="$type3" />
                 </application>
-
             </manifest>
         """
     }

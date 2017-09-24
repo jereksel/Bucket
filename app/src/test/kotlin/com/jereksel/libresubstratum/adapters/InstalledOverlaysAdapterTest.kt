@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.adapter
+package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
 import android.os.Build
@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ImageView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
-import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.nhaarman.mockito_kotlin.verify

@@ -1,26 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_gravity="center"
+    android:clickable="true"
+    android:elevation="5dp"
+    android:layout_marginBottom="10dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardCornerRadius="4dp">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:maxHeight="48dp"
-        android:maxWidth="48dp"
-        android:minHeight="48dp"
-        android:minWidth="48dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
-        android:text="ANDROID TEXT"
-        android:layout_width="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageView"
-        android:layout_centerHorizontal="true" />
+        <RelativeLayout
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:orientation="vertical">
 
-</RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:maxHeight="48dp"
+                    android:maxWidth="48dp"
+                    android:layout_marginRight="10dp"
+                    android:minHeight="48dp"
+                    android:minWidth="48dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/appName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/imageView"
+                    android:gravity="center_horizontal"
+                    android:text="ANDROID TEXT" />
+
+                <TextView
+                    android:id="@+id/appId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="ANDROID TEXT"
+                    android:layout_below="@+id/appName"
+                    android:layout_toEndOf="@+id/imageView" />
+
+                <TextView
+                    android:id="@+id/uptodate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="Up to date"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:layout_below="@+id/appId"
+                    android:layout_toEndOf="@+id/imageView" />
+
+                <CheckBox
+                    android:id="@+id/checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <!-- TODO: Maybe generate with Anko? -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relativeLayout"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/spinner_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/spinner_1a"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/spinner_1b"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/spinner_1c"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/recyclerView"
+            android:layout_alignEnd="@+id/recyclerView"
+            android:layout_alignStart="@+id/recyclerView"
+            android:layout_alignTop="@+id/recyclerView"
+            android:clickable="true"
+            android:background="#c0FFFFFF">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="COMPILING" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

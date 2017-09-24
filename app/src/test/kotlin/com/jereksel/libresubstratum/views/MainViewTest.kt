@@ -16,15 +16,12 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
-import com.jereksel.libresubstratum.data.DetailedApplication
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_main.*
-import org.apache.commons.lang3.reflect.FieldUtils
-import org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
 import org.jetbrains.anko.find
 import org.junit.After
@@ -32,7 +29,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -93,7 +89,6 @@ class MainViewTest: BaseRobolectricTest() {
 
     @Test
     fun `SwipeToRefresh should be unactive after returning themes`() {
-        activity = Robolectric.buildActivity(MainView::class.java).create().get()
         activity.addApplications(mutableListOf())
         assertFalse(swipeToRefresh.isRefreshing)
     }
@@ -117,7 +112,7 @@ class MainViewTest: BaseRobolectricTest() {
         recyclerView.measure(0,0)
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
-        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).find<ImageView>(R.id.heroimage).drawable))
+        assertType(ColorDrawable::class, recyclerView.getChildAt(1).find<ImageView>(R.id.heroimage).drawable)
     }
 
     @Test

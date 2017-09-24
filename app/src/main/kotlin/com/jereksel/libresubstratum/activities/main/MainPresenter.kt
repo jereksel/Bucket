@@ -25,6 +25,7 @@ class MainPresenter(
 
     private var mainView: MainContract.View? = null
     private var subscription: Subscription? = null
+    private var extractSubs: Subscription? = null
 
     override fun getApplications() {
 
@@ -43,6 +44,9 @@ class MainPresenter(
 //                }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable { it }
+                .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
+                .toList()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe { mainView?.addApplications(it) }
     }
@@ -67,9 +71,8 @@ class MainPresenter(
 
     override fun removeView() {
         mainView = null
-        if (subscription?.isUnsubscribed == true) {
-           subscription?.unsubscribe()
-        }
+        subscription?.safeUnsubscribe()
+        extractSubs?.safeUnsubscribe()
     }
 
     override fun openThemeScreen(appId: String) {
@@ -83,7 +86,10 @@ class MainPresenter(
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribeOn(Schedulers.computation())
 //                .subscribe { mainView?.openThemeFragment(appId) }
+//        extractSubs = Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.computation())
+//                .subscribe { mainView?.openThemeFragment(appId) }
 
     }
-
 }

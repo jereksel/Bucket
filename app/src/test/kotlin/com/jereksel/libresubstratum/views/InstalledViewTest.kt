@@ -191,7 +191,6 @@ class InstalledViewTest: BaseRobolectricTest() {
 
     @Test
     fun `Snackbar is shown after showSnackbar is invoked`() {
-        assertNull(ShadowSnackbar.getLatestSnackbar())
         activity.showSnackBar("message", "button", {})
         assertNotNull(ShadowSnackbar.getLatestSnackbar())
         assertEquals("message", ShadowSnackbar.getTextOfLatestSnackbar())

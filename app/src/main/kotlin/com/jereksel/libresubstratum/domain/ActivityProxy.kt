@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.domain
 
 import android.app.Application
 import android.content.Intent
+import android.widget.Toast
 
 class ActivityProxy(val app: Application): IActivityProxy {
 
@@ -17,5 +18,9 @@ class ActivityProxy(val app: Application): IActivityProxy {
         } else {
             return false
         }
+    }
+
+    override fun showToast(text: String) {
+        Toast.makeText(app, text, Toast.LENGTH_LONG).show()
     }
 }
