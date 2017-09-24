@@ -147,7 +147,10 @@ dependencies {
 //    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Kotterknife
-    compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+    compile 'com.jakewharton:kotterknife:0.1.0-20160329.025248-20', {
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
 
     compile 'com.github.clans:fab:1.6.4'
     
