@@ -42,5 +42,5 @@ jobs:
               openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
               tar xvf secrets.tar
               cd ..
-              ./gradlew publishApkRelease
+              ./gradlew publishRelease
             fi
