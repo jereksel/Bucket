@@ -3,9 +3,9 @@
 set -e
 
 ./gradlew testDebugUnitTest --no-daemon
-./gradlew sublib:reader:test
-./gradlew sublib:compiler:test
+./gradlew sublib:reader:test --no-daemon
+./gradlew sublib:compiler:test --no-daemon
 
-./gradlew jacocoTestDebugUnitTestReport
-./gradlew sublib:reader:jacocoTestReport
-./gradlew sublib:compiler:jacocoTestReport
+./gradlew jacocoTestDebugUnitTestReport --no-daemon
+./gradlew sublib:reader:jacocoTestReport --no-daemon
+./gradlew sublib:compiler:jacocoTestReport --no-daemon
