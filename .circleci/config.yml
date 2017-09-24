@@ -11,6 +11,9 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
+          name: Download Android build-tools 26.0.1
+          command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
