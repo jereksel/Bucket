@@ -67,8 +67,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map {
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
-//                    val heroImage = getHeroImage(it.appId)
-                    InstalledTheme(it.appId, name, author, { getHeroImage(it.appId) })
+                    val heroImage = getHeroImage(it.appId)
+                    InstalledTheme(it.appId, name, author, heroImage)
                 }
                 .toList()
     }

@@ -68,11 +68,11 @@ class MainPresenterTest : FunSpec() {
 
             val app1Id = "app1"
             val app1Location = File("/app1")
-            val app1Drawable = { null }
+            val app1Drawable = null
 
             val app2Id = "app2"
             val app2Location = File("/app2")
-            val app2Drawable = { null }
+            val app2Drawable = null
 
 
             val installed = listOf(
@@ -111,7 +111,7 @@ class MainPresenterTest : FunSpec() {
 //        }
     }
 
-    fun packageFactory(id: String, name: String, author: String, drawable: () -> Drawable? = { null }): InstalledTheme {
+    fun packageFactory(id: String, name: String, author: String, drawable: File? = null): InstalledTheme {
 
         return InstalledTheme(id, name, author, drawable)
 

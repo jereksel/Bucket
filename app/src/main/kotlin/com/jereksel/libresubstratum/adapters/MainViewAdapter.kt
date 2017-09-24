@@ -18,8 +18,6 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
 
     private val onClickSubject = PublishSubject.create<MainViewTheme>()!!
 
-    val cache = BitmapLruCache(apps)
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
         holder.appName.text = app.name

@@ -102,14 +102,14 @@ class MainViewTest: BaseRobolectricTest() {
         recyclerView.measure(0,0)
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
-        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById<ImageView>(R.id.heroimage).drawable))
+        assertType(ColorDrawable::class, recyclerView.getChildAt(1).find<ImageView>(R.id.heroimage).drawable)
     }
 
     @Test
     fun `OpenThemeScreen should be called after view click`() {
         val apps = listOf(
-                InstalledTheme("id1", "name1", "author1", { null }),
-                InstalledTheme("id2", "name2", "author2",{ null })
+                InstalledTheme("id1", "name1", "author1", null),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps.map { MainViewTheme.fromInstalledTheme(it, false) })
@@ -125,8 +125,8 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `Dialog should be shown after view click`() {
         val apps = listOf(
-                InstalledTheme("id1", "name1", "author1", {null}),
-                InstalledTheme("id2", "name2", "author2", {null})
+                InstalledTheme("id1", "name1", "author1", null),
+                InstalledTheme("id2", "name2", "author2", null)
         )
 
         activity.addApplications(apps.map { MainViewTheme.fromInstalledTheme(it, false) })
@@ -171,7 +171,7 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `Lock should be visible if theme is encrypted`() {
 
-        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", { null }, true)
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, true)
         activity.addApplications(listOf(encryptedApp))
 
         recyclerView.measure(0, 0);
@@ -185,7 +185,7 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `Lock should not be visible if theme is not encrypted`() {
 
-        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", {null}, false)
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, false)
         activity.addApplications(listOf(encryptedApp))
 
         recyclerView.measure(0, 0);
@@ -199,7 +199,7 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `When clicking on log toast is shown`() {
 
-        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", {null}, true)
+        val encryptedApp = MainViewTheme("app1", "App nr. 1", "Author 1", null, true)
         activity.addApplications(listOf(encryptedApp))
 
         recyclerView.measure(0, 0);
