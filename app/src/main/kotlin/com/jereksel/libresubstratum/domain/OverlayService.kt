@@ -20,4 +20,8 @@ interface OverlayService {
             disableOverlay(id)
         }
     }
+
+    fun requiredPermissions(): List<String>
+
+    fun additionalSteps(): String?
 }

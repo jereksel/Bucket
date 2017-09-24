@@ -1,7 +1,12 @@
 package com.jereksel.libresubstratum.activities.main
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog.Builder
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -28,7 +33,7 @@ class MainView : AppCompatActivity(), MainContract.View {
 
     @Inject lateinit var presenter: Presenter
     var clickSubscriptions: Subscription? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +46,11 @@ class MainView : AppCompatActivity(), MainContract.View {
         swiperefresh.isRefreshing = true
         swiperefresh.setOnRefreshListener { presenter.getApplications() }
         presenter.getApplications()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.checkPermissions()
     }
 
     override fun addApplications(list: List<MainViewTheme>) {
@@ -85,10 +95,34 @@ class MainView : AppCompatActivity(), MainContract.View {
                     super.onOptionsItemSelected(item)
             }
 
+    override fun requestPermissions(perms: List<String>) {
+        ActivityCompat.requestPermissions(this, perms.toTypedArray(), 123)
+    }
+
+    override fun dismissDialog() {
+       if (dialog?.isShowing == true) {
+           dialog?.dismiss()
+       }
+    }
+
+    override fun showUndismissableDialog(message: String) {
+        val builder = Builder(this)
+        builder.setTitle("Required action")
+        builder.setMessage(message)
+        builder.setCancelable(false)
+        dialog = builder.show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         presenter.removeView()
         clickSubscriptions?.safeUnsubscribe()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == 123 && permissions.isNotEmpty()) {
+            presenter.checkPermissions()
+        }
     }
 
 }
