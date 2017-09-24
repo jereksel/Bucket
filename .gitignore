@@ -7,3 +7,6 @@
 /captures
 .externalNativeBuild
 *.tap
+LibreSubstratum.jks
+LibreSubstratum.json
+secrets.tar

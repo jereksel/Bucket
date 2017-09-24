@@ -22,6 +22,7 @@ buildscript {
 //        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.5.0'
 //        classpath ('net.saliman:gradle-cobertura-plugin:2.4.0');
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
 
         // NOTE: Do not place your application dependencies here; they belong

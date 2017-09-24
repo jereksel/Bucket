@@ -1,0 +1,46 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-25-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Download Android build-tools 26.0.1
+          command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - run:
+          name: Build app
+          command: ./gradlew assembleDebug
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./unittests.sh || ./unittests.sh
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+      - run:
+          name: Upload test results to Codecov
+          command: bash <(curl -s https://codecov.io/bash)
+      - deploy:
+          name: Play store deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [[ $CIRCLE_TAG ]]; then
+              cd app
+              openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
+              tar xvf secrets.tar
+              cd ..
+              ./gradlew publishApkRelease
+            fi
