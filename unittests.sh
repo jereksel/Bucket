@@ -2,7 +2,7 @@
 
 set -e
 
-./gradlew testDebugUnitTest
+./gradlew testDebugUnitTest --stacktrace --info
 ./gradlew sublib:reader:test
 ./gradlew sublib:compiler:test
 
