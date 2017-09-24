@@ -5,9 +5,11 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
+import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
@@ -37,6 +39,9 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import org.robolectric.shadow.api.Shadow
+import org.robolectric.shadows.ShadowActivity
+import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
 
@@ -58,7 +63,7 @@ class MainViewTest: BaseRobolectricTest() {
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
         presenter = app.mockedMainPresenter
-        activityController = Robolectric.buildActivity(MainView::class.java).create()
+        activityController = Robolectric.buildActivity(MainView::class.java).create().resume()
         activity = activityController.get()
     }
 
@@ -79,6 +84,11 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `getApplication() should be invoked after opening activity`() {
         verify(presenter).getApplications()
+    }
+
+    @Test
+    fun `checkPermissions() should be invoked after opening activity`() {
+        verify(presenter).checkPermissions()
     }
 
     @Test
@@ -107,7 +117,7 @@ class MainViewTest: BaseRobolectricTest() {
         recyclerView.measure(0,0)
         recyclerView.layout(0, 0, 100, 10000)
         assertEquals(2, recyclerView.childCount)
-        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).findViewById<ImageView>(R.id.heroimage).drawable))
+        assertType(ColorDrawable::class, (recyclerView.getChildAt(1).find<ImageView>(R.id.heroimage).drawable))
     }
 
     @Test
@@ -214,6 +224,33 @@ class MainViewTest: BaseRobolectricTest() {
 
         assertEquals("Theme is encrypted. Ask themer to also include unencrypted files.", ShadowToast.getTextOfLatestToast())
 
+    }
+
+    @Test
+    fun `showUndismissableDialog should show dialog with given message`() {
+
+        val message = "Very important message"
+
+        activity.showUndismissableDialog(message)
+
+        val dialog = ShadowDialog.getLatestDialog()
+        val displayed = dialog.find<TextView>(android.R.id.message).text.toString()
+
+        assertEquals(message, displayed)
+
+        dialog.dispatchKeyEvent(KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK, 0))
+
+        assertTrue(dialog.isShowing)
+    }
+
+    @Test
+    fun `dismissDialog() should dismiss any dialog`() {
+
+        `showUndismissableDialog should show dialog with given message`()
+
+        activity.dismissDialog()
+
+        assertFalse(ShadowDialog.getLatestDialog().isShowing)
     }
 
 }

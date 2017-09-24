@@ -6,9 +6,8 @@ import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.jereksel.libresubstratum.domain.OverlayService
+import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.junit.Ignore
 import org.mockito.Mock
@@ -28,12 +27,14 @@ class MainPresenterTest : FunSpec() {
     lateinit var packageManager : IPackageManager
     @Mock
     lateinit var themeReader: IThemeReader
+    @Mock
+    lateinit var overlayService: OverlayService
 
     lateinit var presenter : MainPresenter
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = MainPresenter(packageManager, themeReader)
+        presenter = MainPresenter(packageManager, themeReader, overlayService)
         presenter.setView(view)
         RxJavaHooks.clear()
         RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
@@ -93,6 +94,27 @@ class MainPresenterTest : FunSpec() {
 
             verify(view).addApplications(expected)
 
+        }
+        test("If overlayService returns non empty list of permissions they're passed to view") {
+            val perms = listOf("perm1", "perm2")
+            whenever(overlayService.requiredPermissions()).thenReturn(perms)
+            presenter.checkPermissions()
+            verify(view).requestPermissions(perms)
+        }
+        test("If overlayService returns empty list of permissions and non-empty message, message is shown") {
+            val message = "Do something"
+            whenever(overlayService.requiredPermissions()).thenReturn(listOf())
+            whenever(overlayService.additionalSteps()).thenReturn(message)
+            presenter.checkPermissions()
+            verify(view, never()).requestPermissions(any())
+            verify(view).showUndismissableDialog(message)
+        }
+        test("If overlayService returns empty list and null message, nothing is shown") {
+            whenever(overlayService.requiredPermissions()).thenReturn(listOf())
+            whenever(overlayService.additionalSteps()).thenReturn(null)
+            presenter.checkPermissions()
+            verify(view, never()).requestPermissions(any())
+            verify(view, never()).showUndismissableDialog(anyOrNull())
         }
         test("removeView with nulls") {
             presenter.removeView()

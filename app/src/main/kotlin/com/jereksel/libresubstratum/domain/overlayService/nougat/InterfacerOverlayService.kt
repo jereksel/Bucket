@@ -1,16 +1,20 @@
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.domain.overlayService.nougat
 
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.IBinder
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import com.jereksel.libresubstratum.domain.OverlayInfo
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.omslib.OMSLib
 import projekt.substratum.IInterfacerInterface
 import java.io.File
 
-class InterfacerOverlayService(context: Context): OverlayService {
+abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     val oms = OMSLib.getOMS()!!
 
@@ -69,4 +73,11 @@ class InterfacerOverlayService(context: Context): OverlayService {
     override fun uninstallApk(appIds: List<String>) {
         service.uninstallPackage(appIds, false)
     }
+
+    override fun requiredPermissions(): List<String> {
+        return allPermissions()
+                .filter { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED }
+    }
+
+    abstract fun allPermissions(): List<String>
 }
