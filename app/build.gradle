@@ -76,8 +76,17 @@ android {
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        if (System.getenv("CIRCLECI")) {
+            versionCode System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
+            if (System.getenv("CIRCLE_TAG")) {
+                versionName System.getenv("CIRCLE_TAG")
+            } else {
+                versionName "NEXT-${"git rev-parse --short HEAD".execute().text}"
+            }
+        } else {
+            versionCode 1
+            versionName "1.0"
+        }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 //        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
         manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
