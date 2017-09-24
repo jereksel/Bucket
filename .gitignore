@@ -6,3 +6,6 @@
 /build
 /captures
 .externalNativeBuild
+*.tap
+LibreSubstratum.jks
+LibreSubstratum.json
