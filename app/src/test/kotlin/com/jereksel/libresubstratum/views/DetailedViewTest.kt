@@ -3,9 +3,6 @@ package com.jereksel.libresubstratum.views
 import android.app.ProgressDialog
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
-import com.jereksel.libresubstratum.BuildConfig
-import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.android.synthetic.main.activity_detailed.*
@@ -24,7 +21,7 @@ import android.support.design.internal.SnackbarContentLayout
 import android.support.design.widget.Snackbar
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.jereksel.libresubstratum.ShadowSnackbar
+import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
@@ -43,7 +40,7 @@ import java.util.*
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
         shadows = arrayOf(ShadowSnackbar::class)
 )
-class DetailedViewTest {
+class DetailedViewTest: BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<DetailedView>
     lateinit var activity : DetailedContract.View

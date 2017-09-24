@@ -77,12 +77,6 @@ open class MainView : AppCompatActivity(), MainContract.View {
         swiperefresh.isRefreshing = false
     }
 
-    override fun setDialogProgress(progress: Int) {
-        runOnUiThread {
-            dialog?.progress = progress
-        }
-    }
-
     override fun openThemeFragment(appId: String) {
         dialog?.dismiss()
         dialog = null

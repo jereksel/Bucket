@@ -7,10 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.View.VISIBLE
-import com.jereksel.libresubstratum.BuildConfig
-import com.jereksel.libresubstratum.MockedApp
-import com.jereksel.libresubstratum.RecViewActivity
-import com.jereksel.libresubstratum.ResettableLazy
+import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
@@ -42,7 +39,7 @@ import org.robolectric.annotation.Config
 @Config(constants = BuildConfig::class,
         application = MockedApp::class,
         sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
-class ThemePackAdapterTest {
+class ThemePackAdapterTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<RecViewActivity>
     lateinit var activity: AppCompatActivity

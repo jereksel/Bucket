@@ -20,7 +20,6 @@ interface MainContract {
         fun requestPermissions(perms: List<String>)
         fun dismissDialog()
         fun showUndismissableDialog(message: String)
-        fun setDialogProgress(progress: Int)
     }
 
 }
