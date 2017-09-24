@@ -202,6 +202,8 @@ dependencies {
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
     compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
 
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     compile 'com.jereksel:omslib:1.0.2'
 
     compile project(":sublib:models")
