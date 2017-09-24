@@ -31,3 +31,13 @@ jobs:
       - run:
           name: Upload test results to Codecov
           command: bash <(curl -s https://codecov.io/bash)
+      - deploy:
+          name: Play store deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "feature/auto_deploy" ]; then
+              cd app
+              openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
+              tar xvf secrets.tar
+              cd ..
+              ls -al
+            fi
