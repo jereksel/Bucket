@@ -262,7 +262,11 @@ dependencies {
 }
 
 play {
-    track = 'beta'
+    if (System.getenv("CIRCLE_TAG")) {
+        track = 'production'
+    } else {
+        track = 'beta'
+    }
     untrackOld = true
     uploadImages = true
 }
