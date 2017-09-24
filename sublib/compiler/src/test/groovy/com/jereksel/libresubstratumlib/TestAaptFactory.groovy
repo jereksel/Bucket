@@ -6,7 +6,7 @@ class TestAaptFactory {
         if (System.getenv("CIRCLE_SHA1")) {
             //CircleCI
             println("Test runs on CircleCI")
-            return new AAPT("/opt/android/sdk/build-tools/26.0.1/aapt")
+            return new AAPT("/opt/android/sdk/build-tools/26.0.1/aapt", true)
         } else if (System.getenv("APPVEYOR")) {
             //AppVeyor
             println("Test runs on AppVeyor")
