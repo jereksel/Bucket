@@ -16,6 +16,9 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
+      - run:
+          name: Build app
+          command: ./gradlew assembleDebug
       - save_cache:
           paths:
             - ~/.gradle
@@ -31,3 +34,13 @@ jobs:
       - run:
           name: Upload test results to Codecov
           command: bash <(curl -s https://codecov.io/bash)
+      - deploy:
+          name: Play store deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [[ $CIRCLE_TAG ]]; then
+              cd app
+              openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
+              tar xvf secrets.tar
+              cd ..
+              ./gradlew publishApkRelease
+            fi
