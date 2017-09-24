@@ -37,7 +37,7 @@ jobs:
       - deploy:
           name: Play store deploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "feature/auto_deploy" ] || [[ $CIRCLE_TAG ]]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [[ $CIRCLE_TAG ]]; then
               cd app
               openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
               tar xvf secrets.tar
