@@ -32,6 +32,7 @@ class MainPresenter(
         subscription?.safeUnsubscribe()
 
         subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
 //                .flatMap { Observable.just(it)
@@ -43,11 +44,10 @@ class MainPresenter(
                         }
 //                }
                 .toList()
-                .observeOn(AndroidSchedulers.mainThread())
                 .flatMapIterable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
                 .toList()
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { mainView?.addApplications(it) }
     }
 
