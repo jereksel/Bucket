@@ -2,35 +2,48 @@ package com.jereksel.libresubstratum.domain
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Build.VERSION.RELEASE
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.N
+import android.os.Build.VERSION_CODES.N_MR1
 import android.provider.Settings
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
-
+import com.jereksel.libresubstratum.extensions.getLogger
 
 object OverlayServiceFactory {
 
+    val log = getLogger()
+
     fun getOverlayService(context: Context): OverlayService {
 
-        if (android.os.Build.VERSION.SDK_INT != android.os.Build.VERSION_CODES.N &&
-                android.os.Build.VERSION.SDK_INT != android.os.Build.VERSION_CODES.N_MR1) {
+        val supportedAndroidVersions = listOf(N, N_MR1)
+
+        if (!supportedAndroidVersions.contains(SDK_INT)) {
+            log.error("Not supported android version: {} {}", SDK_INT, RELEASE)
             return InvalidOverlayService("This app works only on Android Nougat")
         }
 
         val isSettingForceAuthorizeAvailable = try {
+            log.debug("force_authorize_substratum_packages supported")
             Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages")
             true
         } catch (e: Exception) {
+            log.error("force_authorize_substratum_packages not supported")
             false
         }
 
         if (!isSettingForceAuthorizeAvailable) {
-            return InvalidOverlayService("Your ROM is too old to support this app")
+            return InvalidOverlayService("Your ROM is too old to support this app (3-rd party apps in Interfacer are not supported)")
         }
 
 
         if (isNewInterfacerPermissionAvailable(context)) {
+            log.debug("DU commits available")
             return WDUCommitsOverlayService(context)
         } else {
+            log.debug("DU commits not available")
             return WODUCommitsOverlayService(context)
         }
 

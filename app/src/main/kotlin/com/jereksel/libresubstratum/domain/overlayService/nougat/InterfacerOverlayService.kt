@@ -10,11 +10,14 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
 import projekt.substratum.IInterfacerInterface
 import java.io.File
 
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
+
+    private val log = getLogger()
 
     val oms = OMSLib.getOMS()!!
 
@@ -29,7 +32,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         val serviceConnection = object: ServiceConnection {
 
             override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                Log.d(InterfacerOverlayService::class.java.canonicalName, "Service connected")
+                log.debug("Interfacer service connected")
                 service = IInterfacerInterface.Stub.asInterface(binder)
             }
 
