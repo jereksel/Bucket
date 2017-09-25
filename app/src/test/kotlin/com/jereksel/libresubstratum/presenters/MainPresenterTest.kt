@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.InvalidOverlayService
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
@@ -124,6 +125,16 @@ class MainPresenterTest : FunSpec() {
             //We check if exception is not thrown
             presenter.removeView()
         }
+        test("No FC when InvalidOverlayService is returned") {
+
+            val service = InvalidOverlayService("Something bad happeded")
+
+            whenever(overlayService.requiredPermissions()).thenAnswer { service.requiredPermissions() }
+            whenever(overlayService.additionalSteps()).thenAnswer { service.additionalSteps() }
+
+            presenter.checkPermissions()
+        }
+
 //        test("When checking if is encrypted app location is passed") {
 //            val appLocation = File("/data/applocation")
 //            val appId = "app"
