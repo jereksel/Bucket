@@ -165,25 +165,26 @@ task jacocoTestReport(type: JacocoReport) {
         html.enabled = true
     }
     def fileFilter = ["**/R.class",
-"**/R\$*.class",
+                      "**/R\$*.class",
                       "**/BuildConfig.*",
-"**/Manifest*.*",
+                      "**/Manifest*.*",
                       "android/**/*.*",
                       "**/Lambda\$*.class", //Retrolambda
                       "**/Lambda.class",
-"**/*Lambda.class",
+                      "**/*Lambda.class",
                       "**/*Lambda*.class",
-"**/*Lambda*.*",
+                      "**/*Lambda*.*",
                       "**/*Builder.*",
-"**/*_MembersInjector.class", //Dagger2 generated code
+                      "**/*_MembersInjector.class", //Dagger2 generated code
                       "**/*_MembersInjector*.*", //Dagger2 generated code
-"**/*_*Factory*.*", //Dagger2 generated code
+                      "**/*_*Factory*.*", //Dagger2 generated code
                       "**/*Component*.*", //Dagger2 generated code
-"**/*Module*.*" //Dagger2 generated code
+                      "**/*Module*.*" //Dagger2 generated code
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
-    sourceDirectories = files([mainSrc])
+    def kotlinSrc = "${project.projectDir}/src/main/kotlin"
+    sourceDirectories = files([mainSrc, kotlinSrc])
     classDirectories = files([debugTree])
     executionData = fileTree(dir: project.projectDir, includes:
             ["**/*.exec" , "**/*.ec"])
@@ -345,8 +346,3 @@ play {
     uploadImages = true
 }
 
-//jacocoAndroidUnitTestReport {
-//    csv.enabled false
-//    html.enabled true
-//    xml.enabled true
-//}
