@@ -1,10 +1,11 @@
 package com.jereksel.libresubstratum.domain.overlayService.nougat
 
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.provider.Settings
 
 class WODUCommitsOverlayService(context: Context): InterfacerOverlayService(context) {
-    override fun allPermissions() = emptyList<String>()
+    override fun allPermissions() = listOf(WRITE_EXTERNAL_STORAGE)
 
     override fun additionalSteps(): String? {
 
