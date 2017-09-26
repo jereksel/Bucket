@@ -7,6 +7,8 @@ import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
+import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarContract
+import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarPresenter
 import com.jereksel.libresubstratum.domain.*
 import dagger.Module
 import dagger.Provides
@@ -28,7 +30,7 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesThemeReader(): IThemeReader {
-        return ThemeReader()
+        return ThemeReader(application)
     }
 
     @Provides
@@ -76,6 +78,14 @@ open class AppModule(private val application: Application) {
             activityProxy: IActivityProxy
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy)
+    }
+
+    @Provides
+    open fun providesNavigationBarAdapter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader
+    ): NavigationBarContract.Presenter {
+        return NavigationBarPresenter(packageManager, themeReader)
     }
 
 }

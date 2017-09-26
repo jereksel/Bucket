@@ -228,6 +228,11 @@ dependencies {
         transitive = true;
     }
 
+    //Koptional
+//    compile "com.gojuno.koptional:koptional:$koptional_version"
+//    compile "com.gojuno.koptional:koptional-rxjava2-extensions:$koptional_version"
+
+
     //AndroidAnnotations
 //    kapt "org.androidannotations:androidannotations:$aa_version"
 //    kaptTest "org.androidannotations:androidannotations:$aa_version"
@@ -237,6 +242,7 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
+    compile "com.marcinmoskala.activitystarter:activitystarter-kotlin:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
     compile "org.jetbrains.anko:anko-commons:$anko_version"

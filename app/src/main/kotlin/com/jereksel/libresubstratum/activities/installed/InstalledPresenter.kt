@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.installed
 
+import android.graphics.drawable.Drawable
 import android.util.Log
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View

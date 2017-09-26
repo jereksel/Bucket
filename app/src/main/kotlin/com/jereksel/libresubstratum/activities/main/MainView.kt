@@ -18,6 +18,7 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
+import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarViewStarter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
@@ -80,7 +81,8 @@ open class MainView : AppCompatActivity(), MainContract.View {
     override fun openThemeFragment(appId: String) {
         dialog?.dismiss()
         dialog = null
-        DetailedViewStarter.start(this, appId)
+//        DetailedViewStarter.start(this, appId)
+        NavigationBarViewStarter.start(this, appId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
