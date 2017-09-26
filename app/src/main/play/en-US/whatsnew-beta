@@ -1,3 +1,6 @@
+IMPORTANT NOTE: When Substratum is not installed FC may occured on startup. THIS IS NOT LIBRESUBSTRATUM FC, IT'S INTERFACER'S.
+
+Add check if Substratum is installed (it's required for Interfacer)
 Ask for permissions on startup
 Fix FC on startup
 Initial beta version
