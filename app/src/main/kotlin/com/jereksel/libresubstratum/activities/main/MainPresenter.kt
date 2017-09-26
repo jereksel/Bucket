@@ -31,19 +31,21 @@ class MainPresenter(
 
         subscription?.safeUnsubscribe()
 
-        subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
+        subscription = Observable.fromCallable { packageManager.getInstalledThemesIds() }
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-//                .flatMap { Observable.just(it)
-//                        .observeOn(Schedulers.io())
+                .flatMap { Observable.just(it)
+                        .observeOn(Schedulers.io())
+                        .map { packageManager.getInstalledTheme(it) }
                         .map {
                             val appLocation = packageManager.getAppLocation(it.appId)
                             val isEncrypted = themeReader.isThemeEncrypted(appLocation)
                             MainViewTheme.fromInstalledTheme(it, isEncrypted)
                         }
-//                }
+                }
                 .toList()
-                .observeOn(AndroidSchedulers.mainThread())
+//                .observeOn(AndroidSchedulers.mainThread())
                 .flatMapIterable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
                 .toList()
