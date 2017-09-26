@@ -25,19 +25,13 @@ object OverlayServiceFactory {
             return InvalidOverlayService("This app works only on Android Nougat")
         }
 
-        val isSettingForceAuthorizeAvailable = try {
-            log.debug("force_authorize_substratum_packages supported")
+        try {
             Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages")
-            true
+            log.debug("force_authorize_substratum_packages supported")
         } catch (e: Exception) {
-            log.error("force_authorize_substratum_packages not supported")
-            false
-        }
-
-        if (!isSettingForceAuthorizeAvailable) {
+            log.error("force_authorize_substratum_packages not supported", e)
             return InvalidOverlayService("Your ROM is too old to support this app (3-rd party apps in Interfacer are not supported)")
         }
-
 
         if (isNewInterfacerPermissionAvailable(context)) {
             log.debug("DU commits available")
