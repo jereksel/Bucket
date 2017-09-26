@@ -1,4 +1,4 @@
-IMPORTANT NOTE: When Substratum is not installed FC may occured on startup. THIS IS NOT LIBRESUBSTRATUM FC, IT'S INTERFACER'S.
+IMPORTANT NOTE: When Substratum is not installed FC may occurred on startup. THIS IS NOT LIBRESUBSTRATUM'S FC, IT'S INTERFACER'S.
 
 Add check if Substratum is installed (it's required for Interfacer)
 Fix freeze during swipe to refresh in main view
