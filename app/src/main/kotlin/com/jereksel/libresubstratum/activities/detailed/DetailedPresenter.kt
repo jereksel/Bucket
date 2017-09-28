@@ -166,21 +166,21 @@ class DetailedPresenter(
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
 
         val suffix = listOf(type1a, type1b, type1c).mapNotNull {
-            if (it?.default?.not() == true) {
-                it.name.replace(" ", "").replace("-", "").replace("_","")
+            if (it?.default == false) {
+                it.name
             } else {
                 null
             }
         }.joinToString(separator="")
 
         val type1String = if (suffix.isNotEmpty()) { ".$suffix" } else { "" }
-        val type2String = if (type2?.default?.not() == true) { ".${type2.name.replace(" ", "").replace("-","").replace("_", "")}"  } else { "" }
+        val type2String = if (type2?.default == false) { ".${type2.name}"  } else { "" }
         val type3 = type3
-        val type3String = if (type3?.default?.not() == true) { ".${type3.name.replace(" ", "").replace("-","").replace("_", "")}" } else { "" }
+        val type3String = if (type3?.default == false) { ".${type3.name}" } else { "" }
 
         val themeName = packageManager.getAppName(appId)
 
-        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "")
+        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "").replace("-", "").replace("_", "")
     }
 
 
