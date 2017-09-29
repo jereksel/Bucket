@@ -11,6 +11,7 @@ import com.jereksel.libresubstratum.domain.InvalidOverlayService
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
+import org.junit.Assert
 import org.junit.Ignore
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -98,7 +99,9 @@ class MainPresenterTest : FunSpec() {
                     MainViewTheme(app2Id, "Theme nr.2", "author2", app2Drawable, false)
             )
 
-            verify(view).addApplications(expected)
+            val argumentCaptor = argumentCaptor<List<MainViewTheme>>()
+            verify(view).addApplications(argumentCaptor.capture())
+            Assert.assertEquals(listOf(true, false), argumentCaptor.firstValue.map { it.isEncrypted })
 
         }
         test("If overlayService returns non empty list of permissions they're passed to view") {

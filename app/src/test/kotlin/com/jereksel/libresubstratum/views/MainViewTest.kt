@@ -40,7 +40,9 @@ import org.robolectric.shadows.ShadowActivity
 import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
+import java.util.concurrent.FutureTask
 
+@Suppress("IllegalIdentifier")
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
         application = MockedApp::class,
