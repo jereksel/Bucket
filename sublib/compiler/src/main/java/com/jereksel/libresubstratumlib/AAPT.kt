@@ -112,6 +112,8 @@ class AAPT(val aaptPath: String, testing: Boolean = false) {
 
         logger.debug("Invoking: {}", command.joinToString(separator = " "))
 
+        logger.debug("AndroidManifest:\n{}", manifest)
+
         val proc = ProcessBuilder(command)
                 .directory(finalTempDir)
                 .start()
