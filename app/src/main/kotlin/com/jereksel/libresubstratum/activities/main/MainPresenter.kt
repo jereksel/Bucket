@@ -35,14 +35,18 @@ class MainPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-//                .flatMap { Observable.just(it)
-//                        .observeOn(Schedulers.io())
-                        .map {
-                            val appLocation = packageManager.getAppLocation(it.appId)
-                            val isEncrypted = themeReader.isThemeEncrypted(appLocation)
-                            MainViewTheme.fromInstalledTheme(it, isEncrypted)
-                        }
-//                }
+                .map { Pair(packageManager.getAppLocation(it.appId), it) }
+                .flatMap {
+                    Observable.just(it)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.io())
+                            .map {
+                                val location = it.first
+                                val theme = it.second
+                                val isEncrypted = themeReader.isThemeEncrypted(location)
+                                MainViewTheme.fromInstalledTheme(theme, isEncrypted)
+                            }
+                }
                 .toList()
                 .flatMapIterable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }

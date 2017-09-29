@@ -15,6 +15,7 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.has
 import java.io.File
+import java.util.concurrent.FutureTask
 import java.util.logging.Logger
 
 class AppPackageManager(val context: Context) : IPackageManager {
@@ -67,8 +68,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map {
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
-                    val heroImage = getHeroImage(it.appId)
-                    InstalledTheme(it.appId, name, author, heroImage)
+//                    val heroImage = getHeroImage(it.appId)
+                    InstalledTheme(it.appId, name, author, FutureTask { getHeroImage(it.appId) })
                 }
                 .toList()
     }
@@ -82,6 +83,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
     }
 
     fun getHeroImage(appId: String): File? {
+
         val res = context.packageManager.getResourcesForApplication(appId)
         val resId = res.getIdentifier("heroimage", "drawable", appId)
         if (resId == 0) {
@@ -156,9 +158,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
         }
     }
 
-    override fun getCacheFolder(): File {
-        return context.cacheDir
-    }
+    override fun getCacheFolder() = context.cacheDir
 
     fun stringIdToString(stringId: Int): String = context.getString(stringId)
 

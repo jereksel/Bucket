@@ -1,7 +1,11 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.drawable.ColorDrawable
+import android.os.AsyncTask
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.widget.RecyclerView
+import android.text.AndroidCharacter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,18 +15,49 @@ import android.widget.Toast
 import kotterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 
 class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+
+    val log = getLogger()
+
+    init {
+
+        Observable.from(apps.mapIndexed { index, mainViewTheme -> Pair(index, mainViewTheme.heroImage) })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .map {
+//                    log.debug("Image downloading: {}", it)
+                    it
+                }
+                .flatMap {
+                    val index = it.first
+                    val future = it.second
+                    Observable.fromCallable { future.run() }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.io())
+                            .map { index }
+                 }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { index ->
+                    notifyItemChanged(index)
+                }
+
+    }
 
     private val onClickSubject = PublishSubject.create<MainViewTheme>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
         holder.appName.text = app.name
-        if (app.heroImage != null) {
-            Picasso.with(holder.view.context).load(app.heroImage).noFade().fit().centerCrop().into(holder.heroImage)
+        val heroImage = if (app.heroImage.isDone) { app.heroImage.get() } else { null }
+        if (heroImage != null) {
+            Picasso.with(holder.view.context).load(heroImage).noFade().fit().centerCrop().into(holder.heroImage)
         } else {
             holder.heroImage.setImageDrawable(ColorDrawable(android.R.color.black))
         }
