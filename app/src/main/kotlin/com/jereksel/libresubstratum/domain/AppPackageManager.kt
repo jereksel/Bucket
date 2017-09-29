@@ -37,8 +37,6 @@ class AppPackageManager(val context: Context) : IPackageManager {
     val metadataOverlayType2 = "Substratum_Type2"
     val metadataOverlayType3 = "Substratum_Type3"
 
-    val lock = java.lang.Object()
-
     override fun getInstalledOverlays(): List<InstalledOverlay> {
         return getApplications()
                 .filter { it.metadata.has(metadataOverlayTarget) }
@@ -75,34 +73,16 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .toList()
     }
 
-    override fun getInstalledThemesIds(): List<String> {
-        return getApplications()
-                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_AUTHOR) }
-                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_NAME) }
-                .map { it.appId }
-                .toList()
-    }
-
-    override fun getInstalledTheme(id: String): InstalledTheme {
-        val applicationInfo = synchronized(lock) { context.packageManager.getApplicationInfo(id, GET_META_DATA) }
-        val name = applicationInfo.metaData.getString(MainPresenter.SUBSTRATUM_NAME)
-        val author = applicationInfo.metaData.getString(MainPresenter.SUBSTRATUM_AUTHOR)
-        val heroImage = getHeroImage(id)
-        return InstalledTheme(id, name, author, heroImage)
-    }
-
-    private fun getApplications(): Sequence<Application> {
-        return synchronized(lock) {
-            val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
-            packages
-                    .asSequence()
-                    .filter { it.applicationInfo.metaData != null }
-                    .map { Application(it.packageName, it.applicationInfo.metaData) }
-        }
+    fun getApplications(): Sequence<Application> {
+        val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
+        return packages
+                .asSequence()
+                .filter { it.applicationInfo.metaData != null }
+                .map { Application(it.packageName, it.applicationInfo.metaData) }
     }
 
     fun getHeroImage(appId: String): File? {
-        val res = synchronized(lock) { context.packageManager.getResourcesForApplication(appId) }
+        val res = context.packageManager.getResourcesForApplication(appId)
         val resId = res.getIdentifier("heroimage", "drawable", appId)
         if (resId == 0) {
             return null
@@ -158,11 +138,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return getAppLocation("com.android.systemui")
         }
 
-        return synchronized(lock) {
-            File(context.packageManager.getInstalledApplications(0)
-                    .find { it.packageName == appId }!!.sourceDir)
-        }
-
+        return File(context.packageManager.getInstalledApplications(0)
+                .find { it.packageName == appId }!!.sourceDir)
     }
 
     override fun isPackageInstalled(appId: String): Boolean {
@@ -179,7 +156,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
         }
     }
 
-    override fun getCacheFolder() = context.cacheDir
+    override fun getCacheFolder(): File {
+        return context.cacheDir
+    }
 
     fun stringIdToString(stringId: Int): String = context.getString(stringId)
 
