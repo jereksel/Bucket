@@ -1,8 +1,10 @@
 package com.jereksel.libresubstratum.data
 
 import java.io.File
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
 
-data class MainViewTheme(val appId: String, val name: String, val author: String, val heroImage: File?, val isEncrypted: Boolean) {
+data class MainViewTheme(val appId: String, val name: String, val author: String, val heroImage: FutureTask<File?>, val isEncrypted: Boolean) {
 
     companion object {
         fun fromInstalledTheme(theme: InstalledTheme, isEncrypted: Boolean): MainViewTheme =

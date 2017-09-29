@@ -20,6 +20,7 @@ import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
 import java.io.File
+import java.util.concurrent.FutureTask
 
 class MainPresenterTest : FunSpec() {
 
@@ -146,7 +147,7 @@ class MainPresenterTest : FunSpec() {
 
     fun packageFactory(id: String, name: String, author: String, drawable: File? = null): InstalledTheme {
 
-        return InstalledTheme(id, name, author, drawable)
+        return InstalledTheme(id, name, author, FutureTask { drawable })
 
 //        val bundle = mock<Bundle> {
 //            on { get(MainPresenter.SUBSTRATUM_NAME) } - name
