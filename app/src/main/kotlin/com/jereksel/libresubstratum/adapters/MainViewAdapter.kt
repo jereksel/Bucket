@@ -38,18 +38,13 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
                 .flatMap {
                     val index = it.first
                     val future = it.second
-                    Observable.fromCallable {
-                        future.run()
-                        val image = future.get()
-//                        log.debug("Image: {}", image)
-                        index
-                    }
+                    Observable.fromCallable { future.run() }
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
+                            .map { index }
                  }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { index ->
-//                    log.debug("Image downloaded: {}", index)
                     notifyItemChanged(index)
                 }
 
