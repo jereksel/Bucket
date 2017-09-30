@@ -9,6 +9,7 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.getFile
+import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import com.jereksel.libresubstratumlib.Type1DataToCompile
@@ -160,29 +161,26 @@ class DetailedPresenter(
         val theme = themePack.themes[position]
         val state = themePackState[position]
 
+        val appId = theme.application
+
+        val themeName = packageManager.getAppName(appId)
+
         val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
         val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
         val type1c = theme.type1.find {it.suffix == "c"}?.extension?.getOrNull(state.type1c)
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
-
-        val suffix = listOf(type1a, type1b, type1c).mapNotNull {
-            if (it?.default == false) {
-                it.name
-            } else {
-                null
-            }
-        }.joinToString(separator="")
-
-        val type1String = if (suffix.isNotEmpty()) { ".$suffix" } else { "" }
-        val type2String = if (type2?.default == false) { ".${type2.name}"  } else { "" }
         val type3 = type3
-        val type3String = if (type3?.default == false) { ".${type3.name}" } else { "" }
 
-        val themeName = packageManager.getAppName(appId)
-
-        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "").replace("-", "").replace("_", "").replace("/", "")
+        return ThemeNameUtils.getTargetOverlayName(
+                appId,
+                themeName,
+                type1a,
+                type1b,
+                type1c,
+                type2,
+                type3
+        )
     }
-
 
     override fun getAppName(appId: String) = packageManager.getAppName(appId)
 

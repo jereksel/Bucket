@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.domain.usecases
 
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.*
 import rx.Observable
 import java.io.File
@@ -28,7 +29,7 @@ class CompileThemeUseCase(
 //            versionCode: Int,
 //            versionName: String
 //            type3Data: Type3Data
-    ): Observable<File> {
+    ): Observable<File> = Observable.fromCallable {
 
         if (!themeLocation.exists()) {
             throw IllegalArgumentException("$themeLocation doesn't exists")
@@ -52,6 +53,10 @@ class CompileThemeUseCase(
                 "c" to type1cName
         )
 
+        val type1a = theme.type1.firstOrNull { it.suffix == "a" }?.extension?.firstOrNull { it.name == type1aName }
+        val type1b = theme.type1.firstOrNull { it.suffix == "b" }?.extension?.firstOrNull { it.name == type1bName }
+        val type1c = theme.type1.firstOrNull { it.suffix == "c" }?.extension?.firstOrNull { it.name == type1cName }
+
         val type1s = theme.type1.mapNotNull {
             val id = it.suffix
             val ext = it.extension.find { it.name == m[id] }
@@ -66,6 +71,10 @@ class CompileThemeUseCase(
         val type3 = themePack.type3?.extensions?.find { it.name == type3Name }
 
         val fixedTargetApp = if (theme.application.startsWith("com.android.systemui.")) "com.android.systemui" else theme.application
+
+        val themeName = packageManager.getAppName(themeId)
+
+        val targetOverlayId = ThemeNameUtils.getTargetOverlayName(destAppId, themeName, type1a, type1b, type1c, type2, type3)
 
 //        val type1 = listOf(type1aName, type1bName, type1cName).zip(listOf("a", "b", "c"))
 //                .filter{ it.first != null }
@@ -87,6 +96,9 @@ class CompileThemeUseCase(
 
 //        Observable.just(File("asd"))
 
+//        return Observable.just(File("/"))
+
+        File("/")
 
     }
 //
@@ -107,7 +119,7 @@ class CompileThemeUseCase(
 
     fun getTargetOverlayName(
             appId: String,
-            themeName: String,
+            themeId: String,
             type1a: Type1Extension?,
             type1b: Type1Extension?,
             type1c: Type1Extension?,
@@ -115,14 +127,12 @@ class CompileThemeUseCase(
             type3: Type3Extension?
     ): String {
 
+        val themeName = packageManager.getAppName(themeId)
 
-        val suffix = listOf(type1a, type1b, type1c).mapNotNull {
-            if (it?.default == false) {
-                it.name
-            } else {
-                null
-            }
-        }.joinToString(separator="")
+        val suffix = listOf(type1a, type1b, type1c)
+                .filter { it?.default == false }
+                .mapNotNull { it?.name }
+                .joinToString(separator = "")
 
         val type1String = if (suffix.isNotEmpty()) { ".$suffix" } else { "" }
         val type2String = if (type2?.default == false) { ".${type2.name}"  } else { "" }
