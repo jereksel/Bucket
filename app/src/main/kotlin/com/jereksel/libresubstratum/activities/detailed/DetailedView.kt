@@ -13,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.Toast
 import com.jereksel.libresubstratum.App
+import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
@@ -22,6 +23,8 @@ import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
 
 open class DetailedView : AppCompatActivity(), View {
@@ -61,6 +64,9 @@ open class DetailedView : AppCompatActivity(), View {
         }
         fab_compile_install.setOnClickListener { presenter.compileRunSelected() }
         fab_compile_install_activate.setOnClickListener { presenter.compileRunActivateSelected() }
+        recyclerView.postDelayed ({
+            showTutorial()
+        }, 100)
     }
 
     override fun refreshHolder(position: Int) {
@@ -94,6 +100,32 @@ open class DetailedView : AppCompatActivity(), View {
                 dialog.progress++
             }
         }
+    }
+
+    fun showTutorial() {
+        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val rvRow = recyclerView.getChildViewHolder(child) as ThemePackAdapter.ViewHolder
+        val icon = rvRow.appIcon
+        val card = rvRow.card
+        val fab = fab
+
+        val config = ShowcaseConfig()
+        config.delay = 500
+
+        val sequence = if(BuildConfig.DEBUG) {
+            MaterialShowcaseSequence(this)
+        } else {
+            MaterialShowcaseSequence(this, "DetailedView_1")
+        }
+
+        sequence.setConfig(config)
+
+        sequence.apply {
+            addSequenceItem(icon, "Long click to open this application. When is split mode, app will be opened in second split", "GOT IT")
+            addSequenceItem(card, "Click on card to select. Long click to compile and enable overlay", "GOT IT")
+        }
+
+        sequence.start()
     }
 
     override fun hideCompileDialog() {

@@ -42,6 +42,7 @@ repositories {
         url "https://maven.google.com"
     }
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
 }
 
 /*
@@ -235,6 +236,9 @@ dependencies {
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
 
     compile 'com.github.clans:fab:1.6.4'
+
+    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
