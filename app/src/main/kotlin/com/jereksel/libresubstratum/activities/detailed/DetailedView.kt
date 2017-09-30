@@ -103,7 +103,7 @@ open class DetailedView : AppCompatActivity(), View {
     }
 
     fun showTutorial() {
-        val child = recyclerView.layoutManager.findViewByPosition(0)
+        val child = recyclerView.layoutManager.findViewByPosition(0) ?: return
         val rvRow = recyclerView.getChildViewHolder(child) as ThemePackAdapter.ViewHolder
         val icon = rvRow.appIcon
         val card = rvRow.card
