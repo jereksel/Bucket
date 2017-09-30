@@ -14,7 +14,6 @@ import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.android.plugins.RxAndroidPlugins
@@ -38,7 +37,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock())
+        presenter = DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase)
         presenter.setView(view)
 
         RxJavaHooks.clear()

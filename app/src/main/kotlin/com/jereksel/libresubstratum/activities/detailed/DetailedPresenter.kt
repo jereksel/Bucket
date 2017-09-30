@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
@@ -26,7 +27,8 @@ class DetailedPresenter(
         val overlayService: OverlayService,
         val activityProxy: IActivityProxy,
         val themeCompiler: ThemeCompiler,
-        val themeExtractor: ThemeExtractor
+        val themeExtractor: ThemeExtractor,
+        val compileThemeUseCase: ICompileThemeUseCase
 ) : Presenter {
 
     var detailedView: View? = null
@@ -246,6 +248,7 @@ class DetailedPresenter(
                 .observeOn(Schedulers.computation())
                 .flatMap { Observable.just(it)
                         .subscribeOn(Schedulers.computation())
+                        .observeOn(Schedulers.computation())
                         .map {
                             Log.d("Compiling on ", Thread.currentThread().toString())
                             compileForPosition(it.first)
@@ -292,16 +295,32 @@ class DetailedPresenter(
         seq.add(adapterPosition)
         detailedView?.refreshHolder(adapterPosition)
 
-        //We use it so we don't have to create thread by ourselves and so espresso will wait
-        THREAD_POOL_EXECUTOR.execute {
-//            val apk = compileForPosition(adapterPosition)
-//            overlayService.installApk(apk)
-            compileAndRun1(adapterPosition)
-//            val apk =
-            if (theme.application.startsWith("com.android.systemui")) {
-                detailedView?.showSnackBar("SystemUI may be required", "Restart", { overlayService.restartSystemUI() })
-            }
-        }
+        compileForPositionObservable(adapterPosition)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .map {
+                    overlayService.installApk(it)
+                    activateExclusive(adapterPosition)
+                    Unit
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .forEach {
+                    state.compiling = false
+                    detailedView?.refreshHolder(adapterPosition)
+                }
+
+
+
+//        //We use it so we don't have to create thread by ourselves and so espresso will wait
+//        THREAD_POOL_EXECUTOR.execute {
+////            val apk = compileForPosition(adapterPosition)
+////            overlayService.installApk(apk)
+//            compileAndRun1(adapterPosition)
+////            val apk =
+//            if (theme.application.startsWith("com.android.systemui")) {
+//                detailedView?.showSnackBar("SystemUI may be required", "Restart", { overlayService.restartSystemUI() })
+//            }
+//        }
     }
 
     fun activateExclusive(position: Int) {
@@ -311,6 +330,49 @@ class DetailedPresenter(
         val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
         overlayService.disableOverlays(overlays.map { it.overlayId })
         overlayService.toggleOverlay(overlay, !info.enabled)
+    }
+
+    fun compileForPositionObservable(position: Int): Observable<File> {
+
+        val cacheLocation = future!!.get()
+
+        val overlay = getOverlayIdForTheme(position)
+        val state = themePackState[position]
+        val theme = themePack.themes[position]
+
+        val location = getFile(cacheLocation, "assets", "overlays", theme.application)
+
+        val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
+        val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
+        val type1c = theme.type1.find {it.suffix == "c"}?.extension?.getOrNull(state.type1c)
+
+        val type1 = listOf(type1a, type1b, type1c).zip(listOf("a", "b", "c"))
+                .filter { it.first != null }
+                .map {
+                    Type1DataToCompile(it.first!!, it.second)
+                }
+        val type2 = theme.type2?.extensions?.getOrNull(state.type2)
+
+        val themeInfo = packageManager.getAppVersion(appId)
+
+        val fixedTargetApp = if (theme.application.startsWith("com.android.systemui.")) "com.android.systemui" else theme.application
+
+        return compileThemeUseCase.execute(
+                theme,
+                appId,
+                location,
+                fixedTargetApp,
+                type1a?.name,
+                type1b?.name,
+                type1c?.name,
+                type2?.name,
+                type3?.name
+        )
+
+//        val themeToCompile = ThemeToCompile(overlay, appId, fixedTargetApp, type1, type2,
+//                type3, themeInfo.first, themeInfo.second)
+//
+//        return themeCompiler.compileTheme(themeToCompile, location)
     }
 
     fun compileForPosition(position: Int): File {

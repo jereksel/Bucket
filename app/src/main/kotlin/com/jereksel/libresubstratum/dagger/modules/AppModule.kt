@@ -8,6 +8,8 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -63,9 +65,10 @@ open class AppModule(private val application: Application) {
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
             themeCompiler: ThemeCompiler,
-            themeExtractor: ThemeExtractor
+            themeExtractor: ThemeExtractor,
+            compileThemeUseCase: ICompileThemeUseCase
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
+        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor, compileThemeUseCase)
     }
 
     @Provides
@@ -76,6 +79,18 @@ open class AppModule(private val application: Application) {
             activityProxy: IActivityProxy
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy)
+    }
+
+    @Provides
+    open fun providesCompileThemeUseCase(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService,
+            activityProxy: IActivityProxy,
+            themeCompiler: ThemeCompiler,
+            themeExtractor: ThemeExtractor
+    ): ICompileThemeUseCase {
+        return CompileThemeUseCase(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
     }
 
 }

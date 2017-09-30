@@ -13,14 +13,14 @@ class CompileThemeUseCase(
         val activityProxy: IActivityProxy,
         val themeCompiler: ThemeCompiler,
         val themeExtractor: ThemeExtractor
-) {
+): ICompileThemeUseCase {
 
-    fun execute(
+    override fun execute(
             theme: Theme,
             themeId: String,
             themeLocation: File,
             destAppId: String,
-            destOverlayId: String,
+//            destOverlayId: String,
             type1aName: String?,
             type1bName: String?,
             type1cName: String?,
@@ -76,6 +76,11 @@ class CompileThemeUseCase(
 
         val targetOverlayId = ThemeNameUtils.getTargetOverlayName(destAppId, themeName, type1a, type1b, type1c, type2, type3)
 
+        val themeToCompile = ThemeToCompile(targetOverlayId, themeId, fixedTargetApp, type1s, type2,
+                type3, versionCode, versionName)
+
+        themeCompiler.compileTheme(themeToCompile, themeLocation)
+
 //        val type1 = listOf(type1aName, type1bName, type1cName).zip(listOf("a", "b", "c"))
 //                .filter{ it.first != null }
 //                .map { Type1DataToCompile(it.first!!, it.second) }
@@ -98,7 +103,7 @@ class CompileThemeUseCase(
 
 //        return Observable.just(File("/"))
 
-        File("/")
+//        File("/")
 
     }
 //
