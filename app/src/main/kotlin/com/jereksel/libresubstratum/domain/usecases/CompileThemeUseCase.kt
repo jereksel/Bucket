@@ -20,15 +20,11 @@ class CompileThemeUseCase(
             themeId: String,
             themeLocation: File,
             destAppId: String,
-//            destOverlayId: String,
             type1aName: String?,
             type1bName: String?,
             type1cName: String?,
             type2Name: String?,
             type3Name: String?
-//            versionCode: Int,
-//            versionName: String
-//            type3Data: Type3Data
     ): Observable<File> = Observable.fromCallable {
 
         if (!themeLocation.exists()) {
@@ -80,31 +76,6 @@ class CompileThemeUseCase(
                 type3, versionCode, versionName)
 
         themeCompiler.compileTheme(themeToCompile, themeLocation)
-
-//        val type1 = listOf(type1aName, type1bName, type1cName).zip(listOf("a", "b", "c"))
-//                .filter{ it.first != null }
-//                .map { Type1DataToCompile(it.first!!, it.second) }
-
-
-//        val themeToCompile = ThemeToCompile(destOverlayId, themeId, destAppId, type1, type2Name, type3Name, versionCode, versionName)
-//
-//        themeCompiler.compileTheme()
-
-
-//        val themeToCompile = ThemeToCompile(destOverlayId, themeId, destAppId, listOf(type1aName, type1bName, type1cName).mapNotNull { it }.map { Type1DataToCompile(it,) } )
-
-//        themeCompiler.compileTheme()
-
-//        return Observable.fromCallable {
-//            execute1(themeId, destOverlayId, type1aName, type1bName, type1cName, type2Name, type3Name)
-//        }
-
-//        Observable.just(File("asd"))
-
-//        return Observable.just(File("/"))
-
-//        File("/")
-
     }
 
 }
