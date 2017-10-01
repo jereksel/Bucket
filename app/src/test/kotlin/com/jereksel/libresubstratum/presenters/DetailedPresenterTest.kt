@@ -378,10 +378,53 @@ class DetailedPresenterTest : FunSpec() {
         }
         test("When overlay is installed, but versions are different overlay is compiled") {
 
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(Observable.just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.compileAndRun(0)
+
+            verify(overlayService).toggleOverlay("app1.MyTheme", false)
+            verify(overlayService).installApk(File("/"))
+            verify(presenter1).compileForPositionObservable(0)
+
 
         }
         test("When overlays is not installed, overlay is compiled") {
 
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(Observable.just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.compileAndRun(0)
+
+            verify(overlayService).toggleOverlay("app1.MyTheme", false)
+            verify(overlayService).installApk(File("/"))
+            verify(presenter1).compileForPositionObservable(0)
 
         }
     }
