@@ -106,44 +106,5 @@ class CompileThemeUseCase(
 //        File("/")
 
     }
-//
-//    private fun execute1(
-//            themeId: String,
-//            destOverlayId: String,
-//            type1aName: String?,
-//            type1bName: String?,
-//            type1cName: String?,
-//            type2Name: String?,
-//            type3Name: String?
-//    ): File {
-//
-//
-//
-//
-//    }
-
-    fun getTargetOverlayName(
-            appId: String,
-            themeId: String,
-            type1a: Type1Extension?,
-            type1b: Type1Extension?,
-            type1c: Type1Extension?,
-            type2: Type2Extension?,
-            type3: Type3Extension?
-    ): String {
-
-        val themeName = packageManager.getAppName(themeId)
-
-        val suffix = listOf(type1a, type1b, type1c)
-                .filter { it?.default == false }
-                .mapNotNull { it?.name }
-                .joinToString(separator = "")
-
-        val type1String = if (suffix.isNotEmpty()) { ".$suffix" } else { "" }
-        val type2String = if (type2?.default == false) { ".${type2.name}"  } else { "" }
-        val type3String = if (type3?.default == false) { ".${type3.name}" } else { "" }
-
-        return "$appId.$themeName$type1String$type2String$type3String".replace(" ", "").replace("-", "").replace("_", "")
-    }
 
 }
