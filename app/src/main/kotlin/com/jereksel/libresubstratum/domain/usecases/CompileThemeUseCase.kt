@@ -67,8 +67,8 @@ class CompileThemeUseCase(
             }
         }
 
-        val type2 = theme.type2?.extensions?.find { it.name == type2Name }
-        val type3 = themePack.type3?.extensions?.find { it.name == type3Name }
+        val type2 = theme.type2?.extensions?.firstOrNull { it.name == type2Name }
+        val type3 = themePack.type3?.extensions?.firstOrNull { it.name == type3Name }
 
         val fixedTargetApp = if (theme.application.startsWith("com.android.systemui.")) "com.android.systemui" else theme.application
 
