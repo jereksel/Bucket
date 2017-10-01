@@ -10,17 +10,21 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
+import org.junit.Assert
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import rx.Observable
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.plugins.RxJavaHooks
 import rx.schedulers.Schedulers
 import java.io.File
+import java.util.*
 
 class DetailedPresenterTest : FunSpec() {
 
@@ -32,12 +36,17 @@ class DetailedPresenterTest : FunSpec() {
     lateinit var themeReader: IThemeReader
     @Mock
     lateinit var overlayService: OverlayService
+    @Mock
+    lateinit var compileThemeUseCase: ICompileThemeUseCase
 
     lateinit var presenter: Presenter
 
+    lateinit var presenter1: DetailedPresenter
+
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase)
+        presenter1 = spy(DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase))
+        presenter = presenter1
         presenter.setView(view)
 
         RxJavaHooks.clear()
@@ -89,6 +98,9 @@ class DetailedPresenterTest : FunSpec() {
             verifyZeroInteractions(themeReader)
         }
         test("Setting basic information") {
+
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
+
             val apps = listOf("a", "b", "c")
             apps.forEach {
                 whenever(packageManager.getAppName(it)).thenReturn("name$it")
@@ -109,6 +121,8 @@ class DetailedPresenterTest : FunSpec() {
             verify(view2).setAppName("nameb")
         }
         test("Setting checkbox test") {
+
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
             val apps = listOf("a", "b", "c")
             val view = mock<ThemePackAdapterView>()
             apps.forEach {
@@ -130,6 +144,7 @@ class DetailedPresenterTest : FunSpec() {
             verify(view2).setCheckbox(true)
         }
         test("Setting type1a test") {
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
             val apps = listOf("a")
             val view = mock<ThemePackAdapterView>()
             apps.forEach {
@@ -158,6 +173,7 @@ class DetailedPresenterTest : FunSpec() {
             verify(view).type2Spinner(listOf(), 0)
         }
         test("Setting type1b test") {
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
             val apps = listOf("a")
             val view = mock<ThemePackAdapterView>()
             apps.forEach {
@@ -186,6 +202,7 @@ class DetailedPresenterTest : FunSpec() {
             verify(view).type2Spinner(listOf(), 0)
         }
         test("Setting type1c test") {
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
             val apps = listOf("a")
             val view = mock<ThemePackAdapterView>()
             apps.forEach {
@@ -214,6 +231,7 @@ class DetailedPresenterTest : FunSpec() {
             verify(view).type2Spinner(listOf(), 0)
         }
         test("Setting type2 test") {
+            doReturn("overlayid").whenever(presenter1).getOverlayIdForTheme(any())
             val apps = listOf("a")
             val view = mock<ThemePackAdapterView>()
             apps.forEach {
@@ -323,6 +341,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
             whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
             whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
@@ -332,6 +351,37 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setAdapterView(0, view)
 
             verify(view).setInstalled("v1", "v1.1")
+
+        }
+        test("When overlay is installed and up to date it's not compiled, just activated") {
+
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            presenter.compileAndRun(0)
+
+            verify(overlayService).toggleOverlay("app1.MyTheme", false)
+            verify(presenter1, never()).compileForPositionObservable(0)
+
+        }
+        test("When overlay is installed, but versions are different overlay is compiled") {
+
+
+        }
+        test("When overlays is not installed, overlay is compiled") {
+
 
         }
     }

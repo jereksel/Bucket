@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import android.os.AsyncTask.THREAD_POOL_EXECUTOR
 import android.util.Log
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
@@ -160,10 +159,11 @@ class DetailedPresenter(
 
     fun getOverlayIdForTheme(position: Int): String {
 
+
         val theme = themePack.themes[position]
         val state = themePackState[position]
 
-        val appId = theme.application
+        val destAppId = theme.application
 
         val themeName = packageManager.getAppName(appId)
 
@@ -174,7 +174,7 @@ class DetailedPresenter(
         val type3 = type3
 
         return ThemeNameUtils.getTargetOverlayName(
-                appId,
+                destAppId,
                 themeName,
                 type1a,
                 type1b,
@@ -290,6 +290,14 @@ class DetailedPresenter(
 
         val theme = themePack.themes[adapterPosition]
         val state = themePackState[adapterPosition]
+
+        val overlay = getOverlayIdForTheme(adapterPosition)
+
+        if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
+            activateExclusive(adapterPosition)
+            return
+        }
+
         state.compiling = true
 
         seq.add(adapterPosition)
