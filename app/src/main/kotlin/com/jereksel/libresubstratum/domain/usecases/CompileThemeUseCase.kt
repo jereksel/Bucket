@@ -1,10 +1,13 @@
 package com.jereksel.libresubstratum.domain.usecases
 
+import android.util.TimeUtils
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.*
 import rx.Observable
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class CompileThemeUseCase(
         val packageManager: IPackageManager,
@@ -14,6 +17,8 @@ class CompileThemeUseCase(
         val themeCompiler: ThemeCompiler,
         val themeExtractor: ThemeExtractor
 ): ICompileThemeUseCase {
+
+    val log = getLogger()
 
     override fun execute(
             theme: Theme,
@@ -75,7 +80,20 @@ class CompileThemeUseCase(
         val themeToCompile = ThemeToCompile(targetOverlayId, themeId, fixedTargetApp, type1s, type2,
                 type3, versionCode, versionName)
 
-        themeCompiler.compileTheme(themeToCompile, themeLocation)
+        val t1 = System.currentTimeMillis()
+
+        val file = themeCompiler.compileTheme(themeToCompile, themeLocation)
+
+        val t2 = System.currentTimeMillis()
+
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(t2-t1)
+
+//        log.debug("Compilation of {} took {}s", targetOverlayId, seconds)
+
+//        val compilationTimeInSeconds = TimeUnit.MIL(t2-t1)
+
+        file
+
     }
 
 }
