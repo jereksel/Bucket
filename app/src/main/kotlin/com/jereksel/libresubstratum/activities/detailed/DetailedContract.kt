@@ -39,6 +39,8 @@ interface DetailedContract {
         fun openInSplit(adapterPosition: Int)
         fun compileRunActivateSelected()
         fun compileRunSelected()
+        fun selectAll()
+        fun deselectAll()
     }
 
 }

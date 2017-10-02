@@ -10,6 +10,7 @@ import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.extensions.getFile
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.ThemeToCompile
@@ -36,6 +37,7 @@ class DetailedPresenter(
     lateinit var themePack: ThemePack
     lateinit var appId: String
     var future: Future<File>? = null
+    val log = getLogger()
 
     private var type3: Type3Extension? = null
 
@@ -256,7 +258,10 @@ class DetailedPresenter(
         detailedView?.showCompileDialog(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }) { position ->
-            activateExclusive(position)
+            val overlayId = getOverlayIdForTheme(position)
+            if (packageManager.isPackageInstalled(overlayId)) {
+                activateExclusive(position)
+            }
             detailedView?.increaseDialogProgress()
         }
                 .doOnCompleted {
@@ -334,8 +339,11 @@ class DetailedPresenter(
 //        seq.add(adapterPosition)
 //        detailedView?.refreshHolder(adapterPosition)
 //
-        compilePositions(listOf(adapterPosition)) {
-            toggle(adapterPosition)
+        compilePositions(listOf(adapterPosition)) { position ->
+            val overlayId = getOverlayIdForTheme(position)
+            if (packageManager.isPackageInstalled(overlayId)) {
+                toggle(adapterPosition)
+            }
         }
                 .subscribe()
 
@@ -359,6 +367,24 @@ class DetailedPresenter(
                     state.compiling = false
                     detailedView?.refreshHolder(it.second)
                 }*/
+    }
+
+    override fun selectAll() {
+        themePackState.forEachIndexed { index, state ->
+            if (!state.checked) {
+                detailedView?.refreshHolder(index)
+                state.checked = true
+            }
+        }
+    }
+
+    override fun deselectAll() {
+        themePackState.forEachIndexed { index, state ->
+            if (state.checked) {
+                detailedView?.refreshHolder(index)
+                state.checked = false
+            }
+        }
     }
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<File, Int>> {
@@ -387,18 +413,30 @@ class DetailedPresenter(
                             .subscribeOn(Schedulers.computation())
                             .observeOn(Schedulers.computation())
                             .zipWith(listOf(it), { a,b -> Pair(a,b) })
+                            .onErrorReturn { t ->
+                                log.warn("Overlay compilation failed", t)
+                                Pair(File("/"), adapterPosition)
+                            }
                 }
                 .map {
-                    overlayService.installApk(it.first)
-                    val overlay = getOverlayIdForTheme(it.second)
 
-                    //Replacing substratum theme (the keys are different and overlay can't be just replaced)
-                    if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
-                        overlayService.uninstallApk(overlay)
+                    val file = it.first
+
+                    if (file != File("/")) {
+
                         overlayService.installApk(it.first)
+                        val overlay = getOverlayIdForTheme(it.second)
+
+                        //Replacing substratum theme (the keys are different and overlay can't be just replaced)
+                        if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
+                            overlayService.uninstallApk(overlay)
+                            overlayService.installApk(it.first)
+                        }
+
+                        it.first.delete()
+
                     }
 
-                    it.first.delete()
                     afterInstalling(it.second)
                     it
                 }

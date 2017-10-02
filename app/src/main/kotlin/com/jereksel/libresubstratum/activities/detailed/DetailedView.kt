@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.Spinner
@@ -83,8 +85,8 @@ open class DetailedView : AppCompatActivity(), View {
         pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
         pDialog.setTitle("Compiling")
         pDialog.max = size
-        pDialog.show()
-        dialog = pDialog
+//        pDialog.show()
+//        dialog = pDialog
     }
 
     override fun increaseDialogProgress() {
@@ -94,6 +96,31 @@ open class DetailedView : AppCompatActivity(), View {
                 dialog.progress++
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+            when (item.itemId) {
+                R.id.action_selectall -> {
+                    // User chose the "Settings" item, show the app settings UI...
+//                    startActivity<InstalledView>()
+//                    InstalledView_.intent(this).start()
+                    presenter.selectAll()
+                    true
+                }
+                R.id.action_deselectall -> {
+                    presenter.deselectAll()
+                    true
+                }
+                else ->
+                    // If we got here, the user's action was not recognized.
+                    // Invoke the superclass to handle it.
+                    super.onOptionsItemSelected(item)
+            }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.installed, menu)
+        return true
     }
 
     override fun hideCompileDialog() {
