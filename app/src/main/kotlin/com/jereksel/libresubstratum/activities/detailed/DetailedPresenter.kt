@@ -180,7 +180,7 @@ class DetailedPresenter(
 
         val themeName = packageManager.getAppName(appId)
 
-        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "")
+        return "${theme.application}.$themeName$type1String$type2String$type3String".replace(" ", "").replace("/", "")
     }
 
 
