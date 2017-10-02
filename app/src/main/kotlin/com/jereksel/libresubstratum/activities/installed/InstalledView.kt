@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
@@ -14,6 +16,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import kotlinx.android.synthetic.main.activity_installed.*
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 open class InstalledView : AppCompatActivity(), View {
@@ -32,6 +35,10 @@ open class InstalledView : AppCompatActivity(), View {
         fab_uninstall.setOnClickListener { fab.close(true); presenter.uninstallSelected() }
         fab_enable.setOnClickListener { fab.close(true); presenter.enableSelected() }
         fab_disable.setOnClickListener { fab.close(true); presenter.disableSelected() }
+//        fab.setOnLongClickListener {
+//            toast("TEST")
+//            true
+//        }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
@@ -58,6 +65,31 @@ open class InstalledView : AppCompatActivity(), View {
     override fun showSnackBar(message: String, buttonText: String, callback: () -> Unit) {
         Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG)
                 .setAction(buttonText, { _ -> callback() }).show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+            when (item.itemId) {
+                R.id.action_selectall -> {
+                    // User chose the "Settings" item, show the app settings UI...
+//                    startActivity<InstalledView>()
+//                    InstalledView_.intent(this).start()
+                    presenter.selectAll()
+                    true
+                }
+                R.id.action_deselectall -> {
+                    presenter.deselectAll()
+                    true
+                }
+                else ->
+                    // If we got here, the user's action was not recognized.
+                    // Invoke the superclass to handle it.
+                    super.onOptionsItemSelected(item)
+            }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.installed, menu)
+        return true
     }
 
     override fun onRetainCustomNonConfigurationInstance() = presenter

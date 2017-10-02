@@ -25,6 +25,8 @@ interface InstalledContract {
         //RecyclerView
         fun setState(position: Int, isEnabled: Boolean)
         fun getState(position: Int): Boolean
+        fun selectAll()
+        fun deselectAll()
     }
 
 }

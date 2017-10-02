@@ -97,6 +97,7 @@ class InstalledPresenter(
                 .map { overlayService.enableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    deselectAll()
                     view.get()?.refreshRecyclerView()
                 }
 
@@ -114,9 +115,30 @@ class InstalledPresenter(
                 .map { overlayService.disableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    deselectAll()
                     view.get()?.refreshRecyclerView()
                 }
 
+    }
+
+    override fun selectAll() {
+        val state = state
+        if (state != null) {
+            for (i in 0 until state.size) {
+                state[i] = true
+            }
+        }
+        view.get()?.refreshRecyclerView()
+    }
+
+    override fun deselectAll() {
+        val state = state
+        if (state != null) {
+            for (i in 0 until state.size) {
+                state[i] = false
+            }
+        }
+        view.get()?.refreshRecyclerView()
     }
 
     override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId)

@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.activities.detailed
 
 import android.util.Log
+import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
@@ -360,7 +361,7 @@ class DetailedPresenter(
                 }*/
     }
 
-    fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<File, Int>> {
+    private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<File, Int>> {
 
         return Observable.from(positions.toList())
                 .subscribeOn(Schedulers.computation())
@@ -389,6 +390,15 @@ class DetailedPresenter(
                 }
                 .map {
                     overlayService.installApk(it.first)
+                    val overlay = getOverlayIdForTheme(it.second)
+
+                    //Replacing substratum theme (the keys are different and overlay can't be just replaced)
+                    if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
+                        overlayService.uninstallApk(overlay)
+                        overlayService.installApk(it.first)
+                    }
+
+                    it.first.delete()
                     afterInstalling(it.second)
                     it
                 }
