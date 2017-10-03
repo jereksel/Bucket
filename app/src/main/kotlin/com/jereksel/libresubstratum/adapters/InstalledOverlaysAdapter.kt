@@ -14,11 +14,9 @@ import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
 
 class InstalledOverlaysAdapter(
-        apps: List<InstalledOverlay>,
+        val apps: List<InstalledOverlay>,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
-
-    private val apps = apps.sortedBy { it.targetName }
 
     override fun getItemCount() = apps.size
 
