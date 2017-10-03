@@ -345,7 +345,15 @@ class DetailedPresenter(
                 toggle(adapterPosition)
             }
         }
-                .subscribe()
+                .map { it.first }
+                .filter { it.component2() != null }
+                .map { it.component2()!! }
+//                .map { it.message }
+                .toList()
+                .subscribe {
+                    log.debug("Error: {}", it)
+                }
+//                .subscribe()
 
 /*
         Observable.just(adapterPosition)
@@ -387,7 +395,7 @@ class DetailedPresenter(
         }
     }
 
-    private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<File, Int>> {
+    private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<Result<File, Exception>, Int>> {
 
         return Observable.from(positions.toList())
                 .subscribeOn(Schedulers.computation())
@@ -412,28 +420,28 @@ class DetailedPresenter(
                     compileForPositionObservable(it)
                             .subscribeOn(Schedulers.computation())
                             .observeOn(Schedulers.computation())
-                            .zipWith(listOf(it), { a,b -> Pair(a,b) })
+                            .zipWith(listOf(it), { a,b -> Pair(Result.of { a },b) })
                             .onErrorReturn { t ->
                                 log.warn("Overlay compilation failed", t)
-                                Pair(File("/"), adapterPosition)
+                                Pair(Result.error(t as Exception), adapterPosition)
                             }
                 }
                 .map {
 
-                    val file = it.first
+                    val file = it.first.component1()
 
-                    if (file != File("/")) {
+                    if (file != null) {
 
-                        overlayService.installApk(it.first)
+                        overlayService.installApk(file)
                         val overlay = getOverlayIdForTheme(it.second)
 
                         //Replacing substratum theme (the keys are different and overlay can't be just replaced)
                         if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
                             overlayService.uninstallApk(overlay)
-                            overlayService.installApk(it.first)
+                            overlayService.installApk(file)
                         }
 
-                        it.first.delete()
+                        file.delete()
 
                     }
 
