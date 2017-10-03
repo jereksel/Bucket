@@ -1,7 +1,20 @@
 package com.jereksel.libresubstratum.presenters
 
-/**
- * Created by andrzej on 03.10.17.
- */
+import io.kotlintest.specs.FunSpec
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
+
 object PresenterTestUtils {
+
+    fun FunSpec.initRxJava() {
+
+        RxJavaPlugins.reset()
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+
+        RxAndroidPlugins.reset()
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+    }
+
 }
