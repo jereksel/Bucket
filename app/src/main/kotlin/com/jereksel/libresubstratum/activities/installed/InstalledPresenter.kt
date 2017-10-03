@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.installed
 
-import android.util.Log
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -43,7 +42,7 @@ class InstalledPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
-                    it.sortedWith(compareBy({ it.targetName }, { it.sourceThemeName }, { it.type1a },
+                    it.sortedWith(compareBy({ it.sourceThemeName }, { it.targetName }, { it.type1a },
                             { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 }))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
