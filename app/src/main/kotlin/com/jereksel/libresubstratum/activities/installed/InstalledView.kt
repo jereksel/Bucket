@@ -70,9 +70,6 @@ open class InstalledView : AppCompatActivity(), View {
     override fun onOptionsItemSelected(item: MenuItem) =
             when (item.itemId) {
                 R.id.action_selectall -> {
-                    // User chose the "Settings" item, show the app settings UI...
-//                    startActivity<InstalledView>()
-//                    InstalledView_.intent(this).start()
                     presenter.selectAll()
                     true
                 }
@@ -81,8 +78,6 @@ open class InstalledView : AppCompatActivity(), View {
                     true
                 }
                 else ->
-                    // If we got here, the user's action was not recognized.
-                    // Invoke the superclass to handle it.
                     super.onOptionsItemSelected(item)
             }
 
