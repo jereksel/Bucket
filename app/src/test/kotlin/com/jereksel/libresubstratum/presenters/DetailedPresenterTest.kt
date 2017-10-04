@@ -11,6 +11,7 @@ import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
@@ -18,11 +19,6 @@ import io.kotlintest.specs.FunSpec
 import org.junit.Assert
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import rx.Observable
-import rx.android.plugins.RxAndroidPlugins
-import rx.android.plugins.RxAndroidSchedulersHook
-import rx.plugins.RxJavaHooks
-import rx.schedulers.Schedulers
 import java.io.File
 import java.util.*
 
@@ -49,15 +45,7 @@ class DetailedPresenterTest : FunSpec() {
         presenter = presenter1
         presenter.setView(view)
 
-        RxJavaHooks.clear()
-        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
-
-        val hook = object : RxAndroidSchedulersHook() {
-            override fun getMainThreadScheduler() = Schedulers.immediate()
-        }
-
-        RxAndroidPlugins.getInstance().reset()
-        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
+        initRxJava()
     }
 
     override fun afterEach() {

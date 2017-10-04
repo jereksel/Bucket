@@ -4,11 +4,11 @@ import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.OverlayService
-import com.jereksel.libresubstratum.extensions.safeUnsubscribe
-import rx.Observable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.jereksel.libresubstratum.extensions.safeDispose
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class MainPresenter(
@@ -24,12 +24,11 @@ class MainPresenter(
     }
 
     private var mainView: MainContract.View? = null
-    private var subscription: Subscription? = null
-    private var extractSubs: Subscription? = null
+    private var subscription: Disposable? = null
 
     override fun getApplications() {
 
-        subscription?.safeUnsubscribe()
+        subscription?.safeDispose()
 
         subscription = Observable.fromCallable { packageManager.getInstalledThemes() }
                 .subscribeOn(Schedulers.computation())
@@ -48,11 +47,13 @@ class MainPresenter(
                             }
                 }
                 .toList()
-                .flatMapIterable { it }
+                .flattenAsObservable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { mainView?.addApplications(it) }
+                .subscribe { list ->
+                    mainView?.addApplications(list)
+                }
     }
 
     override fun setView(view: MainContract.View) {
@@ -75,8 +76,7 @@ class MainPresenter(
 
     override fun removeView() {
         mainView = null
-        subscription?.safeUnsubscribe()
-        extractSubs?.safeUnsubscribe()
+        subscription?.safeDispose()
     }
 
     override fun openThemeScreen(appId: String) {

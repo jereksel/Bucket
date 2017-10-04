@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.presenters
 
-import android.graphics.drawable.Drawable
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
@@ -9,17 +8,12 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.InvalidOverlayService
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.junit.Assert
-import org.junit.Ignore
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.stubbing.OngoingStubbing
-import rx.android.plugins.RxAndroidPlugins
-import rx.android.plugins.RxAndroidSchedulersHook
-import rx.plugins.RxJavaHooks
-import rx.schedulers.Schedulers
 import java.io.File
 import java.util.concurrent.FutureTask
 
@@ -40,16 +34,8 @@ class MainPresenterTest : FunSpec() {
         MockitoAnnotations.initMocks(this)
         presenter = MainPresenter(packageManager, themeReader, overlayService)
         presenter.setView(view)
-        RxJavaHooks.clear()
-        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
-        RxJavaHooks.setOnIOScheduler { Schedulers.immediate() }
 
-        val hook = object : RxAndroidSchedulersHook() {
-            override fun getMainThreadScheduler() = Schedulers.immediate()
-        }
-
-        RxAndroidPlugins.getInstance().reset()
-        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
+        initRxJava()
     }
 
     init {
