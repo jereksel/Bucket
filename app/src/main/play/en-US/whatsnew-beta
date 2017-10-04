@@ -9,4 +9,3 @@ Add check if Substratum is installed (it's required for Interfacer)
 Fix freeze during swipe to refresh in main view
 Ask for permissions on startup
 Fix FC on startup
-Initial beta version
