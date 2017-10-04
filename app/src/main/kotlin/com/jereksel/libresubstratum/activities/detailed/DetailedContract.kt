@@ -16,6 +16,7 @@ interface DetailedContract {
         fun showCompileDialog(size: Int)
         fun hideCompileDialog()
         fun increaseDialogProgress()
+        fun showError(errors: List<String>)
     }
 
     interface Presenter : MVPPresenter<View> {

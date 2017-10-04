@@ -135,17 +135,22 @@ class DetailedPresenter(
         val isOverlayInstalled = packageManager.isPackageInstalled(overlay)
 
         if (isOverlayInstalled) {
-            val overlayInfo = packageManager.getAppVersion(overlay)
-            val themeInfo = packageManager.getAppVersion(appId)
+            val overlayVersionInfo = packageManager.getAppVersion(overlay)
+            val themeVersionInfo = packageManager.getAppVersion(appId)
+            val overlayInfo = overlayService.getOverlayInfo(overlay)
 
-            if (overlayInfo.first != themeInfo.first) {
+            if (overlayVersionInfo.first != themeVersionInfo.first) {
                 //Overlay can be updated
-                view.setInstalled(overlayInfo.second, themeInfo.second)
+                view.setInstalled(overlayVersionInfo.second, themeVersionInfo.second)
             } else {
                 view.setInstalled(null, null)
             }
 
-            view.setEnabled(overlayService.getOverlayInfo(overlay).enabled)
+            if (overlayInfo != null) {
+                view.setEnabled(overlayInfo.enabled)
+            } else {
+                view.setEnabled(false)
+            }
         }
 
         view.setCompiling(state.compiling)
@@ -233,29 +238,41 @@ class DetailedPresenter(
     var compiling = false
 
     override fun compileRunSelected() {
-//        compileSelected1(false)
 
         val themesToCompile = themePackState.mapIndexed { index, themePackAdapterState -> index to themePackAdapterState }
                 .filter { it.second.checked }
+
+        deselectAll()
 
         detailedView?.showCompileDialog(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }) {
             detailedView?.increaseDialogProgress()
         }
-                .doOnCompleted {
+                .doOnComplete {
                     detailedView?.hideCompileDialog()
                 }
-                .subscribe()
+                .map { it.first }
+                .filter { it.component2() != null }
+                .map { it.component2()!! }
+                .filter { it.message != null }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { errors ->
+                    detailedView?.showError(errors.map { it.message!! })
+                    log.debug("Error: {}", errors)
+                }
+//                .subscribe()
 
 
     }
 
     override fun compileRunActivateSelected() {
-//        compileSelected1(true)
 
         val themesToCompile = themePackState.mapIndexed { index, themePackAdapterState -> index to themePackAdapterState }
                 .filter { it.second.checked }
+
+        deselectAll()
 
         detailedView?.showCompileDialog(themesToCompile.size)
 
@@ -266,10 +283,20 @@ class DetailedPresenter(
             }
             detailedView?.increaseDialogProgress()
         }
-                .doOnCompleted {
+                .doOnComplete {
                     detailedView?.hideCompileDialog()
                 }
-                .subscribe()
+                .map { it.first }
+                .filter { it.component2() != null }
+                .map { it.component2()!! }
+                .filter { it.message != null }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { errors ->
+                    detailedView?.showError(errors.map { it.message!! })
+                    log.debug("Error: {}", errors)
+                }
+//                .subscribe()
     }
 
     fun compileSelected1(activate: Boolean) {
@@ -278,6 +305,8 @@ class DetailedPresenter(
 
         val themesToCompile = themePackState.mapIndexed { index, themePackAdapterState -> index to themePackAdapterState }
                 .filter { it.second.checked }
+
+        deselectAll()
 
         detailedView?.showCompileDialog(themesToCompile.size)
 
@@ -289,7 +318,8 @@ class DetailedPresenter(
                         .map {
                             Log.d("Compiling on ", Thread.currentThread().toString())
                             compileForPosition(it.first)
-                        }}
+                        }
+                }
                 .observeOn(Schedulers.io())
                 .map {
                     Log.d("Installing on ", Thread.currentThread().toString())
@@ -350,12 +380,13 @@ class DetailedPresenter(
                 .map { it.first }
                 .filter { it.component2() != null }
                 .map { it.component2()!! }
-//                .map { it.message }
+                .filter { it.message != null }
                 .toList()
-                .subscribe {
-                    log.debug("Error: {}", it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { errors ->
+                    detailedView?.showError(errors.map { it.message!! })
+                    log.debug("Error: {}", errors)
                 }
-//                .subscribe()
 
 /*
         Observable.just(adapterPosition)
@@ -399,14 +430,21 @@ class DetailedPresenter(
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<Result<File, Exception>, Int>> {
 
-        return Observable.from(positions.toList())
+        positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
+
+        return positions.toList().toObservable()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
+                .map {
+                    detailedView?.refreshHolder(it)
+                    it
+                }
                 .filter {
                     val overlay = getOverlayIdForTheme(it)
 
                     if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
                         afterInstalling(it)
+                        themePackState[it].compiling = false
                         detailedView?.refreshHolder(it)
                         false
                     } else {
@@ -415,9 +453,8 @@ class DetailedPresenter(
                 }
                 .flatMap {
                     val adapterPosition = it
-                    val state = themePackState[adapterPosition]
-                    state.compiling = true
-                    detailedView?.refreshHolder(adapterPosition)
+//                    val state = themePackState[adapterPosition]
+//                    state.compiling = true
 
                     compileForPositionObservable(it)
                             .subscribeOn(Schedulers.computation())
@@ -465,7 +502,7 @@ class DetailedPresenter(
         val theme = themePack.themes[position]
         val overlay = getOverlayIdForTheme(position)
         val info = overlayService.getOverlayInfo(overlay)
-        if (!info.enabled) {
+        if (info?.enabled == false) {
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.disableOverlays(overlays.map { it.overlayId })
             overlayService.toggleOverlay(overlay, !info.enabled)
@@ -476,12 +513,14 @@ class DetailedPresenter(
         val theme = themePack.themes[position]
         val overlay = getOverlayIdForTheme(position)
         val info = overlayService.getOverlayInfo(overlay)
-        if (!info.enabled) {
-            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            overlayService.disableOverlays(overlays.map { it.overlayId })
-            overlayService.enableOverlay(overlay)
-        } else {
-            overlayService.disableOverlay(overlay)
+        if (info != null) {
+            if (!info.enabled) {
+                val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
+                overlayService.disableOverlays(overlays.map { it.overlayId })
+                overlayService.enableOverlay(overlay)
+            } else {
+                overlayService.disableOverlay(overlay)
+            }
         }
     }
 

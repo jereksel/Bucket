@@ -5,7 +5,7 @@ import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.*
-import rx.Observable
+import io.reactivex.Observable
 import java.io.File
 import java.util.concurrent.TimeUnit
 

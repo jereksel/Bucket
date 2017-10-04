@@ -7,7 +7,7 @@ interface OverlayService {
     fun enableOverlays(ids: List<String>)
     fun disableOverlay(id: String) = disableOverlays(listOf(id))
     fun disableOverlays(ids: List<String>)
-    fun getOverlayInfo(id: String): OverlayInfo
+    fun getOverlayInfo(id: String): OverlayInfo?
     fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
     fun restartSystemUI()
     fun installApk(apk: File)

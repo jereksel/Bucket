@@ -16,7 +16,7 @@ interface InstalledContract {
     interface Presenter : MVPPresenter<View> {
         fun getInstalledOverlays()
         fun toggleOverlay(overlayId: String, enabled: Boolean)
-        fun getOverlayInfo(overlayId: String): OverlayInfo
+        fun getOverlayInfo(overlayId: String): OverlayInfo?
         fun openActivity(appId: String): Boolean
         fun uninstallSelected()
         fun disableSelected()

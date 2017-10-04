@@ -95,7 +95,7 @@ class InstalledPresenter(
         toEnable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
-                .filter { !overlayService.getOverlayInfo(it).enabled }
+                .filter { overlayService.getOverlayInfo(it)?.enabled == false }
                 .toList()
                 .map { overlayService.enableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -115,7 +115,7 @@ class InstalledPresenter(
         toDisable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
-                .filter { overlayService.getOverlayInfo(it).enabled }
+                .filter { overlayService.getOverlayInfo(it)?.enabled == true }
                 .toList()
                 .map { overlayService.disableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())

@@ -1,7 +1,7 @@
 package com.jereksel.libresubstratum.domain.usecases
 
 import com.jereksel.libresubstratumlib.Theme
-import rx.Observable
+import io.reactivex.Observable
 import java.io.File
 
 interface ICompileThemeUseCase {

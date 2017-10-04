@@ -5,14 +5,18 @@ import activitystarter.Arg
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.LENGTH_LONG
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.AdapterView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
@@ -24,7 +28,14 @@ import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
+import org.jetbrains.anko.find
 import javax.inject.Inject
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.view.View.GONE
+import org.jetbrains.anko.toast
+
 
 open class DetailedView : AppCompatActivity(), View {
 
@@ -61,8 +72,8 @@ open class DetailedView : AppCompatActivity(), View {
                 recyclerView.adapter.notifyDataSetChanged()
             }
         }
-        fab_compile_install.setOnClickListener { presenter.compileRunSelected() }
-        fab_compile_install_activate.setOnClickListener { presenter.compileRunActivateSelected() }
+        fab_compile_install.setOnClickListener { fab.close(true); presenter.compileRunSelected() }
+        fab_compile_install_activate.setOnClickListener { fab.close(true); presenter.compileRunActivateSelected() }
     }
 
     override fun refreshHolder(position: Int) {
@@ -79,23 +90,55 @@ open class DetailedView : AppCompatActivity(), View {
     }
 
     override fun showCompileDialog(size: Int) {
-        val pDialog = ProgressDialog(this)
-        pDialog.setCancelable(false)
-        pDialog.isIndeterminate = false
-        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        pDialog.setTitle("Compiling")
-        pDialog.max = size
+//        val pDialog = ProgressDialog(this)
+//        pDialog.setCancelable(false)
+//        pDialog.isIndeterminate = false
+//        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+//        pDialog.setTitle("Compiling")
+//        pDialog.max = size
+        progressBar.progress = 0
+        progressBar.max = size
+        progressBar.secondaryProgress = Runtime.getRuntime().availableProcessors()
+        progressBar.visibility = VISIBLE
 //        pDialog.show()
 //        dialog = pDialog
     }
 
     override fun increaseDialogProgress() {
         val dialog = dialog
-        if (dialog != null && dialog.isShowing) {
+//        if (dialog != null && dialog.isShowing) {
             runOnUiThread {
-                dialog.progress++
+//                dialog.progress++
+//                progressBar.progress = 25
+                progressBar.incrementProgressBy(1)
+                progressBar.incrementSecondaryProgressBy(1)
             }
-        }
+//        }
+    }
+
+    override fun showError(errors: List<String>) {
+        Snackbar.make(root, "Error occured during compilation", LENGTH_LONG)
+                .setAction("Show error", {
+                    val view = LayoutInflater.from(it.context).inflate(R.layout.dialog_compilationerror, null)
+                    val textView = view.find<TextView>(R.id.errorTextView)
+                    val errorText = errors.joinToString(separator = "\n")
+                    textView.text = errorText
+
+                    val builder = AlertDialog.Builder(it.context)
+                    builder.setTitle("Error")
+                    builder.setView(view)
+
+                    builder.setPositiveButton("Copy to clipboard", { _, _ ->
+                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("LibreSubstratum error", errorText)
+                        clipboard.primaryClip = clip
+                        toast("Copied to clipboard")
+                    })
+
+                    builder.show()
+                }).show()
+
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -123,6 +166,7 @@ open class DetailedView : AppCompatActivity(), View {
         if (dialog != null && dialog.isShowing) {
             dialog.dismiss()
         }
+        progressBar.visibility = GONE
         recyclerView.adapter?.notifyDataSetChanged()
     }
 

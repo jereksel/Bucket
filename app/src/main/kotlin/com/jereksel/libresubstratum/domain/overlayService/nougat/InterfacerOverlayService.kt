@@ -55,9 +55,13 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         service.disableOverlay(ids, false)
     }
 
-    override fun getOverlayInfo(id: String): OverlayInfo {
+    override fun getOverlayInfo(id: String): OverlayInfo? {
         val info = oms.getOverlayInfo(id, 0)
-        return OverlayInfo(id, info.isEnabled)
+        return if (info != null) {
+            OverlayInfo(id, info.isEnabled)
+        } else {
+            null
+        }
     }
 
     override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
