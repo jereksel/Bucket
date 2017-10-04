@@ -1,23 +1,18 @@
 package com.jereksel.libresubstratum.presenters
 
-import android.os.AsyncTask
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.junit.Assert.*
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.stubbing.OngoingStubbing
-import rx.android.plugins.RxAndroidPlugins
-import rx.android.plugins.RxAndroidSchedulersHook
-import rx.plugins.RxJavaHooks
-import rx.schedulers.Schedulers
-import java.util.concurrent.ExecutorService
 
 class InstalledPresenterTest : FunSpec() {
 
@@ -36,15 +31,8 @@ class InstalledPresenterTest : FunSpec() {
         MockitoAnnotations.initMocks(this)
         presenter = InstalledPresenter(packageManager, overlayService, activityProxy)
         presenter.setView(view)
-        RxJavaHooks.clear()
-        RxJavaHooks.setOnComputationScheduler { Schedulers.immediate() }
 
-        val hook = object : RxAndroidSchedulersHook() {
-            override fun getMainThreadScheduler() = Schedulers.immediate()
-        }
-
-        RxAndroidPlugins.getInstance().reset()
-        RxAndroidPlugins.getInstance().registerSchedulersHook(hook)
+        initRxJava()
     }
 
     init {
@@ -115,8 +103,14 @@ class InstalledPresenterTest : FunSpec() {
         }
         val prepare = {
 
+            whenever(overlayService.getOverlayInfo(any())).then {
+                val id: String = it.getArgument(0)
+                OverlayInfo(id, false)
+            }
+
             whenever(packageManager.getInstalledOverlays()).thenReturn(
                     listOf(
+                            InstalledOverlay("overlay0", "", "", mock(), "", "", mock()),
                             InstalledOverlay("overlay1", "", "", mock(), "", "", mock()),
                             InstalledOverlay("overlay2", "", "", mock(), "", "", mock()),
                             InstalledOverlay("overlay3", "", "", mock(), "", "", mock()),
@@ -130,22 +124,44 @@ class InstalledPresenterTest : FunSpec() {
             presenter.setState(1, true)
             presenter.setState(2, true)
             presenter.setState(3, false)
+            presenter.setState(4, true)
         }
 
         test("Selected overlays are uninstalled during uninstallSelected") {
             prepare()
             presenter.uninstallSelected()
-            verify(overlayService).uninstallApk(listOf("overlay2", "overlay3"))
+            verify(overlayService).uninstallApk(listOf("overlay1", "overlay2", "overlay4"))
         }
         test("Selected overlays are enabled during enableSelected") {
             prepare()
+            whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", true))
+            whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", true))
             presenter.enableSelected()
-            verify(overlayService).enableOverlays(listOf("overlay2", "overlay3"))
+            verify(overlayService).enableOverlays(listOf("overlay2", "overlay4"))
         }
         test("Selected overlays are disabled during disableSelected") {
             prepare()
+            whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", true))
+            whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", true))
             presenter.disableSelected()
-            verify(overlayService).disableOverlays(listOf("overlay2", "overlay3"))
+            verify(overlayService).disableOverlays(listOf("overlay2", "overlay4"))
+        }
+
+        test("selectAll sets all states to true and calls refreshRV") {
+            prepare()
+            presenter.selectAll()
+            for (i in 0..4) {
+                assertTrue(presenter.getState(i))
+            }
+            verify(view).refreshRecyclerView()
+        }
+        test("deselectAll sets all states to false and calls refreshRV") {
+            prepare()
+            presenter.deselectAll()
+            for (i in 0..4) {
+                assertFalse(presenter.getState(i))
+            }
+            verify(view).refreshRecyclerView()
         }
     }
 }

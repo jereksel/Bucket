@@ -8,11 +8,13 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
-import rx.Observable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.toSingletonObservable
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.toObservable
+import io.reactivex.rxkotlin.toSingle
+import io.reactivex.schedulers.Schedulers
+import org.reactivestreams.Subscription
 import java.lang.ref.WeakReference
 
 class InstalledPresenter(
@@ -22,7 +24,7 @@ class InstalledPresenter(
 ) : Presenter {
 
     private var view = WeakReference<View>(null)
-    private var subscription: Subscription? = null
+    private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
 
     @JvmField
@@ -44,7 +46,7 @@ class InstalledPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
-                    it.sortedWith(compareBy({ it.targetName }, { it.sourceThemeName }, { it.type1a },
+                    it.sortedWith(compareBy({ it.sourceThemeName }, { it.targetName }, { it.type1a },
                             { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 }))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,7 +71,7 @@ class InstalledPresenter(
         val toUninstall = selectedOverlays()
                 .map { it.overlayId }
 
-        toUninstall.toSingletonObservable()
+        toUninstall.toSingle()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .map {
@@ -78,7 +80,7 @@ class InstalledPresenter(
                     state = overlays?.map { false }?.toTypedArray()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe { _ ->
                     val o = this.overlays
                     if (o != null) {
                         this.view.get()?.addOverlays(o)
@@ -92,12 +94,15 @@ class InstalledPresenter(
         val toEnable = selectedOverlays()
                 .map { it.overlayId }
 
-        toEnable.toSingletonObservable()
+        toEnable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
+                .filter { !overlayService.getOverlayInfo(it).enabled }
+                .toList()
                 .map { overlayService.enableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe { _ ->
+                    deselectAll()
                     view.get()?.refreshRecyclerView()
                 }
 
@@ -109,15 +114,38 @@ class InstalledPresenter(
         val toDisable = selectedOverlays()
                 .map { it.overlayId }
 
-        toDisable.toSingletonObservable()
+        toDisable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
+                .filter { overlayService.getOverlayInfo(it).enabled }
+                .toList()
                 .map { overlayService.disableOverlays(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe { _ ->
+                    deselectAll()
                     view.get()?.refreshRecyclerView()
                 }
 
+    }
+
+    override fun selectAll() {
+        val state = state
+        if (state != null) {
+            for (i in 0 until state.size) {
+                state[i] = true
+            }
+        }
+        view.get()?.refreshRecyclerView()
+    }
+
+    override fun deselectAll() {
+        val state = state
+        if (state != null) {
+            for (i in 0 until state.size) {
+                state[i] = false
+            }
+        }
+        view.get()?.refreshRecyclerView()
     }
 
     override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId)

@@ -1,16 +1,13 @@
 package com.jereksel.libresubstratum.activities.main
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog.Builder
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
@@ -20,13 +17,12 @@ import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarViewStarter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
-import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.extensions.getLogger
-import com.jereksel.libresubstratum.extensions.safeUnsubscribe
+import com.jereksel.libresubstratum.extensions.safeDispose
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
-import rx.Subscription
 import javax.inject.Inject
 
 open class MainView : AppCompatActivity(), MainContract.View {
@@ -34,7 +30,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     val log = getLogger()
 
     @Inject lateinit var presenter: Presenter
-    var clickSubscriptions: Subscription? = null
+    var clickSubscriptions: Disposable? = null
     private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +50,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     }
 
     override fun addApplications(list: List<MainViewTheme>) {
-        clickSubscriptions?.safeUnsubscribe()
+        clickSubscriptions?.safeDispose()
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
             itemAnimator = DefaultItemAnimator()
@@ -126,7 +122,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     override fun onDestroy() {
         super.onDestroy()
         presenter.removeView()
-        clickSubscriptions?.safeUnsubscribe()
+        clickSubscriptions?.safeDispose()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

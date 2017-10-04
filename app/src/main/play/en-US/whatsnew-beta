@@ -1,5 +1,8 @@
 IMPORTANT NOTE: When Substratum is not installed FC may occurred on startup. THIS IS NOT LIBRESUBSTRATUM'S FC, IT'S INTERFACER'S.
 
+Update Android SDK and libraries
+Sorting by theme name in installed overlays screen
+(Un)Select all in installed overlays screen
 Make MainView loading faster
 Fix // substweaks // compilation
 Add check if Substratum is installed (it's required for Interfacer)

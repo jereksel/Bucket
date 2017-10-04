@@ -13,9 +13,11 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import com.jereksel.libresubstratumlib.Type1DataToCompile
 import com.jereksel.libresubstratumlib.Type3Extension
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toObservable
+import io.reactivex.rxkotlin.toSingle
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.concurrent.Future
 
@@ -244,7 +246,7 @@ class DetailedPresenter(
 
         detailedView?.showCompileDialog(themesToCompile.size)
 
-        Observable.from(themesToCompile)
+        themesToCompile.toObservable()
                 .observeOn(Schedulers.computation())
                 .flatMap { Observable.just(it)
                         .subscribeOn(Schedulers.computation())
@@ -261,7 +263,7 @@ class DetailedPresenter(
                 }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted {
+                .doOnSuccess {
                     overlayService.enableOverlays(themesToCompile.map { getOverlayIdForTheme(it.first) })
                     compiling = false
                     detailedView?.hideCompileDialog()
