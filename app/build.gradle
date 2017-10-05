@@ -115,7 +115,15 @@ android {
             ext.enableCrashlytics = false
         }
     }
-
+    flavorDimensions "store"
+    productFlavors {
+        play {
+            dimension "store"
+            }
+        fdroid {
+            dimension "store"
+            }
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -224,7 +232,7 @@ dependencies {
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
     compile 'org.slf4j:slf4j-api:1.7.25'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
 
