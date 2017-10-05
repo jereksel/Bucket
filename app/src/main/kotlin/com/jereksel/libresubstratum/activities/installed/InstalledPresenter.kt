@@ -58,10 +58,19 @@ class InstalledPresenter(
     }
 
     override fun toggleOverlay(overlayId: String, enabled: Boolean) {
-        overlayService.toggleOverlay(overlayId, enabled)
-        if (overlayId.startsWith("com.android.systemui")) {
-            view.get()?.showSnackBar("This change requires SystemUI restart", "Restart SystemUI", { overlayService.restartSystemUI() })
-        }
+
+        val single = { overlayService.toggleOverlay(overlayId, enabled) }.toSingle()
+
+        single
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+                .subscribe { _ ->
+                    view.get()?.refreshRecyclerView()
+                    if (overlayId.startsWith("com.android.systemui")) {
+                        view.get()?.showSnackBar("This change requires SystemUI restart", "Restart SystemUI", { overlayService.restartSystemUI() })
+                    }
+                }
+
     }
 
     private fun selectedOverlays() = (overlays ?: emptyList<InstalledOverlay>()).filterIndexed { index, _ -> state!![index] }
