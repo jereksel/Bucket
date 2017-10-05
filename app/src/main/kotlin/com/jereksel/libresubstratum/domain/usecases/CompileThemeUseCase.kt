@@ -1,21 +1,20 @@
 package com.jereksel.libresubstratum.domain.usecases
 
-import android.util.TimeUtils
-import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.ThemeCompiler
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
-import com.jereksel.libresubstratumlib.*
+import com.jereksel.libresubstratumlib.Theme
+import com.jereksel.libresubstratumlib.ThemeToCompile
+import com.jereksel.libresubstratumlib.Type1DataToCompile
 import io.reactivex.Observable
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class CompileThemeUseCase(
-        val packageManager: IPackageManager,
-        val themeReader: IThemeReader,
-        val overlayService: OverlayService,
-        val activityProxy: IActivityProxy,
-        val themeCompiler: ThemeCompiler,
-        val themeExtractor: ThemeExtractor
+        private val packageManager: IPackageManager,
+        private val themeReader: IThemeReader,
+        private val themeCompiler: ThemeCompiler
 ): ICompileThemeUseCase {
 
     val log = getLogger()
@@ -45,8 +44,6 @@ class CompileThemeUseCase(
         val location = packageManager.getAppLocation(themeId)
 
         val themePack = themeReader.readThemePack(location)
-
-//        val theme = themePack.themes.find { it.application == destAppId }!!
 
         val m = mapOf(
                 "a" to type1aName,
@@ -86,14 +83,7 @@ class CompileThemeUseCase(
 
         val t2 = System.currentTimeMillis()
 
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(t2-t1)
-
-//        log.debug("Compilation of {} took {}s", targetOverlayId, seconds)
-
-//        val compilationTimeInSeconds = TimeUnit.MIL(t2-t1)
-
         file
-
     }
 
 }

@@ -56,6 +56,7 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
+    @Singleton
     open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
 
     @Provides
@@ -83,15 +84,13 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
+    @Singleton
     open fun providesCompileThemeUseCase(
             packageManager: IPackageManager,
             themeReader: IThemeReader,
-            overlayService: OverlayService,
-            activityProxy: IActivityProxy,
-            themeCompiler: ThemeCompiler,
-            themeExtractor: ThemeExtractor
+            themeCompiler: ThemeCompiler
     ): ICompileThemeUseCase {
-        return CompileThemeUseCase(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
+        return CompileThemeUseCase(packageManager, themeReader, themeCompiler)
     }
 
     @Provides

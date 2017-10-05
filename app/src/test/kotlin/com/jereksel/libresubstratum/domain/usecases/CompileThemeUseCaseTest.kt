@@ -16,19 +16,13 @@ class CompileThemeUseCaseTest: FunSpec() {
     @Mock
     lateinit var themeReader: IThemeReader
     @Mock
-    lateinit var overlayService: OverlayService
-    @Mock
-    lateinit var activityProxy: IActivityProxy
-    @Mock
     lateinit var themeCompiler: ThemeCompiler
-    @Mock
-    lateinit var themeExtractor: ThemeExtractor
 
     lateinit var useCase: ICompileThemeUseCase
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        useCase = CompileThemeUseCase(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
+        useCase = CompileThemeUseCase(packageManager, themeReader, themeCompiler)
 
         initRxJava()
 
