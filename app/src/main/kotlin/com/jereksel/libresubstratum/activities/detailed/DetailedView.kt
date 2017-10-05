@@ -42,8 +42,6 @@ open class DetailedView : AppCompatActivity(), View {
     @Arg
     lateinit var appId : String
 
-    private var dialog: ProgressDialog? = null
-
     @Inject lateinit var presenter : Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,31 +87,18 @@ open class DetailedView : AppCompatActivity(), View {
                 .setAction(buttonText, { _ -> callback() }).show()
     }
 
-    override fun showCompileDialog(size: Int) {
-//        val pDialog = ProgressDialog(this)
-//        pDialog.setCancelable(false)
-//        pDialog.isIndeterminate = false
-//        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-//        pDialog.setTitle("Compiling")
-//        pDialog.max = size
+    override fun showCompilationProgress(size: Int) {
         progressBar.progress = 0
         progressBar.max = size
         progressBar.secondaryProgress = Runtime.getRuntime().availableProcessors()
         progressBar.visibility = VISIBLE
-//        pDialog.show()
-//        dialog = pDialog
     }
 
     override fun increaseDialogProgress() {
-        val dialog = dialog
-//        if (dialog != null && dialog.isShowing) {
-            runOnUiThread {
-//                dialog.progress++
-//                progressBar.progress = 25
-                progressBar.incrementProgressBy(1)
-                progressBar.incrementSecondaryProgressBy(1)
-            }
-//        }
+        runOnUiThread {
+            progressBar.incrementProgressBy(1)
+            progressBar.incrementSecondaryProgressBy(1)
+        }
     }
 
     override fun showError(errors: List<String>) {
@@ -129,16 +114,12 @@ open class DetailedView : AppCompatActivity(), View {
                     builder.setView(view)
 
                     builder.setPositiveButton("Copy to clipboard", { _, _ ->
-                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("LibreSubstratum error", errorText)
-                        clipboard.primaryClip = clip
+                        presenter.setClipboard(errorText)
                         toast("Copied to clipboard")
                     })
 
                     builder.show()
                 }).show()
-
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -161,15 +142,10 @@ open class DetailedView : AppCompatActivity(), View {
         return true
     }
 
-    override fun hideCompileDialog() {
-        val dialog = dialog
-        if (dialog != null && dialog.isShowing) {
-            dialog.dismiss()
-        }
+    override fun hideCompilationProgress() {
         progressBar.visibility = GONE
         recyclerView.adapter?.notifyDataSetChanged()
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

@@ -6,21 +6,17 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.OverlayInfo
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
-import org.junit.Assert
+import io.reactivex.Observable.just
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
-import java.util.*
 
 class DetailedPresenterTest : FunSpec() {
 
@@ -34,6 +30,8 @@ class DetailedPresenterTest : FunSpec() {
     lateinit var overlayService: OverlayService
     @Mock
     lateinit var compileThemeUseCase: ICompileThemeUseCase
+    @Mock
+    lateinit var clipboardManager: ClipboardManager
 
     lateinit var presenter: Presenter
 
@@ -41,7 +39,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter1 = spy(DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase))
+        presenter1 = spy(DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase, clipboardManager))
         presenter = presenter1
         presenter.setView(view)
 
@@ -343,7 +341,6 @@ class DetailedPresenterTest : FunSpec() {
         }
         test("When overlay is installed and up to date it's not compiled, just activated") {
 
-
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
@@ -360,18 +357,24 @@ class DetailedPresenterTest : FunSpec() {
 
             presenter.compileAndRun(0)
 
-            verify(overlayService).toggleOverlay("app1.MyTheme", false)
+            verify(overlayService).disableOverlay("app1.MyTheme")
             verify(presenter1, never()).compileForPositionObservable(0)
 
         }
         test("When overlay is installed, but versions are different overlay is compiled") {
 
+            var overlayVersion = Pair(1, "v1")
+
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
+            whenever(overlayService.installApk(File("/"))).then {
+                overlayVersion = Pair(2, "v1.1")
+                Unit
+            }
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
-            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenAnswer { overlayVersion }
             whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
 
             val themes = ThemePack(listOf(Theme("app1")))
@@ -380,25 +383,30 @@ class DetailedPresenterTest : FunSpec() {
 
             presenter.readTheme("themeid")
 
-            doReturn(Observable.just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+            doReturn(just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
 
             presenter.compileAndRun(0)
 
-            verify(overlayService).toggleOverlay("app1.MyTheme", false)
+            verify(overlayService).disableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
             verify(presenter1).compileForPositionObservable(0)
-
-
         }
         test("When overlays is not installed, overlay is compiled") {
+
+            var installed = false
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
-            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer {installed}
+
+            whenever(overlayService.installApk(File("/"))).then {
+                installed = true; Unit
+            }
+
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
-            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -406,14 +414,18 @@ class DetailedPresenterTest : FunSpec() {
 
             presenter.readTheme("themeid")
 
-            doReturn(Observable.just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+            doReturn(just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
 
             presenter.compileAndRun(0)
 
-            verify(overlayService).toggleOverlay("app1.MyTheme", false)
-            verify(overlayService).installApk(File("/"))
             verify(presenter1).compileForPositionObservable(0)
+            verify(overlayService).enableOverlay("app1.MyTheme")
+            verify(overlayService).installApk(File("/"))
 
+        }
+        test("Settings clipboard is passed to clipboard manager") {
+            presenter.setClipboard("Text")
+            verify(clipboardManager).addToClipboard("Text")
         }
     }
 }

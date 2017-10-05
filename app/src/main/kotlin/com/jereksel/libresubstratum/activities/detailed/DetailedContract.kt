@@ -13,8 +13,8 @@ interface DetailedContract {
         fun refreshHolder(position: Int)
         fun showToast(s: String)
         fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
-        fun showCompileDialog(size: Int)
-        fun hideCompileDialog()
+        fun showCompilationProgress(size: Int)
+        fun hideCompilationProgress()
         fun increaseDialogProgress()
         fun showError(errors: List<String>)
     }
@@ -42,6 +42,7 @@ interface DetailedContract {
         fun compileRunSelected()
         fun selectAll()
         fun deselectAll()
+        fun setClipboard(s: String)
     }
 
 }

@@ -19,7 +19,6 @@ import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.toObservable
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.concurrent.Future
@@ -31,7 +30,8 @@ class DetailedPresenter(
         val activityProxy: IActivityProxy,
         val themeCompiler: ThemeCompiler,
         val themeExtractor: ThemeExtractor,
-        val compileThemeUseCase: ICompileThemeUseCase
+        val compileThemeUseCase: ICompileThemeUseCase,
+        val clipboardManager: ClipboardManager
 ) : Presenter {
 
     var detailedView: View? = null
@@ -235,6 +235,8 @@ class DetailedPresenter(
         }
     }
 
+    override fun setClipboard(s: String) = clipboardManager.addToClipboard(s)
+
     var compiling = false
 
     override fun compileRunSelected() {
@@ -244,13 +246,13 @@ class DetailedPresenter(
 
         deselectAll()
 
-        detailedView?.showCompileDialog(themesToCompile.size)
+        detailedView?.showCompilationProgress(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }) {
             detailedView?.increaseDialogProgress()
         }
                 .doOnComplete {
-                    detailedView?.hideCompileDialog()
+                    detailedView?.hideCompilationProgress()
                 }
                 .map { it.first }
                 .filter { it.component2() != null }
@@ -274,7 +276,7 @@ class DetailedPresenter(
 
         deselectAll()
 
-        detailedView?.showCompileDialog(themesToCompile.size)
+        detailedView?.showCompilationProgress(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }) { position ->
             val overlayId = getOverlayIdForTheme(position)
@@ -284,7 +286,7 @@ class DetailedPresenter(
             detailedView?.increaseDialogProgress()
         }
                 .doOnComplete {
-                    detailedView?.hideCompileDialog()
+                    detailedView?.hideCompilationProgress()
                 }
                 .map { it.first }
                 .filter { it.component2() != null }
@@ -308,7 +310,7 @@ class DetailedPresenter(
 
         deselectAll()
 
-        detailedView?.showCompileDialog(themesToCompile.size)
+        detailedView?.showCompilationProgress(themesToCompile.size)
 
         themesToCompile.toObservable()
                 .observeOn(Schedulers.computation())
@@ -332,7 +334,7 @@ class DetailedPresenter(
                 .doOnSuccess {
                     overlayService.enableOverlays(themesToCompile.map { getOverlayIdForTheme(it.first) })
                     compiling = false
-                    detailedView?.hideCompileDialog()
+                    detailedView?.hideCompilationProgress()
                 }.subscribe()
     }
 /*
@@ -349,7 +351,7 @@ class DetailedPresenter(
                 .toSingle()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    detailedView?.hideCompileDialog()
+                    detailedView?.hideCompilationProgress()
                 }
 */
 

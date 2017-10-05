@@ -66,9 +66,10 @@ open class AppModule(private val application: Application) {
             activityProxy: IActivityProxy,
             themeCompiler: ThemeCompiler,
             themeExtractor: ThemeExtractor,
-            compileThemeUseCase: ICompileThemeUseCase
+            compileThemeUseCase: ICompileThemeUseCase,
+            clipboardManager: ClipboardManager
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor, compileThemeUseCase)
+        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor, compileThemeUseCase, clipboardManager)
     }
 
     @Provides
@@ -92,5 +93,9 @@ open class AppModule(private val application: Application) {
     ): ICompileThemeUseCase {
         return CompileThemeUseCase(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
     }
+
+    @Provides
+    @Singleton
+    open fun providesClipBoardManager(): ClipboardManager = AndroidClipboardManager(application)
 
 }
