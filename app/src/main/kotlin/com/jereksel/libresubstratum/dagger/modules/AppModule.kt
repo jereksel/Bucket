@@ -50,7 +50,6 @@ open class AppModule(private val application: Application) {
     ): ThemeCompiler = AppThemeCompiler(application, packageManager)
 
     @Provides
-//    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService)
     }
@@ -74,7 +73,6 @@ open class AppModule(private val application: Application) {
     }
 
     @Provides
-//    @Singleton
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
             overlayService: OverlayService,
