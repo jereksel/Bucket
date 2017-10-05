@@ -260,7 +260,7 @@ dependencies {
 
     compile 'com.jereksel:omslib:1.0.2'
 
-//    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.guava:guava:20.0'
     androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 

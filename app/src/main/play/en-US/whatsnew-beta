@@ -1,5 +1,4 @@
-IMPORTANT NOTE: When Substratum is not installed FC may occurred on startup. THIS IS NOT LIBRESUBSTRATUM'S FC, IT'S INTERFACER'S.
-
+Fixed Interfacer's FC when Substratum is not installed
 Update Android SDK and libraries
 Sorting by theme name in installed overlays screen
 (Un)Select all in installed overlays screen
