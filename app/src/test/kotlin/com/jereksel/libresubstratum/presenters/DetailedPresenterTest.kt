@@ -13,6 +13,8 @@ import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
+import io.reactivex.Observable
+import io.reactivex.Observable.error
 import io.reactivex.Observable.just
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -398,7 +400,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
-            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer {installed}
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
                 installed = true; Unit
@@ -421,6 +423,60 @@ class DetailedPresenterTest : FunSpec() {
             verify(presenter1).compileForPositionObservable(0)
             verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
+
+        }
+        test("When overlays cannot be installed, it's removed and installed again") {
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1.0"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.compileAndRun(0)
+
+            verify(presenter1).compileForPositionObservable(0)
+            verify(overlayService).enableOverlay("app1.MyTheme")
+            verify(overlayService).uninstallApk("app1.MyTheme")
+            verify(overlayService, times(2)).installApk(File("/"))
+
+        }
+        test("When compilation fails error is shown to user") {
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+//            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1.0"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(Observable.fromCallable({ throw Exception("Exception message") })).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.compileAndRun(0)
+
+            verify(presenter1).compileForPositionObservable(0)
+            verify(overlayService, never()).enableOverlay(any())
+            verify(overlayService, never()).uninstallApk(any<String>())
+            verify(overlayService, never()).installApk(any())
+
+            verify(view).showError(listOf("Exception message"))
 
         }
         test("Settings clipboard is passed to clipboard manager") {

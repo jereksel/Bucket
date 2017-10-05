@@ -18,6 +18,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import org.slf4j.Logger
 import java.io.File
 import java.util.concurrent.Future
 
@@ -37,7 +38,7 @@ class DetailedPresenter(
     lateinit var themePack: ThemePack
     lateinit var appId: String
     var future: Future<File>? = null
-    val log = getLogger()
+    val log: Logger = getLogger()
 
     private var type3: Type3Extension? = null
 

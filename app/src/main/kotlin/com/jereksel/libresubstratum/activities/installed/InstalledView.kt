@@ -35,10 +35,6 @@ open class InstalledView : AppCompatActivity(), View {
         fab_uninstall.setOnClickListener { fab.close(true); presenter.uninstallSelected() }
         fab_enable.setOnClickListener { fab.close(true); presenter.enableSelected() }
         fab_disable.setOnClickListener { fab.close(true); presenter.disableSelected() }
-//        fab.setOnLongClickListener {
-//            toast("TEST")
-//            true
-//        }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
