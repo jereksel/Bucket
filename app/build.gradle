@@ -191,7 +191,8 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(":zipsigner:combined")
+//    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
@@ -246,11 +247,11 @@ dependencies {
     compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
 
     //Signing
-    compile files('lib/kellinwood-logging-android-1.4.jar')
-    compile files('lib/kellinwood-logging-lib-1.1.jar')
-    compile files('lib/kellinwood-logging-log4j-1.0.jar')
-    compile files('lib/zipio-lib-1.8.jar')
-    compile files('lib/zipsigner-lib-1.17.jar')
+//    compile files('lib/kellinwood-logging-android-1.4.jar')
+//    compile files('lib/kellinwood-logging-lib-1.1.jar')
+//    compile files('lib/kellinwood-logging-log4j-1.0.jar')
+//    compile files('lib/zipio-lib-1.8.jar')
+//    compile files('lib/zipsigner-lib-1.17.jar')
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
