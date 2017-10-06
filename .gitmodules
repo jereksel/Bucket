@@ -3,4 +3,4 @@
 	url = https://github.com/omnirom/android_packages_apps_OmniTheme
 [submodule "zipsigner"]
 	path = zipsigner
-	url = git@github.com:jereksel/zip-signer.git
+	url = https://github.com/jereksel/zip-signer
