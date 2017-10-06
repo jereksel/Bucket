@@ -237,7 +237,6 @@ dependencies {
 
     compile 'com.github.clans:fab:1.6.4'
 
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
