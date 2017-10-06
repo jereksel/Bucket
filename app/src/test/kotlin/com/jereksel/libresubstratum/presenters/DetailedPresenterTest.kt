@@ -341,6 +341,9 @@ class DetailedPresenterTest : FunSpec() {
             verify(view).setInstalled("v1", "v1.1")
 
         }
+
+        //COMPILATION
+
         test("When overlay is installed and up to date it's not compiled, just activated") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
