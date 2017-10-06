@@ -16,6 +16,8 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.blockingSubscribeBy
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
@@ -38,7 +40,7 @@ class DetailedPresenter(
     lateinit var themePack: ThemePack
     lateinit var appId: String
     var future: Future<File>? = null
-    val log: Logger = getLogger()
+    val log = getLogger()
 
     private var type3: Type3Extension? = null
 
@@ -247,23 +249,12 @@ class DetailedPresenter(
 
         detailedView?.showCompilationProgress(themesToCompile.size)
 
-        compilePositions(themesToCompile.map { it.first }) {
+        compilePositions(themesToCompile.map { it.first }, {
             detailedView?.increaseDialogProgress()
+        }, {
+            detailedView?.hideCompilationProgress()
         }
-                .doOnComplete {
-                    detailedView?.hideCompilationProgress()
-                }
-                .map { it.first }
-                .filter { it.component2() != null }
-                .map { it.component2()!! }
-                .filter { it.message != null }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { errors ->
-                    detailedView?.showError(errors.map { it.message!! })
-                    log.debug("Error: {}", errors)
-                }
-
+        )
     }
 
     override fun compileRunActivateSelected() {
@@ -275,47 +266,28 @@ class DetailedPresenter(
 
         detailedView?.showCompilationProgress(themesToCompile.size)
 
-        compilePositions(themesToCompile.map { it.first }) { position ->
-            val overlayId = getOverlayIdForTheme(position)
-            if (packageManager.isPackageInstalled(overlayId)) {
-                activateExclusive(position)
-            }
-            detailedView?.increaseDialogProgress()
-        }
-                .doOnComplete {
+        compilePositions(themesToCompile.map { it.first },
+                { position ->
+                    val overlayId = getOverlayIdForTheme(position)
+                    if (packageManager.isPackageInstalled(overlayId)) {
+                        activateExclusive(position)
+                    }
+                    detailedView?.increaseDialogProgress()
+                },
+                {
                     detailedView?.hideCompilationProgress()
                 }
-                .map { it.first }
-                .filter { it.component2() != null }
-                .map { it.component2()!! }
-                .filter { it.message != null }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { errors ->
-                    detailedView?.showError(errors.map { it.message!! })
-                    log.debug("Error: {}", errors)
-                }
-
+        )
     }
 
     override fun compileAndRun(adapterPosition: Int) {
 
-        compilePositions(listOf(adapterPosition)) { position ->
+        compilePositions(listOf(adapterPosition), { position ->
             val overlayId = getOverlayIdForTheme(position)
             if (packageManager.isPackageInstalled(overlayId)) {
                 toggle(adapterPosition)
             }
-        }
-                .map { it.first }
-                .filter { it.component2() != null }
-                .map { it.component2()!! }
-                .filter { it.message != null }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { errors ->
-                    detailedView?.showError(errors.map { it.message!! })
-                    log.debug("Error: {}", errors)
-                }
+        })
     }
 
     override fun selectAll() {
@@ -336,7 +308,7 @@ class DetailedPresenter(
         }
     }
 
-    private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit): Observable<Pair<Result<File, Exception>, Int>> {
+    private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
 
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
@@ -361,8 +333,6 @@ class DetailedPresenter(
                 }
                 .flatMap {
                     val adapterPosition = it
-//                    val state = themePackState[adapterPosition]
-//                    state.compiling = true
 
                     compileForPositionObservable(it)
                             .subscribeOn(Schedulers.computation())
@@ -403,6 +373,21 @@ class DetailedPresenter(
                     detailedView?.refreshHolder(adapterPosition)
                     it
                 }
+                .doOnComplete {
+                    onComplete.invoke()
+                }
+                .map { it.first }
+                .filter { it.component2() != null }
+                .map { it.component2()!! }
+                .filter { it.message != null }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { errors ->
+                    if (errors.isNotEmpty()) {
+                        detailedView?.showError(errors.map { it.message!! })
+                        log.debug("Error: {}", errors)
+                    }
+                }
 
     }
 
@@ -413,7 +398,7 @@ class DetailedPresenter(
         if (info?.enabled == false) {
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             overlayService.disableOverlays(overlays.map { it.overlayId })
-            overlayService.toggleOverlay(overlay, !info.enabled)
+            overlayService.enableOverlay(overlay)
         }
     }
 
@@ -448,7 +433,7 @@ class DetailedPresenter(
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
 
         return compileThemeUseCase.execute(
-                theme,
+                themePack,
                 appId,
                 location,
                 theme.application,

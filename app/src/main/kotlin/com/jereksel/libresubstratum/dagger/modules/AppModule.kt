@@ -85,10 +85,9 @@ open class AppModule(private val application: Application) {
     @Singleton
     open fun providesCompileThemeUseCase(
             packageManager: IPackageManager,
-            themeReader: IThemeReader,
             themeCompiler: ThemeCompiler
     ): ICompileThemeUseCase {
-        return CompileThemeUseCase(packageManager, themeReader, themeCompiler)
+        return CompileThemeUseCase(packageManager, themeCompiler)
     }
 
     @Provides

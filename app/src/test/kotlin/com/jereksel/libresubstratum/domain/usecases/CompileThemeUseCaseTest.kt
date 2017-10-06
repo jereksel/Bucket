@@ -14,15 +14,13 @@ class CompileThemeUseCaseTest: FunSpec() {
     @Mock
     lateinit var packageManager: IPackageManager
     @Mock
-    lateinit var themeReader: IThemeReader
-    @Mock
     lateinit var themeCompiler: ThemeCompiler
 
     lateinit var useCase: ICompileThemeUseCase
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        useCase = CompileThemeUseCase(packageManager, themeReader, themeCompiler)
+        useCase = CompileThemeUseCase(packageManager, themeCompiler)
 
         initRxJava()
 
@@ -36,11 +34,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(Theme("app1")))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -62,11 +59,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(Theme("com.android.systemui.tiles")))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -88,11 +84,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -115,11 +110,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -142,11 +136,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -168,11 +161,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme), Type3Data(listOf(Type3Extension("Type3a", true), Type3Extension("Type3b", false))))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -195,11 +187,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme), Type3Data(listOf(Type3Extension("Type3a", true), Type3Extension("Type3b", false))))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -222,11 +213,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme), Type3Data(listOf(Type3Extension("Type3a", true), Type3Extension("Type3b", false))))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -250,11 +240,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -277,11 +266,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -304,11 +292,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -335,11 +322,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -362,11 +348,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -389,11 +374,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -418,11 +402,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -445,11 +428,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -472,11 +454,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",
@@ -509,11 +490,10 @@ class CompileThemeUseCaseTest: FunSpec() {
             val themePack = ThemePack(listOf(theme), type3s)
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themePack)
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
 
             useCase.execute(
-                    themePack.themes[0],
+                    themePack,
                     "theme",
                     File("/"),
                     "app1",

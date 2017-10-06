@@ -14,7 +14,6 @@ import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable
-import io.reactivex.Observable.error
 import io.reactivex.Observable.just
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -482,6 +481,77 @@ class DetailedPresenterTest : FunSpec() {
             verify(view).showError(listOf("Exception message"))
 
         }
+
+        test("When compiling selected themes with installing only non should be enabled") {
+
+            var installed = false
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
+
+            whenever(overlayService.installApk(File("/"))).then {
+                installed = true; Unit
+            }
+
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.setCheckbox(0, true)
+
+            presenter.compileRunSelected()
+
+            verify(presenter1).compileForPositionObservable(0)
+            verify(overlayService, never()).enableOverlay(any())
+            verify(overlayService).installApk(File("/"))
+        }
+
+        test("When compiling selected themes with installing and enabling overlay should be enabled") {
+
+            var installed = false
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
+
+            whenever(overlayService.installApk(File("/"))).then {
+                installed = true; Unit
+            }
+
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+
+            val themes = ThemePack(listOf(Theme("app1")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(just(File("/"))).whenever(presenter1).compileForPositionObservable(0)
+
+            presenter.setCheckbox(0, true)
+
+            presenter.compileRunActivateSelected()
+
+            verify(presenter1).compileForPositionObservable(0)
+            verify(overlayService).enableOverlay("app1.MyTheme")
+            verify(overlayService).installApk(File("/"))
+        }
+
+        // OTHER
+
         test("Settings clipboard is passed to clipboard manager") {
             presenter.setClipboard("Text")
             verify(clipboardManager).addToClipboard("Text")
