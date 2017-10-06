@@ -119,9 +119,11 @@ android {
     productFlavors {
         play {
             dimension "store"
+            versionNameSuffix "-play"
             }
         fdroid {
             dimension "store"
+            versionNameSuffix "-fdroid"
             }
     }
     packagingOptions {
