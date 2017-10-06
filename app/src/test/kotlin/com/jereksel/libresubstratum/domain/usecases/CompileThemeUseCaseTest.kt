@@ -56,7 +56,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
         test("Navbar overlay") {
 
-            val themePack = ThemePack(listOf(Theme("com.android.systemui.tiles")))
+            val themePack = ThemePack(listOf(Theme("com.android.systemui.navbar")))
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
@@ -65,7 +65,7 @@ class CompileThemeUseCaseTest: FunSpec() {
                     themePack,
                     "theme",
                     File("/"),
-                    "app1",
+                    "com.android.systemui.navbar",
                     null,
                     null,
                     null,
@@ -73,7 +73,7 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "com.android.systemui", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("com.android.systemui.navbar.Theme", "theme", "com.android.systemui", listOf(), null, null, 1, "1.0")
 
             verify(themeCompiler).compileTheme(eq(themeToCompile), any())
         }
