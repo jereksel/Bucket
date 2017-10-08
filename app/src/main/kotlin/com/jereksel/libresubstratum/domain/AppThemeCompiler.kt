@@ -2,16 +2,20 @@ package com.jereksel.libresubstratum.domain
 
 import android.app.Application
 import android.os.Environment
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.AAPT
 import com.jereksel.libresubstratumlib.InvalidInvocationException
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import java.io.File
 import kellinwood.security.zipsigner.ZipSigner
+import java.util.concurrent.TimeUnit
 
 class AppThemeCompiler(
         val app: Application,
         val packageManager: IPackageManager
 ) : ThemeCompiler {
+
+    val log = getLogger()
 
     val aapt = File(app.cacheDir, "appt")
 
@@ -31,6 +35,8 @@ class AppThemeCompiler(
 //        val file = aapt.outputStream()
 //        stream.copyTo(aapt.outputStream())
         aapt.setExecutable(true)
+
+        log.debug("AAPT version: {}", ProcessBuilder().command(listOf(aapt.absolutePath, "v")).start().inputStream.bufferedReader().readText())
 
     }
 
@@ -79,13 +85,28 @@ class AppThemeCompiler(
 
         val loc = packageManager.getAppLocation(targetApk).absolutePath
 
+        val t1 = System.currentTimeMillis()
+
         val file = AAPT(aapt.absolutePath).compileTheme(themeDate, dir, temp, listOf("/system/framework/framework-res.apk", loc))
+
+        val t2 = System.currentTimeMillis()
+
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(t2-t1)
+
+        log.debug("Compilation of {} took {}s", themeDate.targetOverlayId, seconds)
+
+        val t11 = System.currentTimeMillis()
 
         //TODO: Replace with AOSP signer after AS 3.0 drops
         val zipSigner = ZipSigner()
         zipSigner.keymode = "testkey"
         zipSigner.signZip(file, finalApk)
 
+        val t12 = System.currentTimeMillis()
+
+        val seconds2 = TimeUnit.MILLISECONDS.toSeconds(t12-t11)
+
+        log.debug("Signing of {} took {}s", themeDate.targetOverlayId, seconds2)
 //        file.copyTo(finalApk)
 
 //        temp.deleteRecursively()

@@ -8,6 +8,8 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -48,12 +50,12 @@ open class AppModule(private val application: Application) {
     ): ThemeCompiler = AppThemeCompiler(application, packageManager)
 
     @Provides
-//    @Singleton
     open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService)
     }
 
     @Provides
+    @Singleton
     open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
 
     @Provides
@@ -63,13 +65,14 @@ open class AppModule(private val application: Application) {
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
             themeCompiler: ThemeCompiler,
-            themeExtractor: ThemeExtractor
+            themeExtractor: ThemeExtractor,
+            compileThemeUseCase: ICompileThemeUseCase,
+            clipboardManager: ClipboardManager
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
+        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor, compileThemeUseCase, clipboardManager)
     }
 
     @Provides
-//    @Singleton
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
             overlayService: OverlayService,
@@ -77,5 +80,18 @@ open class AppModule(private val application: Application) {
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy)
     }
+
+    @Provides
+    @Singleton
+    open fun providesCompileThemeUseCase(
+            packageManager: IPackageManager,
+            themeCompiler: ThemeCompiler
+    ): ICompileThemeUseCase {
+        return CompileThemeUseCase(packageManager, themeCompiler)
+    }
+
+    @Provides
+    @Singleton
+    open fun providesClipBoardManager(): ClipboardManager = AndroidClipboardManager(application)
 
 }

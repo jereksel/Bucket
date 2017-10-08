@@ -42,7 +42,12 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
                  }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { index ->
-                    notifyItemChanged(index)
+                    //FIXME
+                    try {
+                        notifyItemChanged(index)
+                    } catch (ignored: Exception) {
+
+                    }
                 }
 
     }
