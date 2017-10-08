@@ -1,3 +1,4 @@
+Multiple improvements to overlay compiling
 Fixed Interfacer's FC when Substratum is not installed
 Update Android SDK and libraries
 Sorting by theme name in installed overlays screen
