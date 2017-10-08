@@ -201,7 +201,6 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
@@ -258,11 +257,7 @@ dependencies {
     compile 'com.github.kittinunf.result:result:1.2.0'
 
     //Signing
-    compile files('lib/kellinwood-logging-android-1.4.jar')
-    compile files('lib/kellinwood-logging-lib-1.1.jar')
-    compile files('lib/kellinwood-logging-log4j-1.0.jar')
-    compile files('lib/zipio-lib-1.8.jar')
-    compile files('lib/zipsigner-lib-1.17.jar')
+    compile project(":zipsigner:combined")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
