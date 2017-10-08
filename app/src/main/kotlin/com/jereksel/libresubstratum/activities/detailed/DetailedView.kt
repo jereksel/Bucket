@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.activities.detailed
 
 import activitystarter.ActivityStarter
 import activitystarter.Arg
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.Snackbar.LENGTH_LONG
@@ -13,7 +12,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.TextView
@@ -29,15 +29,11 @@ import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
+import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
-import org.jetbrains.anko.find
 import javax.inject.Inject
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.view.View.GONE
-import org.jetbrains.anko.toast
 
 
 open class DetailedView : AppCompatActivity(), View {
@@ -112,7 +108,6 @@ open class DetailedView : AppCompatActivity(), View {
         val rvRow = recyclerView.getChildViewHolder(child) as ThemePackAdapter.ViewHolder
         val icon = rvRow.appIcon
         val card = rvRow.card
-        val fab = fab
 
         val config = ShowcaseConfig()
         config.delay = 500
@@ -133,14 +128,6 @@ open class DetailedView : AppCompatActivity(), View {
         sequence.start()
     }
 
-    override fun hideCompileDialog() {
-        val dialog = dialog
-        if (dialog != null && dialog.isShowing) {
-            dialog.dismiss()
-        }
-        recyclerView.adapter?.notifyDataSetChanged()
-    }
-      
     override fun showError(errors: List<String>) {
         Snackbar.make(root, "Error occured during compilation", LENGTH_LONG)
                 .setAction("Show error", {
@@ -175,7 +162,6 @@ open class DetailedView : AppCompatActivity(), View {
                 else ->
                     super.onOptionsItemSelected(item)
             }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

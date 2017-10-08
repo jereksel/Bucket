@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.jereksel.libresubstratum.App
+import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
@@ -17,6 +18,8 @@ import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import kotlinx.android.synthetic.main.activity_installed.*
 import org.jetbrains.anko.toast
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
 
 open class InstalledView : AppCompatActivity(), View {
@@ -44,6 +47,9 @@ open class InstalledView : AppCompatActivity(), View {
             itemAnimator = DefaultItemAnimator()
             adapter = InstalledOverlaysAdapter(overlays, presenter)
         }
+        recyclerView.postDelayed ({
+            showTutorial()
+        }, 100)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -76,6 +82,31 @@ open class InstalledView : AppCompatActivity(), View {
                 else ->
                     super.onOptionsItemSelected(item)
             }
+
+    fun showTutorial() {
+        val child = recyclerView.layoutManager.findViewByPosition(0) ?: return
+        val rvRow = recyclerView.getChildViewHolder(child) as InstalledOverlaysAdapter.ViewHolder
+        val icon = rvRow.themeIcon
+        val card = rvRow.card
+
+        val config = ShowcaseConfig()
+        config.delay = 500
+
+        val sequence = if(BuildConfig.DEBUG) {
+            MaterialShowcaseSequence(this)
+        } else {
+            MaterialShowcaseSequence(this, "InstalledView_1")
+        }
+
+        sequence.setConfig(config)
+
+        sequence.apply {
+            addSequenceItem(icon, "Long click to open this application. When is split mode, app will be opened in second split", "GOT IT")
+            addSequenceItem(card, "Click on card to select. Long click to toggle overlay", "GOT IT")
+        }
+
+        sequence.start()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
