@@ -15,6 +15,7 @@ import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable
 import io.reactivex.Observable.just
+import org.junit.Assert.assertNull
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
@@ -551,6 +552,51 @@ class DetailedPresenterTest : FunSpec() {
         }
 
         // OTHER
+
+        test("Select all changes state of unselected items and resets them") {
+
+            whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
+
+            val themes = ThemePack(listOf(Theme("app1"), Theme("app2"), Theme("app3")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            presenter1.themePackState[1].checked = true
+
+            presenter.selectAll()
+
+            assertNull(presenter1.themePackState.find { !it.checked })
+
+            verify(view).refreshHolder(0)
+            verify(view, never()).refreshHolder(1)
+            verify(view).refreshHolder(2)
+
+        }
+
+        test("Deselect all changes state of selected items and resets them") {
+
+            whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
+
+            val themes = ThemePack(listOf(Theme("app1"), Theme("app2"), Theme("app3")))
+
+            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            presenter1.themePackState[1].checked = true
+            presenter1.themePackState[2].checked = true
+
+            presenter.deselectAll()
+
+            assertNull(presenter1.themePackState.find { it.checked })
+
+            verify(view, never()).refreshHolder(0)
+            verify(view).refreshHolder(1)
+            verify(view).refreshHolder(2)
+
+        }
 
         test("Settings clipboard is passed to clipboard manager") {
             presenter.setClipboard("Text")

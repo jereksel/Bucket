@@ -28,6 +28,7 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
 import com.jereksel.libresubstratumlib.Type3Extension
 import org.jetbrains.anko.find
+import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
@@ -161,6 +162,19 @@ class DetailedViewTest: BaseRobolectricTest() {
         verify(presenter).setClipboard(errors.joinToString(separator = "\n"))
 
     }
+
+    @Test
+    fun `Clicking on selectAll invokes it in presenter`() {
+        activityCasted?.onOptionsItemSelected(RoboMenuItem(R.id.action_selectall))
+        verify(presenter).selectAll()
+    }
+
+    @Test
+    fun `Clicking on unselectAll invokes it in presenter`() {
+        activityCasted?.onOptionsItemSelected(RoboMenuItem(R.id.action_deselectall))
+        verify(presenter).deselectAll()
+    }
+
 
     private fun <T> ArrayAdapter<T>.getAllItems() = (0 until count).map { this.getItem(it) }
 }
