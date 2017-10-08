@@ -191,7 +191,7 @@ task jacocoTestReport(type: JacocoReport) {
                       "**/*Component*.*", //Dagger2 generated code
                       "**/*Module*.*" //Dagger2 generated code
     ]
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/fdroid/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
     def kotlinSrc = "${project.projectDir}/src/main/kotlin"
     sourceDirectories = files([mainSrc, kotlinSrc])
