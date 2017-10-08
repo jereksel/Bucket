@@ -10,7 +10,7 @@ import java.util.zip.ZipInputStream
 
 object ZipUtils {
 
-    fun File.extractZip(dest: File, progressCallback: (Int) -> Unit = {}) {
+    fun File.extractZip(dest: File, prefix: String = "", progressCallback: (Int) -> Unit = {}) {
         if (dest.exists()) {
             dest.deleteRecursively()
         }
@@ -28,7 +28,7 @@ object ZipUtils {
 
 //                    Log.d("extractZip", fileName)
 
-                    if (!fileName.startsWith("assets")) {
+                    if (!fileName.startsWith(prefix)) {
                         return@forEachIndexed
                     }
 
@@ -41,12 +41,11 @@ object ZipUtils {
 
                     destFile.parentFile.mkdirs()
                     destFile.createNewFile()
-                    val fout = FileOutputStream(destFile)
 
-                    zis.copyTo(fout)
-                    fout.close()
+                    FileOutputStream(destFile).use { fout ->
+                        zis.copyTo(fout)
+                    }
                 }
-
             }
         }
     }

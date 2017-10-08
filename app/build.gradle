@@ -116,7 +116,17 @@ android {
             ext.enableCrashlytics = false
         }
     }
-
+    flavorDimensions "store"
+    productFlavors {
+        play {
+            dimension "store"
+            versionNameSuffix "-play"
+            }
+        fdroid {
+            dimension "store"
+            versionNameSuffix "-fdroid"
+            }
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -182,7 +192,7 @@ task jacocoTestReport(type: JacocoReport) {
                       "**/*Component*.*", //Dagger2 generated code
                       "**/*Module*.*" //Dagger2 generated code
     ]
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/fdroid/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
     def kotlinSrc = "${project.projectDir}/src/main/kotlin"
     sourceDirectories = files([mainSrc, kotlinSrc])
@@ -192,7 +202,6 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
@@ -225,7 +234,7 @@ dependencies {
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
     compile 'org.slf4j:slf4j-api:1.7.25'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
 
@@ -248,12 +257,10 @@ dependencies {
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
     compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
 
+    compile 'com.github.kittinunf.result:result:1.2.0'
+
     //Signing
-    compile files('lib/kellinwood-logging-android-1.4.jar')
-    compile files('lib/kellinwood-logging-lib-1.1.jar')
-    compile files('lib/kellinwood-logging-log4j-1.0.jar')
-    compile files('lib/zipio-lib-1.8.jar')
-    compile files('lib/zipsigner-lib-1.17.jar')
+    compile project(":zipsigner:combined")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 

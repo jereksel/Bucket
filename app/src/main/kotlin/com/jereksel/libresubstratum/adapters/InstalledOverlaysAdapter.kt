@@ -31,7 +31,7 @@ class InstalledOverlaysAdapter(
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
         holder.targetName.text = "${overlay.targetName} - ${overlay.sourceThemeName}"
-        val color = if(info.enabled) Color.GREEN else Color.RED
+        val color = if(info?.enabled == true) Color.GREEN else Color.RED
         holder.targetName.setTextColor(color)
 
         holder.checkbox.setOnCheckedChangeListener(null)
@@ -45,7 +45,9 @@ class InstalledOverlaysAdapter(
         }
 
         holder.view.setOnLongClickListener {
-            presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            if (info != null) {
+                presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            }
             notifyItemChanged(position)
             true
         }

@@ -14,7 +14,7 @@ class BaseThemeExtractor : ThemeExtractor {
     override fun extract(file: File, dest: File): Future<File> {
 
         val task = FutureTask {
-            file.extractZip(dest, {
+            file.extractZip(dest, "assets", {
                 log.debug("Extract progress: {}", it)
             })
             dest

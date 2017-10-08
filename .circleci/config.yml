@@ -14,6 +14,9 @@ jobs:
           name: Download Android build-tools 26.0.1
           command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
       - run:
+          name: Download submodules
+          command: git submodule update --init --recursive
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon 
       - run:
@@ -42,5 +45,5 @@ jobs:
               openssl aes-256-cbc -K $KEY -iv $IV -in secrets.tar.enc -out secrets.tar -d
               tar xvf secrets.tar
               cd ..
-              ./gradlew publishRelease --no-daemon
+              ./gradlew publishPlayRelease --no-daemon
             fi
