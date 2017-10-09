@@ -45,6 +45,11 @@ object ZipUtils {
                     FileOutputStream(destFile).use { fout ->
                         zis.copyTo(fout)
                     }
+
+                    if (Thread.interrupted()) {
+                        return
+                    }
+
                 }
             }
         }
