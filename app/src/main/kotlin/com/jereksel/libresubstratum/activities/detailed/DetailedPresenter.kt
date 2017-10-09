@@ -16,12 +16,12 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.blockingSubscribeBy
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import org.slf4j.Logger
 import java.io.File
+import java.util.concurrent.CancellationException
 import java.util.concurrent.Future
 
 class DetailedPresenter(
@@ -39,6 +39,7 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
+    val compositeDisposable = CompositeDisposable()
     var future: Future<File>? = null
     val log = getLogger()
 
@@ -53,6 +54,7 @@ class DetailedPresenter(
     override fun removeView() {
         future?.cancel(true)
         detailedView = null
+        compositeDisposable.clear()
     }
 
     override fun readTheme(appId: String) {
@@ -312,7 +314,7 @@ class DetailedPresenter(
 
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
-        return positions.toList().toObservable()
+        val disp = positions.toList().toObservable()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
@@ -382,12 +384,21 @@ class DetailedPresenter(
                 .filter { it.message != null }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { errors ->
+                .subscribe({ errors ->
                     if (errors.isNotEmpty()) {
                         detailedView?.showError(errors.map { it.message!! })
-                        log.debug("Error: {}", errors)
+                        log.warn("Compilation error: {}", errors)
                     }
-                }
+//                })
+                }, { onError ->
+                    //Something gone horribly wrong
+                    log.error("Error: {}", onError)
+                    detailedView?.showError(listOf(onError.localizedMessage))
+                })
+
+        compositeDisposable.add(disp)
+
+        return disp
 
     }
 
@@ -419,7 +430,13 @@ class DetailedPresenter(
 
     fun compileForPositionObservable(position: Int): Observable<File> {
 
-        val cacheLocation = future!!.get()
+        val cacheLocation: File
+
+        try {
+            cacheLocation = future!!.get()
+        } catch (e: CancellationException) {
+            return Observable.error(e)
+        }
 
         val state = themePackState[position]
         val theme = themePack.themes[position]
