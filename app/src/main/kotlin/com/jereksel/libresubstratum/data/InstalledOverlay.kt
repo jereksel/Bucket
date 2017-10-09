@@ -7,11 +7,11 @@ data class InstalledOverlay (
         //Source theme
         val sourceThemeId: String,
         val sourceThemeName: String,
-        val sourceThemeDrawable: Drawable,
+        val sourceThemeDrawable: Drawable?,
         //Target app
         val targetId: String,
         val targetName: String,
-        val targetDrawable: Drawable,
+        val targetDrawable: Drawable?,
         val type1a: String? = null,
         val type1b: String? = null,
         val type1c: String? = null,
