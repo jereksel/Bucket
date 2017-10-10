@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'jacoco-android'
+apply plugin: 'jacoco'
+//apply plugin: 'jacoco-android'
+apply plugin: 'com.vanniktech.android.junit.jacoco'
+
 
 android {
     compileSdkVersion 26
@@ -52,8 +55,16 @@ repositories {
     mavenCentral()
 }
 
-jacocoAndroidUnitTestReport {
-  csv.enabled false
-  html.enabled true
-  xml.enabled true
+junitJacoco {
+    jacocoVersion = '0.7.2.201409121644' // type String
+    ignoreProjects = [] // type String array
+    excludes // type String List
+    includeNoLocationClasses = false // type boolean
 }
+
+
+//jacocoAndroidUnitTestReport {
+//  csv.enabled false
+//  html.enabled true
+//  xml.enabled true
+//}
