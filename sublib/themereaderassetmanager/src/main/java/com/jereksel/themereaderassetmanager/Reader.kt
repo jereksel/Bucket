@@ -2,10 +2,7 @@ package com.jereksel.themereaderassetmanager
 
 import android.content.res.AssetManager
 import android.content.res.AssetManager.ACCESS_BUFFER
-import com.jereksel.libresubstratumlib.Theme
-import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratumlib.Type1Data
-import com.jereksel.libresubstratumlib.Type1Extension
+import com.jereksel.libresubstratumlib.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -24,9 +21,33 @@ object Reader {
                 .toList()
                 .blockingGet()
 
+        val type3Data: Type3Data?
 
-        return ThemePack(list.sortedBy { it.application })
+        if (apps.isEmpty()) {
+            type3Data = null
+        } else {
+            val app = apps[0]
 
+            val type3extensions = am.list("overlays/$app")
+                    .filter { it.startsWith("type3") }
+                    .map {
+                        if (it == "type3") {
+                            Type3Extension(am.read("overlays/$app/$it"), true)
+                        } else {
+                            Type3Extension(it.removePrefix("type3_"), false)
+                        }
+                    }
+                    .sortedWith(compareBy({ !it.default }, { it.name }))
+
+            if (type3extensions.isEmpty()) {
+                type3Data = null
+            } else {
+                type3Data = Type3Data(type3extensions)
+            }
+
+        }
+
+        return ThemePack(list.sortedBy { it.application }, type3Data)
     }
 
     fun readTheme(am: AssetManager, id: String): Theme {
@@ -37,8 +58,7 @@ object Reader {
 
         val type1s = files
                 .filter { it.startsWith("type1") }
-
-                .groupBy { it[5].toString() }
+                .groupBy { it[5] }
                 .map {
                     val type = it.key
                     val extensions = it.value
@@ -53,13 +73,43 @@ object Reader {
                             //We want true to be first
                             .sortedWith(compareBy({ !it.default }, { it.name }))
 
-                    Type1Data(extensions, type)
+                    Type1Data(extensions, type.toString())
                 }
                 .sortedBy { it.suffix }
 
-        return Theme(id, type1s)
+        val type2 = files
+                .filter { it.startsWith("type2") }
+                .map {
+                    if (it == "type2") {
+                        Type2Extension(am.read("$dir/$it"), true)
+                    } else {
+                        Type2Extension(it.removePrefix("type2_"), false)
+                    }
+                }
+//                .ifNotEmptyAdd(Type2Extension("Type2 extension", true))
+
+        val type22: List<Type2Extension>
+
+        if (type2.find { it.default } == null && !type2.isEmpty()) {
+            type22 = type2 + Type2Extension("Type2 extension", true)
+        } else {
+            type22 = type2
+        }
+
+        val finalType2 = type22
+                .sortedWith(compareBy({ !it.default }, { it.name }))
+
+        val type2Data: Type2Data?
+
+        type2Data = if (finalType2.isEmpty()) {
+            null
+        } else {
+            Type2Data(finalType2)
+        }
+
+        return Theme(id, type1s, type2Data)
     }
 
     private fun AssetManager.read(file: String): String = this.open(file, ACCESS_BUFFER).bufferedReader().use { it.readText() }
-
 }
+
