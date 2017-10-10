@@ -63,7 +63,7 @@ class ThemeReaderExtractless {
 
                 logger.debug("Type3: {}", type3List)
 
-                val defaultType3 = type3List.first { it.default }
+                val defaultType3 = type3List.firstOrNull { it.default } ?: Type3Extension("Select preset", true)
                 val otherType3 = (type3List - defaultType3).sortedBy { it.name }
 
                 Type3Data(listOf(defaultType3) + otherType3)

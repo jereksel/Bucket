@@ -16,6 +16,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeDispose
@@ -73,10 +74,10 @@ open class MainView : AppCompatActivity(), MainContract.View {
         swiperefresh.isRefreshing = false
     }
 
-    override fun openThemeFragment(appId: String) {
+    override fun openThemeFragment(appId: String, key: KeyPair?) {
         dialog?.dismiss()
         dialog = null
-        DetailedViewStarter.start(this, appId)
+        DetailedViewStarter.start(this, appId, key)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

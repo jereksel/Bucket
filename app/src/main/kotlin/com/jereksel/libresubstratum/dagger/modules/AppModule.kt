@@ -50,8 +50,13 @@ open class AppModule(private val application: Application) {
     ): ThemeCompiler = AppThemeCompiler(application, packageManager)
 
     @Provides
-    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader, overlayService)
+    open fun providesMainPresenter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService,
+            keyFinder: IKeyFinder
+    ): MainContract.Presenter {
+        return MainPresenter(packageManager, themeReader, overlayService, keyFinder)
     }
 
     @Provides
@@ -93,5 +98,9 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesClipBoardManager(): ClipboardManager = AndroidClipboardManager(application)
+
+    @Provides
+    @Singleton
+    open fun providesKeyFinder(): IKeyFinder = KeyFinder(application)
 
 }

@@ -1,6 +1,8 @@
 package com.jereksel.libresubstratum.activities.main
 
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.OverlayService
@@ -14,7 +16,8 @@ import java.io.File
 class MainPresenter(
         val packageManager: IPackageManager,
         val themeReader: IThemeReader,
-        val overlayService: OverlayService
+        val overlayService: OverlayService,
+        val keyFinder: IKeyFinder
 ) : MainContract.Presenter {
 
     companion object {
@@ -81,10 +84,12 @@ class MainPresenter(
 
     override fun openThemeScreen(appId: String) {
 
+        val key = keyFinder.getKey(appId)
+
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)
 
-        mainView?.openThemeFragment(appId)
+        mainView?.openThemeFragment(appId, key)
 
 //        Observable.fromCallable { source.extractZip(dest) }
 //                .observeOn(AndroidSchedulers.mainThread())

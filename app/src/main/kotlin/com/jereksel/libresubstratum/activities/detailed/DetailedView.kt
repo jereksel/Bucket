@@ -34,6 +34,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.View.GONE
+import com.jereksel.libresubstratum.data.KeyPair
 import org.jetbrains.anko.toast
 
 
@@ -41,6 +42,9 @@ open class DetailedView : AppCompatActivity(), View {
 
     @Arg
     lateinit var appId : String
+
+    @Arg
+    lateinit var key: KeyPair
 
     @Inject lateinit var presenter : Presenter
 

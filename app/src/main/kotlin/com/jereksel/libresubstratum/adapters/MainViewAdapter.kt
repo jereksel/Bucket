@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.domain.KeyFinder
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
@@ -18,6 +19,8 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotterknife.bindView
+import org.jetbrains.anko.toast
+import java.security.KeyFactory
 
 class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
@@ -66,7 +69,10 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
         holder.view.setOnClickListener { onClickSubject.onNext(app) }
         holder.lock.visibility = if (app.isEncrypted) View.VISIBLE else View.GONE
         holder.lock.setOnClickListener {
-            Toast.makeText(it.context, "Theme is encrypted. Ask themer to also include unencrypted files.", Toast.LENGTH_LONG).show()
+            onClickSubject.onNext(app)
+//            val keys = KeyFinder(holder.lock.context).getKey(app.appId)
+//            it.context.toast(keys.toString())
+//            Toast.makeText(it.context, "Theme is encrypted. Ask themer to also include unencrypted files.", Toast.LENGTH_LONG).show()
         }
     }
 
