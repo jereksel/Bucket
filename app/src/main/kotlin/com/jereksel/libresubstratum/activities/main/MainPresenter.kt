@@ -90,15 +90,5 @@ class MainPresenter(
         val dest = File(packageManager.getCacheFolder(), appId)
 
         mainView?.openThemeFragment(appId, key)
-
-//        Observable.fromCallable { source.extractZip(dest) }
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.computation())
-//                .subscribe { mainView?.openThemeFragment(appId) }
-//        extractSubs = Observable.fromCallable { source.extractZip(dest, { mainView?.setDialogProgress(it) }) }
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.computation())
-//                .subscribe { mainView?.openThemeFragment(appId) }
-
     }
 }
