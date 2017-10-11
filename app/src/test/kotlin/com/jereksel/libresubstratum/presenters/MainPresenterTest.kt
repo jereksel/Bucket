@@ -4,10 +4,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.MainViewTheme
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.InvalidOverlayService
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
@@ -27,12 +24,14 @@ class MainPresenterTest : FunSpec() {
     lateinit var themeReader: IThemeReader
     @Mock
     lateinit var overlayService: OverlayService
+    @Mock
+    lateinit var keyFinder: IKeyFinder
 
     lateinit var presenter : MainPresenter
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = MainPresenter(packageManager, themeReader, overlayService)
+        presenter = MainPresenter(packageManager, themeReader, overlayService, keyFinder)
         presenter.setView(view)
 
         initRxJava()
