@@ -10,7 +10,7 @@ init:
 
 install:
   - gradlew -version
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools,tools,build-tools-26.0.1,build-tools-25.0.3,android-26,android-25,extra-google-m2repository,extra-android-m2repository
+  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools,tools,build-tools-26.0.2,android-26,android-25,extra-google-m2repository,extra-android-m2repository
   # on windows we need to accept sublicenses for the new tooling, wee. 30 is an arbitrary number,
   # but should be the maximum number of licenses we explicitly need to type "Y ENTER" for.
   # also, the sdkmanager in all its glory leaks a bit of output to stderr, and powershell
@@ -23,7 +23,7 @@ build_script:
   - gradlew assembleDebug
 
 test_script:
-  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.1\\aapt.exe v"
+  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.2\\aapt.exe v"
   - gradlew testFdroidDebugUnitTest
   - gradlew sublib:reader:test
   - gradlew sublib:compiler:test
