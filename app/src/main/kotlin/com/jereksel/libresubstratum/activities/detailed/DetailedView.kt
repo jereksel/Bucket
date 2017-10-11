@@ -56,6 +56,7 @@ open class DetailedView : AppCompatActivity(), View {
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         title = presenter.getAppName(appId)
         presenter.setView(this)
+        presenter.setKey(key)
         presenter.readTheme(appId)
     }
 

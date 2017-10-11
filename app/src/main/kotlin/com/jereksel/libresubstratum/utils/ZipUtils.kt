@@ -1,16 +1,14 @@
 package com.jereksel.libresubstratum.utils
 
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
 object ZipUtils {
 
-    fun File.extractZip(dest: File, prefix: String = "", progressCallback: (Int) -> Unit = {}) {
+    fun File.extractZip(dest: File, prefix: String = "", progressCallback: (Int) -> Unit = {},
+                        streamTransform: (InputStream) -> InputStream = { it }) {
         if (dest.exists()) {
             dest.deleteRecursively()
         }
@@ -22,7 +20,7 @@ object ZipUtils {
             ZipInputStream(BufferedInputStream(fis)).use { zis ->
                 zis.generateSequence().forEachIndexed { index, ze ->
 
-                    val fileName = ze.name
+                    val fileName = ze.name.removeSuffix(".enc")
 
                     progressCallback((index * 100) / length)
 
@@ -43,7 +41,7 @@ object ZipUtils {
                     destFile.createNewFile()
 
                     FileOutputStream(destFile).use { fout ->
-                        zis.copyTo(fout)
+                        streamTransform(zis).copyTo(fout)
                     }
 
                     if (Thread.interrupted()) {

@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.activities.detailed
 import com.jereksel.libresubstratum.MVPPresenter
 import com.jereksel.libresubstratum.MVPView
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 
@@ -23,6 +24,7 @@ interface DetailedContract {
         //Activity
         fun readTheme(appId: String)
         fun getAppName(appId: String): String
+        fun setKey(key: KeyPair)
 
         //ThemePackAdapter
         fun getNumberOfThemes(): Int

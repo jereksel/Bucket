@@ -5,6 +5,7 @@ import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
@@ -39,6 +40,7 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
+    var keyPair: KeyPair? = null
     val compositeDisposable = CompositeDisposable()
     var future: Future<File>? = null
     val log = getLogger()
@@ -57,6 +59,10 @@ class DetailedPresenter(
         compositeDisposable.clear()
     }
 
+    override fun setKey(key: KeyPair) {
+        keyPair = key
+    }
+
     override fun readTheme(appId: String) {
 
         val extractLocation = File(packageManager.getCacheFolder(), appId)
@@ -70,7 +76,7 @@ class DetailedPresenter(
         val future = this.future
 
         if (future == null || future.isCancelled) {
-            this.future = themeExtractor.extract(apkLocation, extractLocation)
+            this.future = themeExtractor.extract(apkLocation, extractLocation, keyPair)
         }
 
         if (init) {

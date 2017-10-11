@@ -38,7 +38,7 @@ class ThemeReaderExtractless {
             val type3List = (first?.value ?: listOf())
                     .filter { it.startsWith("type3") }
                     .mapNotNull {
-                        if (it == "type3") {
+                        if (it == "type3" || it == "type3.enc") {
                             val entry = zipFile.getEntry("assets/overlays/${first?.key}/$it")
                             val name = zipFile.getInputStream(entry).bufferedReader().readText()
                             Type3Extension(name, true)
@@ -78,7 +78,7 @@ class ThemeReaderExtractless {
                         val type2 = entry.value
                                 .filter { it.startsWith("type2") }
                                 .map {
-                                    if (it == "type2") {
+                                    if (it == "type2" || it == "type2.enc") {
                                         val entry = zipFile.getEntry("assets/overlays/${entry.key}/$it")
                                         val name = zipFile.getInputStream(entry).bufferedReader().readText()
                                         Type2Extension(name, true)
@@ -113,12 +113,12 @@ class ThemeReaderExtractless {
                                     val files = it.second
 
                                     val type1extensions = files.map {
-                                        if (it == "type1$id") {
+                                        if (it == "type1$id" || it == "type1$id.enc") {
                                             val entry = zipFile.getEntry("assets/overlays/${entry.key}/$it")
                                             val name = zipFile.getInputStream(entry).bufferedReader().readText()
                                             Type1Extension(name, true)
                                         } else {
-                                            Type1Extension(it.removePrefix("type1${id}_").removeSuffix(".xml"), false)
+                                            Type1Extension(it.removePrefix("type1${id}_").removeSuffix(".xml").removeSuffix(".xml.enc"), false)
                                         }
                                     }
 

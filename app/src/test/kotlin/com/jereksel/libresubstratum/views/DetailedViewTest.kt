@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
@@ -54,6 +55,7 @@ class DetailedViewTest: BaseRobolectricTest() {
     var progressBar by ResettableLazy { activityCasted!!.progressBar }
 
     val appId = "id1"
+    val key = KeyPair(ByteArray(2), ByteArray(2))
 
     @Before
     fun setup() {
@@ -62,6 +64,8 @@ class DetailedViewTest: BaseRobolectricTest() {
         val intent = Intent(ShadowApplication.getInstance().applicationContext, DetailedView::class.java)
         val APP_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.appIdStarterKey"
         intent.putExtra(APP_ID_EXTRA, appId)
+        val KEY_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.keyStarterKey"
+        intent.putExtra(KEY_ID_EXTRA, key)
         activityController = Robolectric.buildActivity(DetailedView::class.java, intent).create()
         activity = activityController.get()
     }
@@ -78,6 +82,11 @@ class DetailedViewTest: BaseRobolectricTest() {
     @Test
     fun `readTheme() is invoked after starting`() {
         verify(presenter).readTheme(appId)
+    }
+
+    @Test
+    fun `setKey() is invoked after starting`() {
+        verify(presenter).setKey(key)
     }
 
     @Test
