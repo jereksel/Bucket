@@ -59,24 +59,13 @@ open class MainView : AppCompatActivity(), MainContract.View {
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
                 .subscribe {
-                    log.debug("Extracting {}", it)
-                    val pDialog = ProgressDialog(this@MainView)
-                    pDialog.setCancelable(false)
-                    pDialog.isIndeterminate = false
-                    pDialog.setTitle("Extracting")
-                    pDialog.setMessage("Extracting theme")
-                    pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-                    pDialog.max = 100
-                    pDialog.show()
-                    dialog = pDialog
+                    log.debug("Opening {}", it)
                     presenter.openThemeScreen(it.appId)
                 }
         swiperefresh.isRefreshing = false
     }
 
     override fun openThemeFragment(appId: String, key: KeyPair?) {
-        dialog?.dismiss()
-        dialog = null
         DetailedViewStarter.start(this, appId, key)
     }
 
