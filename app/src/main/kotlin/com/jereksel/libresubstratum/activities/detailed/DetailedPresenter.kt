@@ -10,6 +10,7 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
@@ -27,10 +28,9 @@ import java.util.concurrent.Future
 
 class DetailedPresenter(
         private val packageManager: IPackageManager,
-        private val themeReader: IThemeReader,
+        private val getThemeInfoUseCase: IGetThemeInfoUseCase,
         private val overlayService: OverlayService,
         private val activityProxy: IActivityProxy,
-        private val themeCompiler: ThemeCompiler,
         private val themeExtractor: ThemeExtractor,
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager
@@ -87,11 +87,9 @@ class DetailedPresenter(
 
         this.appId = appId
 
-        val location = packageManager.getAppLocation(appId)
-
 //        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
-        Observable.fromCallable { themeReader.readThemePack(location) }
+        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .map {

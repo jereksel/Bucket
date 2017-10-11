@@ -271,6 +271,7 @@ dependencies {
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
+    compile project(":sublib:themereaderassetmanager")
 
     //Testing
     testCompile 'junit:junit:4.12'

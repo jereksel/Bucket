@@ -9,7 +9,9 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -66,15 +68,14 @@ open class AppModule(private val application: Application) {
     @Provides
     open fun providesDetailedPresenter(
             packageManager: IPackageManager,
-            themeReader: IThemeReader,
+            getThemeInfoUseCase: IGetThemeInfoUseCase,
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            themeCompiler: ThemeCompiler,
             themeExtractor: ThemeExtractor,
             compileThemeUseCase: ICompileThemeUseCase,
             clipboardManager: ClipboardManager
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor, compileThemeUseCase, clipboardManager)
+        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, themeExtractor, compileThemeUseCase, clipboardManager)
     }
 
     @Provides
@@ -102,5 +103,9 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesKeyFinder(): IKeyFinder = KeyFinder(application)
+  
+    @Provides
+    @Singleton
+    open fun providesGetThemeInfoUseCase(): IGetThemeInfoUseCase = GetThemeInfoUseCase(application)
 
 }
