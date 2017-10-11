@@ -23,7 +23,7 @@ build_script:
   - gradlew assembleDebug
 
 test_script:
-  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.1\\aapt.exe v"
+  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.2\\aapt.exe v"
   - gradlew testFdroidDebugUnitTest
   - gradlew sublib:reader:test
   - gradlew sublib:compiler:test
