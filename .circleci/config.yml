@@ -11,6 +11,9 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
+          name: Add Android SDK licenses
+          command: mkdir -p $ANDROID_HOME/licenses/ && echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
+      - run:
           name: Download Android build-tools 26.0.2
           command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.2"
       - run:
