@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.activities.detailed
 
 import activitystarter.ActivityStarter
 import activitystarter.Arg
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.Snackbar.LENGTH_LONG
@@ -30,9 +29,6 @@ import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
 import javax.inject.Inject
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.view.View.GONE
 import com.jereksel.libresubstratum.data.KeyPair
 import org.jetbrains.anko.toast
@@ -44,7 +40,7 @@ open class DetailedView : AppCompatActivity(), View {
     lateinit var appId : String
 
     @Arg
-    lateinit var key: KeyPair
+    var key: KeyPair? = null
 
     @Inject lateinit var presenter : Presenter
 

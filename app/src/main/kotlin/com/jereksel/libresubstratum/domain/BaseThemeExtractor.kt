@@ -24,14 +24,16 @@ class BaseThemeExtractor : ThemeExtractor {
 
         if (key != null) {
 
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-            cipher.init(
-                    Cipher.DECRYPT_MODE,
-                    SecretKeySpec(key.key, "AES"),
-                    IvParameterSpec(key.iv)
-            )
+            transform = {
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        SecretKeySpec(key.key.clone(), "AES"),
+                        IvParameterSpec(key.iv.clone())
+                )
 
-            transform = { CipherInputStream(it, cipher) }
+                CipherInputStream(it, cipher)
+            }
 
         } else {
             transform = { it }

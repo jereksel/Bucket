@@ -42,7 +42,7 @@ class KeyFinder(
             return KeyPair(key, iv)
 
         } catch (e: Exception) {
-            log.error("Cannot get keys", e)
+            log.error("Cannot get keys ", e)
         }
 
         return null

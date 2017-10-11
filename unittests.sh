@@ -19,6 +19,7 @@ set -e
 
 ./gradlew sublib:reader:test --no-daemon
 ./gradlew sublib:compiler:test --no-daemon
+./gradlew sublib:themereaderassetmanager:encryptTestAssets --no-daemon
 ./gradlew sublib:themereaderassetmanager:test --no-daemon
 
 ./gradlew app:jacocoTestReport --no-daemon

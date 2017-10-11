@@ -59,7 +59,7 @@ class DetailedPresenter(
         compositeDisposable.clear()
     }
 
-    override fun setKey(key: KeyPair) {
+    override fun setKey(key: KeyPair?) {
         keyPair = key
     }
 
@@ -89,7 +89,7 @@ class DetailedPresenter(
 
 //        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
-        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
+        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId, keyPair) }
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .map {
@@ -256,6 +256,7 @@ class DetailedPresenter(
         detailedView?.showCompilationProgress(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }, {
+            themePackState[it].compiling = false
             detailedView?.increaseDialogProgress()
         }, {
             detailedView?.hideCompilationProgress()
@@ -274,6 +275,7 @@ class DetailedPresenter(
 
         compilePositions(themesToCompile.map { it.first },
                 { position ->
+                    themePackState[position].compiling = false
                     val overlayId = getOverlayIdForTheme(position)
                     if (packageManager.isPackageInstalled(overlayId)) {
                         activateExclusive(position)
@@ -289,6 +291,7 @@ class DetailedPresenter(
     override fun compileAndRun(adapterPosition: Int) {
 
         compilePositions(listOf(adapterPosition), { position ->
+            themePackState[position].compiling = false
             val overlayId = getOverlayIdForTheme(position)
             if (packageManager.isPackageInstalled(overlayId)) {
                 toggle(adapterPosition)

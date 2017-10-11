@@ -5,16 +5,17 @@ import android.content.res.AssetManager.ACCESS_BUFFER
 import com.jereksel.libresubstratumlib.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import java.io.InputStream
 
 object Reader {
 
-    fun read(am: AssetManager): ThemePack {
+    fun read(am: AssetManager, transformer: (InputStream) -> (InputStream) = { it }): ThemePack {
 
         val apps = am.list("overlays")
 
         val list = Observable.fromArray(*apps)
                 .flatMap {
-                    Observable.fromCallable { readTheme(am, it) }
+                    Observable.fromCallable { readTheme(am, it, transformer) }
                             .observeOn(Schedulers.io())
                             .subscribeOn(Schedulers.io())
                 }
@@ -31,8 +32,8 @@ object Reader {
             val type3extensions = am.list("overlays/$app")
                     .filter { it.startsWith("type3") }
                     .map {
-                        if (it == "type3") {
-                            Type3Extension(am.read("overlays/$app/$it"), true)
+                        if (it == "type3" || it == "type3.enc") {
+                            Type3Extension(am.read("overlays/$app/$it", transformer), true)
                         } else {
                             Type3Extension(it.removePrefix("type3_"), false)
                         }
@@ -50,7 +51,7 @@ object Reader {
         return ThemePack(list.sortedBy { it.application }, type3Data)
     }
 
-    fun readTheme(am: AssetManager, id: String): Theme {
+    fun readTheme(am: AssetManager, id: String, transformer: (InputStream) -> (InputStream)): Theme {
 
         val dir = "overlays/$id"
 
@@ -63,10 +64,10 @@ object Reader {
                     val type = it.key
                     val extensions = it.value
                             .map {
-                                if (it.length == 6) {
-                                    Type1Extension(am.read("$dir/$it"), true)
+                                if (it.length == 6 || (it.length == 10 && it.endsWith(".enc"))) {
+                                    Type1Extension(am.read("$dir/$it", transformer), true)
                                 } else {
-                                    val name = it.substring(7).removeSuffix(".xml")
+                                    val name = it.substring(7).removeSuffix(".xml").removeSuffix(".xml.enc")
                                     Type1Extension(name, false)
                                 }
                             }
@@ -80,8 +81,8 @@ object Reader {
         val type2 = files
                 .filter { it.startsWith("type2") }
                 .map {
-                    if (it == "type2") {
-                        Type2Extension(am.read("$dir/$it"), true)
+                    if (it == "type2" || it == "type2.enc") {
+                        Type2Extension(am.read("$dir/$it", transformer), true)
                     } else {
                         Type2Extension(it.removePrefix("type2_"), false)
                     }
@@ -110,6 +111,6 @@ object Reader {
         return Theme(id, type1s, type2Data)
     }
 
-    private fun AssetManager.read(file: String): String = this.open(file, ACCESS_BUFFER).bufferedReader().use { it.readText() }
+    private fun AssetManager.read(file: String, transformer: (InputStream) -> (InputStream)): String =
+            transformer(this.open(file, ACCESS_BUFFER)).bufferedReader().use { it.readText() }
 }
-

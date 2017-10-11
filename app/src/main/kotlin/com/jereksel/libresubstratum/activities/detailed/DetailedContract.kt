@@ -24,7 +24,7 @@ interface DetailedContract {
         //Activity
         fun readTheme(appId: String)
         fun getAppName(appId: String): String
-        fun setKey(key: KeyPair)
+        fun setKey(key: KeyPair?)
 
         //ThemePackAdapter
         fun getNumberOfThemes(): Int

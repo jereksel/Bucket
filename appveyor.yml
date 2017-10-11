@@ -27,6 +27,7 @@ test_script:
   - gradlew testFdroidDebugUnitTest
   - gradlew sublib:reader:test
   - gradlew sublib:compiler:test
+  - gradlew sublib:themereaderassetmanager:encryptTestAssets
   - gradlew sublib:themereaderassetmanager:test
  
 after_test:
