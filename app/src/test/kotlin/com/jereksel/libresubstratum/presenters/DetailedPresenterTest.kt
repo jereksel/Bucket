@@ -99,7 +99,7 @@ class DetailedPresenterTest : FunSpec() {
                 whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
             }
             val themes = ThemePack(apps.map { Theme(it) })
-            whenever(getThemeInfoUseCase.getThemeInfo("id", anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo(eq("id"), anyOrNull())).thenReturn(themes)
             presenter.readTheme("id")
 
             val view = mock<ThemePackAdapterView>()
@@ -611,10 +611,11 @@ class DetailedPresenterTest : FunSpec() {
 
             val keyPair = KeyPair(ByteArray(2), ByteArray(7))
             presenter.setKey(keyPair)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid", keyPair)).thenReturn(ThemePack())
 
             presenter.readTheme("themeid")
 
-            verify(themeExtractor).extract(any(), any(), eq(keyPair))
+            verify(themeExtractor).extract(anyOrNull(), anyOrNull(), eq(keyPair))
             verify(getThemeInfoUseCase).getThemeInfo("themeid", keyPair)
 
         }
