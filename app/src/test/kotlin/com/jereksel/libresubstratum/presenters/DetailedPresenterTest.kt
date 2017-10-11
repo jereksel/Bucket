@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
@@ -27,7 +28,7 @@ class DetailedPresenterTest : FunSpec() {
     @Mock
     lateinit var packageManager: IPackageManager
     @Mock
-    lateinit var themeReader: IThemeReader
+    lateinit var getThemeInfoUseCase: IGetThemeInfoUseCase
     @Mock
     lateinit var overlayService: OverlayService
     @Mock
@@ -41,7 +42,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter1 = spy(DetailedPresenter(packageManager, themeReader, overlayService, mock(), mock(), mock(), compileThemeUseCase, clipboardManager))
+        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), mock(), compileThemeUseCase, clipboardManager))
         presenter = presenter1
         presenter.setView(view)
 
@@ -56,7 +57,7 @@ class DetailedPresenterTest : FunSpec() {
         test("Read empty theme") {
             val emptyThemePack = ThemePack(listOf())
             whenever(packageManager.getAppLocation("themeId")).thenReturn(File("/app.apk"))
-            whenever(themeReader.readThemePack(File("/app.apk"))).thenReturn(emptyThemePack)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeId")).thenReturn(emptyThemePack)
             presenter.readTheme("themeId")
             verify(view).addThemes(emptyThemePack)
         }
@@ -67,7 +68,7 @@ class DetailedPresenterTest : FunSpec() {
             val themePack = ThemePack(themes)
             val destThemePack = ThemePack(installedApps.map { Theme(it) })
             whenever(packageManager.getAppLocation("themeId")).thenReturn(File("/app.apk"))
-            whenever(themeReader.readThemePack(File("/app.apk"))).thenReturn(themePack)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeId")).thenReturn(themePack)
             allApps.forEach {
                 whenever(packageManager.isPackageInstalled(it)).thenReturn(installedApps.contains(it))
             }
@@ -78,12 +79,12 @@ class DetailedPresenterTest : FunSpec() {
         //ADAPTER
         test("After initialized once, themes are not imported again") {
             val themes = ThemePack()
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo(anyOrNull())).thenReturn(themes)
             presenter.readTheme("id")
-            verify(themeReader).readThemePack(anyOrNull())
-            reset(themeReader)
+            verify(getThemeInfoUseCase).getThemeInfo(anyOrNull())
+            reset(getThemeInfoUseCase)
             presenter.readTheme("id")
-            verifyZeroInteractions(themeReader)
+            verifyZeroInteractions(getThemeInfoUseCase)
         }
         test("Setting basic information") {
 
@@ -95,7 +96,7 @@ class DetailedPresenterTest : FunSpec() {
                 whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
             }
             val themes = ThemePack(apps.map { Theme(it) })
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             val view = mock<ThemePackAdapterView>()
@@ -118,7 +119,7 @@ class DetailedPresenterTest : FunSpec() {
                 whenever(packageManager.isPackageInstalled(it)).thenReturn(true)
             }
             val themes = ThemePack(apps.map { Theme(it) })
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             presenter.setAdapterView(0, view)
@@ -141,7 +142,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type1a = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "a")
             val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1a))))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             presenter.setAdapterView(0, view)
@@ -170,7 +171,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type1b = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "b")
             val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1b))))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             presenter.setAdapterView(0, view)
@@ -199,7 +200,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type1c = Type1Data(listOf(Type1Extension("name1", true), Type1Extension("name2", false)), "c")
             val themes = ThemePack(listOf(Theme("a", type1 = listOf(type1c))))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             presenter.setAdapterView(0, view)
@@ -228,7 +229,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
             val themes = ThemePack(listOf(Theme("a", type2 = type2)))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("id")).thenReturn(themes)
             presenter.readTheme("id")
 
             presenter.setAdapterView(0, view)
@@ -256,7 +257,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
             val themes = ThemePack(listOf(Theme("app1", type2 = type2)))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
             whenever(packageManager.isPackageInstalled(anyOrNull())).thenReturn(true)
             presenter.readTheme("themeid")
 
@@ -274,7 +275,7 @@ class DetailedPresenterTest : FunSpec() {
             }
             val type2 = Type2Data(listOf(Type2Extension("name1", true), Type2Extension("name2", false)))
             val themes = ThemePack(listOf(Theme("app", type2 = type2)))
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
             whenever(packageManager.isPackageInstalled(anyOrNull())).thenReturn(true)
             presenter.readTheme("themeid")
             presenter.setType2(0, 1)
@@ -292,7 +293,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.themeid")).thenReturn(false)
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -312,7 +313,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -332,7 +333,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -356,7 +357,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -384,7 +385,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -415,7 +416,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -440,7 +441,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -466,7 +467,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -502,7 +503,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -536,7 +537,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -559,7 +560,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1"), Theme("app2"), Theme("app3")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
@@ -581,7 +582,7 @@ class DetailedPresenterTest : FunSpec() {
 
             val themes = ThemePack(listOf(Theme("app1"), Theme("app2"), Theme("app3")))
 
-            whenever(themeReader.readThemePack(anyOrNull())).thenReturn(themes)
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
 
             presenter.readTheme("themeid")
 
