@@ -31,13 +31,13 @@ class CompileThemeUseCase(
             type3Name: String?
     ): Observable<File> = Observable.fromCallable {
 
-        if (!themeLocation.exists()) {
-            throw IllegalArgumentException("$themeLocation doesn't exists")
-        }
-
-        if (!themeLocation.isDirectory) {
-            throw IllegalArgumentException("$themeLocation is not a directory")
-        }
+//        if (!themeLocation.exists()) {
+//            throw IllegalArgumentException("$themeLocation doesn't exists")
+//        }
+//
+//        if (!themeLocation.isDirectory) {
+//            throw IllegalArgumentException("$themeLocation is not a directory")
+//        }
 
         val (versionCode, versionName) = packageManager.getAppVersion(themeId)
 

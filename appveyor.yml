@@ -28,7 +28,8 @@ test_script:
   - gradlew sublib:reader:test
   - gradlew sublib:compiler:test
   - gradlew sublib:themereaderassetmanager:test
- 
+  - gradlew sublib:compilerassetmanager:test
+
 after_test:
   - gradlew --stop
 

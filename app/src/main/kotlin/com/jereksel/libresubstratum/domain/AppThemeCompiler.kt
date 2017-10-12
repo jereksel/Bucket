@@ -6,6 +6,7 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.AAPT
 import com.jereksel.libresubstratumlib.InvalidInvocationException
 import com.jereksel.libresubstratumlib.ThemeToCompile
+import com.jereksel.libresubstratumlib.assetmanager.AaptCompiler
 import java.io.File
 import kellinwood.security.zipsigner.ZipSigner
 import java.util.concurrent.TimeUnit
@@ -87,7 +88,11 @@ class AppThemeCompiler(
 
         val t1 = System.currentTimeMillis()
 
-        val file = AAPT(aapt.absolutePath).compileTheme(themeDate, dir, temp, listOf("/system/framework/framework-res.apk", loc))
+        val assetManager = app.packageManager.getResourcesForApplication(themeDate.targetThemeId).assets
+
+        //TODO: Fix tiles/navbars etc.
+
+        val file = AaptCompiler(aapt.absolutePath).compileTheme(assetManager, targetApk, themeDate, temp, listOf("/system/framework/framework-res.apk", loc))
 
         val t2 = System.currentTimeMillis()
 
