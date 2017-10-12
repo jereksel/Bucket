@@ -5,7 +5,6 @@ import com.google.common.io.Files.createTempDir
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.extensions.getLogger
 import dalvik.system.DexClassLoader
-import kotlinx.android.parcel.Parcelize
 
 class KeyFinder(
         val context: Context
@@ -39,7 +38,11 @@ class KeyFinder(
             val key = clz.getField("a").get(null) as ByteArray
             val iv = clz.getField("b").get(null) as ByteArray
 
-            return KeyPair(key, iv)
+            if (key.size == 16 && iv.size == 16) {
+                return KeyPair(key, iv)
+            } else {
+                log.warn("Wrong array sizes: {} {}", key.size, iv.size)
+            }
 
         } catch (e: Exception) {
             log.error("Cannot get keys ", e)
