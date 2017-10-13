@@ -131,7 +131,7 @@ class CompilerTest {
         assertTrue(apk.exists())
         assertTrue(apk.isFile)
 
-        assertEquals(listOf(Color("color1", "0xffffffff"), Color("color2", "0x00abcdef")), aapt2.getColorsValues(apk).toList())
+        assertEquals(listOf(Color("color1", "0xffffffff")), aapt2.getColorsValues(apk).toList())
     }
 
     fun compile(

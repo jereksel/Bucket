@@ -30,16 +30,33 @@ class AaptCompiler(
         manifestFile.createNewFile()
         manifestFile.writeText(manifest)
 
+        val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", manifestFile.absolutePath, "-F", apkLocation.absolutePath)
+
         val amLoc = "overlays/$location"
 
         val list = assetManager.list(amLoc).toSet()
 
         val mainRes = File(compilationDir, "res")
 
-        if (list.contains("res")) {
-            mainRes.mkdirs()
-            assetManager.extract("$amLoc/res", mainRes)
+        val type3 = themeDate.type3
+
+        if (type3 != null && !type3.default) {
+            val amLocation = "$amLoc/type3_${type3.name}"
+
+            if (assetManager.list(amLocation).contains("res")) {
+                //Some themes have "res/" in type3
+                assetManager.extract("$amLocation/res", mainRes)
+            } else {
+                assetManager.extract(amLocation, mainRes)
+            }
+
+        } else {
+            if (list.contains("res")) {
+                mainRes.mkdirs()
+                assetManager.extract("$amLoc/res", mainRes)
+            }
         }
+
 
         themeDate.type1
                 .filterNot { it.extension.default }
@@ -51,14 +68,11 @@ class AaptCompiler(
                     source.copyTo(dest, overwrite = true)
                 }
 
-        val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", manifestFile.absolutePath, "-F", apkLocation.absolutePath)
-
         additionalApks.forEach {
             command.addAll(listOf("-I", it))
         }
 
         val type2 = themeDate.type2
-        val type3 = themeDate.type3
 
         if (type2 != null && !type2.default) {
             val file = File(tempDir, "type2")
@@ -71,20 +85,7 @@ class AaptCompiler(
             }
         }
 
-        if (type3 != null && !type3.default) {
-            val file = File(tempDir, "type3")
-            val amLocation = "$amLoc/type3_${type3.name}"
-            assetManager.extract(amLocation, file)
-            if (file.exists()) {
-                if (File(file, "res").exists()) {
-                    command.addAll(listOf("-S", File(file, "res").absolutePath))
-                } else if (file.exists()) {
-                    command.addAll(listOf("-S", file.absolutePath))
-                }
-            }
-        }
-
-        if (mainRes.exists()) {
+        if (mainRes.exists() && mainRes.list().isNotEmpty()) {
             command.addAll(listOf("-S", mainRes.absolutePath))
         }
 
