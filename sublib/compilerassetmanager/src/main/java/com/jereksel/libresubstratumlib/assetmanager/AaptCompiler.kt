@@ -10,15 +10,15 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 
 class AaptCompiler(
-        val aaptPath: String,
+        private val aaptPath: String,
         testing: Boolean = false
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass.name)
 
-    val generator = AndroidManifestGenerator(testing)
+    private val generator = AndroidManifestGenerator(testing)
 
-    fun compileTheme(assetManager: AssetManager, location: String, themeDate: ThemeToCompile, tempDir: File, additionalApks: List<String> = listOf()): File {
+    fun compileTheme(assetManager: AssetManager, themeDate: ThemeToCompile, tempDir: File, additionalApks: List<String> = listOf()): File {
 
         val apkLocation = File(tempDir, "overlay.apk")
         val compilationDir = File(tempDir, "compilation")
@@ -32,7 +32,7 @@ class AaptCompiler(
 
         val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", manifestFile.absolutePath, "-F", apkLocation.absolutePath)
 
-        val amLoc = "overlays/$location"
+        val amLoc = "overlays/${themeDate.originalTargetApp}"
 
         val list = assetManager.list(amLoc).toSet()
 
@@ -56,7 +56,6 @@ class AaptCompiler(
                 assetManager.extract("$amLoc/res", mainRes)
             }
         }
-
 
         themeDate.type1
                 .filterNot { it.extension.default }

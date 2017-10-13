@@ -22,7 +22,6 @@ class CompileThemeUseCase(
     override fun execute(
             themePack: ThemePack,
             themeId: String,
-            themeLocation: File,
             destAppId: String,
             type1aName: String?,
             type1bName: String?,
@@ -30,14 +29,6 @@ class CompileThemeUseCase(
             type2Name: String?,
             type3Name: String?
     ): Observable<File> = Observable.fromCallable {
-
-//        if (!themeLocation.exists()) {
-//            throw IllegalArgumentException("$themeLocation doesn't exists")
-//        }
-//
-//        if (!themeLocation.isDirectory) {
-//            throw IllegalArgumentException("$themeLocation is not a directory")
-//        }
 
         val (versionCode, versionName) = packageManager.getAppVersion(themeId)
 
@@ -66,20 +57,17 @@ class CompileThemeUseCase(
         val type2 = theme.type2?.extensions?.firstOrNull { it.name == type2Name }
         val type3 = themePack.type3?.extensions?.firstOrNull { it.name == type3Name }
 
-        val fixedTargetApp = if (theme.application.startsWith("com.android.systemui.")) "com.android.systemui" else theme.application
+        val originalTargetApp = theme.application
+        val fixedTargetApp = if (originalTargetApp.startsWith("com.android.systemui.")) "com.android.systemui" else originalTargetApp
 
         val themeName = packageManager.getAppName(themeId)
 
         val targetOverlayId = ThemeNameUtils.getTargetOverlayName(destAppId, themeName, type1a, type1b, type1c, type2, type3)
 
-        val themeToCompile = ThemeToCompile(targetOverlayId, themeId, fixedTargetApp, type1s, type2,
-                type3, versionCode, versionName)
+        val themeToCompile = ThemeToCompile(targetOverlayId, themeId, originalTargetApp,
+                fixedTargetApp, type1s, type2, type3, versionCode, versionName)
 
-        val t1 = System.currentTimeMillis()
-
-        val file = themeCompiler.compileTheme(themeToCompile, themeLocation)
-
-        val t2 = System.currentTimeMillis()
+        val file = themeCompiler.compileTheme(themeToCompile)
 
         file
     }

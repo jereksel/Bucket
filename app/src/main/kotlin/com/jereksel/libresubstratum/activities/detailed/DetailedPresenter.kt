@@ -22,8 +22,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.util.concurrent.CancellationException
-import java.util.concurrent.Future
 
 class DetailedPresenter(
         private val packageManager: IPackageManager,
@@ -62,8 +60,6 @@ class DetailedPresenter(
         if (!extractLocation.exists()) {
             extractLocation.mkdirs()
         }
-
-        val apkLocation = packageManager.getAppLocation(appId)
 
         if (init) {
             detailedView?.addThemes(themePack)
@@ -422,12 +418,8 @@ class DetailedPresenter(
 
     fun compileForPositionObservable(position: Int): Observable<File> {
 
-//        val cacheLocation: File
-
         val state = themePackState[position]
         val theme = themePack.themes[position]
-
-//        val location = getFile(cacheLocation, "assets", "overlays", theme.application)
 
         val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
         val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
@@ -438,7 +430,6 @@ class DetailedPresenter(
         return compileThemeUseCase.execute(
                 themePack,
                 appId,
-                File("/"),
                 theme.application,
                 type1a?.name,
                 type1b?.name,

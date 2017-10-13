@@ -134,13 +134,24 @@ class CompilerTest {
         assertEquals(listOf(Color("color1", "0xffffffff")), aapt2.getColorsValues(apk).toList())
     }
 
+    @Test
+    @Config(assetDir = "../../src/test/resources/assets/type3Theme")
+    fun `Test3 non-default without res`() {
+
+        val type3 = Type3Extension("no_res", false)
+        val apk = compile("android", type3 = type3)
+
+        assertTrue(apk.exists())
+        assertTrue(apk.isFile)
+
+        assertEquals(listOf(Color("color1", "0x00000000")), aapt2.getColorsValues(apk).toList())
+    }
+
     fun compile(
         app: String,
         type1Data: List<Type1DataToCompile> = listOf(),
         type2: Type2Extension? = null,
         type3: Type3Extension? = null
-    ): File {
-        return aapt.compileTheme(assetManager, app, ThemeToCompile("com.app.app", "com.app.app", "com.app.app", type1Data, type2, type3, 0, ""), temp, listOf())
-    }
+    ) = aapt.compileTheme(assetManager, ThemeToCompile("com.app.app", "com.app.app", app, "com.app.app", type1Data, type2, type3, 0, ""), temp, listOf())
 
 }
