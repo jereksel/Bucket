@@ -24,7 +24,7 @@ jobs:
           command: ./gradlew androidDependencies --no-daemon 
       - run:
           name: Build app
-          command: ./gradlew assembleDebug --no-daemon
+          command: ./gradlew assembleDebug assembleDebugProguarded --no-daemon
       - save_cache:
           paths:
             - ~/.gradle
