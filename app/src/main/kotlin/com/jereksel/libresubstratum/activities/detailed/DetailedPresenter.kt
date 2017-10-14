@@ -72,8 +72,8 @@ class DetailedPresenter(
 //        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
         Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
-                .observeOn(Schedulers.computation())
-                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .map {
                     //Remove apps that are not installed
                     val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
@@ -301,12 +301,8 @@ class DetailedPresenter(
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
         val disp = positions.toList().toObservable()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .map {
-                    detailedView?.refreshHolder(it)
-                    it
-                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .filter {
                     val overlay = getOverlayIdForTheme(it)
 
