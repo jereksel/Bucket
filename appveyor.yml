@@ -20,7 +20,7 @@ install:
   
 build_script:
   - git submodule update --init --recursive
-  - gradlew assembleDebug
+  - gradlew assembleDebug assembleDebugProguarded
 
 test_script:
   - cmd: "%ANDROID_HOME%\\build-tools\\26.0.2\\aapt.exe v"
