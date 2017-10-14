@@ -53,8 +53,6 @@ class AppThemeCompiler(
 
         val assetManager = app.packageManager.getResourcesForApplication(themeDate.targetThemeId).assets
 
-        //TODO: Fix tiles/navbars etc.
-
         val (file, compilationTime) = timeOfExec {
             AaptCompiler(aapt.absolutePath).compileTheme(assetManager, themeDate, temp, listOf("/system/framework/framework-res.apk", loc))
         }
