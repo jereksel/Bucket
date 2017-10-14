@@ -1,1 +1,2 @@
-include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager', ":sublib:compiler", ":sublib:reader"
+include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager',
+        ":sublib:compiler", ":sublib:reader", ":aapt:lib"
