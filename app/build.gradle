@@ -264,6 +264,7 @@ dependencies {
 
     //Signing
     compile project(":zipsigner:combined")
+    compile project(":aapt:lib")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
