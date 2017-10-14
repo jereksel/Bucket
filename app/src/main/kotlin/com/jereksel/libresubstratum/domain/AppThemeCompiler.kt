@@ -2,7 +2,7 @@ package com.jereksel.libresubstratum.domain
 
 import android.app.Application
 import android.os.Environment
-import com.google.common.io.Files
+import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.InvalidInvocationException
 import com.jereksel.libresubstratumlib.ThemeToCompile
@@ -18,24 +18,10 @@ class AppThemeCompiler(
 
     val log = getLogger()
 
-    val aapt = File(app.cacheDir, "appt")
+    val aapt = getFile(File(app.applicationInfo.dataDir), "lib", "libaaptcomplete.so")
 
     init {
-
-        if (aapt.exists()) {
-            aapt.delete()
-        }
-
-        app.assets.open("aapt").use { stream ->
-            aapt.outputStream().use { file ->
-                stream.copyTo(file)
-            }
-        }
-
-        aapt.setExecutable(true)
-
         log.debug("AAPT version: {}", ProcessBuilder().command(listOf(aapt.absolutePath, "v")).start().inputStream.bufferedReader().readText())
-
     }
 
     @Throws(InvalidInvocationException::class)

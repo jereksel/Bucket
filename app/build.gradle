@@ -95,6 +95,9 @@ android {
 //        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
         manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+        ndk {
+            abiFilters 'armeabi-v7a', "arm64-v8a"
+        }
     }
     signingConfigs {
         release {
@@ -264,6 +267,7 @@ dependencies {
 
     //Signing
     compile project(":zipsigner:combined")
+    compile project(":aapt:lib")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
