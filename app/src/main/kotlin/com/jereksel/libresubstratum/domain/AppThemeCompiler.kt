@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.domain
 
 import android.app.Application
 import android.os.Environment
+import com.google.common.io.Files
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.InvalidInvocationException
