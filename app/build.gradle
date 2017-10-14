@@ -78,11 +78,12 @@ android {
         minSdkVersion 22
         targetSdkVersion 26
         if (System.getenv("CIRCLECI")) {
-            versionCode System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
+            def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
+            versionCode code
             if (System.getenv("CIRCLE_TAG")) {
                 versionName System.getenv("CIRCLE_TAG")
             } else {
-                versionName "NEXT-${"git rev-parse --short HEAD".execute().text.trim()}"
+                versionName "NEXT-${code}-${"git rev-parse --short HEAD".execute().text.trim()}"
             }
         } else {
             versionCode 1
