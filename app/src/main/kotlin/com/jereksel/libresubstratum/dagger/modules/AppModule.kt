@@ -31,8 +31,8 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesThemeReader(): IThemeReader {
-        return ThemeReader()
+    open fun providesThemeReader(packageManager: IPackageManager): IThemeReader {
+        return ThemeReader(packageManager)
     }
 
     @Provides
@@ -48,8 +48,9 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesThemeCompiler(
-            packageManager: IPackageManager
-    ): ThemeCompiler = AppThemeCompiler(application, packageManager)
+            packageManager: IPackageManager,
+            keyFinder: IKeyFinder
+    ): ThemeCompiler = AppThemeCompiler(application, packageManager, keyFinder)
 
     @Provides
     open fun providesMainPresenter(

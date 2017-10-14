@@ -56,11 +56,9 @@ class MainPresenterTest : FunSpec() {
         test("Set isEncrypted from themeReader") {
 
             val app1Id = "app1"
-            val app1Location = File("/app1")
             val app1Drawable = null
 
             val app2Id = "app2"
-            val app2Location = File("/app2")
             val app2Drawable = null
 
 
@@ -69,13 +67,10 @@ class MainPresenterTest : FunSpec() {
                     packageFactory(app2Id, "Theme nr.2", "author2", app2Drawable)
             )
 
-            whenever(packageManager.getAppLocation(app1Id)).thenReturn(app1Location)
-            whenever(packageManager.getAppLocation(app2Id)).thenReturn(app2Location)
-
             whenever(packageManager.getInstalledThemes()).thenReturn(installed)
 
-            whenever(themeReader.isThemeEncrypted(app1Location)).thenReturn(true)
-            whenever(themeReader.isThemeEncrypted(app2Location)).thenReturn(false)
+            whenever(themeReader.isThemeEncrypted(app1Id)).thenReturn(true)
+            whenever(themeReader.isThemeEncrypted(app2Id)).thenReturn(false)
 
             presenter.getApplications()
 

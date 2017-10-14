@@ -40,6 +40,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
     val metadataOverlayType2 = "Substratum_Type2"
     val metadataOverlayType3 = "Substratum_Type3"
 
+    val lock = java.lang.Object()
+
     override fun getInstalledOverlays(): List<InstalledOverlay> {
         return getApplications()
                 .filter { it.metadata.has(metadataOverlayTarget) }
@@ -144,14 +146,14 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return bitmap
     }
 
-    override fun getAppLocation(appId: String): File {
+    override fun getAppLocation(appId: String): File = synchronized(lock) {
 
         if (SYSTEMUI.contains(appId)) {
-            return getAppLocation("com.android.systemui")
+            getAppLocation("com.android.systemui")
+        } else {
+            File(context.packageManager.getApplicationInfo(appId, 0)!!.sourceDir)
         }
 
-        return File(context.packageManager.getInstalledApplications(0)
-                .find { it.packageName == appId }!!.sourceDir)
     }
 
     override fun isPackageInstalled(appId: String): Boolean {

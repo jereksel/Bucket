@@ -18,7 +18,8 @@ class AaptCompiler(
 
     private val generator = AndroidManifestGenerator(testing)
 
-    fun compileTheme(assetManager: AssetManager, themeDate: ThemeToCompile, tempDir: File, additionalApks: List<String> = listOf()): File {
+    fun compileTheme(assetManager: AssetManager, themeDate: ThemeToCompile, tempDir: File,
+                     additionalApks: List<String> = listOf(), transform: (InputStream) -> InputStream = { it }): File {
 
         val apkLocation = File(tempDir, "overlay.apk")
         val compilationDir = File(tempDir, "compilation")
@@ -45,15 +46,15 @@ class AaptCompiler(
 
             if (assetManager.list(amLocation).contains("res")) {
                 //Some themes have "res/" in type3
-                assetManager.extract("$amLocation/res", mainRes)
+                assetManager.extract("$amLocation/res", mainRes, transform)
             } else {
-                assetManager.extract(amLocation, mainRes)
+                assetManager.extract(amLocation, mainRes, transform)
             }
 
         } else {
             if (list.contains("res")) {
                 mainRes.mkdirs()
-                assetManager.extract("$amLoc/res", mainRes)
+                assetManager.extract("$amLoc/res", mainRes, transform)
             }
         }
 
@@ -62,7 +63,7 @@ class AaptCompiler(
                 .forEach {
                     val amLocation = "$amLoc/type1${it.suffix}_${it.extension.name}.xml"
                     val source = File(tempDir, "type1${it.suffix}_${it.extension.name}.xml")
-                    assetManager.extract(amLocation, source)
+                    assetManager.extract(amLocation, source, transform)
                     val dest = File(mainRes, "values", "type1${it.suffix}.xml")
                     source.copyTo(dest, overwrite = true)
                 }
@@ -76,7 +77,7 @@ class AaptCompiler(
         if (type2 != null && !type2.default) {
             val file = File(tempDir, "type2")
             val amLocation = "$amLoc/type2_${type2.name}"
-            assetManager.extract(amLocation, file)
+            assetManager.extract(amLocation, file, transform)
             if (File(file, "res").exists()) {
                 command.addAll(listOf("-S", File(file, "res").absolutePath))
             } else if (file.exists()) {
@@ -95,9 +96,8 @@ class AaptCompiler(
         val proc = ProcessBuilder(command)
                 .start()
 
-        proc.waitFor()
+        val statusCode = proc.waitFor()
 
-        val statusCode = proc.exitValue()
         val output = proc.inputStream.bufferedReader().use { it.readText() }
         val error = proc.errorStream.bufferedReader().use { it.readText() }
 
@@ -108,7 +108,7 @@ class AaptCompiler(
         return apkLocation
     }
 
-    private fun AssetManager.extract(location: String, dest: File, transform: (InputStream) -> (InputStream) = { it }) {
+    private fun AssetManager.extract(location: String, dest: File, transform: (InputStream) -> (InputStream)) {
 
         val children = this.list(location)
 
@@ -141,5 +141,13 @@ class AaptCompiler(
     }
 
     fun File(file: File, vararg subDirs: String) = subDirs.fold(file) { total, next -> java.io.File(total, next) }
+
+    private fun AssetManager.fileExists(location: String) =
+            try {
+                this.open(location).use {  }
+                true
+            } catch (e: FileNotFoundException) {
+                false
+            }
 
 }

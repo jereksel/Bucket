@@ -37,16 +37,13 @@ class MainPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-                .map { Pair(packageManager.getAppLocation(it.appId), it) }
                 .flatMap {
                     Observable.just(it)
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .map {
-                                val location = it.first
-                                val theme = it.second
-                                val isEncrypted = themeReader.isThemeEncrypted(location)
-                                MainViewTheme.fromInstalledTheme(theme, isEncrypted)
+                                val isEncrypted = themeReader.isThemeEncrypted(it.appId)
+                                MainViewTheme.fromInstalledTheme(it, isEncrypted)
                             }
                 }
                 .toList()

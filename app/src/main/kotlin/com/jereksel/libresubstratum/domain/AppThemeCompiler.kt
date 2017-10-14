@@ -10,11 +10,17 @@ import com.jereksel.libresubstratumlib.ThemeToCompile
 import com.jereksel.libresubstratumlib.assetmanager.AaptCompiler
 import java.io.File
 import kellinwood.security.zipsigner.ZipSigner
+import java.io.InputStream
 import java.util.concurrent.TimeUnit
+import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 class AppThemeCompiler(
         val app: Application,
-        val packageManager: IPackageManager
+        val packageManager: IPackageManager,
+        val keyFinder: IKeyFinder
 ) : ThemeCompiler {
 
     val log = getLogger()
@@ -40,8 +46,29 @@ class AppThemeCompiler(
 
         val assetManager = app.packageManager.getResourcesForApplication(themeDate.targetThemeId).assets
 
+        val key = keyFinder.getKey(themeDate.targetThemeId)
+
+        val transform: (InputStream) -> InputStream
+
+        if (key != null) {
+
+            transform = {
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        SecretKeySpec(key.key.clone(), "AES"),
+                        IvParameterSpec(key.iv.clone())
+                )
+
+                CipherInputStream(it, cipher)
+            }
+
+        } else {
+            transform = { it }
+        }
+
         val (file, compilationTime) = timeOfExec {
-            AaptCompiler(aapt.absolutePath).compileTheme(assetManager, themeDate, temp, listOf("/system/framework/framework-res.apk", loc))
+            AaptCompiler(aapt.absolutePath).compileTheme(assetManager, themeDate, temp, listOf("/system/framework/framework-res.apk", loc), transform)
         }
 
         val seconds = TimeUnit.MILLISECONDS.toSeconds(compilationTime)
