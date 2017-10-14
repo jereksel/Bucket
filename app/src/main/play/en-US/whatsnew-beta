@@ -1,3 +1,5 @@
+Faster theme compiling
+Proguard
 Faster theme reading
 Fix FC when entering, exiting overlay list
 Fix // Substweaks // FC
@@ -9,4 +11,3 @@ Sorting by theme name in installed overlays screen
 Make MainView loading faster
 Fix // substweaks // compilation
 Add check if Substratum is installed (it's required for Interfacer)
-Fix freeze during swipe to refresh in main view

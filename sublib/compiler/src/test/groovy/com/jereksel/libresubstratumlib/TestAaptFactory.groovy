@@ -14,7 +14,7 @@ class TestAaptFactory {
         } else {
             //Local
             println("Test runs on local PC")
-            return new AAPT("${System.getProperty("user.home")}/Android/Sdk/build-tools/26.0.2/aapt", true)
+            return new AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt", true)
         }
 
     }
