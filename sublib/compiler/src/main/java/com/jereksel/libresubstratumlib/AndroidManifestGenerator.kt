@@ -14,7 +14,7 @@ class AndroidManifestGenerator(val testing: Boolean = false) {
     fun generateManifest(theme: ThemeToCompile): String {
 
         val appId = theme.targetOverlayId
-        val target = theme.targetAppId
+        val target = theme.fixedTargetApp
         val themeId = theme.targetThemeId
 
         val type1a = theme.getType("a")
