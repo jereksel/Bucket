@@ -4,3 +4,6 @@
 [submodule "zipsigner"]
 	path = zipsigner
 	url = https://github.com/jereksel/zip-signer
+[submodule "aapt"]
+	path = aapt
+	url = https://github.com/jereksel/aaptfordevice.git

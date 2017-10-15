@@ -9,7 +9,6 @@ interface ICompileThemeUseCase {
     fun execute(
             themePack: ThemePack,
             themeId: String,
-            themeLocation: File,
             destAppId: String,
             type1aName: String?,
             type1bName: String?,

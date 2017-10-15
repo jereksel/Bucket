@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      - image: circleci/android:api-25-alpha
+      - image: circleci/android:api-26-alpha
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
@@ -11,8 +11,17 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Download Android build-tools 26.0.1
-          command: echo y | android update sdk --no-ui --all --filter "build-tools-26.0.1"
+          name: Add Android SDK licenses
+          command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
+      - run:
+          name: Install file (https://github.com/android-ndk/ndk/issues/188)
+          command: sudo apt-get install file
+      - run:
+          name: Download Android build-tools 26.0.2
+          command: echo y | sdkmanager "build-tools;26.0.2"
+      - run:
+          name: Download NDK
+          command: echo y | sdkmanager "ndk-bundle"
       - run:
           name: Download submodules
           command: git submodule update --init --recursive
@@ -21,7 +30,7 @@ jobs:
           command: ./gradlew androidDependencies --no-daemon 
       - run:
           name: Build app
-          command: ./gradlew assembleDebug --no-daemon
+          command: ./gradlew assembleDebug assembleDebugProguarded --no-daemon
       - save_cache:
           paths:
             - ~/.gradle

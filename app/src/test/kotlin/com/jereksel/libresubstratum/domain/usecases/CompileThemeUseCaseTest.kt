@@ -24,7 +24,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
         initRxJava()
 
-        whenever(themeCompiler.compileTheme(any(), any())).thenReturn(File("/"))
+        whenever(themeCompiler.compileTheme(any())).thenReturn(File("/"))
     }
 
     init {
@@ -39,7 +39,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -48,9 +47,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", "app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -64,7 +63,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "com.android.systemui.navbar",
                     null,
                     null,
@@ -73,9 +71,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("com.android.systemui.navbar.Theme", "theme", "com.android.systemui", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("com.android.systemui.navbar.Theme", "theme", "com.android.systemui.navbar", "com.android.systemui", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
         }
 
         test("Compilation with default type2 extension") {
@@ -89,7 +87,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -98,9 +95,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), Type2Extension("Type2a", true), null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme","app1", "app1", listOf(), Type2Extension("Type2a", true), null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -115,7 +112,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -124,9 +120,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type2b", "theme", "app1", listOf(), Type2Extension("Type2b", false), null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme.Type2b", "theme", "app1","app1", listOf(), Type2Extension("Type2b", false), null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -141,7 +137,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -150,9 +145,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
         }
 
         test("Compilation with default type3 extension") {
@@ -166,7 +161,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -175,9 +169,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     "Type3a"
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, Type3Extension("Type3a", true), 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(), null, Type3Extension("Type3a", true), 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -192,7 +186,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -201,9 +194,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     "Type3b"
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type3b", "theme", "app1", listOf(), null, Type3Extension("Type3b", false), 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme.Type3b", "theme", "app1","app1", listOf(), null, Type3Extension("Type3b", false), 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -218,7 +211,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -227,9 +219,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     "Type3c"
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
         }
 
         //TYPE 1
@@ -245,7 +237,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     "Type1aa",
                     null,
@@ -254,10 +245,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1aa", true), "a")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1aa", true), "a")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
-
+            verify(themeCompiler).compileTheme(themeToCompile)
         }
 
         test("Compilation with non-default type1a extension") {
@@ -271,7 +261,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     "Type1ab",
                     null,
@@ -280,9 +269,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type1ab", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1ab", false), "a")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme.Type1ab", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1ab", false), "a")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -297,7 +286,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     "Type1ac",
                     null,
@@ -306,9 +294,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -327,7 +315,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     "Type1ba",
@@ -336,9 +323,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1ba", true), "b")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1ba", true), "b")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -353,7 +340,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     "Type1bb",
@@ -362,9 +348,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type1bb", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1bb", false), "b")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme.Type1bb", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1bb", false), "b")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -379,7 +365,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     "Type1bc",
@@ -388,9 +373,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -407,7 +392,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -416,9 +400,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1ca", true), "c")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1ca", true), "c")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -433,7 +417,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -442,9 +425,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type1cb", "theme", "app1", listOf(Type1DataToCompile(Type1Extension("Type1cb", false), "c")), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme.Type1cb", "theme", "app1","app1", listOf(Type1DataToCompile(Type1Extension("Type1cb", false), "c")), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -459,7 +442,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     null,
                     null,
@@ -468,9 +450,9 @@ class CompileThemeUseCaseTest: FunSpec() {
                     null
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme", "theme", "app1", listOf(), null, null, 1, "1.0")
+            val themeToCompile = ThemeToCompile("app1.Theme", "theme","app1","app1", listOf(), null, null, 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
 
         }
 
@@ -495,7 +477,6 @@ class CompileThemeUseCaseTest: FunSpec() {
             useCase.execute(
                     themePack,
                     "theme",
-                    File("/"),
                     "app1",
                     "Type1ab",
                     "Type1bb",
@@ -504,13 +485,13 @@ class CompileThemeUseCaseTest: FunSpec() {
                     "Type3b"
             ).blockingFirst()
 
-            val themeToCompile = ThemeToCompile("app1.Theme.Type1abType1bbType1cb.Type2b.Type3b", "theme", "app1", listOf(
+            val themeToCompile = ThemeToCompile("app1.Theme.Type1abType1bbType1cb.Type2b.Type3b", "theme", "app1","app1", listOf(
                     Type1DataToCompile(Type1Extension("Type1ab", false), "a"),
                     Type1DataToCompile(Type1Extension("Type1bb", false), "b"),
                     Type1DataToCompile(Type1Extension("Type1cb", false), "c")
             ), Type2Extension("Type2b", false), Type3Extension("Type3b", false), 1, "1.0")
 
-            verify(themeCompiler).compileTheme(eq(themeToCompile), any())
+            verify(themeCompiler).compileTheme(themeToCompile)
         }
 
 

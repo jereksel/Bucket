@@ -9,6 +9,7 @@ import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
@@ -21,15 +22,12 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.util.concurrent.CancellationException
-import java.util.concurrent.Future
 
 class DetailedPresenter(
         private val packageManager: IPackageManager,
-        private val themeReader: IThemeReader,
+        private val getThemeInfoUseCase: IGetThemeInfoUseCase,
         private val overlayService: OverlayService,
         private val activityProxy: IActivityProxy,
-        private val themeCompiler: ThemeCompiler,
         private val themeExtractor: ThemeExtractor,
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager
@@ -40,7 +38,6 @@ class DetailedPresenter(
     lateinit var themePack: ThemePack
     lateinit var appId: String
     val compositeDisposable = CompositeDisposable()
-    var future: Future<File>? = null
     val log = getLogger()
 
     private var type3: Type3Extension? = null
@@ -52,7 +49,6 @@ class DetailedPresenter(
     }
 
     override fun removeView() {
-        future?.cancel(true)
         detailedView = null
         compositeDisposable.clear()
     }
@@ -65,14 +61,6 @@ class DetailedPresenter(
             extractLocation.mkdirs()
         }
 
-        val apkLocation = packageManager.getAppLocation(appId)
-
-        val future = this.future
-
-        if (future == null || future.isCancelled) {
-            this.future = themeExtractor.extract(apkLocation, extractLocation)
-        }
-
         if (init) {
             detailedView?.addThemes(themePack)
             return
@@ -81,13 +69,11 @@ class DetailedPresenter(
 
         this.appId = appId
 
-        val location = packageManager.getAppLocation(appId)
-
 //        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
-        Observable.fromCallable { themeReader.readThemePack(location) }
-                .observeOn(Schedulers.computation())
-                .subscribeOn(Schedulers.computation())
+        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .map {
                     //Remove apps that are not installed
                     val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
@@ -315,12 +301,8 @@ class DetailedPresenter(
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
         val disp = positions.toList().toObservable()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .map {
-                    detailedView?.refreshHolder(it)
-                    it
-                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .filter {
                     val overlay = getOverlayIdForTheme(it)
 
@@ -348,6 +330,8 @@ class DetailedPresenter(
                 .map {
 
                     val file = it.first.component1()
+
+                    themePackState[it.second].compiling = false
 
                     if (file != null) {
 
@@ -430,18 +414,8 @@ class DetailedPresenter(
 
     fun compileForPositionObservable(position: Int): Observable<File> {
 
-        val cacheLocation: File
-
-        try {
-            cacheLocation = future!!.get()
-        } catch (e: CancellationException) {
-            return Observable.error(e)
-        }
-
         val state = themePackState[position]
         val theme = themePack.themes[position]
-
-        val location = getFile(cacheLocation, "assets", "overlays", theme.application)
 
         val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
         val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
@@ -452,7 +426,6 @@ class DetailedPresenter(
         return compileThemeUseCase.execute(
                 themePack,
                 appId,
-                location,
                 theme.application,
                 type1a?.name,
                 type1b?.name,
