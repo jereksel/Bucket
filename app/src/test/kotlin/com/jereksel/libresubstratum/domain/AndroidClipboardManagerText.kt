@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.domain
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
+import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.MockedApp
 import org.junit.Assert.assertEquals
@@ -14,7 +15,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @Suppress("IllegalIdentifier")
-class AndroidClipboardManagerText {
+class AndroidClipboardManagerText: BaseRobolectricTest() {
 
     lateinit var manager: AndroidClipboardManager
 
