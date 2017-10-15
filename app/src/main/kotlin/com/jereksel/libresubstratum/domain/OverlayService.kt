@@ -13,13 +13,6 @@ interface OverlayService {
     fun installApk(apk: File)
     fun uninstallApk(appId: String) = uninstallApk(listOf(appId))
     fun uninstallApk(appIds: List<String>)
-    fun toggleOverlay(id: String, enabled: Boolean) {
-        if (enabled) {
-            enableOverlay(id)
-        } else {
-            disableOverlay(id)
-        }
-    }
 
     fun requiredPermissions(): List<String>
 
