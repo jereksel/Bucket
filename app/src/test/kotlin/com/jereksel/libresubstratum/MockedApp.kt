@@ -30,7 +30,7 @@ class MockedApp : App() {
             override fun providesOverlayService() = mockedOverlayService
             override fun providesActivityProxy() = mockedActivityProxy
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy) = mockedInstalledPresenter
-            override fun providesThemeCompiler(packageManager: IPackageManager) = mockedThemeCompiler
+            override fun providesThemeCompiler(packageManager: IPackageManager, keyFinder: IKeyFinder) = mockedThemeCompiler
         }
     }
 }
