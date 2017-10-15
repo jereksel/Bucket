@@ -37,10 +37,7 @@ import java.util.*
 
 
 @Suppress("IllegalIdentifier")
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
+@Config(
         shadows = arrayOf(ShadowSnackbar::class)
 )
 class DetailedViewTest: BaseRobolectricTest() {

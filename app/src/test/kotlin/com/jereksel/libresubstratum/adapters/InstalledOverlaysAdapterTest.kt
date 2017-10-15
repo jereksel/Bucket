@@ -30,10 +30,6 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<RecViewActivity>

@@ -5,6 +5,7 @@ import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
@@ -17,6 +18,7 @@ class MainPresenter(
         val packageManager: IPackageManager,
         val themeReader: IThemeReader,
         val overlayService: OverlayService,
+        val metrics: Metrics,
         val keyFinder: IKeyFinder
 ) : MainContract.Presenter {
 
@@ -80,6 +82,7 @@ class MainPresenter(
     }
 
     override fun openThemeScreen(appId: String) {
+        metrics.userEnteredTheme(appId)
 
         val key = keyFinder.getKey(appId)
 
