@@ -75,7 +75,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.jereksel.libresubstratum"
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 26
         if (System.getenv("CIRCLECI")) {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
