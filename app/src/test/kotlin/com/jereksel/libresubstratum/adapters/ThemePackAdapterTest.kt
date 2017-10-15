@@ -35,10 +35,6 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
 @Suppress("IllegalIdentifier")
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class ThemePackAdapterTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<RecViewActivity>

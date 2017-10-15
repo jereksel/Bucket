@@ -14,10 +14,6 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @Suppress("IllegalIdentifier")
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class AndroidClipboardManagerText {
 
     lateinit var manager: AndroidClipboardManager

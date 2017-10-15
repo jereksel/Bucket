@@ -1,10 +1,14 @@
 package com.jereksel.libresubstratum;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.util.ArraySet;
 import android.view.View;
 
 import org.junit.After;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.ArrayList;
@@ -18,6 +22,10 @@ import static org.robolectric.shadows.ShadowLooper.runUiThreadTasksIncludingDela
  * Base test class to cleanup Robolectric window manager memory leak and finish background threads.
  * Source: https://github.com/mapzen/lost/blob/229afcaad0bf9ae03370b7431f7428ce6823c2d6/lost/src/test/java/com/mapzen/android/lost/BaseRobolectricTest.java
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class,
+        application = MockedApp.class,
+        sdk = Build.VERSION_CODES.N)
 public class BaseRobolectricTest {
 
     // https://github.com/robolectric/robolectric/issues/2068
