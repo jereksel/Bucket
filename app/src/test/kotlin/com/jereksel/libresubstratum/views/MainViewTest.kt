@@ -43,10 +43,6 @@ import org.robolectric.shadows.ShadowToast
 import java.util.concurrent.FutureTask
 
 @Suppress("IllegalIdentifier")
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class MainViewTest: BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<MainView>
