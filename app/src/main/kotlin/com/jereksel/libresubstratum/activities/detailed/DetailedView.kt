@@ -30,14 +30,11 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
-import javax.inject.Inject
-import android.view.View.GONE
 import com.jereksel.libresubstratum.data.KeyPair
 import org.jetbrains.anko.toast
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
-
 
 open class DetailedView : AppCompatActivity(), View {
 
@@ -120,7 +117,7 @@ open class DetailedView : AppCompatActivity(), View {
         config.delay = 500
 
         val sequence = if(BuildConfig.DEBUG) {
-            MaterialShowcaseSequence(this)
+            return
         } else {
             MaterialShowcaseSequence(this, "DetailedView_1")
         }
