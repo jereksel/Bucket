@@ -42,7 +42,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), mock(), compileThemeUseCase, clipboardManager))
+        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), mock(), compileThemeUseCase, clipboardManager, mock()))
         presenter = presenter1
         presenter.setView(view)
 

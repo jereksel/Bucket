@@ -30,7 +30,8 @@ class DetailedPresenter(
         private val activityProxy: IActivityProxy,
         private val themeExtractor: ThemeExtractor,
         private val compileThemeUseCase: ICompileThemeUseCase,
-        private val clipboardManager: ClipboardManager
+        private val clipboardManager: ClipboardManager,
+        private val metrics: Metrics
 ) : Presenter {
 
     var detailedView: View? = null
@@ -392,6 +393,8 @@ class DetailedPresenter(
         val info = overlayService.getOverlayInfo(overlay)
         if (info?.enabled == false) {
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
+            metrics.userEnabledOverlay(overlay)
+            overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
             overlayService.disableOverlays(overlays.map { it.overlayId })
             overlayService.enableOverlay(overlay)
         }
@@ -404,9 +407,14 @@ class DetailedPresenter(
         if (info != null) {
             if (!info.enabled) {
                 val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
+
+                metrics.userEnabledOverlay(overlay)
+                overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
+
                 overlayService.disableOverlays(overlays.map { it.overlayId })
                 overlayService.enableOverlay(overlay)
             } else {
+                metrics.userDisabledOverlay(overlay)
                 overlayService.disableOverlay(overlay)
             }
         }
