@@ -6,6 +6,7 @@ import android.util.ArraySet;
 import android.view.View;
 
 import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -58,6 +59,11 @@ public class BaseRobolectricTest {
         } catch (Exception e) {
             // Catch ClassNotFoundException for API levels where WindowManagerGlobal doesn't exits.
         }
+    }
+
+    @Test
+    public void emptyTest() {
+
     }
 
     @After public void finishThreads() {
