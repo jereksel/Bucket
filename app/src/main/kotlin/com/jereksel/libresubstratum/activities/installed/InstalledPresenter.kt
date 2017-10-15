@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.installed
 
+import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -8,7 +9,9 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.toMaybe
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
@@ -24,9 +27,9 @@ class InstalledPresenter(
     private var view = WeakReference<View>(null)
     private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
+    private val compositeDisposable = CompositeDisposable()
 
-    @JvmField
-    var state: Array<Boolean>? = null
+    private var state: MutableMap<String, Boolean>? = null
 
     override fun setView(view: View) {
         this.view = WeakReference(view)
@@ -50,7 +53,7 @@ class InstalledPresenter(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     overlays = it.toMutableList()
-                    state = it.map { false }.toTypedArray()
+                    state = it.map { Pair(it.overlayId, false) }.toMap().toMutableMap()
                     view.get()?.addOverlays(it)
                 }
     }
@@ -71,29 +74,29 @@ class InstalledPresenter(
 
     }
 
-    private fun selectedOverlays() = (overlays ?: emptyList<InstalledOverlay>()).filterIndexed { index, _ -> state!![index] }
+    private fun selectedOverlays() = (overlays ?: emptyList<InstalledOverlay>()).filter { overlay -> state?.get(overlay.overlayId) == true }
 
     override fun uninstallSelected() {
 
         val toUninstall = selectedOverlays()
-                .map { it.overlayId }
 
-        toUninstall.toSingle()
+        val disp = toUninstall.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .map {
-                    overlayService.uninstallApk(it)
-                    overlays?.removeAll(selectedOverlays())
-                    state = overlays?.map { false }?.toTypedArray()
+                    overlays?.remove(it)
+                    overlayService.uninstallApk(it.overlayId)
+                    Result.of(overlays)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { _ ->
-                    val o = this.overlays
-                    if (o != null) {
-                        this.view.get()?.addOverlays(o)
+                .subscribe { overlaysResult ->
+                    val overlays = overlaysResult.component1()
+                    if (overlays != null) {
+                        this.view.get()?.addOverlays(overlays)
                     }
                 }
 
+        compositeDisposable.add(disp)
     }
 
     override fun enableSelected() {
@@ -101,7 +104,7 @@ class InstalledPresenter(
         val toEnable = selectedOverlays()
                 .map { it.overlayId }
 
-        toEnable.toObservable()
+        val disp = toEnable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .filter { overlayService.getOverlayInfo(it)?.enabled == false }
@@ -113,6 +116,7 @@ class InstalledPresenter(
                     view.get()?.refreshRecyclerView()
                 }
 
+        compositeDisposable.add(disp)
     }
 
     override fun disableSelected() {
@@ -121,7 +125,7 @@ class InstalledPresenter(
         val toDisable = selectedOverlays()
                 .map { it.overlayId }
 
-        toDisable.toObservable()
+        val disp = toDisable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .filter { overlayService.getOverlayInfo(it)?.enabled == true }
@@ -133,25 +137,17 @@ class InstalledPresenter(
                     view.get()?.refreshRecyclerView()
                 }
 
+        compositeDisposable.add(disp)
+
     }
 
     override fun selectAll() {
-        val state = state
-        if (state != null) {
-            for (i in 0 until state.size) {
-                state[i] = true
-            }
-        }
+        overlays?.forEach { state?.set(it.overlayId, true) }
         view.get()?.refreshRecyclerView()
     }
 
     override fun deselectAll() {
-        val state = state
-        if (state != null) {
-            for (i in 0 until state.size) {
-                state[i] = false
-            }
-        }
+        overlays?.forEach { state?.set(it.overlayId, false) }
         view.get()?.refreshRecyclerView()
     }
 
@@ -159,12 +155,17 @@ class InstalledPresenter(
 
     override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
-    override fun getState(position: Int) = state!![position]
+    override fun getState(position: Int) = state!![overlays!![position].overlayId]!!
 
     override fun setState(position: Int, isEnabled: Boolean) {
-        state!![position] = isEnabled
+        val overlayId = overlays?.get(position)?.overlayId
+        if (overlayId != null) {
+            state?.set(overlayId, isEnabled)
+        }
     }
 
-    override fun removeView() = Unit
+    override fun removeView() {
+        compositeDisposable.clear()
+    }
 
 }
