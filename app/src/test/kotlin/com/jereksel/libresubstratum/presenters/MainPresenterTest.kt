@@ -32,7 +32,7 @@ class MainPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = MainPresenter(packageManager, themeReader, overlayService)
+        presenter = MainPresenter(packageManager, themeReader, overlayService, mock())
         presenter.setView(view)
 
         initRxJava()
