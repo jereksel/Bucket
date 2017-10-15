@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.activities.main
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
@@ -14,7 +15,8 @@ import java.io.File
 class MainPresenter(
         val packageManager: IPackageManager,
         val themeReader: IThemeReader,
-        val overlayService: OverlayService
+        val overlayService: OverlayService,
+        val metrics: Metrics
 ) : MainContract.Presenter {
 
     companion object {
@@ -80,6 +82,7 @@ class MainPresenter(
     }
 
     override fun openThemeScreen(appId: String) {
+        metrics.userEnteredTheme(appId)
         mainView?.openThemeFragment(appId)
     }
 }
