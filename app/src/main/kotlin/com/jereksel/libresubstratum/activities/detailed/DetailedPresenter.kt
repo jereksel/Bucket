@@ -336,7 +336,9 @@ class DetailedPresenter(
 
                     if (file != null) {
 
+                        log.debug("Installing overlay {}", file)
                         overlayService.installApk(file)
+                        log.debug("Installing overlay {} finished", file)
                         val overlay = getOverlayIdForTheme(it.second)
 
                         //Replacing substratum theme (the keys are different and overlay can't be just replaced)
