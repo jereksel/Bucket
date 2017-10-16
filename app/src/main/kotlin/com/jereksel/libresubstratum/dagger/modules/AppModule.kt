@@ -52,8 +52,13 @@ open class AppModule(private val application: Application) {
     ): ThemeCompiler = AppThemeCompiler(application, packageManager)
 
     @Provides
-    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader, overlayService)
+    open fun providesMainPresenter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService,
+            metrics: Metrics
+    ): MainContract.Presenter {
+        return MainPresenter(packageManager, themeReader, overlayService, metrics)
     }
 
     @Provides
@@ -68,18 +73,20 @@ open class AppModule(private val application: Application) {
             activityProxy: IActivityProxy,
             themeExtractor: ThemeExtractor,
             compileThemeUseCase: ICompileThemeUseCase,
-            clipboardManager: ClipboardManager
+            clipboardManager: ClipboardManager,
+            metrics: Metrics
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, themeExtractor, compileThemeUseCase, clipboardManager)
+        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, themeExtractor, compileThemeUseCase, clipboardManager, metrics)
     }
 
     @Provides
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
             overlayService: OverlayService,
-            activityProxy: IActivityProxy
+            activityProxy: IActivityProxy,
+            metrics: Metrics
     ): InstalledContract.Presenter {
-        return InstalledPresenter(packageManager, overlayService, activityProxy)
+        return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
     }
 
     @Provides

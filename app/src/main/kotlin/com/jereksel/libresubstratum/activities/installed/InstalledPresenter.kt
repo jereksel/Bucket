@@ -6,6 +6,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,7 +22,8 @@ import java.lang.ref.WeakReference
 class InstalledPresenter(
         val packageManager: IPackageManager,
         val overlayService: OverlayService,
-        val activityProxy: IActivityProxy
+        val activityProxy: IActivityProxy,
+        val metrics: Metrics
 ) : Presenter {
 
     private var view = WeakReference<View>(null)
@@ -60,7 +62,15 @@ class InstalledPresenter(
 
     override fun toggleOverlay(overlayId: String, enabled: Boolean) {
 
-        val single = { overlayService.toggleOverlay(overlayId, enabled) }.toSingle()
+        val single = {
+            if (enabled) {
+                metrics.userEnabledOverlay(overlayId)
+                overlayService.enableOverlay(overlayId)
+            } else {
+                metrics.userDisabledOverlay(overlayId)
+                overlayService.disableOverlay(overlayId)
+            }
+        }.toSingle()
 
         single
                 .observeOn(AndroidSchedulers.mainThread())
@@ -109,7 +119,10 @@ class InstalledPresenter(
                 .subscribeOn(Schedulers.computation())
                 .filter { overlayService.getOverlayInfo(it)?.enabled == false }
                 .toList()
-                .map { overlayService.enableOverlays(it) }
+                .map {
+                    it.forEach { metrics.userEnabledOverlay(it) }
+                    overlayService.enableOverlays(it)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
                     deselectAll()
@@ -130,7 +143,10 @@ class InstalledPresenter(
                 .subscribeOn(Schedulers.computation())
                 .filter { overlayService.getOverlayInfo(it)?.enabled == true }
                 .toList()
-                .map { overlayService.disableOverlays(it) }
+                .map {
+                    it.forEach { metrics.userDisabledOverlay(it) }
+                    overlayService.disableOverlays(it)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
                     deselectAll()

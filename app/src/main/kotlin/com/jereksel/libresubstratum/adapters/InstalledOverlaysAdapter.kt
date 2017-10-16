@@ -82,6 +82,7 @@ class InstalledOverlaysAdapter(
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        val card: RelativeLayout by bindView(R.id.card)
         val targetIcon: ImageView by bindView(R.id.target_icon)
         val themeIcon: ImageView by bindView(R.id.theme_icon)
         val targetName: TextView by bindView(R.id.target_name)
