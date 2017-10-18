@@ -322,8 +322,10 @@ class DetailedPresenter(
                 .observeOn(Schedulers.io())
                 .toList()
                 .subscribe { errors ->
-                    detailedView?.showError(errors.map { (it.cause as Exception).message!! })
-                    log.warn("Compilation error: {}", errors)
+                    if (errors.isNotEmpty()) {
+                        detailedView?.showError(errors.map { (it.cause as Exception).message!! })
+                        log.warn("Compilation error: {}", errors)
+                    }
                 }
 
 
@@ -404,6 +406,7 @@ class DetailedPresenter(
 
                 }
                 .toList()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ _ ->
                     onComplete()
                     exceptionSubject.onComplete()
