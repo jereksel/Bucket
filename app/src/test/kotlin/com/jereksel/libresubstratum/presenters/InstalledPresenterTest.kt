@@ -137,7 +137,9 @@ class InstalledPresenterTest : FunSpec() {
         test("Selected overlays are uninstalled during uninstallSelected") {
             prepare()
             presenter.uninstallSelected()
-            verify(overlayService).uninstallApk(listOf("overlay1", "overlay2", "overlay4"))
+            verify(overlayService).uninstallApk("overlay1")
+            verify(overlayService).uninstallApk("overlay2")
+            verify(overlayService).uninstallApk("overlay4")
         }
         test("Selected overlays are enabled during enableSelected") {
             prepare()
