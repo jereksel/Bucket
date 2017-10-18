@@ -4,8 +4,7 @@ import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter.CompilationState.NO_COMPILATION
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter.CompilationState.WAITING_FOR_COMPILATION
+import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter.CompilationState.*
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
@@ -18,17 +17,20 @@ import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.exceptions.Exceptions
 import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.reactivestreams.Publisher
 import java.io.File
+import java.util.*
 
 class DetailedPresenter(
         private val packageManager: IPackageManager,
@@ -311,36 +313,23 @@ class DetailedPresenter(
         val onClickSubject = PublishSubject.create<Unit>()
         val f = onClickSubject.toFlowable(BackpressureStrategy.LATEST).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()) as Publisher<Unit>
 
+        val exceptionSubject = PublishSubject.create<Exception>()
+
+        val notExistingDirectory = File("/")
+
+        val exceptionDisp = exceptionSubject
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .toList()
+                .subscribe { errors ->
+                    detailedView?.showError(errors.map { (it.cause as Exception).message!! })
+                    log.warn("Compilation error: {}", errors)
+                }
+
+
         log.debug("COMPILATION STARTED")
 
         val disp = positions.toFlowable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .parallel()
-                .runOn(Schedulers.computation())
-                .map { compileForPositionObservable(it).blockingGet() }
-                .sequential()
-                .buffer(f)
-                .observeOn(Schedulers.io())
-                .map { file ->
-                    log.debug("Installing overlay {}", file)
-                    overlayService.installApk(file)
-                    log.debug("Installing overlay {} finished", file)
-                    file.forEach { it.delete() }
-                    onClickSubject.onNext(Unit)
-                    Unit
-                }
-                .toList()
-                .subscribe{ a ->
-                    log.debug("COMPILATION ENDED")
-                }
-
-
-        onClickSubject.onNext(Unit)
-
-/*
-//        val disp = positions.toObservable()
-                positions.toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .filter {
@@ -348,7 +337,92 @@ class DetailedPresenter(
 
                     if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
                         afterInstalling(it)
-                        themePackState[it].compiling = false
+                        themePackState[it].compiling = NO_COMPILATION
+                        detailedView?.refreshHolder(it)
+                        false
+                    } else {
+                        true
+                    }
+                }
+                .parallel()
+                .runOn(Schedulers.computation())
+                .flatMap {
+                    themePackState[it].compiling = COMPILING
+                    detailedView?.refreshHolder(it)
+                    try {
+                        val file = compileForPositionObservable(it).blockingGet();
+                        themePackState[it].compiling = WAITING_FOR_INSTALLING
+                        detailedView?.refreshHolder(it)
+                        Flowable.just(Pair(it, file))
+                    } catch (e: Exception) {
+                        themePackState[it].compiling = NO_COMPILATION
+                        detailedView?.refreshHolder(it)
+                        exceptionSubject.onNext(e)
+                        Flowable.just(Pair(it, notExistingDirectory))
+//                        Flowable.error<Pair<Int, File>>(e)
+                    }
+                }
+                .filter { it.second !== notExistingDirectory }
+                .sequential()
+                .buffer(f)
+                .observeOn(Schedulers.io())
+                .map { file ->
+                    if (file.isEmpty()) {
+                        Thread.sleep(100)
+                        listOf()
+                    } else {
+                        log.debug("Installing overlay {}", file)
+                        file.map { it.first }.forEach { themePackState[it].compiling = INSTALLING; detailedView?.refreshHolder(it) }
+                        overlayService.installApk(file.map { it.second })
+                        log.debug("Installing overlay {} finished", file)
+                        onClickSubject.onNext(Unit)
+                        file
+                    }
+                }
+                .flatMap { Flowable.fromArray(*it.toTypedArray()) }
+                .map {
+
+                    val location = it.first
+                    val file = it.second
+
+                    val overlay = getOverlayIdForTheme(location)
+
+                    //Replacing substratum theme (the keys are different and overlay can't be just replaced)
+                    if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
+                        overlayService.uninstallApk(overlay)
+                        overlayService.installApk(listOf(file))
+                    }
+
+                    file.delete()
+
+                    afterInstalling(location)
+
+                    themePackState[location].compiling = NO_COMPILATION
+                    detailedView?.refreshHolder(location)
+
+                    Unit
+
+                }
+                .toList()
+                .subscribe({ _ ->
+                    onComplete()
+                    exceptionSubject.onComplete()
+                }, { e: Throwable ->
+                    log.error("Error during pricessing", e)
+                })
+
+
+        onClickSubject.onNext(Unit)
+/*
+        val disp = positions.toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .filter {
+                    val overlay = getOverlayIdForTheme(it)
+
+                    if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
+                        afterInstalling(it)
+                        themePackState[it].compiling = INSTALLING
                         detailedView?.refreshHolder(it)
                         false
                     } else {
@@ -371,7 +445,7 @@ class DetailedPresenter(
 
                     val file = it.first.component1()
 
-                    themePackState[it.second].compiling = false
+                    themePackState[it.second].compiling = INSTALLING
 
                     if (file != null) {
 
@@ -397,22 +471,22 @@ class DetailedPresenter(
                 .map {
                     val adapterPosition = it.second
                     val state = themePackState[adapterPosition]
-                    state.compiling = false
+                    state.compiling = NO_COMPILATION
                     detailedView?.refreshHolder(adapterPosition)
                     it
                 }
                 .doOnComplete {
                     onComplete.invoke()
                 }
-                .map { it.first }
-                .filter { it.component2() != null }
-                .map { it.component2()!! }
-                .filter { it.message != null }
+//                .map { it.first }
+//                .filter { it.component2() != null }
+//                .map { it.component2()!! }
+                .filter { it.isPresent }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-*//*                .subscribe({ errors ->
+                .subscribe({ errors ->
                     if (errors.isNotEmpty()) {
-                        detailedView?.showError(errors.map { it.message!! })
+                        detailedView?.showError(errors.map { it.get().message!! })
                         log.warn("Compilation error: {}", errors)
                     }
 //                })
@@ -422,6 +496,7 @@ class DetailedPresenter(
                     detailedView?.showError(listOf(onError.localizedMessage))
                 })*/
 
+        compositeDisposable.add(exceptionDisp)
         compositeDisposable.add(disp)
 
         return disp

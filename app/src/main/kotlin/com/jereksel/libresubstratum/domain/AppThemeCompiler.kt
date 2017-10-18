@@ -24,7 +24,7 @@ class AppThemeCompiler(
 
     init {
         log.debug("AAPT version: {}", ProcessBuilder().command(listOf(aapt.absolutePath, "v")).start().inputStream.bufferedReader().readText())
-
+/*
         if (zipalign.exists()) {
             zipalign.delete()
         }
@@ -38,6 +38,7 @@ class AppThemeCompiler(
         }
 
         zipalign.setExecutable(true)
+        */
     }
 
     @Throws(InvalidInvocationException::class)

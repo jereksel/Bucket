@@ -15,7 +15,8 @@ import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable
-import io.reactivex.Observable.just
+import io.reactivex.Single
+import io.reactivex.Single.just
 import org.junit.Assert.assertNull
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -375,7 +376,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
-            whenever(overlayService.installApk(File("/"))).then {
+            whenever(overlayService.installApk(listOf(File("/")))).then {
                 overlayVersion = Pair(2, "v1.1")
                 Unit
             }
@@ -394,7 +395,7 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileAndRun(0)
 
             verify(overlayService).disableOverlay("app1.MyTheme")
-            verify(overlayService).installApk(File("/"))
+            verify(overlayService).installApk(listOf(File("/")))
             verify(presenter1).compileForPositionObservable(0)
         }
         test("When overlays is not installed, overlay is compiled") {
@@ -406,7 +407,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
-            whenever(overlayService.installApk(File("/"))).then {
+            whenever(overlayService.installApk(listOf(File("/")))).then {
                 installed = true; Unit
             }
 
@@ -426,7 +427,7 @@ class DetailedPresenterTest : FunSpec() {
 
             verify(presenter1).compileForPositionObservable(0)
             verify(overlayService).enableOverlay("app1.MyTheme")
-            verify(overlayService).installApk(File("/"))
+            verify(overlayService).installApk(listOf(File("/")))
 
         }
         test("When overlays cannot be installed, it's removed and installed again") {
@@ -452,7 +453,7 @@ class DetailedPresenterTest : FunSpec() {
             verify(presenter1).compileForPositionObservable(0)
             verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).uninstallApk("app1.MyTheme")
-            verify(overlayService, times(2)).installApk(File("/"))
+            verify(overlayService, times(2)).installApk(listOf(File("/")))
 
         }
         test("When compilation fails error is shown to user") {
@@ -471,7 +472,7 @@ class DetailedPresenterTest : FunSpec() {
 
             presenter.readTheme("themeid")
 
-            doReturn(Observable.fromCallable({ throw Exception("Exception message") })).whenever(presenter1).compileForPositionObservable(0)
+            doReturn(Single.fromCallable({ throw Exception("Exception message") })).whenever(presenter1).compileForPositionObservable(0)
 
             presenter.compileAndRun(0)
 
@@ -484,6 +485,38 @@ class DetailedPresenterTest : FunSpec() {
 
         }
 
+        test("When compiling multiple themes, successfull ones are enabled and errors are displayed") {
+
+            whenever(packageManager.getAppName("app1")).thenReturn("app1")
+            whenever(packageManager.getAppName("app2")).thenReturn("app2")
+            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.isPackageInstalled("app2")).thenReturn(true)
+//            whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
+            whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
+//            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1.0"))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app2.MyTheme")).thenReturn(OverlayInfo("app2.MyTheme", false))
+
+            val themes = ThemePack(listOf(Theme("app1"), Theme("app2")))
+
+            whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
+
+            presenter.readTheme("themeid")
+
+            doReturn(Single.fromCallable({ throw Exception("Exception message") })).whenever(presenter1).compileForPositionObservable(0)
+            doReturn(Single.just(File("/"))).whenever(presenter1).compileForPositionObservable(1)
+
+            presenter.setCheckbox(0, true)
+            presenter.setCheckbox(1, true)
+
+            presenter.compileRunActivateSelected()
+
+//            verify(overlayService).enableOverlay("app1.MyTheme")
+            verify(overlayService).installApk(listOf(File("/")))
+            verify(view).showError(listOf("Exception message"))
+        }
+
         test("When compiling selected themes with installing only non should be enabled") {
 
             var installed = false
@@ -493,7 +526,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
-            whenever(overlayService.installApk(File("/"))).then {
+            whenever(overlayService.installApk(listOf(File("/")))).then {
                 installed = true; Unit
             }
 
@@ -515,7 +548,7 @@ class DetailedPresenterTest : FunSpec() {
 
             verify(presenter1).compileForPositionObservable(0)
             verify(overlayService, never()).enableOverlay(any())
-            verify(overlayService).installApk(File("/"))
+            verify(overlayService).installApk(listOf(File("/")))
         }
 
         test("When compiling selected themes with installing and enabling overlay should be enabled") {
@@ -527,7 +560,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
-            whenever(overlayService.installApk(File("/"))).then {
+            whenever(overlayService.installApk(listOf(File("/")))).then {
                 installed = true; Unit
             }
 
@@ -549,7 +582,7 @@ class DetailedPresenterTest : FunSpec() {
 
             verify(presenter1).compileForPositionObservable(0)
             verify(overlayService).enableOverlay("app1.MyTheme")
-            verify(overlayService).installApk(File("/"))
+            verify(overlayService).installApk(listOf(File("/")))
         }
 
         // OTHER
