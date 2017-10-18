@@ -124,8 +124,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         service.restartSystemUI()
     }
 
-    override fun installApk(apk: File) {
-        service.installPackage(listOf(apk.absolutePath))
+    override fun installApk(apk: List<File>) {
+        service.installPackage(apk.map { it.absolutePath })
     }
 
     override fun uninstallApk(appIds: List<String>) {

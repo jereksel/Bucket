@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.domain.usecases
 
 import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
+import io.reactivex.Single
 import java.io.File
 
 interface ICompileThemeUseCase {
@@ -15,5 +16,5 @@ interface ICompileThemeUseCase {
             type1cName: String?,
             type2Name: String?,
             type3Name: String?
-    ): Observable<File>
+    ): Single<File>
 }

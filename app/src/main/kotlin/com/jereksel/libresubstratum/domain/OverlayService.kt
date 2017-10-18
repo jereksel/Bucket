@@ -10,7 +10,7 @@ interface OverlayService {
     fun getOverlayInfo(id: String): OverlayInfo?
     fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
     fun restartSystemUI()
-    fun installApk(apk: File)
+    fun installApk(apk: List<File>)
     fun uninstallApk(appId: String) = uninstallApk(listOf(appId))
     fun uninstallApk(appIds: List<String>)
 
