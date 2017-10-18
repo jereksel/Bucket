@@ -326,7 +326,7 @@ class DetailedPresenter(
                     log.debug("Installing overlay {}", file)
                     overlayService.installApk(file)
                     log.debug("Installing overlay {} finished", file)
-                    file.forEach { it.deleteOn() }
+                    file.forEach { it.delete() }
                     onClickSubject.onNext(Unit)
                     Unit
                 }
