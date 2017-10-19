@@ -66,6 +66,12 @@ task copyTestClasses(type: Copy) {
 //    }
 //}
 
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
 android {
     playAccountConfigs {
         defaultAccountConfig {
@@ -283,6 +289,9 @@ dependencies {
     compile 'com.google.guava:guava:20.0'
     androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
+
+    compile "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
