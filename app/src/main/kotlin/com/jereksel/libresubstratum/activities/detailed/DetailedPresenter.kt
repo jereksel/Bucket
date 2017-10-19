@@ -152,7 +152,7 @@ class DetailedPresenter(
             }
         }
 
-        view.setCompiling(state.compiling != NO_COMPILATION)
+        view.setCompiling(state.compiling.text)
     }
 
     //TODO: Change name
@@ -310,9 +310,6 @@ class DetailedPresenter(
 
         positions.forEach { themePackState[it].compiling = WAITING_FOR_COMPILATION; detailedView?.refreshHolder(it) }
 
-        val onClickSubject = PublishSubject.create<Unit>()
-        val f = onClickSubject.toFlowable(BackpressureStrategy.LATEST).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()) as Publisher<Unit>
-
         val exceptionSubject = PublishSubject.create<Exception>()
 
         val notExistingDirectory = File("/")
@@ -357,16 +354,18 @@ class DetailedPresenter(
                         detailedView?.refreshHolder(it)
                         Flowable.just(Pair(it, file))
                     } catch (e: Exception) {
+                        afterInstalling(it)
                         themePackState[it].compiling = NO_COMPILATION
                         detailedView?.refreshHolder(it)
                         exceptionSubject.onNext(e)
                         Flowable.just(Pair(it, notExistingDirectory))
-//                        Flowable.error<Pair<Int, File>>(e)
                     }
                 }
                 .filter { it.second !== notExistingDirectory }
                 .sequential()
-                .buffer(f)
+//                .buffer(f)
+//                .buffer(Runtime.getRuntime().availableProcessors())
+                .buffer(1)
                 .observeOn(Schedulers.io())
                 .map { file ->
                     if (file.isEmpty()) {
@@ -377,7 +376,6 @@ class DetailedPresenter(
                         file.map { it.first }.forEach { themePackState[it].compiling = INSTALLING; detailedView?.refreshHolder(it) }
                         overlayService.installApk(file.map { it.second })
                         log.debug("Installing overlay {} finished", file)
-                        onClickSubject.onNext(Unit)
                         file
                     }
                 }
@@ -414,92 +412,8 @@ class DetailedPresenter(
                     log.error("Error during processing", e)
                     exceptionSubject.onNext(e as Exception)
                     exceptionSubject.onComplete()
+                    onComplete()
                 })
-
-
-        onClickSubject.onNext(Unit)
-/*
-        val disp = positions.toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .filter {
-                    val overlay = getOverlayIdForTheme(it)
-
-                    if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
-                        afterInstalling(it)
-                        themePackState[it].compiling = INSTALLING
-                        detailedView?.refreshHolder(it)
-                        false
-                    } else {
-                        true
-                    }
-                }
-                .flatMap {
-                    val adapterPosition = it
-
-                    compileForPositionObservable(it).toObservable()
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(Schedulers.computation())
-                            .zipWith(listOf(it), { a,b -> Pair(Result.of { a },b) })
-                            .onErrorReturn { t ->
-                                log.warn("Overlay compilation failed", t)
-                                Pair(Result.error(t as Exception), adapterPosition)
-                            }
-                }
-                .map {
-
-                    val file = it.first.component1()
-
-                    themePackState[it.second].compiling = INSTALLING
-
-                    if (file != null) {
-
-                        log.debug("Installing overlay {}", file)
-                        overlayService.installApk(listOf(file))
-                        log.debug("Installing overlay {} finished", file)
-                        val overlay = getOverlayIdForTheme(it.second)
-
-                        //Replacing substratum theme (the keys are different and overlay can't be just replaced)
-                        if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
-                            overlayService.uninstallApk(overlay)
-                            overlayService.installApk(listOf(file))
-                        }
-
-                        file.delete()
-
-                    }
-
-                    afterInstalling(it.second)
-                    it
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .map {
-                    val adapterPosition = it.second
-                    val state = themePackState[adapterPosition]
-                    state.compiling = NO_COMPILATION
-                    detailedView?.refreshHolder(adapterPosition)
-                    it
-                }
-                .doOnComplete {
-                    onComplete.invoke()
-                }
-//                .map { it.first }
-//                .filter { it.component2() != null }
-//                .map { it.component2()!! }
-                .filter { it.isPresent }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ errors ->
-                    if (errors.isNotEmpty()) {
-                        detailedView?.showError(errors.map { it.get().message!! })
-                        log.warn("Compilation error: {}", errors)
-                    }
-//                })
-                }, { onError ->
-                    //Something gone horribly wrong
-                    log.error("Error: {}", onError)
-                    detailedView?.showError(listOf(onError.localizedMessage))
-                })*/
 
         compositeDisposable.add(exceptionDisp)
         compositeDisposable.add(disp)

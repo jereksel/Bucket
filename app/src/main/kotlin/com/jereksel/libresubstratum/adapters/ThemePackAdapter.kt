@@ -83,6 +83,7 @@ class ThemePackAdapter(
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
         val overlay: RelativeLayout by bindView(R.id.overlay)
+        val overlayMessage: TextView by bindView(R.id.overlaymessage)
 //        init {
 //            (type1Spinners + type2Spinner).forEach { it.visibility = View.GONE }
 //        }
@@ -155,9 +156,20 @@ class ThemePackAdapter(
             appName.setTextColor(if (enabled) Color.GREEN else Color.RED)
         }
 
+        override fun setCompiling(message: String?) {
+            if (message != null) {
+                overlay.visibility = VISIBLE
+                overlayMessage.text = message
+            } else {
+                overlay.visibility = GONE
+            }
+        }
+
+/*
         override fun setCompiling(compiling: Boolean) {
             overlay.visibility = if (compiling) VISIBLE else GONE
         }
+*/
 
         override fun setInstalled(version1: String?, version2: String?) {
             if (version1 == null && version2 == null) {
