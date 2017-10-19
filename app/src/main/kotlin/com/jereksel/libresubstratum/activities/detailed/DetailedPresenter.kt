@@ -411,7 +411,9 @@ class DetailedPresenter(
                     onComplete()
                     exceptionSubject.onComplete()
                 }, { e: Throwable ->
-                    log.error("Error during pricessing", e)
+                    log.error("Error during processing", e)
+                    exceptionSubject.onNext(e as Exception)
+                    exceptionSubject.onComplete()
                 })
 
 
