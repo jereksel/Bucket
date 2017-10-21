@@ -10,7 +10,8 @@ class Library(
 
 enum class LicenseType(val licenseType: String, val stringId: Int) {
     MIT("MIT", R.string.license_mit),
-    APACHE2("Apache2", R.string.license_apache2)
+    APACHE2("Apache2", R.string.license_apache2),
+    EPL("Eclipse Public License", R.string.license_epl)
 }
 
 data class Author(
