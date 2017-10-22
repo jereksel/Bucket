@@ -60,6 +60,7 @@ class DetailedPresenter(
 
     override fun removeView() {
         detailedView = null
+
         compositeDisposable.clear()
     }
 
@@ -406,10 +407,12 @@ class DetailedPresenter(
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ _ ->
+                    log.debug("COMPILATION ENDED")
                     onComplete()
                     exceptionSubject.onComplete()
                 }, { e: Throwable ->
                     log.error("Error during processing", e)
+                    log.debug("COMPILATION ENDED")
                     exceptionSubject.onNext(e as Exception)
                     exceptionSubject.onComplete()
                     onComplete()
