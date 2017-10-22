@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.dagger.modules.AppModule
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import io.kotlintest.mock.mock
 import org.mockito.Mockito
 
 class MockedApp : App() {
@@ -20,6 +21,8 @@ class MockedApp : App() {
             override fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService, metrics: Metrics, keyFinder: IKeyFinder) = mockedMainPresenter
             override fun providesDetailedPresenter(packageManager: IPackageManager, getThemeInfoUseCase: IGetThemeInfoUseCase, overlayService: OverlayService, activityProxy: IActivityProxy, compileThemeUseCase: ICompileThemeUseCase, clipboardManager: ClipboardManager, metrics: Metrics): DetailedContract.Presenter = mockedDetailedPresenter
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy, metrics: Metrics): InstalledContract.Presenter = mockedInstalledPresenter
+
+            override fun providesThemeCompiler(packageManager: IPackageManager, keyFinder: IKeyFinder): ThemeCompiler = mock()
         }
     }
 }
