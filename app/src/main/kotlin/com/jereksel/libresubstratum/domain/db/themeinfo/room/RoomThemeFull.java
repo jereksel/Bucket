@@ -7,7 +7,15 @@ import java.util.List;
 
 public class RoomThemeFull {
     @Embedded
-    public RoomThemePack themePack;
-    @Relation(parentColumn = "id", entityColumn = "theme_pack_id")
-    List<RoomTheme> themeList;
+    public RoomTheme theme;
+    @Relation(parentColumn = "id", entityColumn = "theme_id")
+    List<RoomType1aExtension> type1aExtension;
+    @Relation(parentColumn = "id", entityColumn = "theme_id")
+    List<RoomType1bExtension> type1bExtension;
+    @Relation(parentColumn = "id", entityColumn = "theme_id")
+    List<RoomType1cExtension> type1cExtension;
+    @Relation(parentColumn = "id", entityColumn = "theme_id")
+    List<RoomType2Extension> type2Extension;
+    @Relation(parentColumn = "id", entityColumn = "theme_id")
+    List<RoomType3Extension> type3Extension;
 }

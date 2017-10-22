@@ -3,17 +3,18 @@ package com.jereksel.libresubstratum.domain.db.themeinfo.room
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import android.support.annotation.Nullable
-import io.reactivex.Flowable
 
 @Dao
 interface RoomThemePackDao {
 
     @Query("SELECT * FROM themepack")
-    fun getAllThemePacks(): List<RoomThemeFull>
+    fun getAllThemePacks(): List<RoomThemePackFull>
 
-    @Query("SELECT * FROM themepack WHERE appId LIKE :id")
-    fun getThemePack(id: String): RoomThemeFull?
+    @Query("SELECT * FROM themepack WHERE appId LIKE :appId")
+    fun getThemePack(appId: String): RoomThemePackFull?
+
+    @Query("SELECT * FROM theme WHERE id LIKE :id")
+    fun getThemeInfo(id: Long): RoomThemeFull?
 
     @Insert
     fun insertThemePack(themePack: RoomThemePack): Long
