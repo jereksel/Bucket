@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
 
 class MainPresenter(
         val packageManager: IPackageManager,
@@ -33,15 +32,6 @@ class MainPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-//                .flatMap {
-//                    Observable.just(it)
-//                            .subscribeOn(Schedulers.io())
-//                            .observeOn(Schedulers.io())
-//                            .map {
-//                                val isEncrypted = themeReader.isThemeEncrypted(it.appId)
-//                                MainViewTheme.fromInstalledTheme(it, isEncrypted)
-//                            }
-//                }
                 .toList()
                 .flattenAsObservable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
@@ -77,12 +67,6 @@ class MainPresenter(
 
     override fun openThemeScreen(appId: String) {
         metrics.userEnteredTheme(appId)
-
-        val key = keyFinder.getKey(appId)
-
-        val source = packageManager.getAppLocation(appId)
-        val dest = File(packageManager.getCacheFolder(), appId)
-
         mainView?.openThemeFragment(appId)
     }
 }
