@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.domain.db.themeinfo.room;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
@@ -11,7 +12,8 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 @ForeignKey(entity = RoomTheme.class,
         parentColumns = "id",
         childColumns = "theme_id",
-        onDelete = CASCADE)
+        onDelete = CASCADE),
+        indices = {@Index("id"), @Index("theme_id")}
 )
 public class RoomType1bExtension {
     @PrimaryKey(autoGenerate = true)

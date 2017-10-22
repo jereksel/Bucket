@@ -17,7 +17,8 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         parentColumns = "id",
         childColumns = "theme_pack_id",
         onDelete = CASCADE),
-        tableName = "theme")
+        tableName = "theme",
+        indices = {@Index("id"), @Index("theme_pack_id")})
 public class RoomTheme {
     @PrimaryKey(autoGenerate = true)
     public Long id;
