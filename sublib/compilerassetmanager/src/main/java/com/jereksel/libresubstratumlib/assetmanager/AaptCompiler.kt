@@ -117,9 +117,6 @@ class AaptCompiler(
         if (children.isEmpty()) {
             //This is file
             dest.parentFile.mkdirs()
-            if (dest.exists()) {
-                dest.delete()
-            }
 
             val `is`: InputStream
 
@@ -127,6 +124,10 @@ class AaptCompiler(
                 `is` = open(location)
             } catch (e: FileNotFoundException) {
                 return
+            }
+
+            if (dest.exists()) {
+                dest.delete()
             }
 
             dest.createNewFile()
