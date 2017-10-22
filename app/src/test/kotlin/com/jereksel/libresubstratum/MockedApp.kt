@@ -18,7 +18,7 @@ class MockedApp : App() {
     override fun getAppModule(): AppModule {
         return object : AppModule(this) {
             override fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService, metrics: Metrics, keyFinder: IKeyFinder) = mockedMainPresenter
-            override fun providesDetailedPresenter(packageManager: IPackageManager, getThemeInfoUseCase: IGetThemeInfoUseCase, overlayService: OverlayService, activityProxy: IActivityProxy, themeExtractor: ThemeExtractor, compileThemeUseCase: ICompileThemeUseCase, clipboardManager: ClipboardManager, metrics: Metrics): DetailedContract.Presenter = mockedDetailedPresenter
+            override fun providesDetailedPresenter(packageManager: IPackageManager, getThemeInfoUseCase: IGetThemeInfoUseCase, overlayService: OverlayService, activityProxy: IActivityProxy, compileThemeUseCase: ICompileThemeUseCase, clipboardManager: ClipboardManager, metrics: Metrics): DetailedContract.Presenter = mockedDetailedPresenter
             override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy, metrics: Metrics): InstalledContract.Presenter = mockedInstalledPresenter
         }
     }

@@ -82,11 +82,6 @@ class DetailedViewTest: BaseRobolectricTest() {
     }
 
     @Test
-    fun `setKey() is invoked after starting`() {
-        verify(presenter).setKey(key)
-    }
-
-    @Test
     fun `type3 spinner has list of type3 extensions`() {
         val colors = listOf("black", "white", "green")
         val type3 = Type3Data(colors.map { Type3Extension(it, false) })

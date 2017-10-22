@@ -3,7 +3,6 @@ package com.jereksel.libresubstratum.presenters
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
-import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
@@ -53,37 +52,6 @@ class MainPresenterTest : FunSpec() {
                 verify(view).addApplications(argThat { size == num })
             }
         }
-        test("Set isEncrypted from themeReader") {
-
-            val app1Id = "app1"
-            val app1Drawable = null
-
-            val app2Id = "app2"
-            val app2Drawable = null
-
-
-            val installed = listOf(
-                    packageFactory(app1Id, "Theme nr.1", "author1", app1Drawable),
-                    packageFactory(app2Id, "Theme nr.2", "author2", app2Drawable)
-            )
-
-            whenever(packageManager.getInstalledThemes()).thenReturn(installed)
-
-            whenever(themeReader.isThemeEncrypted(app1Id)).thenReturn(true)
-            whenever(themeReader.isThemeEncrypted(app2Id)).thenReturn(false)
-
-            presenter.getApplications()
-
-            val expected = listOf(
-                    MainViewTheme(app1Id, "Theme nr.1", "author1", app1Drawable, true),
-                    MainViewTheme(app2Id, "Theme nr.2", "author2", app2Drawable, false)
-            )
-
-            val argumentCaptor = argumentCaptor<List<MainViewTheme>>()
-            verify(view).addApplications(argumentCaptor.capture())
-            Assert.assertEquals(listOf(true, false), argumentCaptor.firstValue.map { it.isEncrypted })
-
-        }
         test("If overlayService returns non empty list of permissions they're passed to view") {
             val perms = listOf("perm1", "perm2")
             whenever(overlayService.requiredPermissions()).thenReturn(perms)
@@ -130,7 +98,7 @@ class MainPresenterTest : FunSpec() {
 
     fun packageFactory(id: String, name: String, author: String, drawable: File? = null): InstalledTheme {
 
-        return InstalledTheme(id, name, author, FutureTask { drawable })
+        return InstalledTheme(id, name, author, false, "1.0", FutureTask { drawable })
 
 //        val bundle = mock<Bundle> {
 //            on { get(MainPresenter.SUBSTRATUM_NAME) } - name
