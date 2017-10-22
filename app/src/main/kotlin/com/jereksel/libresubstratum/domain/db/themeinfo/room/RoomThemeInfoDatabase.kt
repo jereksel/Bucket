@@ -4,7 +4,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 
 @Database(entities = arrayOf(
-//        RoomTheme::class,
+        RoomTheme::class,
         RoomThemePack::class
 //        RoomType1aExtension::class,
 //        RoomType1bExtension::class,

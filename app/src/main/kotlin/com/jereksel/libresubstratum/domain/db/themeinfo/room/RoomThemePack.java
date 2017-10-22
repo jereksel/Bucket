@@ -11,7 +11,8 @@ import java.util.List;
 public class RoomThemePack {
     @PrimaryKey(autoGenerate = true)
     public Long id;
-    public String themeId;
+    public String appId;
+    public byte[] checksum;
 //    public List<RoomTheme> themes = new ArrayList<>();
 //    public List<RoomType3Extension> type3 = new ArrayList<>();
 }
