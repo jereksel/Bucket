@@ -1,18 +1,26 @@
 package com.jereksel.libresubstratum.domain
 
 import android.content.Context
+import android.content.pm.PackageManager
 import com.google.common.io.Files.createTempDir
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.extensions.getLogger
 import dalvik.system.DexClassLoader
 
 class KeyFinder(
-        val context: Context
+        val context: Context,
+        val packageManager: IPackageManager
 ): IKeyFinder {
 
     val log = getLogger()
 
     override fun getKey(appId: String): KeyPair? {
+
+        val themeInfo = packageManager.getInstalledTheme(appId)
+
+        if (!themeInfo.encrypted) {
+            return null
+        }
 
         val location = context.packageManager.getApplicationInfo(appId,0).sourceDir
 

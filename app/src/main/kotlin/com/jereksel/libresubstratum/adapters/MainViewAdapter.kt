@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.domain.KeyFinder
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
@@ -22,7 +22,7 @@ import kotterknife.bindView
 import org.jetbrains.anko.toast
 import java.security.KeyFactory
 
-class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+class MainViewAdapter(val apps: List<InstalledTheme>) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
     val log = getLogger()
 
@@ -55,7 +55,7 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
 
     }
 
-    private val onClickSubject = PublishSubject.create<MainViewTheme>()!!
+    private val onClickSubject = PublishSubject.create<InstalledTheme>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
@@ -67,7 +67,7 @@ class MainViewAdapter(val apps: List<MainViewTheme>) : RecyclerView.Adapter<Main
             holder.heroImage.setImageDrawable(ColorDrawable(android.R.color.black))
         }
         holder.view.setOnClickListener { onClickSubject.onNext(app) }
-        holder.lock.visibility = if (app.isEncrypted) View.VISIBLE else View.GONE
+//        holder.lock.visibility = if (app.isEncrypted) View.VISIBLE else View.GONE
         holder.lock.setOnClickListener {
             onClickSubject.onNext(app)
 //            val keys = KeyFinder(holder.lock.context).getKey(app.appId)

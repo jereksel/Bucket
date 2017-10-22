@@ -36,8 +36,6 @@ class DetailedPresenterTest : FunSpec() {
     lateinit var compileThemeUseCase: ICompileThemeUseCase
     @Mock
     lateinit var clipboardManager: ClipboardManager
-    @Mock
-    lateinit var themeExtractor: ThemeExtractor
 
     lateinit var presenter: Presenter
 
@@ -45,7 +43,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), themeExtractor, compileThemeUseCase, clipboardManager, mock()))
+        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), compileThemeUseCase, clipboardManager, mock()))
         presenter = presenter1
         presenter.setView(view)
 

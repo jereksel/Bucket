@@ -41,9 +41,6 @@ open class DetailedView : AppCompatActivity(), View {
     @Arg
     lateinit var appId : String
 
-    @Arg
-    var key: KeyPair? = null
-
     @Inject lateinit var presenter : Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +51,6 @@ open class DetailedView : AppCompatActivity(), View {
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         title = presenter.getAppName(appId)
         presenter.setView(this)
-        presenter.setKey(key)
         presenter.readTheme(appId)
     }
 

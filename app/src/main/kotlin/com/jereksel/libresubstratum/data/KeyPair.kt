@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 //https://youtrack.jetbrains.com/issue/KT-19899#tab=Changes

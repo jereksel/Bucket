@@ -1,12 +1,6 @@
 package com.jereksel.libresubstratum.activities.main
 
-import com.jereksel.libresubstratum.data.KeyPair
-import com.jereksel.libresubstratum.data.MainViewTheme
-import com.jereksel.libresubstratum.domain.IKeyFinder
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.Metrics
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -39,15 +33,15 @@ class MainPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-                .flatMap {
-                    Observable.just(it)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.io())
-                            .map {
-                                val isEncrypted = themeReader.isThemeEncrypted(it.appId)
-                                MainViewTheme.fromInstalledTheme(it, isEncrypted)
-                            }
-                }
+//                .flatMap {
+//                    Observable.just(it)
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(Schedulers.io())
+//                            .map {
+//                                val isEncrypted = themeReader.isThemeEncrypted(it.appId)
+//                                MainViewTheme.fromInstalledTheme(it, isEncrypted)
+//                            }
+//                }
                 .toList()
                 .flattenAsObservable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
@@ -89,6 +83,6 @@ class MainPresenter(
         val source = packageManager.getAppLocation(appId)
         val dest = File(packageManager.getCacheFolder(), appId)
 
-        mainView?.openThemeFragment(appId, key)
+        mainView?.openThemeFragment(appId)
     }
 }

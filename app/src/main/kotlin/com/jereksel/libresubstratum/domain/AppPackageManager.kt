@@ -80,10 +80,28 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map {
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+                    val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
+                    val pluginVersion = it.metadata.getString("Substratum_Plugin")
 //                    val heroImage = getHeroImage(it.appId)
-                    InstalledTheme(it.appId, name, author, FutureTask { getHeroImage(it.appId) })
+                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
                 }
                 .toList()
+    }
+
+    override fun getInstalledTheme(appId: String): InstalledTheme {
+
+        return getApplications()
+                .filter { it.appId == appId }
+                .map {
+                    val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
+                    val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+                    val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
+                    val pluginVersion = it.metadata.getString("Substratum_Plugin")
+//                    val heroImage = getHeroImage(it.appId)
+                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
+                }
+                .first()
+
     }
 
     fun getApplications(): Sequence<Application> {

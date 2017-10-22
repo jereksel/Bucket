@@ -29,7 +29,6 @@ class DetailedPresenter(
         private val getThemeInfoUseCase: IGetThemeInfoUseCase,
         private val overlayService: OverlayService,
         private val activityProxy: IActivityProxy,
-        private val themeExtractor: ThemeExtractor,
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager,
         private val metrics: Metrics
@@ -39,7 +38,6 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
-    var keyPair: KeyPair? = null
     val compositeDisposable = CompositeDisposable()
     val log = getLogger()
 
@@ -54,10 +52,6 @@ class DetailedPresenter(
     override fun removeView() {
         detailedView = null
         compositeDisposable.clear()
-    }
-
-    override fun setKey(key: KeyPair?) {
-        keyPair = key
     }
 
     override fun readTheme(appId: String) {
@@ -76,9 +70,7 @@ class DetailedPresenter(
 
         this.appId = appId
 
-//        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
-
-        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId, keyPair) }
+        Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .map {

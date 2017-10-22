@@ -62,8 +62,10 @@ class AaptCompiler(
                 .filterNot { it.extension.default }
                 .forEach {
                     val amLocation = "$amLoc/type1${it.suffix}_${it.extension.name}.xml"
+                    val amLocationEnc = "$amLoc/type1${it.suffix}_${it.extension.name}.xml.enc"
                     val source = File(tempDir, "type1${it.suffix}_${it.extension.name}.xml")
                     assetManager.extract(amLocation, source, transform)
+                    assetManager.extract(amLocationEnc, source, transform)
                     val dest = File(mainRes, "values", "type1${it.suffix}.xml")
                     source.copyTo(dest, overwrite = true)
                 }
@@ -134,6 +136,11 @@ class AaptCompiler(
                     transform(inputStream).copyTo(fileOutputStream)
                 }
             }
+
+            if (dest.name.endsWith(".enc")) {
+                dest.renameTo(File(dest.absolutePath.removeSuffix(".enc")))
+            }
+
         } else {
             children.forEach { extract("$location/$it", File(dest, it), transform) }
         }

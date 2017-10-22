@@ -7,6 +7,7 @@ import java.io.File
 
 interface IPackageManager {
     fun getInstalledThemes(): List<InstalledTheme>
+    fun getInstalledTheme(appId: String): InstalledTheme
     fun getInstalledOverlays(): List<InstalledOverlay>
     fun getAppVersion(appId: String): Pair<Int, String>
     fun getAppIcon(appId: String): Drawable?
