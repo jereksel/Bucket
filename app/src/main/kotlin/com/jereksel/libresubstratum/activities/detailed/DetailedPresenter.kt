@@ -38,7 +38,7 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
-    val compositeDisposable = CompositeDisposable()
+    var compositeDisposable = CompositeDisposable()
     val log = getLogger()
 
     private var type3: Type3Extension? = null
@@ -52,6 +52,7 @@ class DetailedPresenter(
     override fun removeView() {
         detailedView = null
         compositeDisposable.clear()
+        compositeDisposable = CompositeDisposable()
     }
 
     override fun readTheme(appId: String) {
