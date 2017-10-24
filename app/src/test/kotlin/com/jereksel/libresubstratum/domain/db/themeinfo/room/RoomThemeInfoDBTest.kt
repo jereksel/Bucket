@@ -4,6 +4,7 @@ import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.domain.ThemePackDatabase
 import com.jereksel.libresubstratumlib.*
 import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +23,17 @@ class RoomThemeInfoDBTest: BaseRobolectricTest() {
     fun `Basic theme pack test`() {
         val themePack = ThemePack(listOf(Theme("app1"), Theme("app2")))
         db.addThemePack("asd", themePack)
-        assertEquals(themePack, db.getThemePack("asd"))
+        assertEquals(themePack, db.getThemePack("asd")!!.first)
+    }
+
+    @Test
+    fun `Checksum is saved test`() {
+        val checksum = byteArrayOf(1,2,3,4,5)
+        val themePack = ThemePack(listOf(Theme("app1"), Theme("app2")))
+        db.addThemePack("asd", checksum, themePack)
+        val themePackFromDB = db.getThemePack("asd")!!
+        assertEquals(themePack, themePackFromDB.first)
+        assertArrayEquals(checksum, themePackFromDB.second)
     }
 
     @Test
@@ -32,7 +43,7 @@ class RoomThemeInfoDBTest: BaseRobolectricTest() {
         val type1c = Type1Data(listOf(Type1Extension("white", true), Type1Extension("black", false), Type1Extension("ping", false)), "c")
         val themePack = ThemePack(listOf(Theme("app1", listOf(type1a, type1c)), Theme("app2", listOf(type1b)), Theme("app3")))
         db.addThemePack("asd", themePack)
-        assertEquals(themePack, db.getThemePack("asd"))
+        assertEquals(themePack, db.getThemePack("asd")!!.first)
     }
 
     @Test
@@ -41,7 +52,7 @@ class RoomThemeInfoDBTest: BaseRobolectricTest() {
         val type2b = Type2Data(listOf(Type2Extension("red", true), Type2Extension("green", false), Type2Extension("pink", false)))
         val themePack = ThemePack(listOf(Theme("app1", type2 = type2a), Theme("app2", type2 = type2b), Theme("app3")))
         db.addThemePack("asd", themePack)
-        assertEquals(themePack, db.getThemePack("asd"))
+        assertEquals(themePack, db.getThemePack("asd")!!.first)
     }
 
     @Test
@@ -49,7 +60,11 @@ class RoomThemeInfoDBTest: BaseRobolectricTest() {
         val type3 = Type3Data(listOf(Type3Extension("yellow", true), Type3Extension("blue", false), Type3Extension("purple", false)))
         val themePack = ThemePack(listOf(Theme("app1"), Theme("app2"), Theme("app3")), type3)
         db.addThemePack("asd", themePack)
-        assertEquals(themePack, db.getThemePack("asd"))
+        assertEquals(themePack, db.getThemePack("asd")!!.first)
     }
 
+}
+
+private fun ThemePackDatabase.addThemePack(appId: String, themePack: ThemePack) {
+    this.addThemePack(appId, kotlin.byteArrayOf(), themePack)
 }

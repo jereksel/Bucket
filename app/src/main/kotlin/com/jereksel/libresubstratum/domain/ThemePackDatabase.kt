@@ -4,6 +4,6 @@ import com.jereksel.libresubstratumlib.Theme
 import com.jereksel.libresubstratumlib.ThemePack
 
 interface ThemePackDatabase {
-    fun addThemePack(appId: String, themePack: ThemePack)
-    fun getThemePack(appId: String): ThemePack?
+    fun addThemePack(appId: String, checksum: ByteArray, themePack: ThemePack)
+    fun getThemePack(appId: String): Pair<ThemePack, ByteArray>?
 }

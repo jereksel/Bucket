@@ -8,6 +8,7 @@ import com.jereksel.libresubstratumlib.Theme
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
 import com.jereksel.libresubstratumlib.Type3Extension
+import org.jetbrains.anko.doFromSdk
 
 class RoomThemePackDatabase(
         context: Context
@@ -15,9 +16,10 @@ class RoomThemePackDatabase(
 
     var db = Room.databaseBuilder(context, RoomThemeInfoDatabase::class.java, "themepack").allowMainThreadQueries().build()!!
 
-    override fun addThemePack(appId: String, themePack: ThemePack) {
+    override fun addThemePack(appId: String, checksum: ByteArray, themePack: ThemePack) {
         val roomThemePack = RoomThemePack()
         roomThemePack.appId = appId
+        roomThemePack.checksum = checksum
 //        println(roomThemePack.id)
         val themePackId = db.abstractThemeInfo().insertThemePack(roomThemePack)
 
@@ -38,7 +40,7 @@ class RoomThemePackDatabase(
 
     }
 
-    override fun getThemePack(appId: String): ThemePack? {
+    override fun getThemePack(appId: String): Pair<ThemePack, ByteArray>? {
         val themePack = db.abstractThemeInfo().getThemePack(appId) ?: return null
 
         val type3Extensions =
@@ -46,7 +48,7 @@ class RoomThemePackDatabase(
                         .map { Type3Extension(it.name, it.def) }
                         .sortedWith(compareBy({ !it.default }, { it.name }))
 
-        return ThemePack(themePack.themeList.map { Theme(it.targetId) }, if(type3Extensions.isEmpty()) null else Type3Data(type3Extensions))
+        return Pair(ThemePack(themePack.themeList.map { Theme(it.targetId) }, if(type3Extensions.isEmpty()) null else Type3Data(type3Extensions)), themePack.themePack.checksum)
     }
 
 }
