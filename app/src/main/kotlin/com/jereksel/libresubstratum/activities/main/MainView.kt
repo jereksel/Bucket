@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
@@ -77,14 +78,14 @@ open class MainView : AppCompatActivity(), MainContract.View {
     override fun onOptionsItemSelected(item: MenuItem) =
             when (item.itemId) {
                 R.id.action_installed -> {
-                    // User chose the "Settings" item, show the app settings UI...
                     startActivity<InstalledView>()
-//                    InstalledView_.intent(this).start()
+                    true
+                }
+                R.id.action_about -> {
+                    startActivity<AboutActivity>()
                     true
                 }
                 else ->
-                    // If we got here, the user's action was not recognized.
-                    // Invoke the superclass to handle it.
                     super.onOptionsItemSelected(item)
             }
 
