@@ -166,6 +166,9 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `Lock should be visible if theme key cannot be found`() {
 
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+
         val encryptedApp = InstalledTheme("id1", "name1", "author1", false, "2", FutureTask { null })
         whenever(presenter.getKeyPair("id1")).thenReturn(null)
         activity.addApplications(listOf(encryptedApp))
@@ -181,6 +184,9 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `Lock should not be visible if theme is not encrypted`() {
 
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+
         val encryptedApp = InstalledTheme("id1", "name1", "author1", false, "2", FutureTask { null })
         whenever(presenter.getKeyPair("id1")).thenReturn(KeyPair.EMPTYKEY)
         activity.addApplications(listOf(encryptedApp))
@@ -195,6 +201,9 @@ class MainViewTest: BaseRobolectricTest() {
 
     @Test
     fun `When clicking on lock toast is shown`() {
+
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         val encryptedApp = InstalledTheme("id1", "name1", "author1", false, "2", FutureTask { null })
         activity.addApplications(listOf(encryptedApp))
@@ -231,6 +240,9 @@ class MainViewTest: BaseRobolectricTest() {
 
     @Test
     fun `When keypair exists spinner is hidden`() {
+
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         val encryptedApp = InstalledTheme("id1", "name1", "author1", false, "2", FutureTask { null })
         whenever(presenter.getKeyPair("id1")).thenReturn(KeyPair.EMPTYKEY)
