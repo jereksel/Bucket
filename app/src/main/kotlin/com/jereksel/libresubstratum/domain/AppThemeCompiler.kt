@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.domain
 import android.app.Application
 import android.os.Environment
 import com.google.common.io.Files
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.InvalidInvocationException
@@ -48,24 +49,7 @@ class AppThemeCompiler(
 
         val key = keyFinder.getKey(themeDate.targetThemeId)
 
-        val transform: (InputStream) -> InputStream
-
-        if (key != null) {
-
-            transform = {
-                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-                cipher.init(
-                        Cipher.DECRYPT_MODE,
-                        SecretKeySpec(key.key.clone(), "AES"),
-                        IvParameterSpec(key.iv.clone())
-                )
-
-                CipherInputStream(it, cipher)
-            }
-
-        } else {
-            transform = { it }
-        }
+        val transform = (key ?: KeyPair.EMPTYKEY).getTransformer()
 
         val (file, compilationTime) = timeOfExec {
             AaptCompiler(aapt.absolutePath).compileTheme(assetManager, themeDate, temp, listOf("/system/framework/framework-res.apk", loc), transform)
