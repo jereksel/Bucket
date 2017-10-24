@@ -82,30 +82,30 @@ class AppPackageManager(val context: Context) : IPackageManager {
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
                     val pluginVersion = it.metadata.getString("Substratum_Plugin")
-//                    val heroImage = getHeroImage(it.appId)
                     InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
                 }
                 .toList()
     }
 
-    override fun getInstalledTheme(appId: String): InstalledTheme {
+    override fun getInstalledTheme(appId: String) = synchronized(lock) {
 
-        return getApplications()
+        getApplications()
                 .filter { it.appId == appId }
                 .map {
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
                     val pluginVersion = it.metadata.getString("Substratum_Plugin")
-//                    val heroImage = getHeroImage(it.appId)
                     InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
                 }
                 .first()
 
     }
 
+    val packageManager = context.packageManager
+
     fun getApplications(): Sequence<Application> {
-        val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
+        val packages = packageManager.getInstalledPackages(GET_META_DATA)!!
         return packages
                 .asSequence()
                 .filter { it.applicationInfo.metaData != null }

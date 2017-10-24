@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.google.common.io.Files.createTempDir
 import com.jereksel.libresubstratum.data.KeyPair
+import com.jereksel.libresubstratum.data.KeyPair.Companion.EMPTYKEY
 import com.jereksel.libresubstratum.extensions.getLogger
 import dalvik.system.DexClassLoader
 
@@ -19,7 +20,7 @@ class KeyFinder(
         val themeInfo = packageManager.getInstalledTheme(appId)
 
         if (!themeInfo.encrypted) {
-            return null
+            return EMPTYKEY
         }
 
         val location = context.packageManager.getApplicationInfo(appId,0).sourceDir

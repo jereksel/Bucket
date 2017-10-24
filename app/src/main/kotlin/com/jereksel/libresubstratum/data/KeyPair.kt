@@ -1,19 +1,36 @@
 package com.jereksel.libresubstratum.data
 
-import android.os.Parcel
-import android.os.Parcelable
+import java.io.InputStream
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
-//https://youtrack.jetbrains.com/issue/KT-19899#tab=Changes
-//@Parcelize
 data class KeyPair(
         val key: ByteArray,
         val iv: ByteArray
-): Parcelable {
+) {
 
-    constructor(parcel: Parcel) : this(
-            parcel.createByteArray(),
-            parcel.createByteArray())
+    companion object {
+        val EMPTYKEY = KeyPair(byteArrayOf(), byteArrayOf())
+    }
+
+    fun getTransformer() : (InputStream) -> (InputStream) {
+        if (key.isEmpty() || iv.isEmpty()) {
+            return { it }
+        } else {
+            return {
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        SecretKeySpec(key.clone(), "AES"),
+                        IvParameterSpec(iv.clone())
+                )
+                CipherInputStream(it, cipher)
+            }
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,25 +52,5 @@ data class KeyPair(
 
     override fun toString(): String =
             "KeyPair(key=${Arrays.toString(key)}, iv=${Arrays.toString(iv)})"
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeByteArray(key)
-        parcel.writeByteArray(iv)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<KeyPair> {
-        override fun createFromParcel(parcel: Parcel): KeyPair {
-            return KeyPair(parcel)
-        }
-
-        override fun newArray(size: Int): Array<KeyPair?> {
-            return arrayOfNulls(size)
-        }
-    }
-
 
 }

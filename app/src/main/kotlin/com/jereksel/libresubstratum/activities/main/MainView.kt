@@ -52,7 +52,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
             itemAnimator = DefaultItemAnimator()
-            adapter = MainViewAdapter(list)
+            adapter = MainViewAdapter(list, presenter)
         }
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()

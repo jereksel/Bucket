@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.main
 
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
@@ -59,6 +60,8 @@ class MainPresenter(
             return
         }
     }
+
+    override fun getKeyPair(appId: String) = keyFinder.getKey(appId)
 
     override fun removeView() {
         mainView = null

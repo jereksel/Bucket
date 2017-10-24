@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.activities.main
 import com.jereksel.libresubstratum.MVPPresenter
 import com.jereksel.libresubstratum.MVPView
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.data.KeyPair
 
 interface MainContract {
 
@@ -10,6 +11,7 @@ interface MainContract {
         fun getApplications()
         fun openThemeScreen(appId: String)
         fun checkPermissions()
+        fun getKeyPair(appId: String): KeyPair?
 //        fun isThemeEncrypted(appId: String)
     }
 

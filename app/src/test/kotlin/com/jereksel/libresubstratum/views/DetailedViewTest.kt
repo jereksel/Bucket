@@ -61,8 +61,6 @@ class DetailedViewTest: BaseRobolectricTest() {
         val intent = Intent(ShadowApplication.getInstance().applicationContext, DetailedView::class.java)
         val APP_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.appIdStarterKey"
         intent.putExtra(APP_ID_EXTRA, appId)
-        val KEY_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.keyStarterKey"
-        intent.putExtra(KEY_ID_EXTRA, key)
         activityController = Robolectric.buildActivity(DetailedView::class.java, intent).create()
         activity = activityController.get()
     }
