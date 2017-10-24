@@ -10,4 +10,6 @@ public class RoomThemePackFull {
     public RoomThemePack themePack;
     @Relation(parentColumn = "id", entityColumn = "theme_pack_id")
     List<RoomTheme> themeList;
+    @Relation(parentColumn = "id", entityColumn = "theme_pack_id")
+    List<RoomType3Extension> type3Extension;
 }

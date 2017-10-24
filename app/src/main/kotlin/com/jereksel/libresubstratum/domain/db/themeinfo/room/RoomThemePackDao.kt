@@ -21,7 +21,7 @@ interface RoomThemePackDao {
 
     @Insert
     fun insertTheme(theme: RoomTheme): Long
-/*
+
     @Insert
     fun insertType1aExtensions(ext: RoomType1aExtension): Long
 
@@ -36,7 +36,7 @@ interface RoomThemePackDao {
 
     @Insert
     fun insertType3Extensions(ext: RoomType3Extension): Long
-    */
+
 /*    @Query("SELECT * FROM themepack")
     fun getAllPeople(): List<RoomThemePack>
 

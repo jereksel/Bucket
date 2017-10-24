@@ -6,6 +6,8 @@ import android.content.Context
 import com.jereksel.libresubstratum.domain.ThemePackDatabase
 import com.jereksel.libresubstratumlib.Theme
 import com.jereksel.libresubstratumlib.ThemePack
+import com.jereksel.libresubstratumlib.Type3Data
+import com.jereksel.libresubstratumlib.Type3Extension
 
 class RoomThemePackDatabase(
         context: Context
@@ -25,12 +27,26 @@ class RoomThemePackDatabase(
             theme.themePackId = themePackId
             db.abstractThemeInfo().insertTheme(theme)
         }
-//        println(roomThemePack.id)
+
+        (themePack.type3 ?: Type3Data(listOf())).extensions.forEach {
+            val type3 = RoomType3Extension()
+            type3.def = it.default
+            type3.name = it.name
+            type3.themePackId = themePackId
+            db.abstractThemeInfo().insertType3Extensions(type3)
+        }
+
     }
 
     override fun getThemePack(appId: String): ThemePack? {
         val themePack = db.abstractThemeInfo().getThemePack(appId) ?: return null
-        return ThemePack(themePack.themeList.map { Theme(it.targetId) })
+
+        val type3Extensions =
+                themePack.type3Extension
+                        .map { Type3Extension(it.name, it.def) }
+                        .sortedWith(compareBy({ !it.default }, { it.name }))
+
+        return ThemePack(themePack.themeList.map { Theme(it.targetId) }, if(type3Extensions.isEmpty()) null else Type3Data(type3Extensions))
     }
 
 }

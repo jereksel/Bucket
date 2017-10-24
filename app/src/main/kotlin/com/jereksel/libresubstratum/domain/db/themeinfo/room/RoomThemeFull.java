@@ -16,6 +16,4 @@ public class RoomThemeFull {
     List<RoomType1cExtension> type1cExtension;
     @Relation(parentColumn = "id", entityColumn = "theme_id")
     List<RoomType2Extension> type2Extension;
-    @Relation(parentColumn = "id", entityColumn = "theme_id")
-    List<RoomType3Extension> type3Extension;
 }
