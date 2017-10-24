@@ -257,18 +257,14 @@ dependencies {
 //    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
 
-    compile 'com.github.clans:fab:1.6.4'
-
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
-    compile "org.jetbrains.anko:anko-commons:$anko_version"
-
-    //UI
-    compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
-    compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
+    compile "org.jetbrains.anko:anko:$anko_version"
+    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
+    compile "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
 
     compile 'com.github.kittinunf.result:result:1.2.0'
 
