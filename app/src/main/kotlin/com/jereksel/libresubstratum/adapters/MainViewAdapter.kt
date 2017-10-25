@@ -17,7 +17,6 @@ import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.domain.KeyFinder
-import com.jereksel.libresubstratum.domain.RetryWithDelay
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
