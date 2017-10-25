@@ -126,6 +126,7 @@ android {
             minifyEnabled true
             ext.enableCrashlytics = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            matchingFallbacks = ['debug']
         }
     }
     flavorDimensions "store"
@@ -218,149 +219,143 @@ dependencies {
 //    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //Support library
-    compile "com.android.support:appcompat-v7:$support_library_version"
-    compile "com.android.support:recyclerview-v7:$support_library_version"
-    compile "com.android.support:cardview-v7:$support_library_version"
-    compile "com.android.support:design:$support_library_version"
+    implementation "com.android.support:appcompat-v7:$support_library_version"
+    implementation "com.android.support:recyclerview-v7:$support_library_version"
+    implementation "com.android.support:cardview-v7:$support_library_version"
+    implementation "com.android.support:design:$support_library_version"
 
     //RxStuff
-    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     //Dagger
-    compile "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
-    testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
+    testImplementation group: 'javax.inject', name: 'javax.inject', version: '1'
 //    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 //    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Kotterknife
-    compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
+    implementation 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    compile 'com.github.clans:fab:1.6.4'
+    implementation 'com.github.clans:fab:1.6.4'
 
     //Logging
-    compile "com.github.tony19:logback-android-core:$logback_android_version"
-    compile "com.github.tony19:logback-android-classic:$logback_android_version"
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation "com.github.tony19:logback-android-core:$logback_android_version"
+    implementation "com.github.tony19:logback-android-classic:$logback_android_version"
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    playImplementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
 
-    //AndroidAnnotations
-//    kapt "org.androidannotations:androidannotations:$aa_version"
-//    kaptTest "org.androidannotations:androidannotations:$aa_version"
-//    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
-//    compile "org.androidannotations:androidannotations-api:$aa_version"
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
-    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
-
-    compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
+    implementation "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
-    compile "org.jetbrains.anko:anko:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
+    implementation "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
 
-    compile 'com.github.kittinunf.result:result:1.2.0'
+    implementation 'com.github.kittinunf.result:result:1.2.0'
 
     //Signing
-    compile project(":zipsigner:combined")
-    compile project(":aapt:lib")
+    implementation project(":zipsigner:combined")
+    implementation project(":aapt:lib")
 
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.jereksel:omslib:1.0.2'
+    implementation 'com.jereksel:omslib:1.0.2'
 
     //So Proguard would shut up
-    compile 'com.google.j2objc:j2objc-annotations:1.3'
-    compile 'com.google.errorprone:error_prone_annotations:2.1.1'
-    compile 'com.google.guava:guava:20.0'
+    implementation 'com.google.j2objc:j2objc-annotations:1.3'
+    implementation 'com.google.errorprone:error_prone_annotations:2.1.1'
+    implementation 'com.google.guava:guava:20.0'
     androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
-    compile project(":sublib:models")
-    compile project(":sublib:reader")
-    compile project(":sublib:themereaderassetmanager")
+    implementation project(":sublib:models")
+    implementation project(":sublib:reader")
+    implementation project(":sublib:themereaderassetmanager")
+    implementation project(':sublib:compilerassetmanager')
 
     //Testing
-    testCompile 'junit:junit:4.12'
-/*    testCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+    testImplementation 'junit:junit:4.12'
+/*    testImplementation 'org.codehaus.groovy:groovy:2.4.7:grooid'
+    testImplementation('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
         exclude group: 'junit'
     }
-    testCompile 'cglib:cglib-nodep:3.2.4'*/
-    testCompile "org.robolectric:robolectric:3.4.2"
-    testCompile 'org.mockito:mockito-core:2.7.19'
+    testImplementation 'cglib:cglib-nodep:3.2.4'*/
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
-    testCompile ('io.kotlintest:kotlintest:1.3.5') {
+    testImplementation ('io.kotlintest:kotlintest:1.3.5') {
         exclude group: "org.jetbrains.kotlin"
     }
-    testCompile ("com.nhaarman:mockito-kotlin:1.3.0") {
+    testImplementation ("com.nhaarman:mockito-kotlin:1.3.0") {
         exclude group: "org.jetbrains.kotlin"
     }
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestCompile ('com.android.support.test:runner:0.3', {
+    androidTestImplementation ('com.android.support.test:runner:0.3', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestCompile ('com.android.support.test:rules:0.3', {
+    androidTestImplementation ('com.android.support.test:rules:0.3', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.5'
 
     //assertj android
-    testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
+    testImplementation ("com.squareup.assertj:assertj-android:$assertj_android_version", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
 
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestImplementation 'org.mockito:mockito-core:1.10.19'
+    androidTestImplementation 'com.google.dexmaker:dexmaker:1.2'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     compile project(path: ':sublib:compiler')
-    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
-    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    androidTestImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
-    androidTestCompile group: 'commons-io', name: 'commons-io', version: '2.5'
-    androidTestCompile 'org.mockito:mockito-core:2.10.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestCompile ('io.kotlintest:kotlintest:1.3.5') {
+    androidTestImplementation group: 'commons-io', name: 'commons-io', version: '2.5'
+    androidTestImplementation 'org.mockito:mockito-core:2.10.0'
+    androidTestImplementation 'com.google.dexmaker:dexmaker:1.2'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestImplementation ('io.kotlintest:kotlintest:1.3.5') {
         exclude group: "org.jetbrains.kotlin"
     }
-    androidTestCompile ("com.nhaarman:mockito-kotlin:1.5.0") {
+    androidTestImplementation ("com.nhaarman:mockito-kotlin:1.5.0") {
         exclude group: "org.jetbrains.kotlin"
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-    androidTestCompile("com.android.support.test.espresso:espresso-intents:2.2.2", {
+    androidTestImplementation("com.android.support.test.espresso:espresso-intents:2.2.2", {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     })
-    compile project(path: ':sublib:compilerassetmanager')
 }
 
 play {
