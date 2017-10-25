@@ -16,7 +16,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
+import java.io.InputStream
 import java.nio.file.Files
+import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 
 @TargetApi(Build.VERSION_CODES.O)
@@ -136,7 +141,7 @@ class CompilerTest {
 
     @Test
     @Config(assetDir = "../../src/test/resources/assets/type3Theme")
-    fun `Test3 non-default without res`() {
+    fun `Type3 non-default without res`() {
 
         val type3 = Type3Extension("no_res", false)
         val apk = compile("android", type3 = type3)

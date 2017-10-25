@@ -93,7 +93,7 @@ open class InstalledView : AppCompatActivity(), View {
         config.delay = 500
 
         val sequence = if(BuildConfig.DEBUG) {
-            MaterialShowcaseSequence(this)
+            return
         } else {
             MaterialShowcaseSequence(this, "InstalledView_1")
         }

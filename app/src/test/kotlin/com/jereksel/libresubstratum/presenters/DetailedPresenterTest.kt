@@ -4,6 +4,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
@@ -42,7 +43,7 @@ class DetailedPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), mock(), compileThemeUseCase, clipboardManager, mock()))
+        presenter1 = spy(DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, mock(), compileThemeUseCase, clipboardManager, mock()))
         presenter = presenter1
         presenter.setView(view)
 

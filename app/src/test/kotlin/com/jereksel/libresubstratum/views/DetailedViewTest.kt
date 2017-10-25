@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
@@ -51,6 +52,7 @@ class DetailedViewTest: BaseRobolectricTest() {
     var progressBar by ResettableLazy { activityCasted!!.progressBar }
 
     val appId = "id1"
+    val key = KeyPair(ByteArray(2), ByteArray(2))
 
     @Before
     fun setup() {

@@ -13,6 +13,8 @@ apply plugin: 'jacoco'
 //apply plugin: 'jacoco-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 
+apply plugin: 'org.jetbrains.kotlin.android.extensions'
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -229,6 +231,7 @@ dependencies {
     //Dagger
     compile "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
 //    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 //    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
@@ -370,3 +373,6 @@ play {
     uploadImages = true
 }
 
+androidExtensions {
+    experimental = true
+}
