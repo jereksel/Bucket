@@ -4,12 +4,10 @@ import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarContra
 import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarContract.View
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.IThemeReader
-import rx.Observable
-import rx.Scheduler
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
-import java.util.*
 
 class NavigationBarPresenter(
         val packageManager: IPackageManager,
@@ -40,9 +38,11 @@ class NavigationBarPresenter(
                 }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     view.get()?.show(it.mapNotNull { it })
-                }
+                }, {
+
+                })
 
 //                .map { it.themes.find { it.application == "com.android.systemui.navbars" }?.type2?.extensions ?: listOf() }
 //                .map { it.mapNotNull { themeReader.getNavigationBar(location, it.name) } }
