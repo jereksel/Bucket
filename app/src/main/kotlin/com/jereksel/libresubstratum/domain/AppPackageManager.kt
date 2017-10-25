@@ -40,6 +40,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
     val metadataOverlayType2 = "Substratum_Type2"
     val metadataOverlayType3 = "Substratum_Type3"
 
+    val lock = java.lang.Object()
+
     override fun getInstalledOverlays(): List<InstalledOverlay> {
         return getApplications()
                 .filter { it.metadata.has(metadataOverlayTarget) }
@@ -78,14 +80,32 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map {
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
-//                    val heroImage = getHeroImage(it.appId)
-                    InstalledTheme(it.appId, name, author, FutureTask { getHeroImage(it.appId) })
+                    val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
+                    val pluginVersion = it.metadata.getString("Substratum_Plugin")
+                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
                 }
                 .toList()
     }
 
+    override fun getInstalledTheme(appId: String) = synchronized(lock) {
+
+        getApplications()
+                .filter { it.appId == appId }
+                .map {
+                    val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
+                    val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+                    val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
+                    val pluginVersion = it.metadata.getString("Substratum_Plugin")
+                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
+                }
+                .first()
+
+    }
+
+    val packageManager = context.packageManager
+
     fun getApplications(): Sequence<Application> {
-        val packages = context.packageManager.getInstalledPackages(GET_META_DATA)!!
+        val packages = packageManager.getInstalledPackages(GET_META_DATA)!!
         return packages
                 .asSequence()
                 .filter { it.applicationInfo.metaData != null }
@@ -144,14 +164,14 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return bitmap
     }
 
-    override fun getAppLocation(appId: String): File {
+    override fun getAppLocation(appId: String): File = synchronized(lock) {
 
         if (SYSTEMUI.contains(appId)) {
-            return getAppLocation("com.android.systemui")
+            getAppLocation("com.android.systemui")
+        } else {
+            File(context.packageManager.getApplicationInfo(appId, 0)!!.sourceDir)
         }
 
-        return File(context.packageManager.getInstalledApplications(0)
-                .find { it.packageName == appId }!!.sourceDir)
     }
 
     override fun isPackageInstalled(appId: String): Boolean {

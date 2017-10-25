@@ -12,6 +12,11 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.data.KeyPair
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import java.security.Key
+import java.util.*
 
 class InstalledOverlaysAdapter(
         val apps: List<InstalledOverlay>,

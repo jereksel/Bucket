@@ -16,6 +16,7 @@ import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.mock
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_installed.*
 import org.jetbrains.anko.find
 import org.junit.*
@@ -29,6 +30,7 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.fakes.RoboMenuItem
 
+@Suppress("IllegalIdentifier")
 @Config(
         shadows = arrayOf(ShadowSnackbar::class)
 )

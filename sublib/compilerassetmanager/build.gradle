@@ -1,3 +1,12 @@
+import groovy.io.FileType
+
+import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.CipherOutputStream
+import javax.crypto.SecretKey
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
@@ -31,6 +40,47 @@ android {
 //        }
     }
 
+}
+
+//Based on https://github.com/substratum/template/blob/kt-n/app/build.gradle#L65
+task encryptTestAssets {
+
+    def tempAssets = new File(getProjectDir(), "/src/test/resources/assetsEncrypted")
+
+    if(tempAssets.exists()) {
+        tempAssets.deleteDir()
+    }
+
+    byte[] KEY = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    byte[] IV_KEY = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
+    println("encrypting assets...")
+    def list = []
+    def dir = new File(getProjectDir(), "/src/test/resources/assets")
+    dir.eachFileRecurse(FileType.FILES) { file ->
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        SecretKey secret = new SecretKeySpec(KEY, "AES")
+        IvParameterSpec iv = new IvParameterSpec(IV_KEY)
+
+        cipher.init(Cipher.ENCRYPT_MODE, secret, iv)
+
+        FileInputStream fis = new FileInputStream(file)
+        File fo = new File(file.getAbsolutePath().replace("assets", "assetsEncrypted") + ".enc")
+        list << fo
+        fo.getParentFile().mkdirs()
+        FileOutputStream fos = new FileOutputStream(fo)
+
+        fos << new CipherInputStream(fis, cipher)
+
+        fis.close()
+        fos.close()
+    }
+
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn encryptTestAssets
 }
 
 dependencies {
