@@ -4,6 +4,6 @@ import com.jereksel.libresubstratumlib.ThemePack
 import java.io.File
 
 interface IThemeReader {
-    fun readThemePack(location: File): ThemePack
-    fun isThemeEncrypted(location: File): Boolean
+    fun readThemePack(appId: String): ThemePack
+    fun isThemeEncrypted(appId: String): Boolean
 }

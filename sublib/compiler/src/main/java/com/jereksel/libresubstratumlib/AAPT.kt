@@ -108,7 +108,9 @@ class AAPT(val aaptPath: String, testing: Boolean = false) {
             }
         }
 
-        command.addAll(listOf("-S", res.absolutePath))
+        if (res.exists()) {
+            command.addAll(listOf("-S", res.absolutePath))
+        }
 
         logger.debug("Invoking: {}", command.joinToString(separator = " "))
 

@@ -60,3 +60,7 @@
 -dontwarn kotlin.reflect.jvm.internal.**
 
 -dontwarn com.google.errorprone.**
+
+-keepclassmembers class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}

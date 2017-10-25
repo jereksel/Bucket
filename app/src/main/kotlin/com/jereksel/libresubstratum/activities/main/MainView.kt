@@ -1,7 +1,6 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog.Builder
@@ -12,11 +11,12 @@ import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
-import com.jereksel.libresubstratum.data.MainViewTheme
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.disposables.Disposable
@@ -48,12 +48,12 @@ open class MainView : AppCompatActivity(), MainContract.View {
         presenter.checkPermissions()
     }
 
-    override fun addApplications(list: List<MainViewTheme>) {
+    override fun addApplications(list: List<InstalledTheme>) {
         clickSubscriptions?.safeDispose()
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
             itemAnimator = DefaultItemAnimator()
-            adapter = MainViewAdapter(list)
+            adapter = MainViewAdapter(list, presenter)
         }
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
@@ -77,14 +77,14 @@ open class MainView : AppCompatActivity(), MainContract.View {
     override fun onOptionsItemSelected(item: MenuItem) =
             when (item.itemId) {
                 R.id.action_installed -> {
-                    // User chose the "Settings" item, show the app settings UI...
                     startActivity<InstalledView>()
-//                    InstalledView_.intent(this).start()
+                    true
+                }
+                R.id.action_about -> {
+                    startActivity<AboutActivity>()
                     true
                 }
                 else ->
-                    // If we got here, the user's action was not recognized.
-                    // Invoke the superclass to handle it.
                     super.onOptionsItemSelected(item)
             }
 

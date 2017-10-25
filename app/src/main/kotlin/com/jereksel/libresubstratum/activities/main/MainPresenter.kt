@@ -1,22 +1,19 @@
 package com.jereksel.libresubstratum.activities.main
 
-import com.jereksel.libresubstratum.data.MainViewTheme
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
-import com.jereksel.libresubstratum.domain.Metrics
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.data.KeyPair
+import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
 
 class MainPresenter(
         val packageManager: IPackageManager,
         val themeReader: IThemeReader,
         val overlayService: OverlayService,
-        val metrics: Metrics
+        val metrics: Metrics,
+        val keyFinder: IKeyFinder
 ) : MainContract.Presenter {
 
     companion object {
@@ -36,18 +33,6 @@ class MainPresenter(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .flatMapIterable { it }
-                .map { Pair(packageManager.getAppLocation(it.appId), it) }
-                .flatMap {
-                    Observable.just(it)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.io())
-                            .map {
-                                val location = it.first
-                                val theme = it.second
-                                val isEncrypted = themeReader.isThemeEncrypted(location)
-                                MainViewTheme.fromInstalledTheme(theme, isEncrypted)
-                            }
-                }
                 .toList()
                 .flattenAsObservable { it }
                 .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
@@ -75,6 +60,8 @@ class MainPresenter(
             return
         }
     }
+
+    override fun getKeyPair(appId: String) = keyFinder.getKey(appId)
 
     override fun removeView() {
         mainView = null

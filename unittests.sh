@@ -13,7 +13,7 @@ set -e
 # Non-Robolectric
 
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.presenters.*
-
+./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.data.*
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.utils.*
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.domain.*
 

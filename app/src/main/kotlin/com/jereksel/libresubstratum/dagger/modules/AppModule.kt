@@ -31,8 +31,8 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesThemeReader(): IThemeReader {
-        return ThemeReader()
+    open fun providesThemeReader(packageManager: IPackageManager): IThemeReader {
+        return ThemeReader(packageManager)
     }
 
     @Provides
@@ -48,17 +48,19 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesThemeCompiler(
-            packageManager: IPackageManager
-    ): ThemeCompiler = AppThemeCompiler(application, packageManager)
+            packageManager: IPackageManager,
+            keyFinder: IKeyFinder
+    ): ThemeCompiler = AppThemeCompiler(application, packageManager, keyFinder)
 
     @Provides
     open fun providesMainPresenter(
             packageManager: IPackageManager,
             themeReader: IThemeReader,
             overlayService: OverlayService,
-            metrics: Metrics
+            metrics: Metrics,
+            keyFinder: IKeyFinder
     ): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader, overlayService, metrics)
+        return MainPresenter(packageManager, themeReader, overlayService, metrics, keyFinder)
     }
 
     @Provides
@@ -71,12 +73,11 @@ open class AppModule(private val application: Application) {
             getThemeInfoUseCase: IGetThemeInfoUseCase,
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            themeExtractor: ThemeExtractor,
             compileThemeUseCase: ICompileThemeUseCase,
             clipboardManager: ClipboardManager,
             metrics: Metrics
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, themeExtractor, compileThemeUseCase, clipboardManager, metrics)
+        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, compileThemeUseCase, clipboardManager, metrics)
     }
 
     @Provides
@@ -104,6 +105,14 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesGetThemeInfoUseCase(): IGetThemeInfoUseCase = GetThemeInfoUseCase(application)
+    open fun providesKeyFinder(
+            packageManager: IPackageManager
+    ): IKeyFinder = KeyFinder(application, packageManager)
+
+    @Provides
+    @Singleton
+    open fun providesGetThemeInfoUseCase(
+            keyFinder: IKeyFinder
+    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder)
 
 }

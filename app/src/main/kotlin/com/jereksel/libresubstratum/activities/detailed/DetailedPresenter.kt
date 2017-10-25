@@ -6,6 +6,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter.CompilationState.*
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
+import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
@@ -37,7 +38,6 @@ class DetailedPresenter(
         private val getThemeInfoUseCase: IGetThemeInfoUseCase,
         private val overlayService: OverlayService,
         private val activityProxy: IActivityProxy,
-        private val themeExtractor: ThemeExtractor,
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager,
         private val metrics: Metrics
@@ -47,7 +47,7 @@ class DetailedPresenter(
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
-    val compositeDisposable = CompositeDisposable()
+    var compositeDisposable = CompositeDisposable()
     val log = getLogger()
 
     private var type3: Type3Extension? = null
@@ -62,6 +62,7 @@ class DetailedPresenter(
         detailedView = null
 
         compositeDisposable.clear()
+        compositeDisposable = CompositeDisposable()
     }
 
     override fun readTheme(appId: String) {
@@ -79,8 +80,6 @@ class DetailedPresenter(
         init = true
 
         this.appId = appId
-
-//        val location = File(File(packageManager.getCacheFolder(), appId), "assets")
 
         Observable.fromCallable { getThemeInfoUseCase.getThemeInfo(appId) }
                 .observeOn(Schedulers.io())
@@ -249,6 +248,7 @@ class DetailedPresenter(
         detailedView?.showCompilationProgress(themesToCompile.size)
 
         compilePositions(themesToCompile.map { it.first }, {
+            themePackState[it].compiling = false
             detailedView?.increaseDialogProgress()
         }, {
             detailedView?.hideCompilationProgress()
@@ -267,6 +267,7 @@ class DetailedPresenter(
 
         compilePositions(themesToCompile.map { it.first },
                 { position ->
+                    themePackState[position].compiling = false
                     val overlayId = getOverlayIdForTheme(position)
                     if (packageManager.isPackageInstalled(overlayId)) {
                         activateExclusive(position)
@@ -282,6 +283,7 @@ class DetailedPresenter(
     override fun compileAndRun(adapterPosition: Int) {
 
         compilePositions(listOf(adapterPosition), { position ->
+            themePackState[position].compiling = false
             val overlayId = getOverlayIdForTheme(position)
             if (packageManager.isPackageInstalled(overlayId)) {
                 toggle(adapterPosition)
