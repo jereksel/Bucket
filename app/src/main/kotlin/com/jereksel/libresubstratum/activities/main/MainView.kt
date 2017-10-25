@@ -16,6 +16,7 @@ import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
+import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarViewStarter
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
 import com.jereksel.libresubstratum.data.MainViewTheme
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -66,7 +67,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     }
 
     override fun openThemeFragment(appId: String) {
-        DetailedViewStarter.start(this, appId)
+        NavigationBarViewStarter.start(this, appId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
