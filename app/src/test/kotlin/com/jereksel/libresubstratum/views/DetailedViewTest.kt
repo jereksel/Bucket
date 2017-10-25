@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.views
 
-import android.app.ProgressDialog
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
@@ -16,28 +16,27 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import android.content.Intent
-import android.provider.Settings
 import android.support.design.internal.SnackbarContentLayout
-import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.jereksel.libresubstratum.*
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
 import com.jereksel.libresubstratumlib.Type3Extension
-import com.nhaarman.mockito_kotlin.mock
+import org.jetbrains.anko.find
+import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
 import java.util.*
 
 
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
+@Suppress("IllegalIdentifier")
+@Config(
         shadows = arrayOf(ShadowSnackbar::class)
 )
 class DetailedViewTest: BaseRobolectricTest() {
@@ -49,6 +48,7 @@ class DetailedViewTest: BaseRobolectricTest() {
     var activityCasted by ResettableLazy { activity as AppCompatActivity? }
     var recyclerView by ResettableLazy { activityCasted!!.recyclerView }
     var spinner by ResettableLazy { activityCasted!!.spinner }
+    var progressBar by ResettableLazy { activityCasted!!.progressBar }
 
     val appId = "id1"
 
@@ -69,6 +69,7 @@ class DetailedViewTest: BaseRobolectricTest() {
         activityCasted = null
         recyclerView = null
         spinner = null
+        progressBar = null
     }
 
     @Test
@@ -102,41 +103,75 @@ class DetailedViewTest: BaseRobolectricTest() {
 
     @Test
     fun `hideCompileDialog doesn't crash without dialog`() {
-        activity.hideCompileDialog()
+        activity.hideCompilationProgress()
     }
 
     @Test
     fun `showCompileDialog indeed shows dialog`() {
-        activity.showCompileDialog(2)
-        val dialog = ShadowDialog.getLatestDialog()
-        assertNotNull(dialog)
-        assertTrue(dialog.isShowing)
+        assertThat(progressBar).isNotVisible
+        activity.showCompilationProgress(2)
+        assertThat(progressBar).isVisible
+        assertThat(progressBar).hasMaximum(2)
     }
 
     @Test
     fun `setProgress test`() {
-        activity.showCompileDialog(4)
-        val dialog = ShadowDialog.getLatestDialog() as ProgressDialog
-        assertNotNull(dialog)
-        assertEquals(0, dialog.progress)
+        activity.showCompilationProgress(4)
+        assertThat(progressBar).hasProgress(0)
+        assertThat(progressBar).hasMaximum(4)
         activity.increaseDialogProgress()
-        assertEquals(1, dialog.progress)
+        assertThat(progressBar).hasProgress(1)
+        assertThat(progressBar).hasMaximum(4)
     }
 
     @Test
     fun `snackBar test`() {
-//        val f: () -> Unit = mock()
         var clicked = false
         activity.showSnackBar("Text", "Button", { clicked = true })
-        val snackbar = ShadowSnackbar.getLatestSnackbar()
+        val snackBar = ShadowSnackbar.getLatestSnackbar()
         assertEquals("Text", ShadowSnackbar.getTextOfLatestSnackbar())
-        val button = ((snackbar.view as ViewGroup).getChildAt(0) as SnackbarContentLayout).actionView
+        val button = ((snackBar.view as ViewGroup).getChildAt(0) as SnackbarContentLayout).actionView
         assertEquals("Button", button.text)
         assertFalse(clicked)
         button.performClick()
         assertTrue(clicked)
     }
 
-    private fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }
-}
+    @Test
+    fun `Error dialog test`() {
+        val errors = listOf("Error1", "Error 2")
+        activity.showError(errors)
 
+        val snackBar = ShadowSnackbar.getLatestSnackbar()
+        assertEquals("Error occured during compilation", ShadowSnackbar.getTextOfLatestSnackbar())
+
+        val button = ((snackBar.view as ViewGroup).getChildAt(0) as SnackbarContentLayout).actionView
+        assertThat(button).hasText("Show error")
+        button.performClick()
+
+        val dialog = ShadowDialog.getLatestDialog() as AlertDialog
+
+        val textView = dialog.find<TextView>(R.id.errorTextView)
+        assertThat(textView).hasText(errors.joinToString(separator = "\n"))
+
+        dialog.getButton(BUTTON_POSITIVE).performClick()
+
+        verify(presenter).setClipboard(errors.joinToString(separator = "\n"))
+
+    }
+
+    @Test
+    fun `Clicking on selectAll invokes it in presenter`() {
+        activityCasted?.onOptionsItemSelected(RoboMenuItem(R.id.action_selectall))
+        verify(presenter).selectAll()
+    }
+
+    @Test
+    fun `Clicking on unselectAll invokes it in presenter`() {
+        activityCasted?.onOptionsItemSelected(RoboMenuItem(R.id.action_deselectall))
+        verify(presenter).deselectAll()
+    }
+
+
+    private fun <T> ArrayAdapter<T>.getAllItems() = (0 until count).map { this.getItem(it) }
+}

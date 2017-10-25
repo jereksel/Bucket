@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:fab="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,14 +24,25 @@
             android:layout_height="40dp"
             android:visibility="gone" />
 
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:id="@+id/progressBar"
+            android:indeterminate="false"
+            android:max="1"
+            android:progress="0"
+            android:visibility="gone"
+            android:layout_below="@id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:clipToPadding="false"
             android:layout_height="match_parent"
-            android:paddingBottom="66dp"
-            android:layout_below="@+id/spinner"
-            android:layout_toEndOf="@+id/imageView" />
+            android:layout_below="@+id/progressBar"
+            android:layout_toEndOf="@+id/imageView"
+            android:clipToPadding="false"
+            android:paddingBottom="66dp" />
 
     </RelativeLayout>
 
@@ -41,22 +53,22 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        android:src="@drawable/fab_add" >
+        android:src="@drawable/fab_add">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_compile_install"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_label="Compile and install" />
+            fab:fab_label="Compile and install"
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_compile_install_activate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_label="Compile, install and activate" />
+            fab:fab_label="Compile, install and activate"
+            fab:fab_size="mini" />
 
-        </com.github.clans.fab.FloatingActionMenu>
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

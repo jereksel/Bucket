@@ -29,10 +29,7 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.fakes.RoboMenuItem
 
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP),
+@Config(
         shadows = arrayOf(ShadowSnackbar::class)
 )
 class InstalledViewTest: BaseRobolectricTest() {

@@ -13,12 +13,14 @@ import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.has
 import java.io.File
 import java.util.concurrent.FutureTask
-import java.util.logging.Logger
 
 class AppPackageManager(val context: Context) : IPackageManager {
+
+    val log = getLogger()
 
     companion object {
         private val SYSTEMUI = mapOf(
@@ -44,11 +46,19 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map {
                     val overlay = it.appId
                     val parent = it.metadata.getString(metadataOverlayParent)
-                    val parentIcon = getAppIcon(parent)!!
+                    val parentIcon = getAppIcon(parent)
                     val parentName = getAppName(parent)
                     val target = it.metadata.getString(metadataOverlayTarget)
-                    val targetIcon = getAppIcon(target)!!
+                    val targetIcon = getAppIcon(target)
                     val targetName = getTargetName(overlay, target)
+
+                    if (parentIcon == null) {
+                        log.warn("Cannot read icon of {}", parent)
+                    }
+
+                    if (targetIcon == null) {
+                        log.warn("Cannot read icon of {}", target)
+                    }
 
                     val type1a = it.metadata.getString(metadataOverlayType1a)
                     val type1b = it.metadata.getString(metadataOverlayType1b)
@@ -167,7 +177,6 @@ class AppPackageManager(val context: Context) : IPackageManager {
         if (SYSTEMUI.contains(appId)) {
             return SYSTEMUI[appId]!!
         }
-
 
         val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
         return context.packageManager.getApplicationLabel(appInfo).toString()

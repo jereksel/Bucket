@@ -10,23 +10,27 @@ init:
 
 install:
   - gradlew -version
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools,tools,build-tools-26.0.1,build-tools-25.0.3,android-26,android-25,extra-google-m2repository,extra-android-m2repository
+  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools,tools,build-tools-26.0.2,android-26,android-25,extra-google-m2repository,extra-android-m2repository
   # on windows we need to accept sublicenses for the new tooling, wee. 30 is an arbitrary number,
   # but should be the maximum number of licenses we explicitly need to type "Y ENTER" for.
   # also, the sdkmanager in all its glory leaks a bit of output to stderr, and powershell
   # and appveyor interpret that as errors, and blows up. so, when piping in our "Y ENTER"
   # responses, we invoke cmd so we can redirect stderr to stdout, and tell it to --update itself.
   - ps: for($i=0;$i -lt 30;$i++) { $response += "y`n"}; $response | cmd /c 'C:\android\tools\bin\sdkmanager.bat 2>&1' --update
+  - echo y | "%ANDROID_HOME%\tools\bin\sdkmanager.bat" "ndk-bundle"
   
-build_script: 
-  - gradlew assembleDebug
+build_script:
+  - git submodule update --init --recursive
+  - gradlew assembleDebug assembleDebugProguarded
 
 test_script:
-  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.1\\aapt.exe v"
-  - gradlew testDebugUnitTest
+  - cmd: "%ANDROID_HOME%\\build-tools\\26.0.2\\aapt.exe v"
+  - gradlew testFdroidDebugUnitTest
   - gradlew sublib:reader:test
   - gradlew sublib:compiler:test
- 
+  - gradlew sublib:themereaderassetmanager:test
+  - gradlew sublib:compilerassetmanager:test
+
 after_test:
   - gradlew --stop
 

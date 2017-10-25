@@ -1,10 +1,13 @@
+About screen
+Fix some issues with uninstalling
+Add tutorial in theme view
+Faster theme compiling
+Proguard
+Faster theme reading
+Fix FC when entering, exiting overlay list
+Fix // Substweaks // FC
+Multiple improvements to overlay compiling
 Fixed Interfacer's FC when Substratum is not installed
 Update Android SDK and libraries
 Sorting by theme name in installed overlays screen
 (Un)Select all in installed overlays screen
-Make MainView loading faster
-Fix // substweaks // compilation
-Add check if Substratum is installed (it's required for Interfacer)
-Fix freeze during swipe to refresh in main view
-Ask for permissions on startup
-Fix FC on startup

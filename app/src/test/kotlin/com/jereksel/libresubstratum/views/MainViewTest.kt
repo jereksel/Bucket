@@ -43,10 +43,6 @@ import org.robolectric.shadows.ShadowToast
 import java.util.concurrent.FutureTask
 
 @Suppress("IllegalIdentifier")
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = MockedApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class MainViewTest: BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<MainView>
@@ -132,34 +128,6 @@ class MainViewTest: BaseRobolectricTest() {
         view.performClick()
 
         verify(presenter).openThemeScreen("id1")
-    }
-
-    @Test
-    fun `Dialog should be shown after view click`() {
-        val apps = listOf(
-                InstalledTheme("id1", "name1", "author1", null),
-                InstalledTheme("id2", "name2", "author2", null)
-        )
-
-        activity.addApplications(apps.map { MainViewTheme.fromInstalledTheme(it, false) })
-        recyclerView.measure(0, 0);
-        recyclerView.layout(0, 0, 100, 10000);
-
-        val view = recyclerView.getChildAt(0)
-        view.performClick()
-
-        val dialog = ShadowDialog.getLatestDialog()
-        assertNotNull(dialog)
-        assertTrue(dialog.isShowing)
-    }
-
-    @Test
-    fun `Dialog should be hidden after openThemeFragment call`() {
-        `Dialog should be shown after view click`()
-        activity.openThemeFragment("1")
-        val dialog = ShadowDialog.getLatestDialog()
-        assertNotNull(dialog)
-        assertFalse(dialog.isShowing)
     }
 
     @Test

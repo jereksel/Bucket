@@ -18,7 +18,7 @@ class ZipUtilsTest {
         val zipLocation = File(resources, "Theme.apk")
         val tempFolder = Files.createTempDir()
 
-        zipLocation.extractZip(tempFolder)
+        zipLocation.extractZip(tempFolder, "assets")
 
         val expectedFile = listOf(
                 "android/type1a",

@@ -11,7 +11,6 @@ import android.support.test.runner.AndroidJUnit4
 import android.support.v7.widget.RecyclerView
 import android.test.suitebuilder.annotation.LargeTest
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.RxSchedulerHook
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule
@@ -32,7 +31,7 @@ class MainViewTest {
 
     @Before
     fun setUp() {
-        RxSchedulerHook.registerHooksForTesting()
+//        RxSchedulerHook.registerHooksForTesting()
         val activity = mActivityTestRule.activity
         val wakeUpDevice = Runnable {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or

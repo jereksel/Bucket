@@ -29,7 +29,7 @@ class InstalledPresenterTest : FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        presenter = InstalledPresenter(packageManager, overlayService, activityProxy)
+        presenter = InstalledPresenter(packageManager, overlayService, activityProxy, mock())
         presenter.setView(view)
 
         initRxJava()
@@ -79,8 +79,15 @@ class InstalledPresenterTest : FunSpec() {
                     row(true),
                     row(false)
             )) { enabled ->
+                reset(overlayService)
                 presenter.toggleOverlay("app", enabled)
-                verify(overlayService).toggleOverlay("app", enabled)
+                if (enabled) {
+                    verify(overlayService).enableOverlay("app")
+                    verify(overlayService, never()).disableOverlay("app")
+                } else {
+                    verify(overlayService, never()).enableOverlay("app")
+                    verify(overlayService).disableOverlay("app")
+                }
             }
 
         }
@@ -130,7 +137,9 @@ class InstalledPresenterTest : FunSpec() {
         test("Selected overlays are uninstalled during uninstallSelected") {
             prepare()
             presenter.uninstallSelected()
-            verify(overlayService).uninstallApk(listOf("overlay1", "overlay2", "overlay4"))
+            verify(overlayService).uninstallApk("overlay1")
+            verify(overlayService).uninstallApk("overlay2")
+            verify(overlayService).uninstallApk("overlay4")
         }
         test("Selected overlays are enabled during enableSelected") {
             prepare()

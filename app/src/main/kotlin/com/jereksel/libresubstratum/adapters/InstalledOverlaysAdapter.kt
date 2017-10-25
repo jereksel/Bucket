@@ -31,7 +31,7 @@ class InstalledOverlaysAdapter(
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
         holder.targetName.text = "${overlay.targetName} - ${overlay.sourceThemeName}"
-        val color = if(info.enabled) Color.GREEN else Color.RED
+        val color = if(info?.enabled == true) Color.GREEN else Color.RED
         holder.targetName.setTextColor(color)
 
         holder.checkbox.setOnCheckedChangeListener(null)
@@ -45,7 +45,9 @@ class InstalledOverlaysAdapter(
         }
 
         holder.view.setOnLongClickListener {
-            presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            if (info != null) {
+                presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+            }
             notifyItemChanged(position)
             true
         }
@@ -80,6 +82,7 @@ class InstalledOverlaysAdapter(
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        val card: RelativeLayout by bindView(R.id.card)
         val targetIcon: ImageView by bindView(R.id.target_icon)
         val themeIcon: ImageView by bindView(R.id.theme_icon)
         val targetName: TextView by bindView(R.id.target_name)

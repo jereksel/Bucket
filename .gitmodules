@@ -1,3 +1,9 @@
 [submodule "testthemes/OmniTheme"]
 	path = testthemes/OmniTheme
 	url = https://github.com/omnirom/android_packages_apps_OmniTheme
+[submodule "zipsigner"]
+	path = zipsigner
+	url = https://github.com/jereksel/zip-signer
+[submodule "aapt"]
+	path = aapt
+	url = https://github.com/jereksel/aaptfordevice.git

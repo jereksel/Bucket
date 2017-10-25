@@ -10,6 +10,10 @@ import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarContract
 import com.jereksel.libresubstratum.activities.navigationbar.NavigationBarPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -50,34 +54,41 @@ open class AppModule(private val application: Application) {
     ): ThemeCompiler = AppThemeCompiler(application, packageManager)
 
     @Provides
-//    @Singleton
-    open fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader, overlayService)
+    open fun providesMainPresenter(
+            packageManager: IPackageManager,
+            themeReader: IThemeReader,
+            overlayService: OverlayService,
+            metrics: Metrics
+    ): MainContract.Presenter {
+        return MainPresenter(packageManager, themeReader, overlayService, metrics)
     }
 
     @Provides
+    @Singleton
     open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
 
     @Provides
     open fun providesDetailedPresenter(
             packageManager: IPackageManager,
-            themeReader: IThemeReader,
+            getThemeInfoUseCase: IGetThemeInfoUseCase,
             overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            themeCompiler: ThemeCompiler,
-            themeExtractor: ThemeExtractor
+            themeExtractor: ThemeExtractor,
+            compileThemeUseCase: ICompileThemeUseCase,
+            clipboardManager: ClipboardManager,
+            metrics: Metrics
     ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, themeReader, overlayService, activityProxy, themeCompiler, themeExtractor)
+        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, themeExtractor, compileThemeUseCase, clipboardManager, metrics)
     }
 
     @Provides
-//    @Singleton
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
             overlayService: OverlayService,
-            activityProxy: IActivityProxy
+            activityProxy: IActivityProxy,
+            metrics: Metrics
     ): InstalledContract.Presenter {
-        return InstalledPresenter(packageManager, overlayService, activityProxy)
+        return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
     }
 
     @Provides
@@ -87,5 +98,22 @@ open class AppModule(private val application: Application) {
     ): NavigationBarContract.Presenter {
         return NavigationBarPresenter(packageManager, themeReader)
     }
+
+    @Provides
+    @Singleton
+    open fun providesCompileThemeUseCase(
+            packageManager: IPackageManager,
+            themeCompiler: ThemeCompiler
+    ): ICompileThemeUseCase {
+        return CompileThemeUseCase(packageManager, themeCompiler)
+    }
+
+    @Provides
+    @Singleton
+    open fun providesClipBoardManager(): ClipboardManager = AndroidClipboardManager(application)
+
+    @Provides
+    @Singleton
+    open fun providesGetThemeInfoUseCase(): IGetThemeInfoUseCase = GetThemeInfoUseCase(application)
 
 }
