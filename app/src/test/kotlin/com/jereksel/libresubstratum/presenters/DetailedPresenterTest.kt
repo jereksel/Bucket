@@ -265,7 +265,6 @@ class DetailedPresenterTest : FunSpec() {
             presenter.readTheme("themeid")
 
             reset(packageManager)
-            whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "theme1", "", false, "", FutureTask({ null })))
             presenter.setAdapterView(0, view)
             verify(packageManager).isPackageInstalled("app1.theme1")
@@ -285,15 +284,12 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setType2(0, 1)
 
             reset(packageManager)
-            whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "theme1", "", false, "", FutureTask({ null })))
             presenter.setAdapterView(0, view)
             verify(packageManager).isPackageInstalled("app.theme1.name2")
         }
         test("When overlay is not installed setInstalled is not called at all") {
 
-            whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.themeid")).thenReturn(false)
@@ -311,7 +307,6 @@ class DetailedPresenterTest : FunSpec() {
         test("When overlay is up to date setInstalled is called with 2 nulls") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
@@ -331,7 +326,6 @@ class DetailedPresenterTest : FunSpec() {
         test("When overlay is not up to date setInstalled is called with VersionNames") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
@@ -356,7 +350,6 @@ class DetailedPresenterTest : FunSpec() {
         test("When overlay is installed and up to date it's not compiled, just activated") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
@@ -381,7 +374,6 @@ class DetailedPresenterTest : FunSpec() {
             var overlayVersion = Pair(1, "v1")
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
@@ -412,7 +404,6 @@ class DetailedPresenterTest : FunSpec() {
             var installed = false
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
@@ -443,7 +434,6 @@ class DetailedPresenterTest : FunSpec() {
         test("When overlays cannot be installed, it's removed and installed again") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
@@ -470,7 +460,6 @@ class DetailedPresenterTest : FunSpec() {
         test("When compilation fails error is shown to user") {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
@@ -502,7 +491,6 @@ class DetailedPresenterTest : FunSpec() {
             var installed = false
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
@@ -537,7 +525,6 @@ class DetailedPresenterTest : FunSpec() {
             var installed = false
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
-            whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
             whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
