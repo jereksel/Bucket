@@ -64,3 +64,6 @@
 -keepclassmembers class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
 }
+
+-dontwarn org.apache.commons.logging.impl.*
+
