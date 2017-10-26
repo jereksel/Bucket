@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.robolectric.RuntimeEnvironment
 
+@Suppress("IllegalIdentifier")
 class RoomThemeInfoDBTest: BaseRobolectricTest() {
 
     lateinit var db: ThemePackDatabase
