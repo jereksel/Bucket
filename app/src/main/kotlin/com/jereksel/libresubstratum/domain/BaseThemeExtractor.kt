@@ -1,18 +1,12 @@
 package com.jereksel.libresubstratum.domain
 
-import android.os.AsyncTask
-import android.renderscript.ScriptGroup
 import com.jereksel.libresubstratum.data.KeyPair
+import com.jereksel.libresubstratum.domain.DataHolder.THREAD_POOL_EXECUTOR
 import com.jereksel.libresubstratum.extensions.getLogger
+import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
-import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
-import java.io.InputStream
-import javax.crypto.Cipher
-import javax.crypto.CipherInputStream
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 class BaseThemeExtractor : ThemeExtractor {
 
@@ -29,7 +23,7 @@ class BaseThemeExtractor : ThemeExtractor {
             dest
         }
 
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        THREAD_POOL_EXECUTOR.execute {
             task.run()
         }
 

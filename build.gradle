@@ -4,7 +4,7 @@ buildscript {
     //1.1.60: Add Parcelize to KeyPair
     ext.kotlin_version = '1.1.51'
     ext.anko_version = '0.10.1'
-    ext.support_library_version = "26.0.1"
+    ext.support_library_version = "26.1.0"
     ext.dagger_version = "2.10"
     ext.assertj_android_version = "1.2.0"
     ext.slf4j_version = "1.7.25"
@@ -17,6 +17,12 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap-1.1/"
+        }
+        maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap-1.2/"
+        }
     }
 
     dependencies {
@@ -37,7 +43,14 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         jcenter()
+        maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap-1.1/"
+        }
+        maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap-1.2/"
+        }
     }
 }
 
