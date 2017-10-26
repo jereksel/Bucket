@@ -83,6 +83,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
+        def nextVersion = "1.0"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 26
@@ -90,9 +91,9 @@ android {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
             versionCode code
             if (System.getenv("CIRCLE_TAG")) {
-                versionName System.getenv("CIRCLE_TAG")
+                versionName nextVersion
             } else {
-                versionName "NEXT-${code}-${"git rev-parse --short HEAD".execute().text.trim()}"
+                versionName "${nextVersion}-BETA-${code}-${"git rev-parse --short HEAD".execute().text.trim()}"
             }
         } else {
             versionCode 1
