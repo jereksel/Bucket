@@ -14,9 +14,9 @@ buildscript {
     ext.robolectric_version = "3.5"
 
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        google()
     }
 
     dependencies {
