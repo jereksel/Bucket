@@ -67,3 +67,4 @@
 
 -dontwarn org.apache.commons.logging.impl.*
 
+-dontwarn com.google.common.collect.MapMakerInternalMap$ReferenceEntry
