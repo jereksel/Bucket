@@ -16,7 +16,7 @@ open class WODUCommitsOverlayService(context: Context): InterfacerOverlayService
             return "Please install Substratum app (it's required for Interfacer to function properly)"
         }
 
-        val areAllPackagesAllowed = Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages") == 1
+        val areAllPackagesAllowed = Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages", 0) == 1
 
         return if (!areAllPackagesAllowed) {
             """Please turn on "Force authorize every theme app" in developer settings"""
