@@ -61,7 +61,7 @@ class CompileThemeUseCase(
         val originalTargetApp = theme.application
         val fixedTargetApp = if (originalTargetApp.startsWith("com.android.systemui.")) "com.android.systemui" else originalTargetApp
 
-        val themeName = packageManager.getAppName(themeId)
+        val themeName = packageManager.getInstalledTheme(themeId).name
 
         val targetOverlayId = ThemeNameUtils.getTargetOverlayName(destAppId, themeName, type1a, type1b, type1c, type2, type3)
 

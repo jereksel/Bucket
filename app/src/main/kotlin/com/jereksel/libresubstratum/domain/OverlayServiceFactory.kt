@@ -32,14 +32,6 @@ object OverlayServiceFactory {
             return InvalidOverlayService("Interfacer is not installed. Are you using Substratum compatible ROM?")
         }
 
-        try {
-            Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages")
-            log.debug("force_authorize_substratum_packages supported")
-        } catch (e: Settings.SettingNotFoundException) {
-            log.error("force_authorize_substratum_packages not supported")
-            return InvalidOverlayService("Your ROM is too old to support this app (3-rd party apps in Interfacer are not supported)")
-        }
-
         if (isNewInterfacerPermissionAvailable(context)) {
             log.debug("DU commits available")
             return WDUCommitsOverlayService(context)
