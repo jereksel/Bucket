@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.domain.usecases
 
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
@@ -8,6 +9,7 @@ import io.kotlintest.specs.FunSpec
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
+import java.util.concurrent.FutureTask
 
 class CompileThemeUseCaseTest: FunSpec() {
 
@@ -35,6 +37,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -59,6 +62,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -83,6 +87,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -108,6 +113,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -133,6 +139,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -157,6 +164,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -182,6 +190,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -207,6 +216,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -233,6 +243,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -257,6 +268,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -282,6 +294,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -311,6 +324,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -336,6 +350,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -361,6 +376,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -388,6 +404,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -413,6 +430,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -438,6 +456,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
@@ -473,6 +492,7 @@ class CompileThemeUseCaseTest: FunSpec() {
 
             whenever(packageManager.getAppVersion("theme")).thenReturn(Pair(1, "1.0"))
             whenever(packageManager.getAppName("theme")).thenReturn("Theme")
+            whenever(packageManager.getInstalledTheme("theme")).thenReturn(InstalledTheme("theme", "Theme", "", false, "", FutureTask({ null })))
 
             useCase.execute(
                     themePack,
