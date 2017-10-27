@@ -1,3 +1,4 @@
+Fix "Your ROM is too old to support this app" message
 Fix theme name in overlayid (fixes Subs compability with themes such as AospUI)
 Support for encrypted themes
 About screen
@@ -7,6 +8,3 @@ Faster theme compiling
 Proguard
 Faster theme reading
 Fix FC when entering, exiting overlay list
-Fix // Substweaks // FC
-Multiple improvements to overlay compiling
-Fixed Interfacer's FC when Substratum is not installed
