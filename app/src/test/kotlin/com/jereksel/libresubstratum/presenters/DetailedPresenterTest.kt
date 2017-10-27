@@ -4,6 +4,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
+import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
@@ -21,6 +22,7 @@ import org.junit.Assert.assertNull
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
+import java.util.concurrent.FutureTask
 
 class DetailedPresenterTest : FunSpec() {
 
@@ -264,6 +266,7 @@ class DetailedPresenterTest : FunSpec() {
 
             reset(packageManager)
             whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "theme1", "", false, "", FutureTask({ null })))
             presenter.setAdapterView(0, view)
             verify(packageManager).isPackageInstalled("app1.theme1")
         }
@@ -283,6 +286,7 @@ class DetailedPresenterTest : FunSpec() {
 
             reset(packageManager)
             whenever(packageManager.getAppName("themeid")).thenReturn("theme1")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "theme1", "", false, "", FutureTask({ null })))
             presenter.setAdapterView(0, view)
             verify(packageManager).isPackageInstalled("app.theme1.name2")
         }
@@ -290,6 +294,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.themeid")).thenReturn(false)
             val themes = ThemePack(listOf(Theme("app1")))
@@ -307,6 +312,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(1, "v1"))
@@ -326,6 +332,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -350,6 +357,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -374,6 +382,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(overlayService.installApk(File("/"))).then {
@@ -404,6 +413,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
@@ -434,6 +444,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -460,6 +471,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -491,6 +503,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
@@ -525,6 +538,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(packageManager.getAppName("app1")).thenReturn("app1")
             whenever(packageManager.getAppName("themeid")).thenReturn("MyTheme")
+            whenever(packageManager.getInstalledTheme("themeid")).thenReturn(InstalledTheme("themeid", "MyTheme", "", false, "", FutureTask({ null })))
             whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
