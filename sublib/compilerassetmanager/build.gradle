@@ -84,15 +84,13 @@ project.afterEvaluate {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile "junit:junit:$junit_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "io.reactivex.rxjava2:rxjava:2.1.5"
+    compile kotlinLib
+    compile rxjava
 
-    testCompile "org.robolectric:robolectric:$robolectric_version"
-    testCompile "org.mockito:mockito-core:$mockito_version"
+    testCompile junit
+    testCompile robolectric
+    testCompile mockito
 
-    //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
     testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
         exclude group: "org.jetbrains.kotlin"
     }

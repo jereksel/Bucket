@@ -219,19 +219,18 @@ dependencies {
 //    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //Support library
-    compile "com.android.support:appcompat-v7:$support_library_version"
-    compile "com.android.support:recyclerview-v7:$support_library_version"
-    compile "com.android.support:cardview-v7:$support_library_version"
-    compile "com.android.support:design:$support_library_version"
+    supportLibrary.each { name, lib ->
+        compile lib
+    }
 
     //RxStuff
-    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile rxjava
+    compile rxkotlin
+    compile rxandroid
 
     //Dagger
-    compile "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    compile dagger
+    kapt daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
 //    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 //    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
@@ -249,14 +248,8 @@ dependencies {
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
     compile 'org.slf4j:slf4j-api:1.7.25'
     playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+        transitive = true
     }
-
-    //AndroidAnnotations
-//    kapt "org.androidannotations:androidannotations:$aa_version"
-//    kaptTest "org.androidannotations:androidannotations:$aa_version"
-//    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
-//    compile "org.androidannotations:androidannotations-api:$aa_version"
 
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
@@ -280,19 +273,22 @@ dependencies {
     //So Proguard would shut up
     compile 'com.google.j2objc:j2objc-annotations:1.3'
     compile 'com.google.errorprone:error_prone_annotations:2.1.1'
-    compile 'com.google.guava:guava:20.0'
-    androidTestCompile 'com.google.guava:guava:20.0'
+    compile guava
+    androidTestCompile guava
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
+    compile project(':sublib:compilerassetmanager')
 
     //Testing
     testCompile "junit:junit:$junit_version"
 
     testCompile "org.robolectric:robolectric:$robolectric_version"
     testCompile "org.mockito:mockito-core:$mockito_version"
+
+    testCompile kotlinReflect
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
     testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
@@ -313,6 +309,8 @@ dependencies {
     })
 
     testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
     //assertj android
     testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
@@ -328,23 +326,7 @@ dependencies {
     testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
     testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
 
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    compile project(path: ':sublib:compiler')
-    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
-    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
-    androidTestCompile group: 'commons-io', name: 'commons-io', version: '2.5'
-    androidTestCompile 'org.mockito:mockito-core:2.10.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestCompile ('io.kotlintest:kotlintest:1.3.5') {
-        exclude group: "org.jetbrains.kotlin"
-    }
-    androidTestCompile ("com.nhaarman:mockito-kotlin:1.5.0") {
-        exclude group: "org.jetbrains.kotlin"
-    }
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
@@ -357,7 +339,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     })
-    compile project(path: ':sublib:compilerassetmanager')
 }
 
 play {
