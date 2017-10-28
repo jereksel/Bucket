@@ -21,12 +21,7 @@ buildscript {
     }
 
     dependencies {
-        // These docs use an open ended version so that our plugin
-        // can be updated quickly in response to Android tooling updates
-
-        // We recommend changing it to the latest version from our changelog:
-        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
-        classpath 'io.fabric.tools:gradle:1.24.1'
+        classpath 'io.fabric.tools:gradle:1.24.4'
     }
 }
 
@@ -47,26 +42,10 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-/*
-buildscript {
-    dependencies {
-        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:1.1.0'
-    }
-}
-*/
-
 task copyTestClasses(type: Copy) {
     from "build/tmp/kotlin-classes/debugUnitTest"
     into "build/intermediates/classes/debug"
 }
-
-//kapt {
-////    generateStubs = true
-//    arguments {
-////        arg("androidManifestFile", variant.outputs[0]?.processResourcesTask?.manifestFile ?: "")
-//        arg("androidManifestFile", variant.outputs[0].processResourcesk.manifestFile)
-//    }
-//}
 
 android {
     playAccountConfigs {
@@ -246,8 +225,8 @@ dependencies {
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    compile "org.slf4j:slf4j-api:$slf4j_version"
+    playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
 
@@ -256,9 +235,8 @@ dependencies {
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
-    compile "org.jetbrains.anko:anko:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
+    compile anko
+    compile ankoRecyclerView
 
     compile 'com.github.kittinunf.result:result:1.2.0'
 
