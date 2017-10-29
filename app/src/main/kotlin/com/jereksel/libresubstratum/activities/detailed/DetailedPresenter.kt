@@ -349,7 +349,7 @@ class DetailedPresenter(
                             overlayService.installApk(file)
                         }
 
-                        file.delete()
+//                        file.delete()
 
                     }
 

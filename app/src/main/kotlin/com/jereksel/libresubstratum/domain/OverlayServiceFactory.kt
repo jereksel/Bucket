@@ -5,11 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.VERSION.RELEASE
 import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.N
-import android.os.Build.VERSION_CODES.N_MR1
+import android.os.Build.VERSION_CODES.*
 import android.provider.Settings
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OInterfacerOverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 
 object OverlayServiceFactory {
@@ -17,6 +17,10 @@ object OverlayServiceFactory {
     val log = getLogger()
 
     fun getOverlayService(context: Context): OverlayService {
+
+        if (SDK_INT == O) {
+            return OInterfacerOverlayService(context)
+        }
 
         val supportedAndroidVersions = listOf(N, N_MR1)
 

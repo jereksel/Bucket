@@ -7,6 +7,9 @@
     <uses-permission android:name="projekt.interfacer.permission.ACCESS_SERVICE_INNER"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="interfacer.permission.MODIFY_OVERLAY" />
+    <uses-permission android:name="interfacer.permission.MODIFY_APPS" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
