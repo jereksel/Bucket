@@ -11,9 +11,11 @@ class RoomThemePackDatabase(
         context: Context
 ): ThemePackDatabase {
 
+    val lock = java.lang.Object()
+
     var db = Room.databaseBuilder(context, RoomThemeInfoDatabase::class.java, "themepack").allowMainThreadQueries().build()!!
 
-    override fun addThemePack(appId: String, checksum: ByteArray, themePack: ThemePack) {
+    override fun addThemePack(appId: String, checksum: ByteArray, themePack: ThemePack) = synchronized(lock) {
         val roomThemePack = RoomThemePack()
         roomThemePack.appId = appId
         roomThemePack.checksum = checksum
@@ -76,7 +78,7 @@ class RoomThemePackDatabase(
 
     }
 
-    override fun getThemePack(appId: String): Pair<ThemePack, ByteArray>? {
+    override fun getThemePack(appId: String): Pair<ThemePack, ByteArray>? = synchronized(lock) {
         val themePack = db.abstractThemeInfo().getThemePack(appId) ?: return null
 
         val themes = themePack.themeList.map {
@@ -102,6 +104,14 @@ class RoomThemePackDatabase(
                         .sortedWith(compareBy({ !it.default }, { it.name }))
 
         return Pair(ThemePack(themes, if(type3Extensions.isEmpty()) null else Type3Data(type3Extensions)), themePack.themePack.checksum)
+    }
+
+    override fun removeThemePack(appId: String) {
+        db.abstractThemeInfo().deleteThemePack(appId)
+    }
+
+    override fun getChecksum(appId: String): ByteArray? {
+        return db.abstractThemeInfo().getThemePack(appId)?.themePack?.checksum ?: return null
     }
 
 }

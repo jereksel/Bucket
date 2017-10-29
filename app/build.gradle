@@ -264,6 +264,8 @@ dependencies {
 //    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
 
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"

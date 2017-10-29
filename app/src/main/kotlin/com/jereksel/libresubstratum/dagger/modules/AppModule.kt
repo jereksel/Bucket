@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
@@ -111,8 +112,14 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesThemePackDatabase(
+    ): ThemePackDatabase = RoomThemePackDatabase(application)
+
+    @Provides
+    @Singleton
     open fun providesGetThemeInfoUseCase(
-            keyFinder: IKeyFinder
-    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder)
+            keyFinder: IKeyFinder,
+            themePackDatabase: ThemePackDatabase
+    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder, themePackDatabase)
 
 }

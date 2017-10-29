@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys =
-@ForeignKey(entity = RoomTheme.class,
+@ForeignKey(entity = RoomThemePack.class,
         parentColumns = "id",
         childColumns = "theme_pack_id",
         onDelete = CASCADE),

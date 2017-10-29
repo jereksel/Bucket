@@ -37,6 +37,9 @@ interface RoomThemePackDao {
     @Insert
     fun insertType3Extensions(ext: RoomType3Extension): Long
 
+    @Query("DELETE FROM themepack WHERE appId LIKE :appId")
+    fun deleteThemePack(appId: String)
+
 /*    @Query("SELECT * FROM themepack")
     fun getAllPeople(): List<RoomThemePack>
 
