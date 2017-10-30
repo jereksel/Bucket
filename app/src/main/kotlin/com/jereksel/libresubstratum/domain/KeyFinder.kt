@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.KeyPair.Companion.EMPTYKEY
 import com.jereksel.libresubstratum.extensions.getLogger
 import dalvik.system.DexClassLoader
+import org.apache.maven.artifact.versioning.ComparableVersion
 
 class KeyFinder(
         val context: Context,
@@ -15,12 +16,20 @@ class KeyFinder(
 
     val log = getLogger()
 
+    val JNI_TEMPLATE = ComparableVersion("11.1.0")
+
     override fun getKey(appId: String): KeyPair? {
 
         val themeInfo = packageManager.getInstalledTheme(appId)
 
         if (!themeInfo.encrypted) {
             return EMPTYKEY
+        }
+
+        val templateVersion = ComparableVersion(themeInfo.pluginVersion)
+
+        if (templateVersion >= JNI_TEMPLATE) {
+            return null
         }
 
         val location = context.packageManager.getApplicationInfo(appId,0).sourceDir
