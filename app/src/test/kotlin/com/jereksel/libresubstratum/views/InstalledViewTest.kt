@@ -209,4 +209,10 @@ class InstalledViewTest: BaseRobolectricTest() {
         verify(presenter).deselectAll()
     }
 
+    @Test
+    fun `Clicking on Restart SystemUI invokes it in presenter`() {
+        activityCasted?.onOptionsItemSelected(RoboMenuItem(R.id.action_restartui))
+        verify(presenter).restartSystemUI()
+    }
+
 }

@@ -180,6 +180,10 @@ class InstalledPresenter(
         }
     }
 
+    override fun restartSystemUI() {
+        overlayService.restartSystemUI()
+    }
+
     override fun removeView() {
         compositeDisposable.clear()
     }

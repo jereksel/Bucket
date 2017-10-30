@@ -618,5 +618,10 @@ class DetailedPresenterTest : FunSpec() {
             presenter.setClipboard("Text")
             verify(clipboardManager).addToClipboard("Text")
         }
+
+        test("Restart SystemUI invokes it in OverlayService") {
+            presenter.restartSystemUI()
+            verify(overlayService).restartSystemUI()
+        }
     }
 }

@@ -299,6 +299,10 @@ class DetailedPresenter(
         }
     }
 
+    override fun restartSystemUI() {
+        overlayService.restartSystemUI()
+    }
+
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
 
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
