@@ -1,3 +1,4 @@
+Add option to restart SystemUI
 Fix lag in multiple places
 Fix "Your ROM is too old to support this app" message
 Fix theme name in overlayid (fixes Subs compability with themes such as AospUI)
