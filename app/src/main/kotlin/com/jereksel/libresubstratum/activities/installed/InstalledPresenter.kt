@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.installed
 
+import android.os.AsyncTask
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
@@ -181,7 +182,12 @@ class InstalledPresenter(
     }
 
     override fun restartSystemUI() {
-        overlayService.restartSystemUI()
+        Observable.just("")
+                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    overlayService.restartSystemUI()
+                }
     }
 
     override fun removeView() {
