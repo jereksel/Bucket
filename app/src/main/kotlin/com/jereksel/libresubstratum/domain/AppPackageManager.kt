@@ -89,16 +89,17 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
     override fun getInstalledTheme(appId: String) = synchronized(lock) {
 
-        getApplications()
-                .filter { it.appId == appId }
-                .map {
-                    val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
-                    val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
-                    val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
-                    val pluginVersion = it.metadata.getString("Substratum_Plugin")
-                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
-                }
-                .first()
+        val application = packageManager.getApplicationInfo(appId, GET_META_DATA)
+
+        val app = Application(appId, application.metaData)
+
+        app.let {
+            val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
+            val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+            val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
+            val pluginVersion = it.metadata.getString("Substratum_Plugin")
+            InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
+        }
 
     }
 
