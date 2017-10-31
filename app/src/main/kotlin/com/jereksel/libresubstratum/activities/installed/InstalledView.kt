@@ -79,6 +79,10 @@ open class InstalledView : AppCompatActivity(), View {
                     presenter.deselectAll()
                     true
                 }
+                R.id.action_restartui -> {
+                    presenter.restartSystemUI()
+                    true
+                }
                 else ->
                     super.onOptionsItemSelected(item)
             }

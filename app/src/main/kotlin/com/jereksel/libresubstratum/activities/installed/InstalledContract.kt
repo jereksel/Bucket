@@ -27,6 +27,7 @@ interface InstalledContract {
         fun getState(position: Int): Boolean
         fun selectAll()
         fun deselectAll()
+        fun restartSystemUI()
     }
 
 }
