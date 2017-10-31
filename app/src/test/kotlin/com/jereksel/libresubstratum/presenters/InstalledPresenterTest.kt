@@ -172,5 +172,9 @@ class InstalledPresenterTest : FunSpec() {
             }
             verify(view).refreshRecyclerView()
         }
+        test("Restart SystemUI invokes it in OverlayService") {
+            presenter.restartSystemUI()
+            verify(overlayService).restartSystemUI()
+        }
     }
 }

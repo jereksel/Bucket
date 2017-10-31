@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed
 
+import android.os.AsyncTask
 import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -164,7 +165,7 @@ class DetailedPresenter(
 
         val destAppId = theme.application
 
-        val themeName = packageManager.getAppName(appId)
+        val themeName = packageManager.getInstalledTheme(appId).name
 
         val type1a = theme.type1.find {it.suffix == "a"}?.extension?.getOrNull(state.type1a)
         val type1b = theme.type1.find {it.suffix == "b"}?.extension?.getOrNull(state.type1b)
@@ -297,6 +298,15 @@ class DetailedPresenter(
                 state.checked = false
             }
         }
+    }
+
+    override fun restartSystemUI() {
+        Observable.just("")
+                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    overlayService.restartSystemUI()
+                }
     }
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
