@@ -44,6 +44,8 @@ interface DetailedContract {
         fun selectAll()
         fun deselectAll()
         fun setClipboard(s: String)
+
+        fun restartSystemUI()
     }
 
 }
