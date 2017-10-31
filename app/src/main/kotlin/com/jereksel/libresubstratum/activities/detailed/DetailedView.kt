@@ -161,13 +161,17 @@ open class DetailedView : AppCompatActivity(), View {
                     presenter.deselectAll()
                     true
                 }
+                R.id.action_restartui -> {
+                    presenter.restartSystemUI()
+                    true
+                }
                 else ->
                     super.onOptionsItemSelected(item)
             }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.installed, menu)
+        menuInflater.inflate(R.menu.detailed, menu)
         return true
     }
 

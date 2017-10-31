@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed
 
+import android.os.AsyncTask
 import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
@@ -307,6 +308,15 @@ class DetailedPresenter(
                 state.checked = false
             }
         }
+    }
+
+    override fun restartSystemUI() {
+        Observable.just("")
+                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    overlayService.restartSystemUI()
+                }
     }
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {

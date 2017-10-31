@@ -19,6 +19,8 @@ class AboutActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.about)
 
+        val maven = Library("Maven", APACHE2, Author("Maven contributors", "2014"))
+
         val kotlin = Library("Kotlin", APACHE2, Author("Jetbrains", "2015"))
         val support = Library("Android support library", APACHE2, Author("The Android Open Source Project", "2013"))
 
@@ -46,8 +48,8 @@ class AboutActivity: AppCompatActivity() {
 
         val guava = Library("Guava", APACHE2, Author("Guava contributors", "2010-present"))
 
-        val libraries = listOf(kotlin, support, rxandroid, rxjava, rxkotlin, dagger, kotterknife,
-                fab, logback, msv, activityStarter, anko, result, picasso, guava)
+        val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
+                kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava)
                 .sortedBy { it.name }
 
         verticalLayout {

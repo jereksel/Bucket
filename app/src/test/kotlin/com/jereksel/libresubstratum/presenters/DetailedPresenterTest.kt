@@ -5,10 +5,12 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.InstalledTheme
-import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
-import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.ClipboardManager
+import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.OverlayInfo
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
@@ -650,6 +652,11 @@ class DetailedPresenterTest : FunSpec() {
         test("Settings clipboard is passed to clipboard manager") {
             presenter.setClipboard("Text")
             verify(clipboardManager).addToClipboard("Text")
+        }
+
+        test("Restart SystemUI invokes it in OverlayService") {
+            presenter.restartSystemUI()
+            verify(overlayService).restartSystemUI()
         }
     }
 }
