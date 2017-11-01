@@ -1,16 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//UNCOMMENT TO ENABLE TESTS - REMEMBER TO DO BUILD BEFORE
-//apply plugin: 'groovyx.android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
-//apply plugin: 'com.github.kt3k.coveralls'
-//apply plugin: 'net.saliman.cobertura'
-
 apply plugin: 'jacoco'
-//apply plugin: 'jacoco-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
@@ -194,8 +188,7 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile kotlinLib
 
     //Support library
     supportLibrary.each { name, lib ->
@@ -211,8 +204,6 @@ dependencies {
     compile dagger
     kapt daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
-//    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
-//    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
@@ -225,7 +216,7 @@ dependencies {
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
-    compile "org.slf4j:slf4j-api:$slf4j_version"
+    compile slf4japi
     playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }

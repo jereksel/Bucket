@@ -44,6 +44,8 @@ buildscript {
 
         guava = "com.google.guava:guava:$guava_version"
 
+        slf4japi = "org.slf4j:slf4j-api:$slf4j_version"
+
         //Testing libs
         junit = "junit:junit:$junit_version"
         robolectric = "org.robolectric:robolectric:$robolectric_version"

@@ -2,7 +2,6 @@ import groovy.io.FileType
 
 import javax.crypto.Cipher
 import javax.crypto.CipherInputStream
-import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -10,9 +9,7 @@ import javax.crypto.spec.SecretKeySpec
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
-//apply plugin: 'jacoco-android'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
-
 
 android {
     compileSdkVersion 26
@@ -32,12 +29,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-
-    sourceSets {
-//        test {
-//            assets.srcDirs = ["test/resources/assets"]
-//        }
     }
 
 }
@@ -111,9 +102,3 @@ junitJacoco {
     includeNoLocationClasses = false // type boolean
 }
 
-
-//jacocoAndroidUnitTestReport {
-//  csv.enabled false
-//  html.enabled true
-//  xml.enabled true
-//}

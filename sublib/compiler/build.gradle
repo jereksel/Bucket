@@ -6,7 +6,7 @@ apply plugin: "jacoco"
 dependencies {
     compile kotlinLib
     compile project(":sublib:models")
-    compile "org.slf4j:slf4j-api:$slf4j_version"
+    compile slf4japi
 
     testCompile(
             'junit:junit:4.12',
