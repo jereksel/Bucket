@@ -59,7 +59,7 @@ class KeyFinder(
             if (key.size == 16 && iv.size == 16) {
                 return KeyPair(key, iv)
             } else {
-                log.warn("Wrong array sizes: {} {}", key.size, iv.size)
+                log.error("Wrong array sizes: {} {}", key.size, iv.size)
             }
 
         } catch (e: Exception) {
