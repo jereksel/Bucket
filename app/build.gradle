@@ -91,7 +91,7 @@ android {
             } else {
                 versionName "${nextVersion}-BETA-${code}-${shortTag}"
             }
-        } else if (project.hasProperty("fdroid") {
+        } else if (project.hasProperty("fdroid")) {
             versionCode 1
             versionName nextVersion
         } else {
