@@ -123,11 +123,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-        releaseFdroid {
-            initWith(buildTypes.release)
-            ext.enableCrashlytics = false
-            signingConfig null
-        }
         debug {
             testCoverageEnabled true
             ext.enableCrashlytics = false
