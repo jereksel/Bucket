@@ -67,7 +67,6 @@ task copyTestClasses(type: Copy) {
 //    }
 //}
 
-def productionBranch = "master"
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 android {
@@ -86,7 +85,8 @@ android {
         if (System.getenv("CIRCLECI")) {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
             versionCode code
-            if (System.getenv("CIRCLE_BRANCH") == productionBranch) {
+            if (System.getenv("CIRCLE_TAG")) {
+                if (System.getenv("CIRCLE_TAG") != nextVersion) throw new RuntimeException("Versions doesn't match: ${System.getenv("CIRCLE_TAG")} and ${nextVersion}")
                 versionName "${nextVersion}-${shortTag}"
             } else {
                 versionName "${nextVersion}-BETA-${code}-${shortTag}"
@@ -375,7 +375,7 @@ dependencies {
 }
 
 play {
-    if (System.getenv("CIRCLE_BRANCH") == productionBranch) {
+    if (System.getenv("CIRCLE_TAG")) {
         track = 'production'
     } else {
         track = 'beta'
