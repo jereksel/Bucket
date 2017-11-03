@@ -78,7 +78,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
-        def nextVersion = "v1.0"
+        def nextVersion = "0.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 26
@@ -86,8 +86,9 @@ android {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
             versionCode code
             if (System.getenv("CIRCLE_TAG")) {
-                if (System.getenv("CIRCLE_TAG") != nextVersion) throw new RuntimeException("Versions doesn't match: ${System.getenv("CIRCLE_TAG")} and ${nextVersion}")
-                versionName "${nextVersion}-${shortTag}"
+                //Remove "v" from beginning (https://www.codesd.com/item/remove-the-prefix-from-the-string-in-groovy.html)
+                def reg = ~/^v/
+                versionName System.getenv("CIRCLE_TAG") - reg
             } else {
                 versionName "${nextVersion}-BETA-${code}-${shortTag}"
             }
