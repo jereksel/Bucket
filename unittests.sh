@@ -4,9 +4,9 @@ set -e
 
 # Robolectric
 
-./gradlew testFdroidDebugUnitTest --no-daemon --tests **.MainViewTest
-./gradlew testFdroidDebugUnitTest --no-daemon --tests **.DetailedViewTest
-./gradlew testFdroidDebugUnitTest --no-daemon --tests **.InstalledViewTest
+./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.views.MainViewTest
+./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.views.DetailedViewTest
+./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.views.InstalledViewTest
 
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests com.jereksel.libresubstratum.adapters.*
 

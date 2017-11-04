@@ -1,13 +1,15 @@
 package com.jereksel.libresubstratum.domain.db.themeinfo.room;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(tableName = "themepack")
+@Entity(tableName = "themepack",
+        indices = @Index("appId"))
 public class RoomThemePack {
     @PrimaryKey(autoGenerate = true)
     public Long id;

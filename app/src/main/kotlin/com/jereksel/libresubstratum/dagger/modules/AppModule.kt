@@ -32,8 +32,11 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesThemeReader(packageManager: IPackageManager): IThemeReader {
-        return ThemeReader(packageManager)
+    open fun providesThemeReader(
+            packageManager: IPackageManager,
+            keyFinder: IKeyFinder
+    ): IThemeReader {
+        return ThemeReader(application, packageManager, keyFinder)
     }
 
     @Provides
@@ -118,8 +121,9 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesGetThemeInfoUseCase(
-            keyFinder: IKeyFinder,
-            themePackDatabase: ThemePackDatabase
-    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder, themePackDatabase)
+            packageManager: IPackageManager,
+            themePackDatabase: ThemePackDatabase,
+            themeReader: IThemeReader
+    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
 
 }

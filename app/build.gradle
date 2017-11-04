@@ -256,6 +256,8 @@ dependencies {
 
     compile 'com.github.clans:fab:1.6.4'
 
+    compile 'org.zeroturnaround:zt-zip:1.12'
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"

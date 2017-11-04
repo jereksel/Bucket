@@ -48,6 +48,8 @@ class AboutActivity: AppCompatActivity() {
 
         val guava = Library("Guava", APACHE2, Author("Guava contributors", "2010-present"))
 
+        val zipUtils = Library("zt-zip", APACHE2, Author("ZeroTurnaround LLC.", "2012"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava)
                 .sortedBy { it.name }

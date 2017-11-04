@@ -1,30 +1,30 @@
 package com.jereksel.libresubstratum.domain.usecases
 
-import android.content.Context
-import com.jereksel.libresubstratum.data.KeyPair.Companion.EMPTYKEY
-import com.jereksel.libresubstratum.domain.IKeyFinder
+import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.IThemeReader
 import com.jereksel.libresubstratum.domain.ThemePackDatabase
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.themereaderassetmanager.Reader.read
 import org.apache.commons.codec.digest.DigestUtils
-import org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_1
-import java.io.File
+import org.apache.commons.codec.digest.MessageDigestAlgorithms.MD5
+import org.zeroturnaround.zip.ZipUtil
 import java.util.*
 
 class GetThemeInfoUseCase(
-        val context: Context,
-        val keyFinder: IKeyFinder,
-        val themePackDatabase: ThemePackDatabase
+        val packageManager: IPackageManager,
+        val themePackDatabase: ThemePackDatabase,
+        val themeReader: IThemeReader
 ): IGetThemeInfoUseCase {
 
     val log = getLogger()
 
     override fun getThemeInfo(appId: String): ThemePack {
 
-        val keyPair = keyFinder.getKey(appId) ?: EMPTYKEY
+        val appLocation = packageManager.getAppLocation(appId)
 
-        val (md5, time) = timeOfExec { DigestUtils(SHA_1).digest(File(context.packageManager.getApplicationInfo(appId, 0).sourceDir)) }
+        val manifest = ZipUtil.unpackEntry(appLocation, "META-INF/MANIFEST.MF")
+
+        val (md5, time) = timeOfExec { DigestUtils(MD5).digest(manifest) }
 
         log.debug("Time of MD5: {}", time)
 
@@ -34,8 +34,7 @@ class GetThemeInfoUseCase(
 
             themePackDatabase.removeThemePack(appId)
 
-            val assets = context.packageManager.getResourcesForApplication(appId).assets
-            val pack = read(assets, keyPair.getTransformer())
+            val pack = themeReader.readThemePack(appId)
 
             themePackDatabase.addThemePack(appId, md5, pack)
             return pack
