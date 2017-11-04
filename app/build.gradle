@@ -33,13 +33,14 @@ repositories {
         url "https://maven.google.com"
     }
     maven { url 'https://maven.fabric.io/public' }
-    maven { url "https://jitpack.io" }
 }
 
 task copyTestClasses(type: Copy) {
     from "build/tmp/kotlin-classes/debugUnitTest"
     into "build/intermediates/classes/debug"
 }
+
+def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 android {
     playAccountConfigs {
@@ -50,7 +51,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
-        def nextVersion = "1.0"
+        def nextVersion = "0.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 26
@@ -58,13 +59,18 @@ android {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
             versionCode code
             if (System.getenv("CIRCLE_TAG")) {
-                versionName nextVersion
+                //Remove "v" from beginning (https://www.codesd.com/item/remove-the-prefix-from-the-string-in-groovy.html)
+                def reg = ~/^v/
+                versionName System.getenv("CIRCLE_TAG") - reg
             } else {
-                versionName "${nextVersion}-BETA-${code}-${"git rev-parse --short HEAD".execute().text.trim()}"
+                versionName "${nextVersion}-BETA-${code}-${shortTag}"
             }
-        } else {
+        } else if (project.hasProperty("fdroid")) {
             versionCode 1
-            versionName "1.0"
+            versionName nextVersion
+        } else {
+            versionCode 9999
+            versionName "${nextVersion}-DEV"
         }
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -107,11 +113,11 @@ android {
         play {
             dimension "store"
             versionNameSuffix "-play"
-            }
+        }
         fdroid {
             dimension "store"
             versionNameSuffix "-fdroid"
-            }
+        }
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
