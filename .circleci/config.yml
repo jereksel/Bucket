@@ -6,9 +6,6 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       JVM_OPTS: -Xmx3200m
-    filters:
-      tags:
-        only: /.*/
     steps:
       - checkout
       - restore_cache:
@@ -59,3 +56,11 @@ jobs:
               cd ..
               ./gradlew publishPlayRelease --no-daemon
             fi
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
