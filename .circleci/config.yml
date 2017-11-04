@@ -36,6 +36,7 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       JVM_OPTS: -Xmx3200m
+    steps:
       - run:
           name: Build app
           command: ./gradlew assembleDebug assembleDebugProguarded --no-daemon
@@ -49,6 +50,7 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       JVM_OPTS: -Xmx3200m
+    steps:
       - run:
           name: Run Tests
           command: ./unittests.sh
