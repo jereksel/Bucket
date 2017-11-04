@@ -1,64 +1,65 @@
-workflows:
-  version: 2
-  jobs:
-    prepare:
+version: 2
+#workflows:
+jobs:
+  prepare:
 #      working_directory: ~/code
-      docker:
-        - image: circleci/android:api-26-alpha
-      environment:
-        JVM_OPTS: -Xmx3200m
-      steps:
-        - checkout
-        - restore_cache:
-            key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-        - run:
-            name: Add Android SDK licenses
-            command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
-        - run:
-            name: Install file (https://github.com/android-ndk/ndk/issues/188)
-            command: sudo apt-get install file
-        - run:
-            name: Download Android build-tools 26.0.2
-            command: echo y | sdkmanager "build-tools;26.0.2"
-        - run:
-            name: Download NDK
-            command: echo y | sdkmanager "ndk-bundle"
-        - run:
-            name: Download submodules
-            command: git submodule update --init --recursive
-        - run:
-            name: Download Dependencies
-            command: ./gradlew androidDependencies --no-daemon
-    build:
-#      working_directory: ~/code
-      docker:
-        - image: circleci/android:api-26-alpha
-      environment:
-        JVM_OPTS: -Xmx3200m
-        - run:
-            name: Build app
-            command: ./gradlew assembleDebug assembleDebugProguarded --no-daemon
-        - save_cache:
-            paths:
-              - ~/.gradle
-            key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-    test:
-#      working_directory: ~/code
-      docker:
-        - image: circleci/android:api-26-alpha
-      environment:
-        JVM_OPTS: -Xmx3200m
-        - run:
-            name: Run Tests
-            command: ./unittests.sh
-        - store_artifacts:
-            path: app/build/reports
-            destination: reports
-        - store_test_results:
-            path: app/build/test-results
-        - run:
-            name: Upload test results to Codecov
-            command: bash <(curl -s https://codecov.io/bash)
+    docker:
+      - image: circleci/android:api-26-alpha
+    working_directory: ~/code
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Add Android SDK licenses
+          command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
+      - run:
+          name: Install file (https://github.com/android-ndk/ndk/issues/188)
+          command: sudo apt-get install file
+      - run:
+          name: Download Android build-tools 26.0.2
+          command: echo y | sdkmanager "build-tools;26.0.2"
+      - run:
+          name: Download NDK
+          command: echo y | sdkmanager "ndk-bundle"
+      - run:
+          name: Download submodules
+          command: git submodule update --init --recursive
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies --no-daemon
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+      - run:
+          name: Build app
+          command: ./gradlew assembleDebug assembleDebugProguarded --no-daemon
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+  test:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+      - run:
+          name: Run Tests
+          command: ./unittests.sh
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+      - run:
+          name: Upload test results to Codecov
+          command: bash <(curl -s https://codecov.io/bash)
 #        - deploy:
 #            name: Play store deploy
 #            command: |
@@ -69,3 +70,14 @@ workflows:
 #                cd ..
 #                ./gradlew publishPlayRelease --no-daemon
 #              fi
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - prepare
+      - build
+          requires:
+            - prepare
+      - test
+          requires:
+            - prepare
