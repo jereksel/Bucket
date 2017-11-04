@@ -56,3 +56,11 @@ jobs:
               cd ..
               ./gradlew publishPlayRelease --no-daemon
             fi
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
