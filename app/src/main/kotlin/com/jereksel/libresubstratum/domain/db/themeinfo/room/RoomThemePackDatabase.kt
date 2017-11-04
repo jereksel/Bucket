@@ -1,12 +1,13 @@
 package com.jereksel.libresubstratum.domain.db.themeinfo.room
 
 import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import com.jereksel.libresubstratum.domain.ThemePackDatabase
 import com.jereksel.libresubstratumlib.*
-import org.jetbrains.anko.doFromSdk
 
+/**
+ * Not used, but leave it for now - who knows, maybe it'll be useful in future (we could do two layer caching with DB and Guava cache)
+ */
 class RoomThemePackDatabase(
         context: Context
 ): ThemePackDatabase {
@@ -108,10 +109,6 @@ class RoomThemePackDatabase(
 
     override fun removeThemePack(appId: String) {
         db.abstractThemeInfo().deleteThemePack(appId)
-    }
-
-    override fun getChecksum(appId: String): ByteArray? {
-        return db.abstractThemeInfo().getThemePack(appId)?.themePack?.checksum ?: return null
     }
 
 }

@@ -22,13 +22,13 @@ class GetThemeInfoUseCase(
 
         val appLocation = packageManager.getAppLocation(appId)
 
-        val manifest = ZipUtil.unpackEntry(appLocation, "META-INF/MANIFEST.MF")
+        val manifest = ZipUtil.unpackEntry(appLocation, "META-INF/MANIFEST.MF") ?: return themeReader.readThemePack(appId)
 
         val (md5, time) = timeOfExec { DigestUtils(MD5).digest(manifest) }
 
         log.debug("Time of MD5: {}", time)
 
-        val oldChecksum = themePackDatabase.getChecksum(appId)
+        val oldChecksum = themePackDatabase.getThemePack(appId)?.second
 
         if (oldChecksum == null || !Arrays.equals(oldChecksum, md5)) {
 
