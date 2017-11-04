@@ -12,7 +12,7 @@ class ActivityProxy(val app: Application): IActivityProxy {
         if (intent != null) {
             intent
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
+                    .addFlags(DataHolder.FLAG_ACTIVITY_LAUNCH_ADJACENT)
             app.startActivity(Intent.createChooser(intent, "Split"));
             return true
         } else {
