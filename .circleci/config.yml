@@ -1,4 +1,4 @@
-version: 2
+version: 2.0
 #workflows:
 jobs:
   prepare:
@@ -30,6 +30,7 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon
+
   build:
     working_directory: ~/code
     docker:
@@ -44,6 +45,7 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+
   test:
     working_directory: ~/code
     docker:
