@@ -5,6 +5,7 @@ import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
+import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter.CompilationState.*
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
@@ -17,13 +18,21 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.exceptions.Exceptions
+import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import org.reactivestreams.Publisher
 import java.io.File
+import java.util.*
 
 class DetailedPresenter(
         private val packageManager: IPackageManager,
@@ -52,6 +61,7 @@ class DetailedPresenter(
 
     override fun removeView() {
         detailedView = null
+
         compositeDisposable.clear()
         compositeDisposable = CompositeDisposable()
     }
@@ -143,7 +153,7 @@ class DetailedPresenter(
             }
         }
 
-        view.setCompiling(state.compiling)
+        view.setCompiling(state.compiling.text)
     }
 
     //TODO: Change name
@@ -311,9 +321,27 @@ class DetailedPresenter(
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
 
-        positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
+        positions.forEach { themePackState[it].compiling = WAITING_FOR_COMPILATION; detailedView?.refreshHolder(it) }
 
-        val disp = positions.toList().toObservable()
+        val exceptionSubject = PublishSubject.create<Exception>()
+
+        val notExistingDirectory = File("/")
+
+        val exceptionDisp = exceptionSubject
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .toList()
+                .subscribe { errors ->
+                    if (errors.isNotEmpty()) {
+                        detailedView?.showError(errors.map { (it.cause as Exception).message!! })
+                        log.warn("Compilation error: {}", errors)
+                    }
+                }
+
+
+        log.debug("COMPILATION STARTED")
+
+        val disp = positions.toFlowable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .filter {
@@ -321,80 +349,88 @@ class DetailedPresenter(
 
                     if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
                         afterInstalling(it)
-                        themePackState[it].compiling = false
+                        themePackState[it].compiling = NO_COMPILATION
                         detailedView?.refreshHolder(it)
                         false
                     } else {
                         true
                     }
                 }
+                .parallel()
+                .runOn(Schedulers.computation())
                 .flatMap {
-                    val adapterPosition = it
-
-                    compileForPositionObservable(it)
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(Schedulers.computation())
-                            .zipWith(listOf(it), { a,b -> Pair(Result.of { a },b) })
-                            .onErrorReturn { t ->
-                                log.warn("Overlay compilation failed", t)
-                                Pair(Result.error(t as Exception), adapterPosition)
-                            }
+                    themePackState[it].compiling = COMPILING
+                    detailedView?.refreshHolder(it)
+                    try {
+                        val file = compileForPositionObservable(it).blockingGet();
+                        themePackState[it].compiling = WAITING_FOR_INSTALLING
+                        detailedView?.refreshHolder(it)
+                        Flowable.just(Pair(it, file))
+                    } catch (e: Exception) {
+                        afterInstalling(it)
+                        themePackState[it].compiling = NO_COMPILATION
+                        detailedView?.refreshHolder(it)
+                        exceptionSubject.onNext(e)
+                        Flowable.just(Pair(it, notExistingDirectory))
+                    }
                 }
+                .filter { it.second !== notExistingDirectory }
+                .sequential()
+//                .buffer(f)
+//                .buffer(Runtime.getRuntime().availableProcessors())
+                .buffer(1)
+                .observeOn(Schedulers.io())
+                .map { file ->
+                    if (file.isEmpty()) {
+                        Thread.sleep(100)
+                        listOf()
+                    } else {
+                        log.debug("Installing overlay {}", file)
+                        file.map { it.first }.forEach { themePackState[it].compiling = INSTALLING; detailedView?.refreshHolder(it) }
+                        overlayService.installApk(file.map { it.second })
+                        log.debug("Installing overlay {} finished", file)
+                        file
+                    }
+                }
+                .flatMap { Flowable.fromArray(*it.toTypedArray()) }
                 .map {
 
-                    val file = it.first.component1()
+                    val location = it.first
+                    val file = it.second
 
-                    themePackState[it.second].compiling = false
+                    val overlay = getOverlayIdForTheme(location)
 
-                    if (file != null) {
-
-                        log.debug("Installing overlay {}", file)
-                        overlayService.installApk(file)
-                        log.debug("Installing overlay {} finished", file)
-                        val overlay = getOverlayIdForTheme(it.second)
-
-                        //Replacing substratum theme (the keys are different and overlay can't be just replaced)
-                        if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
-                            overlayService.uninstallApk(overlay)
-                            overlayService.installApk(file)
-                        }
-
-                        file.delete()
-
+                    //Replacing substratum theme (the keys are different and overlay can't be just replaced)
+                    if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
+                        overlayService.uninstallApk(overlay)
+                        overlayService.installApk(listOf(file))
                     }
 
-                    afterInstalling(it.second)
-                    it
+                    file.delete()
+
+                    afterInstalling(location)
+
+                    themePackState[location].compiling = NO_COMPILATION
+                    detailedView?.refreshHolder(location)
+
+                    Unit
+
                 }
-                .observeOn(AndroidSchedulers.mainThread())
-                .map {
-                    val adapterPosition = it.second
-                    val state = themePackState[adapterPosition]
-                    state.compiling = false
-                    detailedView?.refreshHolder(adapterPosition)
-                    it
-                }
-                .doOnComplete {
-                    onComplete.invoke()
-                }
-                .map { it.first }
-                .filter { it.component2() != null }
-                .map { it.component2()!! }
-                .filter { it.message != null }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ errors ->
-                    if (errors.isNotEmpty()) {
-                        detailedView?.showError(errors.map { it.message!! })
-                        log.warn("Compilation error: {}", errors)
-                    }
-//                })
-                }, { onError ->
-                    //Something gone horribly wrong
-                    log.error("Error: {}", onError)
-                    detailedView?.showError(listOf(onError.localizedMessage))
+                .subscribe({ _ ->
+                    log.debug("COMPILATION ENDED")
+                    onComplete()
+                    exceptionSubject.onComplete()
+                }, { e: Throwable ->
+                    log.error("Error during processing", e)
+                    log.debug("COMPILATION ENDED")
+                    exceptionSubject.onNext(e as Exception)
+                    exceptionSubject.onComplete()
+                    onComplete()
                 })
 
+        compositeDisposable.add(exceptionDisp)
         compositeDisposable.add(disp)
 
         return disp
@@ -434,7 +470,7 @@ class DetailedPresenter(
         }
     }
 
-    fun compileForPositionObservable(position: Int): Observable<File> {
+    fun compileForPositionObservable(position: Int): Single<File> {
 
         val state = themePackState[position]
         val theme = themePack.themes[position]
@@ -460,11 +496,19 @@ class DetailedPresenter(
 
     data class ThemePackAdapterState(
             var checked: Boolean = false,
-            var compiling: Boolean = false,
+            var compiling: CompilationState = NO_COMPILATION,
             var type1a: Int = 0,
             var type1b: Int = 0,
             var type1c: Int = 0,
             var type2: Int = 0
     )
+
+    enum class CompilationState(val text: String?) {
+        NO_COMPILATION(null),
+        WAITING_FOR_COMPILATION("Waiting for compilation"),
+        COMPILING("Compiling"),
+        WAITING_FOR_INSTALLING("Waiting for installation"),
+        INSTALLING("Installing")
+    }
 
 }

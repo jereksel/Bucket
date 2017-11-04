@@ -31,7 +31,7 @@ class AaptCompiler(
         manifestFile.createNewFile()
         manifestFile.writeText(manifest)
 
-        val command = mutableListOf(aaptPath, "package", "--auto-add-overlay", "-f", "-M", manifestFile.absolutePath, "-F", apkLocation.absolutePath)
+        val command = mutableListOf(aaptPath, "package", "--include-meta-data", "--auto-add-overlay", "-f", "-M", manifestFile.absolutePath, "-F", apkLocation.absolutePath)
 
         val amLoc = "overlays/${themeDate.originalTargetApp}"
 

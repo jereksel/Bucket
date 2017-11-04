@@ -77,7 +77,9 @@ open class DetailedView : AppCompatActivity(), View {
     }
 
     override fun refreshHolder(position: Int) {
-        recyclerView.post { recyclerView.adapter.notifyItemChanged(position, "") }
+        runOnUiThread {
+            recyclerView.post { recyclerView.adapter.notifyItemChanged(position, "") }
+        }
     }
 
     override fun showToast(s: String) {

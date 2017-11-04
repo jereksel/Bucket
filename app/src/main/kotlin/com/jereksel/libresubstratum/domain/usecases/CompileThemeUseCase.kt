@@ -10,6 +10,7 @@ import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import com.jereksel.libresubstratumlib.Type1DataToCompile
 import io.reactivex.Observable
+import io.reactivex.Single
 import java.io.File
 
 class CompileThemeUseCase(
@@ -28,7 +29,7 @@ class CompileThemeUseCase(
             type1cName: String?,
             type2Name: String?,
             type3Name: String?
-    ): Observable<File> = Observable.fromCallable {
+    ): Single<File> = Single.fromCallable {
 
         val (versionCode, versionName) = packageManager.getAppVersion(themeId)
 

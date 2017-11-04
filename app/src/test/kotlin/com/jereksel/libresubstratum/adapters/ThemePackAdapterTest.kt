@@ -33,6 +33,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import java.util.*
 
 @Suppress("IllegalIdentifier")
 class ThemePackAdapterTest: BaseRobolectricTest() {
@@ -356,15 +357,19 @@ class ThemePackAdapterTest: BaseRobolectricTest() {
     }
 
     @Test
-    fun `setCompiling controlls overlay visibility`() {
-
+    fun `When null is passed to setCompiling overlay is hidden`() {
         val viewHolder = getViewHolder()
-
-        viewHolder.setCompiling(true)
-        assertThat(viewHolder.overlay).isVisible
-
-        viewHolder.setCompiling(false)
+        viewHolder.setCompiling(null)
         assertThat(viewHolder.overlay).isNotVisible
+    }
+
+    @Test
+    fun `When non-null is passed to setCompiling overlay is visible and text is set`() {
+        val text = UUID.randomUUID().toString()
+        val viewHolder = getViewHolder()
+        viewHolder.setCompiling(text)
+        assertThat(viewHolder.overlay).isVisible
+        assertThat(viewHolder.overlayMessage).hasText(text)
     }
 
     @Test

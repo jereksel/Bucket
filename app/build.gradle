@@ -273,8 +273,6 @@ dependencies {
     compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
     compile "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
 
-    compile 'com.github.kittinunf.result:result:1.2.0'
-
     //Signing
     compile project(":zipsigner:combined")
     compile project(":aapt:lib")

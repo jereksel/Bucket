@@ -23,7 +23,7 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun installApk(apk: File) {
+    override fun installApk(apk: List<File>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

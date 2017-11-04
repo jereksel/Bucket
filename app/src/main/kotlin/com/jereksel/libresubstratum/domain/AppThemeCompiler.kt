@@ -27,9 +27,25 @@ class AppThemeCompiler(
     val log = getLogger()
 
     val aapt = getFile(File(app.applicationInfo.dataDir), "lib", "libaaptcomplete.so")
+    val zipalign = File(app.cacheDir, "zipalign")
 
     init {
         log.debug("AAPT version: {}", ProcessBuilder().command(listOf(aapt.absolutePath, "v")).start().inputStream.bufferedReader().readText())
+/*
+        if (zipalign.exists()) {
+            zipalign.delete()
+        }
+
+        zipalign.createNewFile()
+
+        app.assets.open("zipalign").use { iss ->
+            zipalign.outputStream().use { os ->
+                iss.copyTo(os)
+            }
+        }
+
+        zipalign.setExecutable(true)
+        */
     }
 
     @Throws(InvalidInvocationException::class)
@@ -39,6 +55,8 @@ class AppThemeCompiler(
 
         val apkDir = File(Environment.getExternalStorageDirectory(), "libresubs")
         apkDir.mkdir()
+        val zipAlignedApk = File.createTempFile("zipaligned", ".apk", apkDir)
+        zipAlignedApk.delete()
         val finalApk = File.createTempFile("compiled", ".apk", apkDir)
 
         val targetApk = themeDate.fixedTargetApp
@@ -58,12 +76,30 @@ class AppThemeCompiler(
         val seconds = TimeUnit.MILLISECONDS.toSeconds(compilationTime)
 
         log.debug("Compilation of {} took {}s", themeDate.targetOverlayId, seconds)
+/*
+
+        val (_, timeOfZipaligning) = timeOfExec {
+            val command = listOf(zipalign.absolutePath, "4", file.absolutePath, zipAlignedApk.absolutePath)
+            val process = ProcessBuilder().command(command).start()
+
+            val errorStream = process.errorStream.bufferedReader().use { it.readText() }
+            val statusCode = process.waitFor()
+
+            if (statusCode != 0) {
+                log.error("Zipalignign failed: {}", errorStream)
+                throw RuntimeException("Zipalignign failed")
+            }
+        }
+
+        log.debug("Zipaligning of {} took {}s", themeDate.targetOverlayId, TimeUnit.MILLISECONDS.toSeconds(timeOfZipaligning))
+    */
 
         //TODO: Replace with AOSP signer after AS 3.0 drops
         val (_, timeOfSigning) = timeOfExec {
             val zipSigner = ZipSigner()
             zipSigner.keymode = "testkey"
             zipSigner.signZip(file, finalApk)
+//            zipSigner.signZip(zipAlignedApk, finalApk)
         }
 
         val seconds2 = TimeUnit.MILLISECONDS.toSeconds(timeOfSigning)
