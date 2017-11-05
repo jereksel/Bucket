@@ -259,7 +259,11 @@ class MainViewTest: BaseRobolectricTest() {
     @Test
     fun `dismissDialog() should dismiss any dialog`() {
 
-        `showUndismissableDialog should show dialog with given message`()
+        val message = "Very important message"
+
+        activity.showUndismissableDialog(message)
+
+        assertTrue(ShadowDialog.getLatestDialog().isShowing)
 
         activity.dismissDialog()
 

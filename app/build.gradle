@@ -67,6 +67,12 @@ task copyTestClasses(type: Copy) {
 //    }
 //}
 
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 android {
@@ -250,6 +256,8 @@ dependencies {
 
     compile 'com.github.clans:fab:1.6.4'
 
+    compile 'org.zeroturnaround:zt-zip:1.12'
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
@@ -263,6 +271,8 @@ dependencies {
 //    kaptTest "org.androidannotations:androidannotations:$aa_version"
 //    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
 //    compile "org.androidannotations:androidannotations-api:$aa_version"
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
@@ -290,6 +300,9 @@ dependencies {
     androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
+    compile "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+
     compile project(":sublib:models")
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
@@ -302,7 +315,7 @@ dependencies {
         exclude group: 'junit'
     }
     testCompile 'cglib:cglib-nodep:3.2.4'*/
-    testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile "org.robolectric:robolectric:3.5"
     testCompile 'org.mockito:mockito-core:2.7.19'
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
