@@ -89,7 +89,7 @@ class CompilationTest extends Specification {
         def compilationDir = Paths.get(resources.absolutePath, "type1Theme", "overlays", "android").toFile()
 
         when:
-        def types1 = [new Type1DataToCompile(new Type1Extension("ATYPE1", false), "a")]
+        def types1 = [new Type1DataToCompile(new Type1Extension("ATYPE1", false, ""), "a")]
         def apk = compileTheme(compilationDir: compilationDir, type1: types1)
         def colors = aapt.getColorsValues(apk)
 
@@ -104,7 +104,7 @@ class CompilationTest extends Specification {
         def compilationDir = Paths.get(resources.absolutePath, "type1Theme", "overlays", "android").toFile()
 
         when:
-        def types1 = [new Type1DataToCompile(new Type1Extension("BTYPE1", false), "b"), new Type1DataToCompile(new Type1Extension("CTYPE2", false), "c"),]
+        def types1 = [new Type1DataToCompile(new Type1Extension("BTYPE1", false, ""), "b"), new Type1DataToCompile(new Type1Extension("CTYPE2", false, ""), "c"),]
         def apk = compileTheme(compilationDir: compilationDir, type1: types1)
         def colors = aapt.getColorsValues(apk)
 

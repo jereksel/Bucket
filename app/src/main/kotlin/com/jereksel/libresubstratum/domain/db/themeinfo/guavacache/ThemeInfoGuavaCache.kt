@@ -15,7 +15,7 @@ class ThemeInfoGuavaCache: ThemePackDatabase {
                     .build()
 
     override fun addThemePack(appId: String, checksum: ByteArray, themePack: ThemePack) {
-        cache.put(appId, Pair(themePack, checksum))
+//        cache.put(appId, Pair(themePack, checksum))
     }
 
     override fun getThemePack(appId: String) = cache.getIfPresent(appId)
@@ -25,4 +25,3 @@ class ThemeInfoGuavaCache: ThemePackDatabase {
     }
 
 }
-

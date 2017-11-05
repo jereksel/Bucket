@@ -113,7 +113,7 @@ class ThemePackAdapter(
                 type1aSpinner.visibility = GONE
             } else {
                 type1aSpinner.visibility = VISIBLE
-                type1aSpinner.list = list
+                type1aSpinner.adapter = Type1SpinnerArrayAdapter(type1aSpinner.context, list)
                 type1aSpinner.setSelection(position)
             }
         }
@@ -124,7 +124,7 @@ class ThemePackAdapter(
                 type1bSpinner.visibility = GONE
             } else {
                 type1bSpinner.visibility = VISIBLE
-                type1bSpinner.list = list
+                type1bSpinner.adapter = Type1SpinnerArrayAdapter(type1bSpinner.context, list)
                 type1bSpinner.setSelection(position)
             }
         }
@@ -135,7 +135,7 @@ class ThemePackAdapter(
                 type1cSpinner.visibility = GONE
             } else {
                 type1cSpinner.visibility = VISIBLE
-                type1cSpinner.list = list
+                type1cSpinner.adapter = Type1SpinnerArrayAdapter(type1cSpinner.context, list)
                 type1cSpinner.setSelection(position)
             }
         }
