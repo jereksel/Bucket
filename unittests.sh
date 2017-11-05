@@ -4,7 +4,7 @@ set -e
 
 # Robolectric
 
-./gradlew testFdroidDebugUnitTest --no-daemon --tests "**.MainViewTest"
+./gradlew testFdroidDebugUnitTest --info --no-daemon --tests "**.MainViewTest"
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests "**.DetailedViewTest"
 ./gradlew testFdroidDebugUnitTest --no-daemon --tests "**.InstalledViewTest"
 
