@@ -40,6 +40,12 @@ task copyTestClasses(type: Copy) {
     into "build/intermediates/classes/debug"
 }
 
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 android {
@@ -219,6 +225,8 @@ dependencies {
 
     compile 'com.github.clans:fab:1.6.4'
 
+    compile 'org.zeroturnaround:zt-zip:1.12'
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
@@ -226,6 +234,8 @@ dependencies {
     playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
@@ -252,6 +262,9 @@ dependencies {
     androidTestCompile guava
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
+    compile "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+
     compile project(":sublib:models")
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
@@ -264,6 +277,8 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockito_version"
 
     testCompile kotlinReflect
+    testCompile mockito
+    testCompile robolectric
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
     testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
