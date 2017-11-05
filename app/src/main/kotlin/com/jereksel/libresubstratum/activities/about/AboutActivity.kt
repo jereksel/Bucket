@@ -48,8 +48,15 @@ class AboutActivity: AppCompatActivity() {
 
         val guava = Library("Guava", APACHE2, Author("Guava contributors", "2010-present"))
 
+        val zipUtils = Library("zt-zip", APACHE2, Author("ZeroTurnaround LLC.", "2012"))
+
+        val room = Library("Room", APACHE2, Author("The Android Open Source Project", "2017"))
+
+        val codec = Library("Apache Commons Codec", APACHE2, Author("The Apache Software Foundation", "2002-2017"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
-                kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava)
+                kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
+                zipUtils, room, codec)
                 .sortedBy { it.name }
 
         verticalLayout {

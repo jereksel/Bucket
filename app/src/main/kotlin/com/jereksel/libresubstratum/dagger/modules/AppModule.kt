@@ -8,6 +8,8 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
+import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
@@ -31,8 +33,11 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesThemeReader(packageManager: IPackageManager): IThemeReader {
-        return ThemeReader(packageManager)
+    open fun providesThemeReader(
+            packageManager: IPackageManager,
+            keyFinder: IKeyFinder
+    ): IThemeReader {
+        return ThemeReader(application, packageManager, keyFinder)
     }
 
     @Provides
@@ -111,8 +116,15 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesThemePackDatabase(
+    ): ThemePackDatabase = ThemeInfoGuavaCache()
+
+    @Provides
+    @Singleton
     open fun providesGetThemeInfoUseCase(
-            keyFinder: IKeyFinder
-    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder)
+            packageManager: IPackageManager,
+            themePackDatabase: ThemePackDatabase,
+            themeReader: IThemeReader
+    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
 
 }

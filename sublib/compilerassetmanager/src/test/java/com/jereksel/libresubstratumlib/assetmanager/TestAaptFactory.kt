@@ -16,7 +16,7 @@ object TestAaptFactory {
         } else {
             //Local
             println("Test runs on local PC")
-            return AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt.exe", true)
+            return AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt", true)
         }
 
     }
@@ -34,7 +34,7 @@ object TestAaptFactory {
         } else {
             //Local
             println("Test runs on local PC")
-            return com.jereksel.libresubstratumlib.AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt.exe", true)
+            return com.jereksel.libresubstratumlib.AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt", true)
         }
 
     }
