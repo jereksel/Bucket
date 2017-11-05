@@ -9,7 +9,7 @@
         android:id="@+id/textView"
         style="?android:attr/spinnerDropDownItemStyle"
         android:layout_width="match_parent"
-        android:layout_height="?attr/dropdownListPreferredItemHeight"
+        android:layout_height="64dip"
         android:layout_centerVertical="true"
         android:maxLines="1"
         android:text="RED" />
