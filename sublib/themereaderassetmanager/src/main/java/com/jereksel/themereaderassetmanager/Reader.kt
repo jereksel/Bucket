@@ -6,6 +6,10 @@ import com.jereksel.libresubstratumlib.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import java.io.InputStream
+import android.util.Xml
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserException
+import java.io.IOException
 
 object Reader {
 
@@ -67,8 +71,10 @@ object Reader {
                                 if (it.length == 6 || (it.length == 10 && it.endsWith(".enc"))) {
                                     Type1Extension(am.read("$dir/$it", transformer), true)
                                 } else {
+                                    val content = am.read("$dir/$it", transformer)
+                                    val color = getFirstColor(content) ?: ""
                                     val name = it.substring(7).removeSuffix(".xml").removeSuffix(".xml.enc")
-                                    Type1Extension(name, false)
+                                    Type1Extension(name, false, color)
                                 }
                             }
                             //We want true to be first
@@ -109,6 +115,52 @@ object Reader {
         }
 
         return Theme(id, type1s, type2Data)
+    }
+
+    //Most of this code is from https://developer.android.com/training/basics/network-ops/xml.html
+    fun getFirstColor(content: String): String? {
+
+        if (content.trim().isEmpty()) {
+            return null
+        }
+
+        try {
+
+            val parser = Xml.newPullParser()
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+            parser.setInput(content.reader())
+            parser.nextTag()
+            parser.require(XmlPullParser.START_TAG, null, "resources")
+
+            while (parser.next() != XmlPullParser.END_TAG) {
+                if (parser.eventType != XmlPullParser.START_TAG) {
+                    continue;
+                }
+
+                parser.require(XmlPullParser.START_TAG, null, "color");
+                val color = readText(parser)
+                if (color.startsWith("#")) {
+                    return color
+                }
+                parser.require(XmlPullParser.END_TAG, null, "color");
+            }
+
+        } catch (e: XmlPullParserException) {
+            e.printStackTrace()
+            return null
+        }
+
+        return null
+
+    }
+
+    private fun readText(parser: XmlPullParser): String {
+        var result = ""
+        if (parser.next() == XmlPullParser.TEXT) {
+            result = parser.text
+            parser.nextTag()
+        }
+        return result
     }
 
     private fun AssetManager.read(file: String, transformer: (InputStream) -> (InputStream)): String =
