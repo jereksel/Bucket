@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./gradlew app:testFdroidDebugUnitTest --no-daemon --tests "**.MainViewTest"
+
 set -e
 
 # Robolectric
