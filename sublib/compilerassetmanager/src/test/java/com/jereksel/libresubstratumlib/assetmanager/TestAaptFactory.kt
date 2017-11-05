@@ -8,7 +8,7 @@ object TestAaptFactory {
         if (!System.getenv("CIRCLE_SHA1").isNullOrBlank()) {
             //CircleCI
             println("Test runs on CircleCI")
-            return AAPT("/opt/android/sdk/build-tools/26.0.2/aapt", true)
+            return AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt", true)
         } else if (!System.getenv("APPVEYOR").isNullOrBlank()) {
             //AppVeyor
             println("Test runs on AppVeyor")
@@ -26,7 +26,7 @@ object TestAaptFactory {
         if (!System.getenv("CIRCLE_SHA1").isNullOrBlank()) {
             //CircleCI
             println("Test runs on CircleCI")
-            return com.jereksel.libresubstratumlib.AAPT("/opt/android/sdk/build-tools/26.0.2/aapt", true)
+            return com.jereksel.libresubstratumlib.AAPT("${System.getenv("ANDROID_HOME")}/build-tools/26.0.2/aapt", true)
         } else if (!System.getenv("APPVEYOR").isNullOrBlank()) {
             //AppVeyor
             println("Test runs on AppVeyor")
