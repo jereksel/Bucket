@@ -409,7 +409,7 @@ class DetailedPresenter(
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
             metrics.userEnabledOverlay(overlay)
             overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
-            overlayService.disableOverlays(overlays.map { it.overlayId })
+            overlays.forEach { overlayService.disableOverlay(it.overlayId) }
             overlayService.enableOverlay(overlay)
         }
     }
@@ -425,7 +425,7 @@ class DetailedPresenter(
                 metrics.userEnabledOverlay(overlay)
                 overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
 
-                overlayService.disableOverlays(overlays.map { it.overlayId })
+                overlays.forEach { overlayService.disableOverlay(it.overlayId) }
                 overlayService.enableOverlay(overlay)
             } else {
                 metrics.userDisabledOverlay(overlay)

@@ -122,7 +122,7 @@ class InstalledPresenter(
                 .toList()
                 .map {
                     it.forEach { metrics.userEnabledOverlay(it) }
-                    overlayService.enableOverlays(it)
+                    it.forEach { overlayService.enableOverlay(it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
@@ -146,7 +146,7 @@ class InstalledPresenter(
                 .toList()
                 .map {
                     it.forEach { metrics.userDisabledOverlay(it) }
-                    overlayService.disableOverlays(it)
+                    it.forEach { overlayService.disableOverlay(it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
