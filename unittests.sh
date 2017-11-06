@@ -32,4 +32,3 @@ set -e
 ./gradlew sublib:compiler:jacocoTestReport
 ./gradlew sublib:themereaderassetmanager:jacocoTestReportDebug
 ./gradlew sublib:compilerassetmanager:jacocoTestReportDebug
-./gradlew sublib:compilerassetmanager:jacocoTestReportDebug
