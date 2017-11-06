@@ -17,8 +17,19 @@ import org.jetbrains.anko.textColor
 
 class Type1SpinnerArrayAdapter(
         context: Context,
-        val objects: List<Type1ExtensionToString>
+        objects: List<Type1ExtensionToString>
 ) : ArrayAdapter<Type1ExtensionToString>(context, 0, objects) {
+
+    private val objects = objects.sortedWith(compareBy({ !it.type1.default }, {
+        val hsv = FloatArray(3)
+        val rgb = it.type1.color
+        if (rgb.isEmpty()) {
+            Float.MAX_VALUE
+        } else {
+            Color.colorToHSV(Color.parseColor(rgb), hsv)
+            hsv[0]
+        }
+    }))
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
@@ -30,7 +41,7 @@ class Type1SpinnerArrayAdapter(
         textView.text = type1Extension.toString()
 
         if (type1Extension.type1.color.isNotEmpty()) {
-            val type1Color = Color.parseColor(type1Extension.type1.color.trim())
+            val type1Color = Color.parseColor(type1Extension.type1.color)
             val swatch = Palette.Swatch(type1Color, 1)
             textView.textColor = swatch.titleTextColor
             view.background = ColorDrawable(type1Color)

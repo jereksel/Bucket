@@ -259,6 +259,8 @@ dependencies {
 
     compile 'org.zeroturnaround:zt-zip:1.12'
 
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"

@@ -140,7 +140,7 @@ object Reader {
                 parser.require(XmlPullParser.START_TAG, null, "color");
                 val color = readText(parser)
                 if (color.startsWith("#")) {
-                    return color
+                    return color.trim()
                 }
                 parser.require(XmlPullParser.END_TAG, null, "color");
             }

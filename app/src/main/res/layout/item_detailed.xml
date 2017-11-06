@@ -95,6 +95,25 @@
                     android:layout_height="40dp"
                     android:visibility="gone" />
 
+                <com.jereksel.libresubstratum.views.ColorView
+                    android:id="@+id/colorview_1a"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+
+                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                    android:id="@+id/discrete_1a"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="12"
+                    />
+
                 <Spinner
                     android:id="@+id/spinner_1b"
                     android:layout_width="match_parent"

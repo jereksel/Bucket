@@ -16,6 +16,9 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.list
+import com.jereksel.libresubstratum.views.ColorView
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+import org.adw.library.widgets.discreteseekbar.internal.PopupIndicator
 
 class ThemePackAdapter(
         val presenter: Presenter
@@ -76,6 +79,8 @@ class ThemePackAdapter(
         val upToDate: TextView by bindView(R.id.uptodate)
 
         val type1aSpinner: Spinner by bindView(R.id.spinner_1a)
+        val colorview1a: ColorView by bindView(R.id.colorview_1a)
+        val discrete1a: DiscreteSeekBar by bindView(R.id.discrete_1a)
         val type1bSpinner: Spinner by bindView(R.id.spinner_1b)
         val type1cSpinner: Spinner by bindView(R.id.spinner_1c)
         val type1Spinners = listOf(type1aSpinner, type1bSpinner, type1cSpinner)
@@ -110,11 +115,52 @@ class ThemePackAdapter(
         override fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
 //            type1aSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
+                colorview1a.visibility = GONE
                 type1aSpinner.visibility = GONE
+                colorview1a.visibility = GONE
             } else {
+                colorview1a.visibility = VISIBLE
                 type1aSpinner.visibility = VISIBLE
+                colorview1a.visibility = VISIBLE
                 type1aSpinner.adapter = Type1SpinnerArrayAdapter(type1aSpinner.context, list)
                 type1aSpinner.setSelection(position)
+                val a = list.sortedWith(compareBy({ !it.type1.default }, {
+                    val hsv = FloatArray(3)
+                    val rgb = it.type1.color
+                    if (rgb.isEmpty()) {
+                        Float.MAX_VALUE
+                    } else {
+                        Color.colorToHSV(Color.parseColor(rgb), hsv)
+                        hsv[0]
+                    }
+                })).map { it.type1.color }.filter { it.isNotEmpty() }.map { Color.parseColor(it) }
+                colorview1a.colors = a
+                colorview1a.invalidate()
+
+                discrete1a.min = 0
+                discrete1a.max = a.size - 1
+
+                discrete1a.setOnProgressChangeListener(object: DiscreteSeekBar.OnProgressChangeListener {
+                    override fun onProgressChanged(seekBar: DiscreteSeekBar, value: Int, fromUser: Boolean) {
+//                        seekBar.setRippleColor(a[value])
+//                        seekBar.setTracColor(a[value])
+                        val color = a[value]
+//                        seekBar.setIndicatorPopupEnabled(false)
+                        val indicatorField = DiscreteSeekBar::class.java.declaredFields.first { it.name == "mIndicator" }
+                        indicatorField.isAccessible = true
+                        val indicator = indicatorField.get(seekBar) as PopupIndicator
+                        indicator.setColors(color, color)
+
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: DiscreteSeekBar) {
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: DiscreteSeekBar) {
+                    }
+                })
+
+//                DiscreteSeekBar(colorview1a.context).setIndicatorFormatter()
             }
         }
 
