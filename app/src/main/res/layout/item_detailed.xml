@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -95,24 +96,28 @@
                     android:layout_height="40dp"
                     android:visibility="gone" />
 
-                <com.jereksel.libresubstratum.views.ColorView
-                    android:id="@+id/colorview_1a"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="40dp">
 
-                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-                    android:id="@+id/discrete_1a"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp" />
+                    <com.jereksel.libresubstratum.views.ColorView
+                        android:id="@+id/colorview_1a"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
 
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    style="@style/Widget.AppCompat.SeekBar.Discrete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="12"
-                    />
+                    <SeekBar
+                        android:id="@+id/seekBar_1a"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="0dp"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:max="7" />
+
+                </RelativeLayout>
 
                 <Spinner
                     android:id="@+id/spinner_1b"

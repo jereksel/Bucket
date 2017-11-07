@@ -259,7 +259,7 @@ dependencies {
 
     compile 'org.zeroturnaround:zt-zip:1.12'
 
-    compile 'org.adw.library:discrete-seekbar:1.0.1'
+    compile project(":discreteSeekBar:library")
 
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
