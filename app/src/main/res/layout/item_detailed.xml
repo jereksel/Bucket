@@ -90,46 +90,21 @@
                     android:layout_height="40dp"
                     android:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/spinner_1a"
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1aview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
-                <RelativeLayout
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1bview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp">
+                    android:layout_height="wrap_content" />
 
-                    <com.jereksel.libresubstratum.views.ColorView
-                        android:id="@+id/colorview_1a"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp" />
-
-                    <SeekBar
-                        android:id="@+id/seekBar_1a"
-                        style="@style/Widget.AppCompat.SeekBar.Discrete"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="0dp"
-                        android:layout_centerVertical="true"
-                        android:paddingLeft="0dp"
-                        android:layout_marginRight="0dp"
-                        android:layout_marginLeft="0dp"
-                        android:max="7" />
-
-                </RelativeLayout>
-
-                <Spinner
-                    android:id="@+id/spinner_1b"
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1cview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
-                <Spinner
-                    android:id="@+id/spinner_1c"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
             </LinearLayout>
 
         </RelativeLayout>

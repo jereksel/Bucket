@@ -17,19 +17,19 @@ import org.jetbrains.anko.textColor
 
 class Type1SpinnerArrayAdapter(
         context: Context,
-        objects: List<Type1ExtensionToString>
+        val objects: List<Type1ExtensionToString>
 ) : ArrayAdapter<Type1ExtensionToString>(context, 0, objects) {
 
-    private val objects = objects.sortedWith(compareBy({ !it.type1.default }, {
-        val hsv = FloatArray(3)
-        val rgb = it.type1.color
-        if (rgb.isEmpty()) {
-            Float.MAX_VALUE
-        } else {
-            Color.colorToHSV(Color.parseColor(rgb), hsv)
-            hsv[0]
-        }
-    }))
+//    private val objects = objects.sortedWith(compareBy({ !it.type1.default }, {
+//        val hsv = FloatArray(3)
+//        val rgb = it.type1.color
+//        if (rgb.isEmpty()) {
+//            Float.MAX_VALUE
+//        } else {
+//            Color.colorToHSV(Color.parseColor(rgb), hsv)
+//            hsv[0]
+//        }
+//    }))
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
