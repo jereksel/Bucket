@@ -7,6 +7,3 @@
 [submodule "aapt"]
 	path = aapt
 	url = https://github.com/jereksel/aaptfordevice.git
-[submodule "discreteSeekBar"]
-	path = discreteSeekBar
-	url = https://github.com/jereksel/discreteSeekBar
