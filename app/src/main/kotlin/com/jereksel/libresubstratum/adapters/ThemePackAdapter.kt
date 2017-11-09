@@ -1,7 +1,6 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -11,18 +10,13 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import kotterknife.bindView
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.list
-import com.jereksel.libresubstratum.views.ColorView
-import com.jereksel.libresubstratum.views.ITypeView
 import com.jereksel.libresubstratum.views.TypeView
-import io.reactivex.rxkotlin.toFlowable
-import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-import org.adw.library.widgets.discreteseekbar.internal.PopupIndicator
+import kotterknife.bindView
 
 class ThemePackAdapter(
         val presenter: Presenter
