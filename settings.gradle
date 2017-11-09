@@ -1,2 +1,3 @@
 include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager',
-        ":sublib:compilerassetmanager", ":sublib:compiler", ":sublib:reader", ":aapt:lib"
+        ":sublib:compilerassetmanager", ":sublib:compiler", ":sublib:reader", ":aapt:lib",
+        ":discreteSeekBar:library"

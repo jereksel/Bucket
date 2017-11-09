@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -16,6 +17,12 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Present
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.list
+import com.jereksel.libresubstratum.views.ColorView
+import com.jereksel.libresubstratum.views.ITypeView
+import com.jereksel.libresubstratum.views.TypeView
+import io.reactivex.rxkotlin.toFlowable
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+import org.adw.library.widgets.discreteseekbar.internal.PopupIndicator
 
 class ThemePackAdapter(
         val presenter: Presenter
@@ -38,15 +45,12 @@ class ThemePackAdapter(
             presenter.setCheckbox(holder.adapterPosition, isChecked)
         }
 
-        holder.type1aSpinner.selectListener { spinnerPosition ->
-            presenter.setType1a(holder.adapterPosition, spinnerPosition)
-        }
-        holder.type1bSpinner.selectListener { spinnerPosition ->
-            presenter.setType1b(holder.adapterPosition, spinnerPosition)
-        }
-        holder.type1cSpinner.selectListener { spinnerPosition ->
-            presenter.setType1c(holder.adapterPosition, spinnerPosition)
-        }
+        holder.type1aView.onPositionChange { presenter.setType1a(holder.adapterPosition, it) }
+
+        holder.type1bView.onPositionChange { presenter.setType1b(holder.adapterPosition, it) }
+
+        holder.type1cView.onPositionChange { presenter.setType1c(holder.adapterPosition, it) }
+
         holder.type2Spinner.selectListener { spinnerPosition ->
             presenter.setType2(holder.adapterPosition, spinnerPosition)
         }
@@ -75,10 +79,9 @@ class ThemePackAdapter(
 
         val upToDate: TextView by bindView(R.id.uptodate)
 
-        val type1aSpinner: Spinner by bindView(R.id.spinner_1a)
-        val type1bSpinner: Spinner by bindView(R.id.spinner_1b)
-        val type1cSpinner: Spinner by bindView(R.id.spinner_1c)
-        val type1Spinners = listOf(type1aSpinner, type1bSpinner, type1cSpinner)
+        val type1aView: TypeView by bindView(R.id.type1aview)
+        val type1bView: TypeView by bindView(R.id.type1bview)
+        val type1cView: TypeView by bindView(R.id.type1cview)
 
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
@@ -108,35 +111,33 @@ class ThemePackAdapter(
         }
 
         override fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
-//            type1aSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1aSpinner.visibility = GONE
+                type1aView.visibility = GONE
             } else {
-                type1aSpinner.visibility = VISIBLE
-                type1aSpinner.adapter = Type1SpinnerArrayAdapter(type1aSpinner.context, list)
-                type1aSpinner.setSelection(position)
+                type1aView.setType1(list)
+                type1aView.setSelection(position)
+                type1aView.visibility = VISIBLE
             }
         }
 
         override fun type1bSpinner(list: List<Type1ExtensionToString>, position: Int) {
-//            type1bSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1bSpinner.visibility = GONE
+                type1bView.visibility = GONE
             } else {
-                type1bSpinner.visibility = VISIBLE
-                type1bSpinner.adapter = Type1SpinnerArrayAdapter(type1bSpinner.context, list)
-                type1bSpinner.setSelection(position)
+                type1bView.setType1(list)
+                type1bView.setSelection(position)
+                type1bView.visibility = VISIBLE
             }
         }
 
+
         override fun type1cSpinner(list: List<Type1ExtensionToString>, position: Int) {
-//            type1cSpinner.onItemSelectedListener = null
             if (list.isEmpty()) {
-                type1cSpinner.visibility = GONE
+                type1cView.visibility = GONE
             } else {
-                type1cSpinner.visibility = VISIBLE
-                type1cSpinner.adapter = Type1SpinnerArrayAdapter(type1cSpinner.context, list)
-                type1cSpinner.setSelection(position)
+                type1cView.setType1(list)
+                type1cView.setSelection(position)
+                type1cView.visibility = VISIBLE
             }
         }
 
