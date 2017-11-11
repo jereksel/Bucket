@@ -10,4 +10,6 @@ interface Metrics {
     //InstalledView
     fun userEnabledOverlay(overlayId: String)
     fun userDisabledOverlay(overlayId: String)
+
+    fun logOverlayServiceType(overlayService: OverlayService)
 }

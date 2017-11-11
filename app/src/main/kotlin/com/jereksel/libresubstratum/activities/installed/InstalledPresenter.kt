@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.installed
 
-import android.os.AsyncTask
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
@@ -9,15 +8,15 @@ import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.toMaybe
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
-import org.reactivestreams.Subscription
 import java.lang.ref.WeakReference
 
 class InstalledPresenter(
@@ -26,6 +25,8 @@ class InstalledPresenter(
         val activityProxy: IActivityProxy,
         val metrics: Metrics
 ) : Presenter {
+
+    val log = getLogger()
 
     private var view = WeakReference<View>(null)
     private var subscription: Disposable? = null
@@ -65,10 +66,8 @@ class InstalledPresenter(
 
         val single = {
             if (enabled) {
-                metrics.userEnabledOverlay(overlayId)
                 overlayService.enableOverlay(overlayId)
             } else {
-                metrics.userDisabledOverlay(overlayId)
                 overlayService.disableOverlay(overlayId)
             }
         }.toSingle()
@@ -115,14 +114,14 @@ class InstalledPresenter(
         val toEnable = selectedOverlays()
                 .map { it.overlayId }
 
+
         val disp = toEnable.toObservable()
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .filter { overlayService.getOverlayInfo(it)?.enabled == false }
                 .toList()
                 .map {
-                    it.forEach { metrics.userEnabledOverlay(it) }
-                    overlayService.enableOverlays(it)
+                    it.forEach { overlayService.enableOverlay(it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
@@ -145,8 +144,7 @@ class InstalledPresenter(
                 .filter { overlayService.getOverlayInfo(it)?.enabled == true }
                 .toList()
                 .map {
-                    it.forEach { metrics.userDisabledOverlay(it) }
-                    overlayService.disableOverlays(it)
+                    it.forEach { overlayService.disableOverlay(it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
@@ -182,10 +180,8 @@ class InstalledPresenter(
     }
 
     override fun restartSystemUI() {
-        Observable.just("")
-                .observeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
+        compositeDisposable += Schedulers.io()
+                .scheduleDirect {
                     overlayService.restartSystemUI()
                 }
     }

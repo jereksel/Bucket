@@ -1,6 +1,5 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
@@ -54,6 +53,8 @@ class DetailedPresenter(
     }
 
     override fun readTheme(appId: String) {
+
+        log.debug("Reading {}", appId)
 
         val extractLocation = File(packageManager.getCacheFolder(), appId)
 
@@ -146,7 +147,7 @@ class DetailedPresenter(
     //TODO: Change name
     fun areVersionsTheSame(app1: String, app2: String): Boolean {
 
-        Log.d("areVersionTheSame", "$app1 vs $app2")
+        log.debug("areVersionTheSame", "$app1 vs $app2")
 
         val app1Info = packageManager.getAppVersion(app1)
         val app2Info = packageManager.getAppVersion(app2)
@@ -156,6 +157,7 @@ class DetailedPresenter(
 
     fun getOverlayIdForTheme(position: Int): String {
 
+        log.debug("Getting overlayId for theme {} and types3 {} for position {} state overlay {} state of type3 {}", themePack.themes[position], themePack.type3, position, themePackState[position], type3)
 
         val theme = themePack.themes[position]
         val state = themePackState[position]
@@ -170,7 +172,7 @@ class DetailedPresenter(
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
         val type3 = type3
 
-        return ThemeNameUtils.getTargetOverlayName(
+        val id = ThemeNameUtils.getTargetOverlayName(
                 destAppId,
                 themeName,
                 type1a,
@@ -179,6 +181,10 @@ class DetailedPresenter(
                 type2,
                 type3
         )
+
+        log.debug("OverlayId: {}", id)
+
+        return id
     }
 
     override fun getAppName(appId: String) = packageManager.getAppName(appId)
@@ -217,6 +223,7 @@ class DetailedPresenter(
 
     override fun openInSplit(adapterPosition: Int) {
         val app = themePack.themes[adapterPosition].application
+        log.debug("Opening {} in split", app)
         if (!activityProxy.openActivityInSplit(app)) {
             detailedView?.showToast("App couldn't be opened")
         }
@@ -298,6 +305,7 @@ class DetailedPresenter(
     }
 
     override fun restartSystemUI() {
+        log.debug("Resetting SystemUI")
         Observable.just("")
                 .observeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -310,6 +318,8 @@ class DetailedPresenter(
 
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
+        log.debug("Compiling overlays for {}", positions.map { themePack.themes[it].application })
+
         val disp = positions.toList().toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -317,6 +327,7 @@ class DetailedPresenter(
                     val overlay = getOverlayIdForTheme(it)
 
                     if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
+                        log.debug("{} is installed and has the same version", overlay)
                         afterInstalling(it)
                         themePackState[it].compiling = false
                         detailedView?.refreshHolder(it)
@@ -404,9 +415,7 @@ class DetailedPresenter(
         val info = overlayService.getOverlayInfo(overlay)
         if (info?.enabled == false) {
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            metrics.userEnabledOverlay(overlay)
-            overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
-            overlayService.disableOverlays(overlays.map { it.overlayId })
+            overlays.forEach { overlayService.disableOverlay(it.overlayId) }
             overlayService.enableOverlay(overlay)
         }
     }
@@ -419,10 +428,9 @@ class DetailedPresenter(
             if (!info.enabled) {
                 val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
 
-                metrics.userEnabledOverlay(overlay)
                 overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
 
-                overlayService.disableOverlays(overlays.map { it.overlayId })
+                overlays.forEach { overlayService.disableOverlay(it.overlayId) }
                 overlayService.enableOverlay(overlay)
             } else {
                 metrics.userDisabledOverlay(overlay)

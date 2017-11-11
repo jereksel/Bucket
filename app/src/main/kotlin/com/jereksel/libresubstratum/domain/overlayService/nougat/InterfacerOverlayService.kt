@@ -97,12 +97,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     }
 
-    override fun enableOverlays(ids: List<String>) {
-        service.enableOverlay(ids, false)
+    override fun enableOverlay(id: String) {
+        service.enableOverlay(listOf(id), false)
     }
 
-    override fun disableOverlays(ids: List<String>) {
-        service.disableOverlay(ids, false)
+    override fun disableOverlay(id: String) {
+        service.disableOverlay(listOf(id), false)
     }
 
     override fun getOverlayInfo(id: String): OverlayInfo? {
@@ -128,8 +128,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         service.installPackage(listOf(apk.absolutePath))
     }
 
-    override fun uninstallApk(appIds: List<String>) {
-        service.uninstallPackage(appIds, false)
+    override fun uninstallApk(appId: String) {
+        service.uninstallPackage(listOf(appId), false)
     }
 
     override fun requiredPermissions(): List<String> {

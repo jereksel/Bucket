@@ -23,4 +23,9 @@ class FdroidMetrics
     override fun userDisabledOverlay(overlayId: String) {
         log.debug("User disabled overlay {}", overlayId)
     }
+
+    override fun logOverlayServiceType(overlayService: OverlayService) {
+        log.debug("User overlayService: {}", overlayService.javaClass.toString())
+    }
+
 }

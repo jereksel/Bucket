@@ -16,6 +16,7 @@ import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -42,8 +43,23 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesOverlayService(): OverlayService {
-        return OverlayServiceFactory.getOverlayService(application)
+    @Named("default")
+    open fun providesOverlayService(
+            metrics: Metrics
+    ): OverlayService {
+        val service = OverlayServiceFactory.getOverlayService(application)
+        metrics.logOverlayServiceType(service)
+        return service
+    }
+
+    @Provides
+    @Singleton
+    @Named("logged")
+    open fun providesLoggedOverlayService(
+            @Named("default") overlayService: OverlayService,
+            metrics: Metrics
+    ): OverlayService {
+        return LoggedOverlayService(overlayService, metrics)
     }
 
     @Provides
@@ -61,7 +77,7 @@ open class AppModule(private val application: Application) {
     open fun providesMainPresenter(
             packageManager: IPackageManager,
             themeReader: IThemeReader,
-            overlayService: OverlayService,
+            @Named("logged") overlayService: OverlayService,
             metrics: Metrics,
             keyFinder: IKeyFinder
     ): MainContract.Presenter {
@@ -76,7 +92,7 @@ open class AppModule(private val application: Application) {
     open fun providesDetailedPresenter(
             packageManager: IPackageManager,
             getThemeInfoUseCase: IGetThemeInfoUseCase,
-            overlayService: OverlayService,
+            @Named("logged") overlayService: OverlayService,
             activityProxy: IActivityProxy,
             compileThemeUseCase: ICompileThemeUseCase,
             clipboardManager: ClipboardManager,
@@ -88,7 +104,7 @@ open class AppModule(private val application: Application) {
     @Provides
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
-            overlayService: OverlayService,
+            @Named("logged") overlayService: OverlayService,
             activityProxy: IActivityProxy,
             metrics: Metrics
     ): InstalledContract.Presenter {
