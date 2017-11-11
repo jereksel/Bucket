@@ -162,9 +162,9 @@ class ThemePackAdapterTest: BaseRobolectricTest() {
         val viewHolder = recyclerView.getChildViewHolder(child) as ViewHolder
 
         val spinners = listOf(
-                viewHolder.type1aSpinner,
-                viewHolder.type1bSpinner,
-                viewHolder.type1cSpinner
+                viewHolder.type1aView,
+                viewHolder.type1bView,
+                viewHolder.type1cView
         )
 
         val verifies = listOf(
@@ -173,15 +173,17 @@ class ThemePackAdapterTest: BaseRobolectricTest() {
                 { verify(presenter).setType1c(0, 1) }
         )
 
-        spinners.zip(verifies).forEach { (spinner, verify) ->
+        spinners.zip(verifies).forEach { (typeView, verify) ->
 
             val arr = listOf(
                     Type1ExtensionToString(Type1Extension("red", true)),
                     Type1ExtensionToString(Type1Extension("green", false))
             )
 
-            spinner.visibility = VISIBLE
-            spinner.list = arr
+            val spinner = typeView.spinner
+
+            typeView.visibility = VISIBLE
+            typeView.setType1(arr)
             spinner.setSelection(0)
             reset(presenter)
             spinner.setSelection(1)
@@ -272,9 +274,9 @@ class ThemePackAdapterTest: BaseRobolectricTest() {
         val setterc = { l: List<Type1ExtensionToString> -> viewHolder.type1cSpinner(l, 0) }
 
         listOf(
-                viewHolder.type1aSpinner to settera,
-                viewHolder.type1bSpinner to setterb,
-                viewHolder.type1cSpinner to setterc
+                viewHolder.type1aView to settera,
+                viewHolder.type1bView to setterb,
+                viewHolder.type1cView to setterc
         ).forEach { (holder, setter) ->
             setter.invoke(listOf())
             assertThat(holder).isGone
@@ -293,9 +295,9 @@ class ThemePackAdapterTest: BaseRobolectricTest() {
 
 
         listOf(
-                viewHolder.type1aSpinner to settera,
-                viewHolder.type1bSpinner to setterb,
-                viewHolder.type1cSpinner to setterc
+                viewHolder.type1aView.spinner to settera,
+                viewHolder.type1bView.spinner to setterb,
+                viewHolder.type1cView.spinner to setterc
         ).forEach { (holder, setter) ->
 
             val arr = listOf(

@@ -30,6 +30,7 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 
+@Suppress("IllegalIdentifier")
 class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<RecViewActivity>

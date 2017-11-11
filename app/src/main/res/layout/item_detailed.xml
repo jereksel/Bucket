@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -89,23 +90,21 @@
                     android:layout_height="40dp"
                     android:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/spinner_1a"
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1aview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
-                <Spinner
-                    android:id="@+id/spinner_1b"
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1bview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
-                <Spinner
-                    android:id="@+id/spinner_1c"
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1cview"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
 
         </RelativeLayout>
