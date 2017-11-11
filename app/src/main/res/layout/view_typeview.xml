@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:layout_below="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.jereksel.libresubstratum.views.ColorView
+            android:id="@+id/colorview"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:tickMark="@drawable/ic_radio_button_unchecked_black_24dp"
+            android:thumb="@drawable/ic_radio_button_checked_black_24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="0dp"
+            android:layout_centerVertical="true"
+            android:paddingLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="0dp"
+            android:max="7" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
