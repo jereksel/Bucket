@@ -44,8 +44,12 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     @Named("default")
-    open fun providesOverlayService(): OverlayService {
-        return OverlayServiceFactory.getOverlayService(application)
+    open fun providesOverlayService(
+            metrics: Metrics
+    ): OverlayService {
+        val service = OverlayServiceFactory.getOverlayService(application)
+        metrics.logOverlayServiceType(service)
+        return service
     }
 
     @Provides
