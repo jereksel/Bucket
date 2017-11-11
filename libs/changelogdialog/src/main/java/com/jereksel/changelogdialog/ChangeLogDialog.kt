@@ -29,7 +29,7 @@ object ChangeLogDialog {
                     .map {
                         """
                         <div>
-                        <h1>${it.version}</h1>
+                        <h3>${it.version}</h3>
                         <ul>
                             ${it.changes.map { "<li>$it</li>" }.joinToString(separator = "")}
                         </ul>
