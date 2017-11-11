@@ -6,6 +6,8 @@ import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.RelativeLayout
 import android.widget.SeekBar
@@ -47,7 +49,9 @@ class TypeView : RelativeLayout, ITypeView {
 
     override fun setSelection(position: Int) {
         spinner.setSelection(position)
-        seekbar.progress = position
+/*        seekbar.post {
+            seekbar.progress = position
+        }*/
     }
 
     override fun setType1(list: List<Type1ExtensionToString>) {
@@ -55,13 +59,29 @@ class TypeView : RelativeLayout, ITypeView {
 //        type1aSpinner.setSelection(position)
         val colors = list.map { it.type1.color }.map { if (it.isNotEmpty()) { it } else {"white"} }.map { Color.parseColor(it) }
 
-        colorview.colors = colors
-        colorview.invalidate()
+        colorview.visibility = View.GONE
+        seekbar.visibility = View.GONE
+
+/*
+        if (colors.find { it != Color.parseColor("white") } == null || colors.size > 15) {
+            //There are only whites or too much colors
+            colorview.visibility = View.GONE
+            seekbar.visibility = View.GONE
+        } else {
+            colorview.visibility = View.VISIBLE
+            seekbar.visibility = View.VISIBLE
+        }
+*/
+
+/*        colorview.colors = colors
+        colorview.invalidate()*/
 
         val type1aSeekbar = seekbar
         val type1aSpinner = spinner
-
+/*
         type1aSeekbar.post {
+
+            type1aSeekbar.setOnSeekBarChangeListener(null)
 
             val width = type1aSeekbar.measuredWidth
 
@@ -71,23 +91,24 @@ class TypeView : RelativeLayout, ITypeView {
             type1aSeekbar.progressDrawable = ColorDrawable(Color.TRANSPARENT)
 
             type1aSeekbar.max = colors.size - 1
+            type1aSeekbar.progress = 0
 
             type1aSeekbar.invalidate()
-        }
 
-        type1aSeekbar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                type1aSpinner.background = ColorDrawable(colors[progress])
-                type1aSpinner.setSelection(progress)
-            }
+            type1aSeekbar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    type1aSpinner.background = ColorDrawable(colors[progress])
+                    type1aSpinner.setSelection(progress)
+                }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-            }
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-            }
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                }
 
-        })
+            })
+        }*/
 
         spinner.selectListener { position ->
             listener?.onPositionChange(position)

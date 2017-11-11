@@ -33,7 +33,7 @@ class Type1SpinnerArrayAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val view = context.layoutInflater.inflate(R.layout.item_type1spinner, null)
+        val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
         val type1Extension = objects[position]
 
         val textView = view.find<TextView>(R.id.textView)
@@ -55,7 +55,25 @@ class Type1SpinnerArrayAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return getView(position, convertView, parent)
+        val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
+        val type1Extension = objects[position]
+
+        val textView = view.find<TextView>(R.id.textView)
+
+        textView.text = type1Extension.toString()
+
+        if (type1Extension.type1.color.isNotEmpty()) {
+            val type1Color = Color.parseColor(type1Extension.type1.color)
+            val swatch = Palette.Swatch(type1Color, 1)
+            textView.textColor = swatch.titleTextColor
+            view.background = ColorDrawable(type1Color)
+        } else {
+            val type1Color = Color.WHITE
+            textView.textColor = Color.BLACK
+            view.background = ColorDrawable(type1Color)
+        }
+
+        return view
     }
 }
 

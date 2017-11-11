@@ -108,9 +108,9 @@ class ThemePackAdapter(
             if (list.isEmpty()) {
                 type1aView.visibility = GONE
             } else {
+                type1aView.visibility = VISIBLE
                 type1aView.setType1(list)
                 type1aView.setSelection(position)
-                type1aView.visibility = VISIBLE
             }
         }
 
@@ -118,9 +118,9 @@ class ThemePackAdapter(
             if (list.isEmpty()) {
                 type1bView.visibility = GONE
             } else {
+                type1bView.visibility = VISIBLE
                 type1bView.setType1(list)
                 type1bView.setSelection(position)
-                type1bView.visibility = VISIBLE
             }
         }
 
@@ -129,9 +129,9 @@ class ThemePackAdapter(
             if (list.isEmpty()) {
                 type1cView.visibility = GONE
             } else {
+                type1cView.visibility = VISIBLE
                 type1cView.setType1(list)
                 type1cView.setSelection(position)
-                type1cView.visibility = VISIBLE
             }
         }
 
