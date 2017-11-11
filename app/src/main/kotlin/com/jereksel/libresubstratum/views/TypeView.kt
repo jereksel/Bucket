@@ -59,6 +59,9 @@ class TypeView : RelativeLayout, ITypeView {
 //        type1aSpinner.setSelection(position)
         val colors = list.map { it.type1.color }.map { if (it.isNotEmpty()) { it } else {"white"} }.map { Color.parseColor(it) }
 
+        //ColorView is hidden for now. It was bad idea, I'll prepare something like this:
+        //https://github.com/dmfs/color-picker
+
         colorview.visibility = View.GONE
         seekbar.visibility = View.GONE
 
