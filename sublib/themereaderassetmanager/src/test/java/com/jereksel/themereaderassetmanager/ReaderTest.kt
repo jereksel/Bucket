@@ -39,7 +39,7 @@ class ReaderTest {
     @Test
     fun `simple type1 test`() {
         val themePack = Reader.read(assetManager)
-        val expected = listOf(Type1Extension("Initial color", true), Type1Extension("Green", false), Type1Extension("Red", false))
+        val expected = listOf(Type1Extension("Initial color", true), Type1Extension("Green", false, "#12345678"), Type1Extension("Red", false))
 
         assertNull(themePack.type3)
         assertNull(themePack.themes[0].type2)
