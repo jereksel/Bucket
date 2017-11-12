@@ -159,12 +159,12 @@ class InstalledOverlaysAdapter(
         } else {
             originApps.filter {
                 it.targetName.contains(newText, true) ||
-                        it.sourceThemeName.contains(newText, true) ||
-                        it.type1a?.contains(newText, true) == true ||
-                        it.type1b?.contains(newText, true) == true ||
-                        it.type1c?.contains(newText, true) == true ||
-                        it.type2?.contains(newText, true) == true ||
-                        it.type3?.contains(newText, true) == true
+                        it.sourceThemeName.contains(newText, true)
+//                        it.type1a?.contains(newText, true) == true ||
+//                        it.type1b?.contains(newText, true) == true ||
+//                        it.type1c?.contains(newText, true) == true ||
+//                        it.type2?.contains(newText, true) == true ||
+//                        it.type3?.contains(newText, true) == true
             }
         }
 
