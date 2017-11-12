@@ -25,6 +25,8 @@
 -keepattributes *Annotation*
 -dontwarn ch.qos.logback.core.net.*
 
+-keep class com.allogy.android.logback.CrashlyticsAppender { *; }
+
 # https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-guava.pro
 -keep class com.google.common.io.Resources {
     public static <methods>;

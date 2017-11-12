@@ -48,8 +48,11 @@ class AboutActivity: AppCompatActivity() {
 
         val guava = Library("Guava", APACHE2, Author("Guava contributors", "2010-present"))
 
+        val crashlyticsAppender = Library("Crashlytics Appender", APACHE2, Author("Allogy Interactive", "2013"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
-                kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava)
+                kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
+                crashlyticsAppender)
                 .sortedBy { it.name }
 
         verticalLayout {
