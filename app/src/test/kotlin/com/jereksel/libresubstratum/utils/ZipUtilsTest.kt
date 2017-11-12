@@ -10,12 +10,12 @@ import java.io.File
 
 class ZipUtilsTest {
 
-    val resources : File = File(javaClass.classLoader.getResource("Theme.apk").path).parentFile
+    val resources : File = File(javaClass.classLoader.getResource("Themeapp.apk").path).parentFile
 
     @Test
     fun `Zip extraction test`() {
 
-        val zipLocation = File(resources, "Theme.apk")
+        val zipLocation = File(resources, "Themeapp.apk")
         val tempFolder = Files.createTempDir()
 
         zipLocation.extractZip(tempFolder, "assets")

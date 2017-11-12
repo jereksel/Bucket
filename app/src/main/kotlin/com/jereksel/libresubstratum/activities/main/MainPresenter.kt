@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.activities.main
 
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,6 +16,8 @@ class MainPresenter(
         val metrics: Metrics,
         val keyFinder: IKeyFinder
 ) : MainContract.Presenter {
+
+    val log = getLogger()
 
     companion object {
         val SUBSTRATUM_LEGACY = "Substratum_Legacy"
@@ -69,6 +72,7 @@ class MainPresenter(
     }
 
     override fun openThemeScreen(appId: String) {
+        log.debug("Opening theme {}", appId)
         metrics.userEnteredTheme(appId)
         mainView?.openThemeFragment(appId)
     }

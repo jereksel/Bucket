@@ -48,6 +48,12 @@ kapt {
 
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
+def beta = true
+
+if(System.getenv("CIRCLE_TAG")) {
+    beta = false
+}
+
 android {
     playAccountConfigs {
         defaultAccountConfig {
@@ -57,6 +63,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
+        buildConfigField "boolean", "BETA", beta.toString()
         def nextVersion = "0.2"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
@@ -250,6 +257,8 @@ dependencies {
     //Signing
     compile project(":zipsigner:combined")
     compile project(":aapt:lib")
+
+    compile project(":libs:changelogdialog")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 

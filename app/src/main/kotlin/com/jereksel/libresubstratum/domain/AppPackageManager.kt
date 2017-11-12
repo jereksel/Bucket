@@ -46,6 +46,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return getApplications()
                 .filter { it.metadata.has(metadataOverlayTarget) }
                 .map {
+
+                    log.debug("Reading information of overlay {}", it.appId)
+
                     val overlay = it.appId
                     val parent = it.metadata.getString(metadataOverlayParent)
                     val parentIcon = getAppIcon(parent)
@@ -78,6 +81,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .filter { it.metadata.has(MainPresenter.SUBSTRATUM_AUTHOR) }
                 .filter { it.metadata.has(MainPresenter.SUBSTRATUM_NAME) }
                 .map {
+
+                    log.debug("Reading information of theme {}", it.appId)
+
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
@@ -92,6 +98,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
         val application = packageManager.getApplicationInfo(appId, GET_META_DATA)
 
         val app = Application(appId, application.metaData)
+
+        log.debug("Reading information of theme {}", appId)
 
         app.let {
             val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)

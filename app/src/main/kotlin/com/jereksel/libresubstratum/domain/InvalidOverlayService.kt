@@ -3,11 +3,12 @@ package com.jereksel.libresubstratum.domain
 import java.io.File
 
 class InvalidOverlayService(val message: String): OverlayService {
-    override fun enableOverlays(ids: List<String>) {
+
+    override fun enableOverlay(id: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun disableOverlays(ids: List<String>) {
+    override fun disableOverlay(id: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -27,7 +28,7 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun uninstallApk(appIds: List<String>) {
+    override fun uninstallApk(appId: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

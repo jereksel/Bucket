@@ -15,6 +15,7 @@ class CrashlitycsMetrics
     val log = getLogger()
 
     override fun userEnteredTheme(themeId: String) {
+        Crashlytics.setString("currentTheme", themeId)
         Answers.getInstance().logCustom(CustomEvent("Entered theme")
                 .putCustomAttribute("themeId", themeId))
     }
@@ -33,5 +34,9 @@ class CrashlitycsMetrics
     override fun userDisabledOverlay(overlayId: String) {
         Answers.getInstance().logCustom(CustomEvent("Disabled overlay")
                 .putCustomAttribute("overlayId", overlayId))
+    }
+
+    override fun logOverlayServiceType(overlayService: OverlayService) {
+        Crashlytics.setString("overlayService", overlayService.javaClass.toString())
     }
 }

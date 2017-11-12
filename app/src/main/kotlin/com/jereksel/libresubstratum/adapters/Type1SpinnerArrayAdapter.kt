@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum.adapters
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +42,7 @@ class Type1SpinnerArrayAdapter(
         textView.text = type1Extension.toString()
 
         if (type1Extension.type1.color.isNotEmpty()) {
-            val type1Color = Color.parseColor(type1Extension.type1.color)
+            val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
             val swatch = Palette.Swatch(type1Color, 1)
             textView.textColor = swatch.titleTextColor
             view.background = ColorDrawable(type1Color)

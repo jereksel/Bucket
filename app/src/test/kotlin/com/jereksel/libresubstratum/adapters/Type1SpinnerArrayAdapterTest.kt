@@ -50,4 +50,13 @@ class Type1SpinnerArrayAdapterTest: BaseRobolectricTest() {
         assertThat((view.background as ColorDrawable).color).isEqualTo(Color.WHITE)
     }
 
+    @Test
+    fun `Translucent colors doesn't throw exceptions`() {
+        val objects = listOf(Type1Extension("a", true, "#33ABCDEF")).map { Type1ExtensionToString(it) }
+        adapter = Type1SpinnerArrayAdapter(RuntimeEnvironment.application, objects)
+        val parent = ListView(RuntimeEnvironment.application)
+        val view = adapter.getView(0, null, parent)
+        assertThat(view).isNotNull
+    }
+
 }

@@ -1,3 +1,2 @@
-include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager',
-        ":sublib:compilerassetmanager", ":sublib:compiler", ":sublib:reader", ":aapt:lib",
-        ":discreteSeekBar:library"
+include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager', ':libs:changelogdialog',
+        ":sublib:compilerassetmanager", ":sublib:compiler", ":sublib:reader", ":aapt:lib"

@@ -146,14 +146,18 @@ class InstalledPresenterTest : FunSpec() {
             whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", true))
             whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", true))
             presenter.enableSelected()
-            verify(overlayService).enableOverlays(listOf("overlay2", "overlay4"))
+            verify(overlayService).enableOverlay("overlay2")
+            verify(overlayService).enableOverlay("overlay4")
+            verify(overlayService, times(2)).enableOverlay(any())
         }
         test("Selected overlays are disabled during disableSelected") {
             prepare()
             whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", true))
             whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", true))
             presenter.disableSelected()
-            verify(overlayService).disableOverlays(listOf("overlay2", "overlay4"))
+            verify(overlayService).disableOverlay("overlay2")
+            verify(overlayService).disableOverlay("overlay4")
+            verify(overlayService, times(2)).disableOverlay(any())
         }
 
         test("selectAll sets all states to true and calls refreshRV") {
