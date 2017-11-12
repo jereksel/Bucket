@@ -1,6 +1,8 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
+import android.support.v7.util.SortedList
+import android.support.v7.util.SortedList.INVALID_POSITION
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
@@ -15,15 +17,57 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.KeyPair
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.custom.async
+import org.jetbrains.anko.doAsync
 import java.security.Key
 import java.util.*
 
 class InstalledOverlaysAdapter(
-        val apps: List<InstalledOverlay>,
+        val originApps: List<InstalledOverlay>,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
 
-    override fun getItemCount() = apps.size
+    val comparator = compareBy<InstalledOverlay>({ it.sourceThemeName.toLowerCase() }, { it.targetName.toLowerCase() }, { it.type1a },
+            { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 })
+
+    val mCallback = object: SortedList.Callback<InstalledOverlay>() {
+        override fun onInserted(position: Int, count: Int) {
+            notifyItemRangeInserted(position, count)
+        }
+
+        override fun areItemsTheSame(item1: InstalledOverlay, item2: InstalledOverlay): Boolean {
+            return item1.overlayId == item2.overlayId
+        }
+
+        override fun onRemoved(position: Int, count: Int) {
+            notifyItemRangeRemoved(position, count)
+        }
+
+        override fun onChanged(position: Int, count: Int) {
+            notifyItemRangeChanged(position, count)
+        }
+
+        override fun compare(o1: InstalledOverlay, o2: InstalledOverlay): Int {
+            return comparator.compare(o1, o2)
+        }
+
+        override fun onMoved(fromPosition: Int, toPosition: Int) {
+            notifyItemMoved(fromPosition, toPosition);
+        }
+
+        override fun areContentsTheSame(oldItem: InstalledOverlay, newItem: InstalledOverlay): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+
+    val apps = SortedList(InstalledOverlay::class.java, mCallback, originApps.size)
+
+    override fun getItemCount() = apps.size()
+
+    init {
+        this.apps.addAll(originApps)
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
@@ -104,4 +148,37 @@ class InstalledOverlaysAdapter(
     fun destroy() {
         destroyed = true
     }
+
+    fun setFilter(newText: String) {
+        apps.beginBatchedUpdates()
+        if (newText.isEmpty()) {
+            val toAdd = originApps.filterNot { apps.contains(it) }
+            apps.addAll(toAdd)
+        } else {
+            val newApps = originApps.filter {
+                it.targetName.contains(newText, true) ||
+                        it.sourceThemeName.contains(newText, true) ||
+                        it.type1a?.contains(newText, true) == true ||
+                        it.type1b?.contains(newText, true) == true ||
+                        it.type1c?.contains(newText, true) == true ||
+                        it.type2?.contains(newText, true) == true ||
+                        it.type3?.contains(newText, true) == true
+            }
+
+            val toRemove = (0 until apps.size()).map { apps[it] }
+                    .filterNot { newApps.contains(it) }
+
+            val toAdd = newApps.filterNot { apps.contains(it) }
+
+            toRemove.forEach { apps.remove(it) }
+            apps.addAll(toAdd)
+
+//            apps.addAll(newApps)
+        }
+        apps.endBatchedUpdates()
+    }
+}
+
+private fun <T> SortedList<T>.contains(it: T): Boolean {
+    return this.indexOf(it) != INVALID_POSITION
 }
