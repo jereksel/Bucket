@@ -23,8 +23,8 @@ interface InstalledContract {
         fun enableSelected()
 
         //RecyclerView
-        fun setState(position: Int, isEnabled: Boolean)
-        fun getState(position: Int): Boolean
+        fun setState(overlayId: String, isEnabled: Boolean)
+        fun getState(overlayId: String): Boolean
         fun selectAll()
         fun deselectAll()
         fun restartSystemUI()

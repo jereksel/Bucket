@@ -79,6 +79,7 @@ class InstalledOverlaysAdapter(
         val overlay = apps[position]
 
         val info = presenter.getOverlayInfo(overlay.overlayId)
+        val overlayId = overlay.overlayId
 
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
@@ -87,9 +88,9 @@ class InstalledOverlaysAdapter(
         holder.targetName.setTextColor(color)
 
         holder.checkbox.setOnCheckedChangeListener(null)
-        holder.checkbox.isChecked = presenter.getState(position)
+        holder.checkbox.isChecked = presenter.getState(overlayId)
         holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
-            presenter.setState(position, isChecked)
+            presenter.setState(overlayId, isChecked)
         }
 
         holder.view.setOnClickListener {

@@ -31,7 +31,7 @@ class InstalledPresenter(
     private var view = WeakReference<View>(null)
     private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
-    private val compositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
 
     private var state: MutableMap<String, Boolean>? = null
 
@@ -170,13 +170,10 @@ class InstalledPresenter(
 
     override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
-    override fun getState(position: Int) = state!![overlays!![position].overlayId]!!
+    override fun getState(overlayId: String) = state!![overlayId]!!
 
-    override fun setState(position: Int, isEnabled: Boolean) {
-        val overlayId = overlays?.get(position)?.overlayId
-        if (overlayId != null) {
-            state?.set(overlayId, isEnabled)
-        }
+    override fun setState(overlayId: String, isEnabled: Boolean) {
+        state?.set(overlayId, isEnabled)
     }
 
     override fun restartSystemUI() {
@@ -188,6 +185,7 @@ class InstalledPresenter(
 
     override fun removeView() {
         compositeDisposable.clear()
+        compositeDisposable = CompositeDisposable()
     }
 
 }

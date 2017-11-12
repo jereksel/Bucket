@@ -5,6 +5,7 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
+            +"Searching in installed overlays view"
             +"Fix FC in Swift Black"
             +"Changelog dialog"
             +"Spinners now show colors"
