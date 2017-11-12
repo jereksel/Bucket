@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
+import android.support.v7.util.DiffUtil
 import android.support.v7.util.SortedList
 import android.support.v7.util.SortedList.INVALID_POSITION
 import android.support.v7.widget.RecyclerView
@@ -61,9 +62,11 @@ class InstalledOverlaysAdapter(
 
     }
 
-    val apps = SortedList(InstalledOverlay::class.java, mCallback, originApps.size)
+//    val apps = SortedList(InstalledOverlay::class.java, mCallback, originApps.size)
 
-    override fun getItemCount() = apps.size()
+    val apps = mutableListOf<InstalledOverlay>()
+
+    override fun getItemCount() = apps.size
 
     init {
         this.apps.addAll(originApps)
@@ -150,12 +153,11 @@ class InstalledOverlaysAdapter(
     }
 
     fun setFilter(newText: String) {
-        apps.beginBatchedUpdates()
-        if (newText.isEmpty()) {
-            val toAdd = originApps.filterNot { apps.contains(it) }
-            apps.addAll(toAdd)
+
+        val newList = if (newText.isEmpty()) {
+            originApps
         } else {
-            val newApps = originApps.filter {
+            originApps.filter {
                 it.targetName.contains(newText, true) ||
                         it.sourceThemeName.contains(newText, true) ||
                         it.type1a?.contains(newText, true) == true ||
@@ -164,19 +166,54 @@ class InstalledOverlaysAdapter(
                         it.type2?.contains(newText, true) == true ||
                         it.type3?.contains(newText, true) == true
             }
-
-            val toRemove = (0 until apps.size()).map { apps[it] }
-                    .filterNot { newApps.contains(it) }
-
-            val toAdd = newApps.filterNot { apps.contains(it) }
-
-            toRemove.forEach { apps.remove(it) }
-            apps.addAll(toAdd)
-
-//            apps.addAll(newApps)
         }
-        apps.endBatchedUpdates()
+
+        val diff = DiffUtil.calculateDiff(InstalledOverlayDiffCallback(apps, newList))
+
+        apps.clear()
+        apps.addAll(newList)
+
+        diff.dispatchUpdatesTo(this)
+
+//        DiffUtil.calculateDiff()
+
+//        apps.beginBatchedUpdates()
+//        if (newText.isEmpty()) {
+//            val toAdd = originApps.filterNot { apps.contains(it) }
+//            apps.addAll(toAdd)
+//        } else {
+//
+//            val toRemove = (0 until apps.size()).map { apps[it] }
+//                    .filterNot { newApps.contains(it) }
+//
+//            val toAdd = newApps.filterNot { apps.contains(it) }
+//
+//            toRemove.forEach { apps.remove(it) }
+//            apps.addAll(toAdd)
+//
+////            apps.addAll(newApps)
+//        }
+//        apps.endBatchedUpdates()
+        }
+
+    class InstalledOverlayDiffCallback(
+            val originalList: List<InstalledOverlay>,
+            val newList: List<InstalledOverlay>
+    ): DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return originalList[oldItemPosition].overlayId == newList[newItemPosition].overlayId
+        }
+
+        override fun getOldListSize() = originalList.size
+
+        override fun getNewListSize() = newList.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return originalList[oldItemPosition] == newList[newItemPosition]
+        }
+
     }
+
 }
 
 private fun <T> SortedList<T>.contains(it: T): Boolean {
