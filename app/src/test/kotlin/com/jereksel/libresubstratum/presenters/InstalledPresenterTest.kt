@@ -224,8 +224,6 @@ class InstalledPresenterTest : FunSpec() {
                     )
             )
 
-            assertThat(captor.firstValue).extracting()
-
         }
         test("Restart SystemUI invokes it in OverlayService") {
             presenter.restartSystemUI()
