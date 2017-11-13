@@ -32,6 +32,7 @@ class InstalledPresenter(
     private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
     private var compositeDisposable = CompositeDisposable()
+    private var filter = ""
 
     private var state: MutableMap<String, Boolean>? = null
 
@@ -44,7 +45,7 @@ class InstalledPresenter(
         val o = overlays
 
         if (o != null) {
-            view.get()?.addOverlays(o)
+            view.get()?.addOverlays(getFilteredApps())
         }
 
         subscription = Observable.fromCallable { packageManager.getInstalledOverlays() }
@@ -58,7 +59,7 @@ class InstalledPresenter(
                 .subscribe {
                     overlays = it.toMutableList()
                     state = it.map { Pair(it.overlayId, false) }.toMap().toMutableMap()
-                    view.get()?.addOverlays(it)
+                    view.get()?.addOverlays(getFilteredApps())
                 }
     }
 
@@ -181,6 +182,25 @@ class InstalledPresenter(
                 .scheduleDirect {
                     overlayService.restartSystemUI()
                 }
+    }
+
+    override fun setFilter(filter: String) {
+        this.filter = filter
+        view.get()?.updateOverlays(getFilteredApps())
+    }
+
+    fun getFilteredApps(): List<InstalledOverlay> {
+        val overlays = overlays
+        if (overlays == null) {
+            return listOf()
+        } else if (filter.isEmpty()) {
+            return overlays
+        } else {
+            return overlays.filter {
+                it.targetName.contains(filter, true) ||
+                        it.sourceThemeName.contains(filter, true)
+            }
+        }
     }
 
     override fun removeView() {

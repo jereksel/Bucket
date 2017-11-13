@@ -143,7 +143,7 @@ class InstalledViewTest: BaseRobolectricTest() {
 
         recyclerView.getChildAt(0).performClick()
 
-        verify(presenter).setState(0, true)
+        verify(presenter).setState("appid1", true)
 
     }
 
@@ -157,8 +157,8 @@ class InstalledViewTest: BaseRobolectricTest() {
                 )
         )
 
-        whenever(presenter.getState(0)).thenReturn(true)
-        whenever(presenter.getState(1)).thenReturn(false)
+        whenever(presenter.getState("appid1")).thenReturn(true)
+        whenever(presenter.getState("appid2")).thenReturn(false)
         whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", true))
         whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", false))
 

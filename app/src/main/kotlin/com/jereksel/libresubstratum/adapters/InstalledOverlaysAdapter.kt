@@ -215,8 +215,20 @@ class InstalledOverlaysAdapter(
 
     }
 
+    private fun <T> SortedList<T>.contains(it: T): Boolean {
+        return this.indexOf(it) != INVALID_POSITION
+    }
+
+    fun updateOverlays(overlays: List<InstalledOverlay>) {
+
+        val diff = DiffUtil.calculateDiff(InstalledOverlayDiffCallback(apps, overlays))
+
+        apps.clear()
+        apps.addAll(overlays)
+
+        diff.dispatchUpdatesTo(this)
+
+    }
+
 }
 
-private fun <T> SortedList<T>.contains(it: T): Boolean {
-    return this.indexOf(it) != INVALID_POSITION
-}

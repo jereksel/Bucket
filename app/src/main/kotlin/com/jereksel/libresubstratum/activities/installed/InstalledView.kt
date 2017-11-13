@@ -128,9 +128,15 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        adapter?.setFilter(newText)
-        recyclerView.scrollToPosition(0)
+        presenter.setFilter(newText)
+//        adapter?.setFilter(newText)
+//        recyclerView.scrollToPosition(0)
         return true;
+    }
+
+    override fun updateOverlays(overlays: List<InstalledOverlay>) {
+        adapter?.updateOverlays(overlays)
+        recyclerView.scrollToPosition(0)
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
