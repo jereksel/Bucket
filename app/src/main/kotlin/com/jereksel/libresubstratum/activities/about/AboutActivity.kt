@@ -54,9 +54,11 @@ class AboutActivity: AppCompatActivity() {
 
         val codec = Library("Apache Commons Codec", APACHE2, Author("The Apache Software Foundation", "2002-2017"))
 
+        val crashlyticsAppender = Library("Crashlytics Appender", APACHE2, Author("Allogy Interactive", "2013"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
-                zipUtils, room, codec)
+                zipUtils, room, codec, crashlyticsAppender)
                 .sortedBy { it.name }
 
         verticalLayout {
