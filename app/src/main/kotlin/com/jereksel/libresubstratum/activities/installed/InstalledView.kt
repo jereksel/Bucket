@@ -129,8 +129,6 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
 
     override fun onQueryTextChange(newText: String): Boolean {
         presenter.setFilter(newText)
-//        adapter?.setFilter(newText)
-//        recyclerView.scrollToPosition(0)
         return true;
     }
 
