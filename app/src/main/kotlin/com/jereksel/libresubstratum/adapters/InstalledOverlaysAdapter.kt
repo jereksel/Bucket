@@ -28,10 +28,6 @@ class InstalledOverlaysAdapter(
 
     override fun getItemCount() = apps.size
 
-    init {
-        this.apps.addAll(apps)
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         if (destroyed) return

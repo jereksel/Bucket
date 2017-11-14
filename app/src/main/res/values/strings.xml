@@ -158,5 +158,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
     </string>
     <string name="restart_systemui">Restart SystemUI</string>
     <string name="search">Search</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
 
 </resources>

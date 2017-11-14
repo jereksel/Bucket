@@ -225,6 +225,75 @@ class InstalledPresenterTest : FunSpec() {
             )
 
         }
+        test("selectAll with filter selects only overlays that are shown to user") {
+            whenever(overlayService.getOverlayInfo(any())).then {
+                val id: String = it.getArgument(0)
+                OverlayInfo(id, false)
+            }
+
+            whenever(packageManager.getInstalledOverlays()).thenReturn(
+                    listOf(
+                            InstalledOverlay("overlay0", "", "Theme1", null, "", "Chrome", null),
+                            InstalledOverlay("overlay1", "", "Theme1", null, "", "Settings", null),
+                            InstalledOverlay("overlay2", "", "Theme1", null, "", "System", null),
+                            InstalledOverlay("overlay3", "", "Theme2", null, "", "Chrome", null),
+                            InstalledOverlay("overlay4", "", "Theme2", null, "", "System", null)
+                    )
+            )
+
+            presenter.getInstalledOverlays()
+
+            for(i in 0..4) {
+                assertThat(presenter.getState("overlay$i")).isFalse()
+            }
+
+            presenter.setFilter("System")
+            presenter.selectAll()
+
+            assertThat(presenter.getState("overlay0")).isFalse()
+            assertThat(presenter.getState("overlay1")).isFalse()
+            assertThat(presenter.getState("overlay2")).isTrue()
+            assertThat(presenter.getState("overlay3")).isFalse()
+            assertThat(presenter.getState("overlay4")).isTrue()
+
+        }
+        test("deselectAll with filter disables only overlays that are shown to user") {
+
+            whenever(overlayService.getOverlayInfo(any())).then {
+                val id: String = it.getArgument(0)
+                OverlayInfo(id, false)
+            }
+
+            whenever(packageManager.getInstalledOverlays()).thenReturn(
+                    listOf(
+                            InstalledOverlay("overlay0", "", "Theme1", null, "", "Chrome", null),
+                            InstalledOverlay("overlay1", "", "Theme1", null, "", "Settings", null),
+                            InstalledOverlay("overlay2", "", "Theme1", null, "", "System", null),
+                            InstalledOverlay("overlay3", "", "Theme2", null, "", "Chrome", null),
+                            InstalledOverlay("overlay4", "", "Theme2", null, "", "System", null)
+                    )
+            )
+
+            presenter.getInstalledOverlays()
+
+            for(i in 0..4) {
+                presenter.setState("overlay$i", true)
+            }
+
+            for(i in 0..4) {
+                assertThat(presenter.getState("overlay$i")).isTrue()
+            }
+
+            presenter.setFilter("System")
+            presenter.deselectAll()
+
+            assertThat(presenter.getState("overlay0")).isTrue()
+            assertThat(presenter.getState("overlay1")).isTrue()
+            assertThat(presenter.getState("overlay2")).isFalse()
+            assertThat(presenter.getState("overlay3")).isTrue()
+            assertThat(presenter.getState("overlay4")).isFalse()
+
+        }
         test("Restart SystemUI invokes it in OverlayService") {
             presenter.restartSystemUI()
             verify(overlayService).restartSystemUI()

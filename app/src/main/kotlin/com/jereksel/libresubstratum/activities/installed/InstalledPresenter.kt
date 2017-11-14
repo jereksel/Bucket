@@ -135,7 +135,6 @@ class InstalledPresenter(
 
     override fun disableSelected() {
 
-
         val toDisable = selectedOverlays()
                 .map { it.overlayId }
 
@@ -158,12 +157,12 @@ class InstalledPresenter(
     }
 
     override fun selectAll() {
-        overlays?.forEach { state?.set(it.overlayId, true) }
+        getFilteredApps().forEach { state?.set(it.overlayId, true) }
         view.get()?.refreshRecyclerView()
     }
 
     override fun deselectAll() {
-        overlays?.forEach { state?.set(it.overlayId, false) }
+        getFilteredApps().forEach { state?.set(it.overlayId, false) }
         view.get()?.refreshRecyclerView()
     }
 
