@@ -1,11 +1,14 @@
 environment:
   ANDROID_HOME: 'C:\android'
+  ANDROID_NDK_HOME: 'C:\android\android-ndk-r15c'
 
 init:
   - mkdir "%ANDROID_HOME%"
   - cd "%ANDROID_HOME%"
   - appveyor DownloadFile "https://dl.google.com/android/repository/tools_r25.2.3-windows.zip"
   - 7z x "tools_r25.2.3-windows.zip" > nul
+  - appveyor DownloadFile https://dl.google.com/android/repository/android-ndk-r15c-windows-x86_64.zip
+  - 7z x "android-ndk-r15c-windows-x86_64.zip" > nul
   - cd "C:\projects\libresubstratum"
 
 install:
@@ -17,7 +20,7 @@ install:
   # and appveyor interpret that as errors, and blows up. so, when piping in our "Y ENTER"
   # responses, we invoke cmd so we can redirect stderr to stdout, and tell it to --update itself.
   - ps: for($i=0;$i -lt 30;$i++) { $response += "y`n"}; $response | cmd /c 'C:\android\tools\bin\sdkmanager.bat 2>&1' --update
-  - echo y | "%ANDROID_HOME%\tools\bin\sdkmanager.bat" "ndk-bundle"
+#  - echo y | "%ANDROID_HOME%\tools\bin\sdkmanager.bat" "ndk-bundle"
   
 build_script:
   - git submodule update --init --recursive
