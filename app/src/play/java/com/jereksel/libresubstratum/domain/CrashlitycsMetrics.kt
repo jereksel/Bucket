@@ -5,16 +5,21 @@ import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.jereksel.libresubstratum.extensions.getLogger
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * Anonymous metrics about app usage
  */
+@Named("volatile")
 class CrashlitycsMetrics
 @Inject constructor(): Metrics {
+
+    val data = mutableMapOf<String, String>()
 
     val log = getLogger()
 
     override fun userEnteredTheme(themeId: String) {
+        data["currentTheme"] = themeId
         Crashlytics.setString("currentTheme", themeId)
         Answers.getInstance().logCustom(CustomEvent("Entered theme")
                 .putCustomAttribute("themeId", themeId))
@@ -37,6 +42,9 @@ class CrashlitycsMetrics
     }
 
     override fun logOverlayServiceType(overlayService: OverlayService) {
+        data["overlayService"] = overlayService.javaClass.toString()
         Crashlytics.setString("overlayService", overlayService.javaClass.toString())
     }
+
+    override fun getMetrics() = data
 }

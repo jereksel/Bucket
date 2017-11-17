@@ -64,7 +64,8 @@ open class MainView : AppCompatActivity(), MainContract.View {
                 .getClickObservable()
                 .subscribe {
                     log.debug("Opening {}", it)
-                    presenter.openThemeScreen(it.appId)
+//                    presenter.openThemeScreen(it.appId)
+                    throw RuntimeException("BOOM")
                 }
         swiperefresh.isRefreshing = false
     }
