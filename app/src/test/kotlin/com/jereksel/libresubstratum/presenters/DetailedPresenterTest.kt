@@ -625,5 +625,10 @@ class DetailedPresenterTest : FunSpec() {
             presenter.restartSystemUI()
             verify(overlayService).restartSystemUI()
         }
+
+        test("Presenter won't crash when select/deselectall is called before overlays are loaded") {
+            presenter.selectAll()
+            presenter.deselectAll()
+        }
     }
 }
