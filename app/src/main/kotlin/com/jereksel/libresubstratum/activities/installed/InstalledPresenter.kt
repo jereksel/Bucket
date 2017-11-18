@@ -45,7 +45,8 @@ class InstalledPresenter(
         val o = overlays
 
         if (o != null) {
-            view.get()?.addOverlays(getFilteredApps())
+            view.get()?.addOverlays(o)
+            return
         }
 
         subscription = Observable.fromCallable { packageManager.getInstalledOverlays() }
