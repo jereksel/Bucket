@@ -12,7 +12,9 @@ class SharedPreferencesPersistentMetrics
         context: Application
 ): Metrics {
 
-    val sharedPreferences = context.getSharedPreferences("metrics", MODE_PRIVATE)
+    val SP_KEY = "metrics"
+
+    val sharedPreferences = context.getSharedPreferences(SP_KEY, MODE_PRIVATE)
 
     val THEME_KEY = "THEME"
     val OVERLAY_SERVICE_TYPE_KEY = "OVERLAY_SERVICE"
@@ -42,7 +44,5 @@ class SharedPreferencesPersistentMetrics
 
     override fun userDisabledOverlay(overlayId: String) {
     }
-
-
 
 }
