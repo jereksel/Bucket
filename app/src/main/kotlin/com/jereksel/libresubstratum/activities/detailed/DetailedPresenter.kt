@@ -287,6 +287,13 @@ class DetailedPresenter(
     }
 
     override fun selectAll() {
+
+        try {
+            themePackState.isEmpty()
+        } catch (e: UninitializedPropertyAccessException) {
+            return
+        }
+
         themePackState.forEachIndexed { index, state ->
             if (!state.checked) {
                 detailedView?.refreshHolder(index)
@@ -296,6 +303,13 @@ class DetailedPresenter(
     }
 
     override fun deselectAll() {
+
+        try {
+            themePackState.isEmpty()
+        } catch (e: UninitializedPropertyAccessException) {
+            return
+        }
+
         themePackState.forEachIndexed { index, state ->
             if (state.checked) {
                 detailedView?.refreshHolder(index)
