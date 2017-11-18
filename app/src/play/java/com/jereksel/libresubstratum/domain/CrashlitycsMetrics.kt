@@ -10,7 +10,6 @@ import javax.inject.Named
 /**
  * Anonymous metrics about app usage
  */
-@Named("volatile")
 class CrashlitycsMetrics
 @Inject constructor(): Metrics {
 

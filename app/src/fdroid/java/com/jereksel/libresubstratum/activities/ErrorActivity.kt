@@ -45,7 +45,7 @@ import javax.inject.Named
 class ErrorActivity : AppCompatActivity() {
 
     @Inject
-    @field:Named("group")
+    @field:Named("persistent")
     lateinit var metrics: Metrics
 
     @SuppressLint("PrivateResource")
@@ -82,10 +82,12 @@ class ErrorActivity : AppCompatActivity() {
 
             val message = CustomActivityOnCrash.getAllErrorDetailsFromIntent(this@ErrorActivity, intent)
 
+            val fullMessage = message + "\nWhat were you doing when the crash happened?\n\n"
+
             val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", "jereksel@gmail.com", null))
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "LibreSubstratum bug report")
-            emailIntent.putExtra(Intent.EXTRA_TEXT, message)
+            emailIntent.putExtra(Intent.EXTRA_TEXT, fullMessage)
             startActivity(Intent.createChooser(emailIntent, "Send email..."))
 
         }

@@ -21,7 +21,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-abstract class AppModule(private val application: Application) {
+class AppModule(private val application: Application) {
 
     @Provides
     @Singleton

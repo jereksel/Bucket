@@ -11,5 +11,6 @@ import javax.inject.Singleton
 abstract class MetricsModule {
     @Binds
     @Singleton
+    @Named("volatile")
     internal abstract fun metricsFactory(factory: CrashlitycsMetrics): Metrics
 }

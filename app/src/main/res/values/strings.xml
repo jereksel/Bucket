@@ -18,6 +18,8 @@
     <string name="theme_type2_list"><b>Type2</b></string>
     <string name="theme_type3_list"><b>Type3</b></string>
 
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation_play">An unexpected error occurred.\nSorry for the inconvenience.\nCrash log was sent to developers automatically.</string>
+
     <string name="about">About</string>
     <string name="license">License</string>
     <string name="libraries">Libraries</string>

@@ -21,8 +21,6 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -38,10 +36,12 @@ import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.utils.CustomActivityOnCrashUtils
 import org.jetbrains.anko.find
 import javax.inject.Inject
+import javax.inject.Named
 
 class ErrorActivity : AppCompatActivity() {
 
     @Inject
+    @field:Named("persistent")
     lateinit var metrics: Metrics
 
     @SuppressLint("PrivateResource")
@@ -58,7 +58,7 @@ class ErrorActivity : AppCompatActivity() {
         }
         a.recycle()
 
-        setContentView(com.jereksel.libresubstratum.R.layout.fdroid_crash_activity)
+        setContentView(com.jereksel.libresubstratum.R.layout.play_crash_activity)
 
         val restartButton = find<Button>(R.id.customactivityoncrash_error_activity_restart_button)
 
