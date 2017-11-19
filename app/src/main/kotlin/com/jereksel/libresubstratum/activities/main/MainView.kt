@@ -14,6 +14,7 @@ import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
+import com.jereksel.libresubstratum.activities.database.DatabaseActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
@@ -87,6 +88,10 @@ open class MainView : AppCompatActivity(), MainContract.View {
                 }
                 R.id.action_about -> {
                     startActivity<AboutActivity>()
+                    true
+                }
+                R.id.action_database -> {
+                    startActivity<DatabaseActivity>()
                     true
                 }
                 else ->
