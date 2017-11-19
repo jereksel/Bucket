@@ -4,8 +4,14 @@
 [![CircleCI](https://circleci.com/gh/jereksel/LibreSubstratum.svg?style=svg&circle-token=7d45fe3bcf9f47596d18d02437c1f6e131df3075)](https://circleci.com/gh/jereksel/LibreSubstratum) [![codecov](https://codecov.io/gh/jereksel/LibreSubstratum/branch/master/graph/badge.svg?token=U2RvZTObDd)](https://codecov.io/gh/jereksel/LibreSubstratum)
 
 ## Stable version (branch `master`) available on Google Play
-[![Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=com.jereksel.libresubstratum)
+
+<a href="https://play.google.com/store/apps/details?id=com.jereksel.libresubstratum" target="_blank"> <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="70"/></a>
 
 ## Beta version (branch `develop`) available on Google Play as public beta
 
-[![Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/apps/testing/com.jereksel.libresubstratum)
+<a href="https://play.google.com/apps/testing/com.jereksel.libresubstratum" target="_blank"> <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="70"/></a>
+
+## Download from F-Droid
+
+<a href="https://f-droid.org/packages/com.jereksel.libresubstratum" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="70"/></a>
