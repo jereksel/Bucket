@@ -18,6 +18,8 @@
     <string name="theme_type2_list"><b>Type2</b></string>
     <string name="theme_type3_list"><b>Type3</b></string>
 
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation_play">An unexpected error occurred.\nSorry for the inconvenience.\nCrash log was sent to developers automatically.</string>
+
     <string name="about">About</string>
     <string name="license">License</string>
     <string name="libraries">Libraries</string>
@@ -157,5 +159,6 @@ Everyone is permitted to copy and distribute copies of this Agreement, but in or
 This Agreement is governed by the laws of the State of New York and the intellectual property laws of the United States of America. No party to this Agreement will bring a legal action under this Agreement more than one year after the cause of action arose. Each party waives its rights to a jury trial in any resulting litigation.\n
     </string>
     <string name="restart_systemui">Restart SystemUI</string>
+    <string name="send_log_to_developers">Send log to developers</string>
 
 </resources>

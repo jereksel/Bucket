@@ -6,11 +6,15 @@ import android.support.annotation.VisibleForTesting;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.jereksel.libresubstratum.activities.ErrorActivity;
 import com.jereksel.libresubstratum.dagger.components.AppComponent;
 import com.jereksel.libresubstratum.dagger.components.DaggerAppComponent;
 import com.jereksel.libresubstratum.dagger.modules.AppModule;
 
+import cat.ereza.customactivityoncrash.config.CaocConfig;
 import io.fabric.sdk.android.Fabric;
+
+import static cat.ereza.customactivityoncrash.config.CaocConfig.BACKGROUND_MODE_CRASH;
 
 public class App extends Application {
 
@@ -19,6 +23,14 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        CaocConfig.Builder.create()
+                .backgroundMode(BACKGROUND_MODE_CRASH)
+                .trackActivities(true)
+                .minTimeBetweenCrashesMs(2000)
+                .errorActivity(ErrorActivity.class)
+                .apply();
+
         CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
                 .build();

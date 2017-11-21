@@ -310,6 +310,8 @@ dependencies {
     androidTestCompile 'com.google.guava:guava:20.0'
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
+    compile 'cat.ereza:customactivityoncrash:2.1.0'
+
     compile "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
 
