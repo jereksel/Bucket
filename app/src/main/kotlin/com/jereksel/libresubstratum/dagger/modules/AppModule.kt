@@ -14,6 +14,7 @@ import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -45,7 +46,7 @@ open class AppModule(private val application: Application) {
     @Singleton
     @Named("default")
     open fun providesOverlayService(
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): OverlayService {
         val service = OverlayServiceFactory.getOverlayService(application)
         metrics.logOverlayServiceType(service)
@@ -57,7 +58,7 @@ open class AppModule(private val application: Application) {
     @Named("logged")
     open fun providesLoggedOverlayService(
             @Named("default") overlayService: OverlayService,
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): OverlayService {
         return LoggedOverlayService(overlayService, metrics)
     }
@@ -78,7 +79,7 @@ open class AppModule(private val application: Application) {
             packageManager: IPackageManager,
             themeReader: IThemeReader,
             @Named("logged") overlayService: OverlayService,
-            metrics: Metrics,
+            @Named("group") metrics: Metrics,
             keyFinder: IKeyFinder
     ): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService, metrics, keyFinder)
@@ -96,7 +97,7 @@ open class AppModule(private val application: Application) {
             activityProxy: IActivityProxy,
             compileThemeUseCase: ICompileThemeUseCase,
             clipboardManager: ClipboardManager,
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): DetailedContract.Presenter {
         return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, compileThemeUseCase, clipboardManager, metrics)
     }
@@ -106,7 +107,7 @@ open class AppModule(private val application: Application) {
             packageManager: IPackageManager,
             @Named("logged") overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
     }
