@@ -40,7 +40,7 @@ class InstalledViewTest: BaseRobolectricTest() {
     lateinit var activity: View
     lateinit var presenter: Presenter
 
-    var activityCasted by ResettableLazy { activity as AppCompatActivity? }
+    var activityCasted by ResettableLazy { activity as InstalledView? }
 //    var swipeToRefresh by ResettableLazy { activityCasted!!.swiperefresh }
     var recyclerView by ResettableLazy { activityCasted!!.recyclerView }
 
@@ -188,6 +188,12 @@ class InstalledViewTest: BaseRobolectricTest() {
         verify(presenter).uninstallSelected()
 
         reset(presenter)
+    }
+
+    @Test
+    fun `Text changes from searchview are passed to presenter`() {
+        activityCasted!!.onQueryTextChange("new text")
+        verify(presenter).setFilter("new text")
     }
 
     @Test
