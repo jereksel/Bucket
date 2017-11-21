@@ -2,13 +2,18 @@ package com.jereksel.libresubstratum.domain
 
 import com.jereksel.libresubstratum.extensions.getLogger
 import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
 class FdroidMetrics
 @Inject constructor(): Metrics {
 
+    val data = mutableMapOf<String, String>()
+
     val log = getLogger()
 
     override fun userEnteredTheme(themeId: String) {
+        data["currentTheme"] = themeId
         log.debug("User entered theme {}", themeId)
     }
 
@@ -25,7 +30,10 @@ class FdroidMetrics
     }
 
     override fun logOverlayServiceType(overlayService: OverlayService) {
+        data["overlayService"] = overlayService.javaClass.toString()
         log.debug("User overlayService: {}", overlayService.javaClass.toString())
     }
+
+    override fun getMetrics() = data
 
 }

@@ -26,6 +26,7 @@
         <activity android:name=".activities.detailed.DetailedView" />
         <activity android:name=".activities.installed.InstalledView" />
         <activity android:name=".activities.about.AboutActivity" />
+        <activity android:name=".activities.ErrorActivity"/>
         <activity android:name=".RecViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             />
