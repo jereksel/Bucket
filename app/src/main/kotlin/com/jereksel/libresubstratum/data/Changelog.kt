@@ -6,6 +6,7 @@ object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
             +"Add screen about crash after FC"
+            +"Fix text overlay in installed view"
             +"Fix FC in Swift Black"
             +"Changelog dialog"
             +"Spinners now show colors"
