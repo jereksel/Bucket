@@ -9,11 +9,10 @@ import android.content.pm.PackageManager
 import android.os.IBinder
 import android.os.Looper
 import android.support.v4.content.ContextCompat
-import android.util.Log
-import com.google.common.cache.*
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.ListenableFutureTask
-import com.google.common.util.concurrent.Service
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
+import com.google.common.cache.RemovalListener
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -21,9 +20,7 @@ import com.jereksel.omslib.OMSLib
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import projekt.substratum.IInterfacerInterface
 import java.io.File
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
@@ -33,18 +30,16 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val oms: IOverlayManager
         get() = omsCache.get(Unit)
 
-    private val service: IInterfacerInterface
+    private val service: AidlIInterfacerInterface
         get() = interfacerCache.get(Unit).second
 
     @Suppress("JoinDeclarationAndAssignment")
     private val omsCache : LoadingCache<Unit, IOverlayManager>
 
-    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, IInterfacerInterface>>
+    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>>
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
-    val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
     val INTERFACER_BINDED = INTERFACER_PACKAGE + ".INITIALIZE"
-    val STATUS_CHANGED = INTERFACER_PACKAGE + ".STATUS_CHANGED"
 
     init {
 
@@ -57,23 +52,23 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
         interfacerCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)
-                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, IInterfacerInterface>> {
+                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>> {
                     notification -> context.unbindService(notification.value.first)
                 })
-                .build(object: CacheLoader<Unit, Pair<ServiceConnection, IInterfacerInterface>>() {
-                    override fun load(key: Unit): Pair<ServiceConnection, IInterfacerInterface> {
+                .build(object: CacheLoader<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>>() {
+                    override fun load(key: Unit): Pair<ServiceConnection, AidlIInterfacerInterface> {
 
                         if (Looper.getMainLooper().thread == Thread.currentThread()) {
                             throw RuntimeException("Cannot be invoked on UI thread")
                         }
 
-                        return Observable.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
+                        return Observable.fromPublisher<Pair<ServiceConnection, AidlIInterfacerInterface>> {
 
                             val serviceConnection = object: ServiceConnection {
 
                                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                                     log.debug("Interfacer service connected")
-                                    val service = IInterfacerInterface.Stub.asInterface(binder)
+                                    val service = AidlIInterfacerInterface.asInterface(binder)!!
                                     it.onNext(Pair(this, service))
                                     it.onComplete()
                                 }
@@ -98,11 +93,11 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     override fun enableOverlay(id: String) {
-        service.enableOverlay(listOf(id), false)
+        service.enableOverlays(listOf(id))
     }
 
     override fun disableOverlay(id: String) {
-        service.disableOverlay(listOf(id), false)
+        service.disableOverlays(listOf(id))
     }
 
     override fun getOverlayInfo(id: String): OverlayInfo? {
@@ -125,11 +120,11 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     override fun installApk(apk: File) {
-        service.installPackage(listOf(apk.absolutePath))
+        service.installPackages(listOf(apk.absolutePath))
     }
 
     override fun uninstallApk(appId: String) {
-        service.uninstallPackage(listOf(appId), false)
+        service.removePackages(listOf(appId))
     }
 
     override fun requiredPermissions(): List<String> {
