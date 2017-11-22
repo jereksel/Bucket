@@ -14,8 +14,8 @@ interface AidlIInterfacerInterface: IInterface {
                 return null
             }
             val iin = obj.queryLocalInterface(DESCRIPTOR)
-            return if (iin != null && iin is projekt.substratum.IMyAidlInterface) {
-                iin as AidlIInterfacerInterface
+            return if (iin != null && iin is AidlIInterfacerInterface) {
+                iin
             } else {
                 Proxy(obj)
             }
