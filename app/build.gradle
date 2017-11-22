@@ -274,6 +274,7 @@ dependencies {
     compile group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofit_version
     compile group: 'com.squareup.retrofit2', name: 'adapter-rxjava2', version: retrofit_version
     compile "com.squareup.retrofit2:converter-jackson:$retrofit_version"
+    compile "com.squareup.retrofit2:converter-scalars:$retrofit_version"
 /*
     //Jackson
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"

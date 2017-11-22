@@ -2,18 +2,26 @@ package com.jereksel.libresubstratum.activities.database
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.jereksel.libresubstratum.domain.SubsDatabaseDownloader
+import com.jereksel.libresubstratum.domain.SubstratumDatabaseTheme
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.http.GET
 
+class DatabaseViewModel(
+        val downloader: SubsDatabaseDownloader
+): ViewModel() {
 
-class DatabaseViewModel: ViewModel() {
+    var compositeDisposable = CompositeDisposable()
 
 //    @Volatile
 //    private var appsInvoked = false
-    val apps = MutableLiveData<List<theme>>()
+    private var apps : MutableLiveData<List<SubstratumDatabaseTheme>>? = null
     val clearTheme = MutableLiveData<List<String>>()
     val darkTheme = MutableLiveData<List<String>>()
     val lightThemes = MutableLiveData<List<String>>()
@@ -21,11 +29,49 @@ class DatabaseViewModel: ViewModel() {
     val samsung = MutableLiveData<List<String>>()
     val wallpapers = MutableLiveData<List<String>>()
 
-    init {
-        computeApps()
+    fun getApps(): MutableLiveData<List<SubstratumDatabaseTheme>> {
+
+        val apps = apps
+
+        if (apps == null) {
+            val newApps = MutableLiveData<List<SubstratumDatabaseTheme>>()
+            this.apps = newApps
+            asyncGetApps()
+            return newApps
+        } else {
+            return apps
+        }
+
     }
 
-    fun computeApps() {
+    private fun asyncGetApps() {
+        compositeDisposable += downloader.getApps()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe { v ->
+                    apps?.value = v
+                }
+    }
+
+//    init {
+////        computeApps()
+//        computeApps()
+//    }
+//
+//    fun computeApps() {
+//        compositeDisposable += downloader.getApps()
+//                .observeOn(Schedulers.io())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe { v ->
+//                    apps.postValue(v)
+//                }
+//    }
+
+    override fun onCleared() {
+        compositeDisposable.dispose()
+    }
+
+    fun computeApps2() {
 
 //        Schedulers.io().scheduleDirect {
 //            Thread.sleep(10000)
@@ -52,7 +98,7 @@ class DatabaseViewModel: ViewModel() {
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe {
-                    apps.postValue(it.themes)
+//                    apps.postValue(it.themes)
                 }
 
 

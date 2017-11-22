@@ -22,6 +22,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.domain.SubstratumDatabaseTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import kotlinx.android.synthetic.main.activity_database.*
 import org.jetbrains.anko.find
@@ -63,7 +64,7 @@ class DatabaseActivity : AppCompatActivity() {
 
         val viewMode = ViewModelProviders.of(this).get(DatabaseViewModel::class.java)
 
-        viewMode.apps.observe(this, Observer<List<DatabaseViewModel.theme>> {
+        viewMode.getApps().observe(this, Observer<List<SubstratumDatabaseTheme>> {
             val data = it
             if (data != null) {
                 log.debug("Apps: {}", data)

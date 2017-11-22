@@ -7,7 +7,7 @@ import io.reactivex.schedulers.Schedulers
 
 object PresenterTestUtils {
 
-    fun FunSpec.initRxJava() {
+    fun initRxJava() {
 
         RxJavaPlugins.reset()
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
