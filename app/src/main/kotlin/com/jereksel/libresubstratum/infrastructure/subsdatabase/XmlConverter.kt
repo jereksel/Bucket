@@ -1,6 +1,6 @@
 package com.jereksel.libresubstratum.infrastructure.subsdatabase
 
-import com.jereksel.libresubstratum.domain.Princing.*
+import com.jereksel.libresubstratum.domain.Pricing.*
 import com.jereksel.libresubstratum.domain.SubstratumDatabaseTheme
 import com.jereksel.libresubstratum.domain.Support.*
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -34,13 +34,14 @@ object XmlConverter {
                     val pricing = it["pricing"]
                     val enumPricing = stringToPricing(pricing)
                     val supports = it["support"]
+                    val link = it["link"]
                     val enumSupports = supports
                             .split("|")
                             .mapNotNull { stringToSupport(it) }
                     val image = it["image"]
                     val backgroundImage = it["backgroundimage"]
 
-                    SubstratumDatabaseTheme(author, packageId, enumPricing,
+                    SubstratumDatabaseTheme(author, link, packageId, enumPricing,
                             enumSupports, image, backgroundImage)
                 }
 
