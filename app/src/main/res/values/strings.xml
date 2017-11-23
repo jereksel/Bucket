@@ -160,5 +160,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
     </string>
     <string name="restart_systemui">Restart SystemUI</string>
     <string name="send_log_to_developers">Send log to developers</string>
+    <string name="unsupported_template_toast">Theme is using unsupported template version</string>
 
 </resources>
