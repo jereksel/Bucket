@@ -127,7 +127,7 @@ class MainViewAdapter(
 //            onClickSubject.onNext(app)
 //            val keys = KeyFinder(holder.lock.context).getKey(app.appId)
 //            it.context.toast(keys.toString())
-            it.context.longToast("Theme is encrypted. Ask themer to also include unencrypted files.")
+            it.context.longToast(R.string.unsupported_template_toast)
         }
     }
 
