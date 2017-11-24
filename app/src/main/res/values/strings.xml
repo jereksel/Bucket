@@ -165,4 +165,5 @@ This Agreement is governed by the laws of the State of New York and the intellec
     <string name="deselect_all">Deselect All</string>
   
     <string name="send_log_to_developers">Send log to developers</string>
+    <string name="unsupported_template_toast">Theme is using unsupported template version</string>
 </resources>

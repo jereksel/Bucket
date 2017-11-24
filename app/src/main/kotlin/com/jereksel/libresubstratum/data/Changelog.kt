@@ -6,6 +6,7 @@ object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
             +"Searching in installed overlays view"
+            +"Change toast text that shows when theme cannot be decrypted"
             +"Add screen about crash after FC"
             +"Fix text overlay in installed view"
             +"Fix FC in Swift Black"
