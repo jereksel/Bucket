@@ -2,18 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"/>
+    <item
         android:id="@+id/action_selectall"
-        android:title="Select All"
-        app:showAsAction="never" />
+        android:title="@string/select_all"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_deselectall"
-        android:title="Deselect All"
-        app:showAsAction="never" />
+        android:title="@string/deselect_all"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_restartui"
         android:title="@string/restart_systemui"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
 </menu>

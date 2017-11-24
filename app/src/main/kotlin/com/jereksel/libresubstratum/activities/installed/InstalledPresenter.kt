@@ -31,7 +31,8 @@ class InstalledPresenter(
     private var view = WeakReference<View>(null)
     private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
-    private val compositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
+    private var filter = ""
 
     private var state: MutableMap<String, Boolean>? = null
 
@@ -45,6 +46,7 @@ class InstalledPresenter(
 
         if (o != null) {
             view.get()?.addOverlays(o)
+            return
         }
 
         subscription = Observable.fromCallable { packageManager.getInstalledOverlays() }
@@ -58,7 +60,7 @@ class InstalledPresenter(
                 .subscribe {
                     overlays = it.toMutableList()
                     state = it.map { Pair(it.overlayId, false) }.toMap().toMutableMap()
-                    view.get()?.addOverlays(it)
+                    view.get()?.addOverlays(getFilteredApps())
                 }
     }
 
@@ -134,7 +136,6 @@ class InstalledPresenter(
 
     override fun disableSelected() {
 
-
         val toDisable = selectedOverlays()
                 .map { it.overlayId }
 
@@ -157,12 +158,12 @@ class InstalledPresenter(
     }
 
     override fun selectAll() {
-        overlays?.forEach { state?.set(it.overlayId, true) }
+        getFilteredApps().forEach { state?.set(it.overlayId, true) }
         view.get()?.refreshRecyclerView()
     }
 
     override fun deselectAll() {
-        overlays?.forEach { state?.set(it.overlayId, false) }
+        getFilteredApps().forEach { state?.set(it.overlayId, false) }
         view.get()?.refreshRecyclerView()
     }
 
@@ -170,13 +171,10 @@ class InstalledPresenter(
 
     override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
-    override fun getState(position: Int) = state!![overlays!![position].overlayId]!!
+    override fun getState(overlayId: String) = state!![overlayId]!!
 
-    override fun setState(position: Int, isEnabled: Boolean) {
-        val overlayId = overlays?.get(position)?.overlayId
-        if (overlayId != null) {
-            state?.set(overlayId, isEnabled)
-        }
+    override fun setState(overlayId: String, isEnabled: Boolean) {
+        state?.set(overlayId, isEnabled)
     }
 
     override fun restartSystemUI() {
@@ -186,8 +184,28 @@ class InstalledPresenter(
                 }
     }
 
+    override fun setFilter(filter: String) {
+        this.filter = filter
+        view.get()?.updateOverlays(getFilteredApps())
+    }
+
+    fun getFilteredApps(): List<InstalledOverlay> {
+        val overlays = overlays
+        if (overlays == null) {
+            return listOf()
+        } else if (filter.isEmpty()) {
+            return overlays
+        } else {
+            return overlays.filter {
+                it.targetName.contains(filter, true) ||
+                        it.sourceThemeName.contains(filter, true)
+            }
+        }
+    }
+
     override fun removeView() {
         compositeDisposable.clear()
+        compositeDisposable = CompositeDisposable()
     }
 
 }

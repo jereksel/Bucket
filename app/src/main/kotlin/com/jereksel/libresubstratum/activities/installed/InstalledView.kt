@@ -21,12 +21,16 @@ import org.jetbrains.anko.toast
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
+import android.support.v4.view.MenuItemCompat
+import android.support.v7.widget.SearchView
 
-open class InstalledView : AppCompatActivity(), View {
+
+open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextListener {
 
     @Inject lateinit var presenter: Presenter
     val mLayoutManager by lazy { LinearLayoutManager(this@InstalledView) }
     var layoutState: Parcelable? = null
+    var adapter: InstalledOverlaysAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +46,11 @@ open class InstalledView : AppCompatActivity(), View {
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
         mLayoutManager.onRestoreInstanceState(layoutState)
+        adapter = InstalledOverlaysAdapter(overlays, presenter)
         with(recyclerView) {
             layoutManager = mLayoutManager
             itemAnimator = DefaultItemAnimator()
-            adapter = InstalledOverlaysAdapter(overlays, presenter)
+            adapter = this@InstalledView.adapter
         }
         recyclerView.postDelayed ({
             showTutorial()
@@ -115,8 +120,27 @@ open class InstalledView : AppCompatActivity(), View {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.installed, menu)
+
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnQueryTextListener(this);
+
         return true
     }
+
+    override fun onQueryTextChange(newText: String): Boolean {
+        presenter.setFilter(newText)
+        return true;
+    }
+
+    override fun updateOverlays(overlays: List<InstalledOverlay>) {
+        adapter?.updateOverlays(overlays)
+        recyclerView.scrollToPosition(0)
+    }
+
+    override fun onQueryTextSubmit(query: String): Boolean {
+        return false
+    }
+
 
     override fun onRetainCustomNonConfigurationInstance() = presenter
 
