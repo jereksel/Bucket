@@ -14,6 +14,9 @@ jobs:
           name: Add Android SDK licenses
           command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
       - run:
+          name: Download cmake
+          command: echo y | $ANDROID_HOME/tools/bin/sdkmanager "cmake;3.6.4111459"
+      - run:
           name: Download submodules
           command: git submodule update --init --recursive
       - run:
@@ -41,6 +44,9 @@ jobs:
       - run:
           name: Add Android SDK licenses
           command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
+      - run:
+          name: Download cmake
+          command: echo y | $ANDROID_HOME/tools/bin/sdkmanager "cmake;3.6.4111459"
       - run:
           name: Download submodules
           command: git submodule update --init --recursive
@@ -74,6 +80,9 @@ jobs:
       - run:
           name: Add Android SDK licenses
           command: mkdir -p $ANDROID_HOME/licenses/ && printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
+      - run:
+          name: Download cmake
+          command: echo y | $ANDROID_HOME/tools/bin/sdkmanager "cmake;3.6.4111459"
       - run:
           name: Download submodules
           command: git submodule update --init --recursive
