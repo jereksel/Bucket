@@ -92,11 +92,7 @@ class KeyFinder(
             return null
         }
 
-//        println(abis)
-
-//        val so = Files.fileTreeTraverser().preOrderTraversal(appDir).find { it.extension == "so" } ?: return null
-
-        val (key, iv) = KeyFinderNative.getKeyAndIV(so.absolutePath)
+        val (key, iv) = KeyFinderNative.getKeyAndIV(so.absolutePath) ?: return null
 
         val kp = KeyPair(key, iv)
 

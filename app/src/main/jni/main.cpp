@@ -74,13 +74,23 @@ Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env
 
     auto lib = dlopen(location, RTLD_LAZY);
 
+    if (lib == nullptr) {
+        return nullptr;
+    }
+
     //dlsym has broken signature (void*, const char*, _Symbol)
     auto mydlsym = (void* (*)(void*, const char*))dlsym;
+    auto mydlclose = (void (*)(void*))dlclose;
 
     auto getKey = (jbyteArray(*)(JNIEnv*)) mydlsym(lib, keyFun.data());
-    auto key = getKey(env);
-
     auto getIV = (jbyteArray(*)(JNIEnv*)) mydlsym(lib, ivFun.data());
+
+    if (getKey == nullptr || getIV == nullptr) {
+        mydlclose(lib);
+        return nullptr;
+    }
+
+    auto key = getKey(env);
     auto iv = getIV(env);
 
     jclass myClassArray = env->FindClass("[B");
@@ -89,6 +99,10 @@ Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env
 
     env->SetObjectArrayElement(arr, 0, key);
     env->SetObjectArrayElement(arr, 1, iv);
+
+    mydlclose(lib);
+
+    env->ReleaseStringUTFChars(location_, location);
 
     return arr;
 
