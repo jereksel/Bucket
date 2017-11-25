@@ -5,6 +5,7 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
+            +"Fix FC in installed overlays view"
             +"Searching in installed overlays view"
             +"Change toast text that shows when theme cannot be decrypted"
             +"Add screen about crash after FC"
