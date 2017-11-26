@@ -9,6 +9,7 @@ interface InstalledContract {
 
     interface View : MVPView {
         fun addOverlays(overlays: List<InstalledOverlay>)
+        fun updateOverlays(overlays: List<InstalledOverlay>)
         fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
         fun refreshRecyclerView()
     }
@@ -21,13 +22,14 @@ interface InstalledContract {
         fun uninstallSelected()
         fun disableSelected()
         fun enableSelected()
-
-        //RecyclerView
-        fun setState(position: Int, isEnabled: Boolean)
-        fun getState(position: Int): Boolean
         fun selectAll()
         fun deselectAll()
         fun restartSystemUI()
+        fun setFilter(filter: String)
+
+        //RecyclerView
+        fun setState(overlayId: String, isEnabled: Boolean)
+        fun getState(overlayId: String): Boolean
     }
 
 }

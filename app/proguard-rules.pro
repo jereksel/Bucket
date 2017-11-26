@@ -66,3 +66,5 @@
 -keepclassmembers class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
 }
+
+-keep class android.support.v7.widget.SearchView { *; }

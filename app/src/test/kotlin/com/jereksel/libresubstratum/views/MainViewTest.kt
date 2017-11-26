@@ -213,7 +213,7 @@ class MainViewTest: BaseRobolectricTest() {
 
         recyclerView.getChildAt(0).find<ImageView>(R.id.lock).performClick()
 
-        assertEquals("Theme is encrypted. Ask themer to also include unencrypted files.", ShadowToast.getTextOfLatestToast())
+        assertEquals(RuntimeEnvironment.application.getString(R.string.unsupported_template_toast), ShadowToast.getTextOfLatestToast())
 
     }
 
