@@ -82,6 +82,7 @@ dependencies {
     testCompile junit
     testCompile robolectric
     testCompile mockito
+    testCompile assertj
 
     testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
         exclude group: "org.jetbrains.kotlin"
