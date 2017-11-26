@@ -7,6 +7,8 @@ import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
 import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
@@ -110,6 +112,14 @@ open class AppModule(private val application: Application) {
             @Named("group") metrics: Metrics
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
+    }
+
+    @Provides
+    open fun providesPrioritiesPresenter(
+            packageManager: IPackageManager,
+            @Named("logged") overlayService: OverlayService
+    ): PrioritiesContract.Presenter {
+        return PrioritiesPresenter(overlayService, packageManager)
     }
 
     @Provides
