@@ -6,6 +6,7 @@ object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
             +"Add support for type3_common (please report any issues)"
+            +"Fix sorting in main activity"
             +"Fix FC in Swift Black (again)"
             +"Fix FC in installed overlays view"
             +"Searching in installed overlays view"

@@ -52,6 +52,12 @@ class MainPresenterTest : FunSpec() {
                 verify(view).addApplications(argThat { size == num })
             }
         }
+        test("Application are sorted by name") {
+            val apps = listOf(packageFactory("1", "Z App", ""), packageFactory("2", "a App", ""), packageFactory("3", "u App", ""))
+            whenever(packageManager.getInstalledThemes()).thenReturn(apps)
+            presenter.getApplications()
+            verify(view).addApplications(argThat { map { it.name } == listOf("a App", "u App", "Z App") })
+        }
         test("If overlayService returns non empty list of permissions they're passed to view") {
             val perms = listOf("perm1", "perm2")
             whenever(overlayService.requiredPermissions()).thenReturn(perms)

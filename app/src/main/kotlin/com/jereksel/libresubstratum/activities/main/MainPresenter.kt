@@ -38,7 +38,7 @@ class MainPresenter(
                 .flatMapIterable { it }
                 .toList()
                 .flattenAsObservable { it }
-                .sorted { t1, t2 -> compareValues(t1.name, t2.name) }
+                .sorted { t1, t2 -> String.CASE_INSENSITIVE_ORDER.compare(t1.name, t2.name)}
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { list ->
