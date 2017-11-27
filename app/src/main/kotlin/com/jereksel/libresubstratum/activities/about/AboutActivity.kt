@@ -62,7 +62,7 @@ class AboutActivity: AppCompatActivity() {
 
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
-                zipUtils, room, codec, crashlyticsAppender, crash)
+                zipUtils, room, codec, crashlyticsAppender, crash, elfio)
                 .sortedBy { it.name }
 
         verticalLayout {
