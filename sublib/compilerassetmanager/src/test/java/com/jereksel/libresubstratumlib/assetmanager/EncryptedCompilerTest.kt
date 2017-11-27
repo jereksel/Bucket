@@ -6,6 +6,7 @@ import android.content.res.AssetManager
 import android.os.Build
 import com.jereksel.compilerassetmanager.BuildConfig
 import com.jereksel.libresubstratumlib.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -163,6 +164,35 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.isFile)
 
         Assert.assertEquals(listOf(Color("color1", "0x00000000")), aapt2.getColorsValues(apk).toList())
+    }
+
+    @Test
+    @Config(assetDir = "../../src/test/resources/assetsEncrypted/type3WithCommonTheme")
+    fun `Type3 default doesn't use common`() {
+
+        val type3 = Type3Extension("Default", true)
+        val apk = compile("android", type3 = type3)
+
+        assertThat(apk.exists()).isTrue()
+        assertThat(apk.isFile).isTrue()
+
+        assertThat(aapt2.getColorsValues(apk).toList())
+                .containsExactlyInAnyOrder(Color("color1", "0x00000000"), Color("color2", "0x00abcdef"))
+    }
+
+    @Test
+    @Config(assetDir = "../../src/test/resources/assetsEncrypted/type3WithCommonTheme")
+    fun `Type3 non-default uses common`() {
+
+        val type3 = Type3Extension("test", false)
+        val apk = compile("android", type3 = type3)
+
+        assertThat(apk.exists()).isTrue()
+        assertThat(apk.isFile).isTrue()
+
+        assertThat(aapt2.getColorsValues(apk).toList())
+                .containsExactlyInAnyOrder(Color("common_color1", "0xaaaaaaaa"), Color("color1", "0xffffffff"))
+
     }
 
     fun compile(

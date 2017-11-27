@@ -8,6 +8,7 @@ buildscript {
         aa_version = "4.3.1"
         dagger_version = "2.10"
         room_version = "1.0.0-beta2"
+        assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
         slf4j_version = "1.7.25"
         activity_starter_version = "1.00-beta.2"
@@ -52,6 +53,8 @@ buildscript {
         junit = "junit:junit:$junit_version"
         robolectric = "org.robolectric:robolectric:$robolectric_version"
         mockito =  "org.mockito:mockito-core:$mockito_version"
+
+        assertj = "org.assertj:assertj-core:$assertj_version"
 
     }
 
