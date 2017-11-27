@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.nio.file.Files
 
 class AaptCompiler(
         private val aaptPath: String,
@@ -149,7 +150,11 @@ class AaptCompiler(
             }
 
             if (dest.name.endsWith(".enc")) {
-                dest.renameTo(File(dest.absolutePath.removeSuffix(".enc")))
+                val newFile = File(dest.absolutePath.removeSuffix(".enc"))
+                if (newFile.exists()) {
+                    newFile.delete()
+                }
+                dest.renameTo(newFile)
             }
 
         } else {
