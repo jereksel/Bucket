@@ -5,7 +5,7 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
-            +"Add support for template 11.1.0"
+            +"Add support for template 11.1.0 (please report any issues)"
             +"Fix sorting in main activity"
             +"Fix FC in Swift Black (again)"
             +"Fix FC in installed overlays view"
