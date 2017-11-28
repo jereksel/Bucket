@@ -28,8 +28,9 @@
         <activity android:name=".activities.about.AboutActivity" />
         <activity android:name=".activities.ErrorActivity"/>
         <activity android:name=".activities.priorities.PrioritiesView"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".activities.prioritiesdetail.PrioritiesDetailView"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".RecViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             />

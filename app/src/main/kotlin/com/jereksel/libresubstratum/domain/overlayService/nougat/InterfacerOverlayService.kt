@@ -115,6 +115,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         return map.map { OverlayInfo(it.packageName, it.isEnabled) }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+        val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
+        return list.map { OverlayInfo(it.packageName, it.isEnabled) }
+    }
+
     override fun restartSystemUI() {
         service.restartSystemUI()
     }

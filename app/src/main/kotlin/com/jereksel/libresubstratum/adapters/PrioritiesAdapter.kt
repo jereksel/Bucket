@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract.Presenter
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailViewStarter
 import com.jereksel.libresubstratum.adapters.PrioritiesAdapter.ViewHolder
-import com.jereksel.libresubstratum.data.InstalledTheme
 import kotterknife.bindView
 
 class PrioritiesAdapter(
@@ -22,6 +21,9 @@ class PrioritiesAdapter(
         val appId = apps[position]
         holder.imageView.setImageDrawable(presenter.getIcon(appId))
         holder.textView.text = appId
+        holder.itemView.setOnClickListener {
+            PrioritiesDetailViewStarter.start(it.context, appId)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

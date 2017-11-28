@@ -23,6 +23,10 @@ class PrioritiesPresenter(
         this.view = WeakReference(view)
     }
 
+    override fun removeView() {
+        view = WeakReference<View>(null)
+    }
+
     override fun getApplication() {
 
         Observable.fromCallable { packageManager.getInstalledOverlays() }
@@ -54,8 +58,4 @@ class PrioritiesPresenter(
     }
 
     override fun getIcon(appId: String) = packageManager.getAppIcon(appId)
-
-    override fun removeView() {
-        view = WeakReference<View>(null)
-    }
 }
