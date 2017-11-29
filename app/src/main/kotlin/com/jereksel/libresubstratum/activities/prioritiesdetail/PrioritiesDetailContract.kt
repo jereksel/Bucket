@@ -8,10 +8,16 @@ interface PrioritiesDetailContract {
 
     interface Presenter : MVPPresenter<View> {
         fun getOverlays(targetId: String)
+        fun updateOverlays(overlays: List<InstalledOverlay>)
+        fun updatePriorities(overlays: List<InstalledOverlay>)
+        fun openAppInSplit(targetId: String)
     }
 
     interface View : MVPView {
         fun setOverlays(overlays: List<InstalledOverlay>)
+        fun showFab()
+        fun hideFab()
+        fun notifyPrioritiesChanged()
     }
 
 }

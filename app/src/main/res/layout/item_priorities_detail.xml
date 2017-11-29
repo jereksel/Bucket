@@ -9,6 +9,7 @@
 
     <RelativeLayout
         android:id="@+id/icons"
+        android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -31,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/reorder"
         android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/icons"
         android:orientation="vertical">
@@ -74,13 +76,15 @@
 
     </LinearLayout>
 
-    <!--<Button-->
-        <!--android:id="@+id/enable_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_below="@id/icons"-->
-        <!--android:text="Enable" />-->
+    <ImageView
+        android:src="@drawable/ic_reorder_black_24dp"
+        android:id="@+id/reorder"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/icons"
+        android:text="Enable" />
 
 </RelativeLayout>

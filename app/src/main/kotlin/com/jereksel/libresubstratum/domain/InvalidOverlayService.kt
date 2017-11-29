@@ -36,6 +36,10 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun updatePriorities(overlayIds: List<String>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun requiredPermissions() = listOf<String>()
 
     override fun additionalSteps() = message

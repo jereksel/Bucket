@@ -113,6 +113,24 @@ interface AidlIInterfacerInterface: IInterface {
                 }
 
             }
+
+            override fun changePriority(overlayIds: List<String>) {
+                val data = Parcel.obtain()
+                val reply = Parcel.obtain()
+
+                try {
+                    data.writeInterfaceToken(DESCRIPTOR)
+                    data.writeStringList(overlayIds)
+                    //We don't want to restart
+                    data.writeInt(0)
+                    mRemote.transact(IBinder.FIRST_CALL_TRANSACTION + 9, data, reply, 0)
+                    reply.readException()
+                } finally {
+                    reply.recycle()
+                    data.recycle()
+                }
+
+            }
         }
     }
 
@@ -125,5 +143,7 @@ interface AidlIInterfacerInterface: IInterface {
     fun enableOverlays(overlayIds: List<String>)
 
     fun disableOverlays(overlayIds: List<String>)
+
+    fun changePriority(overlayIds: List<String>)
 
 }

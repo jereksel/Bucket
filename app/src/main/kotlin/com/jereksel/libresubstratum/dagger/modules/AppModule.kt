@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
+import android.content.om.IOverlayManager
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.activities.main.MainContract
@@ -127,9 +128,10 @@ open class AppModule(private val application: Application) {
     @Provides
     open fun providesDetailedPrioritiesPresenter(
             packageManager: IPackageManager,
-            @Named("logged") overlayService: OverlayService
+            @Named("logged") overlayService: OverlayService,
+            activityProxy: IActivityProxy
     ): PrioritiesDetailContract.Presenter {
-        return PrioritiesDetailPresenter(overlayService, packageManager)
+        return PrioritiesDetailPresenter(overlayService, packageManager, activityProxy)
     }
 
     @Provides

@@ -1,59 +1,87 @@
 package com.jereksel.libresubstratum.adapters
 
-import activitystarter.Arg
+import android.support.v4.view.MotionEventCompat
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.Html
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.extensions.getLogger
+import com.jereksel.libresubstratum.utils.SimpleDiffCallback
 import kotterknife.bindView
 import java.util.*
 import kotlin.collections.ArrayList
 
 class PrioritiesDetailAdapter(
-        overlays: List<InstalledOverlay>
+        overlays: List<InstalledOverlay>,
+        val presenter: Presenter
 ): RecyclerView.Adapter<PrioritiesDetailAdapter.ViewHolder>() {
 
+    val log = getLogger()
+
     val overlays = ArrayList(overlays)
+
+    lateinit var itemTouchListener: ItemTouchHelper
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val overlay = overlays[position]
 
-//        val info = presenter.getOverlayInfo(overlay.overlayId)
-        val overlayId = overlay.overlayId
-
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
         holder.targetName.text = "${overlay.targetName} - ${overlay.sourceThemeName}"
-//        val color = if(info?.enabled == true) Color.GREEN else Color.RED
-//        holder.targetName.setTextColor(color)
 
-//        holder.checkbox.isChecked = presenter.getState(overlayId)
-//        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
-//            presenter.setState(overlayId, isChecked)
-//        }
+/*        holder.card.setOnClickListener {
+            itemTouchListener.startDrag(holder)
+        }*/
 
-//        holder.view.setOnLongClickListener {
-//            if (info != null) {
-//                presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+        val listener = View.OnTouchListener { _, event ->
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                itemTouchListener.startDrag(holder)
+            }
+            false
+        }
+
+        holder.card.setOnClickListener {
+
+            val oldOverlays = overlays.toMutableList()
+
+            overlays.removeAt(position)
+            overlays.add(0, overlay)
+            presenter.updateOverlays(overlays)
+
+            DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, overlays.toMutableList())).dispatchUpdatesTo(this)
+
+//            notifyDataSetChanged()
+//            notifyItemMoved(position, 0)
+////            notifyItemMoved(0, position)
+//            for(i in 0 until position - 1) {
+//                notifyItemMoved(i, i+1)
 //            }
-//            notifyItemChanged(position)
-//            true
-//        }
+        }
+
+        holder.reorder.setOnTouchListener(listener)
+
+//        holder.themeIcon.setOnTouchListener(listener)
+//        holder.targetIcon.setOnTouchListener(listener)
+
+        holder.themeIcon.setOnClickListener {
+            presenter.openAppInSplit(overlay.targetId)
+        }
 //
-//        listOf(holder.targetIcon, holder.themeIcon).forEach { it.setOnLongClickListener {
-//            if(!presenter.openActivity(overlay.targetId)) {
-//                Toast.makeText(it.context, "App cannot be opened", Toast.LENGTH_SHORT).show()
-//            }
-//            true
-//        }}
+        holder.targetIcon.setOnClickListener {
+            presenter.openAppInSplit(overlay.targetId)
+        }
 
         listOf(
                 Triple(overlay.type1a, holder.type1a, R.string.theme_type1a_list),
@@ -77,20 +105,10 @@ class PrioritiesDetailAdapter(
         return ViewHolder(v)
     }
 
-    fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        if (fromPosition < toPosition) {
-            for (i in fromPosition until toPosition) {
-                Collections.swap(overlays, i, i + 1)
-            }
-            notifyItemMoved(fromPosition, toPosition)
-            return true
-        } else {
-            for (i in fromPosition downTo toPosition + 1) {
-                Collections.swap(overlays, i, i - 1)
-            }
-            notifyItemMoved(fromPosition, toPosition)
-            return true
-        }
+    fun onItemMove(fromPosition: Int, toPosition: Int) {
+        Collections.swap(overlays, fromPosition, toPosition)
+        presenter.updateOverlays(overlays)
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun getItemCount() = overlays.size
@@ -100,6 +118,7 @@ class PrioritiesDetailAdapter(
         val targetIcon: ImageView by bindView(R.id.target_icon)
         val themeIcon: ImageView by bindView(R.id.theme_icon)
         val targetName: TextView by bindView(R.id.target_name)
+        val reorder: ImageView by bindView(R.id.reorder)
         val type1a: TextView by bindView(R.id.theme_type1a)
         val type1b: TextView by bindView(R.id.theme_type1b)
         val type1c: TextView by bindView(R.id.theme_type1c)

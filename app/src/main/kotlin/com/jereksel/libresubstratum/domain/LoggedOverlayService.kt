@@ -35,6 +35,10 @@ class LoggedOverlayService(
     override fun getOverlaysPrioritiesForTarget(targetAppId: String) =
             overlayService.getOverlaysPrioritiesForTarget(targetAppId)
 
+    override fun updatePriorities(overlayIds: List<String>) {
+        overlayService.updatePriorities(overlayIds)
+    }
+
     override fun requiredPermissions() = overlayService.requiredPermissions()
 
     override fun additionalSteps() = overlayService.additionalSteps()

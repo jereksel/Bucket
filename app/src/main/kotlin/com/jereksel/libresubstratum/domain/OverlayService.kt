@@ -16,4 +16,6 @@ interface OverlayService {
     fun additionalSteps(): String?
 
     fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo>
+
+    fun updatePriorities(overlayIds: List<String>)
 }
