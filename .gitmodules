@@ -7,3 +7,6 @@
 [submodule "aapt"]
 	path = aapt
 	url = https://github.com/jereksel/aaptfordevice.git
+[submodule "app/src/main/jni/ELFIO"]
+	path = app/src/main/jni/ELFIO
+	url = https://github.com/serge1/ELFIO.git

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.nio.file.Files
 
 class AaptCompiler(
         private val aaptPath: String,
@@ -39,10 +40,20 @@ class AaptCompiler(
 
         val mainRes = File(compilationDir, "res")
 
+        val type3CommonLocation = "$amLoc/type3-common"
+
         val type3 = themeDate.type3
 
         if (type3 != null && !type3.default) {
             val amLocation = "$amLoc/type3_${type3.name}"
+
+            if (assetManager.list(type3CommonLocation).isNotEmpty()) {
+                if (assetManager.list(type3CommonLocation).contains("res")) {
+                    assetManager.extract("$type3CommonLocation/res", mainRes, transform)
+                } else {
+                    assetManager.extract(type3CommonLocation, mainRes, transform)
+                }
+            }
 
             if (assetManager.list(amLocation).contains("res")) {
                 //Some themes have "res/" in type3
@@ -139,7 +150,11 @@ class AaptCompiler(
             }
 
             if (dest.name.endsWith(".enc")) {
-                dest.renameTo(File(dest.absolutePath.removeSuffix(".enc")))
+                val newFile = File(dest.absolutePath.removeSuffix(".enc"))
+                if (newFile.exists()) {
+                    newFile.delete()
+                }
+                dest.renameTo(newFile)
             }
 
         } else {
