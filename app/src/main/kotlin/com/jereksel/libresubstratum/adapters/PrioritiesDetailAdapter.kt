@@ -54,13 +54,18 @@ class PrioritiesDetailAdapter(
 
         holder.card.setOnClickListener {
 
+            @Suppress("NAME_SHADOWING")
+            val position = holder.adapterPosition
+
             val oldOverlays = overlays.toMutableList()
 
-            overlays.removeAt(position)
-            overlays.add(0, overlay)
+            val o = overlays.removeAt(position)
+            overlays.add(0, o)
             presenter.updateOverlays(overlays)
 
-            DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, overlays.toMutableList())).dispatchUpdatesTo(this)
+            val newOverlays = overlays.toMutableList()
+
+            DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, newOverlays)).dispatchUpdatesTo(this)
 
 //            notifyDataSetChanged()
 //            notifyItemMoved(position, 0)
