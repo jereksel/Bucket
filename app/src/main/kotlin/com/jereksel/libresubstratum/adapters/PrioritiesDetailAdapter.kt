@@ -41,10 +41,6 @@ class PrioritiesDetailAdapter(
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
         holder.targetName.text = "${overlay.targetName} - ${overlay.sourceThemeName}"
 
-/*        holder.card.setOnClickListener {
-            itemTouchListener.startDrag(holder)
-        }*/
-
         val listener = View.OnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 itemTouchListener.startDrag(holder)
@@ -66,24 +62,14 @@ class PrioritiesDetailAdapter(
             val newOverlays = overlays.toMutableList()
 
             DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, newOverlays)).dispatchUpdatesTo(this)
-
-//            notifyDataSetChanged()
-//            notifyItemMoved(position, 0)
-////            notifyItemMoved(0, position)
-//            for(i in 0 until position - 1) {
-//                notifyItemMoved(i, i+1)
-//            }
         }
 
         holder.reorder.setOnTouchListener(listener)
 
-//        holder.themeIcon.setOnTouchListener(listener)
-//        holder.targetIcon.setOnTouchListener(listener)
-
         holder.themeIcon.setOnClickListener {
             presenter.openAppInSplit(overlay.targetId)
         }
-//
+
         holder.targetIcon.setOnClickListener {
             presenter.openAppInSplit(overlay.targetId)
         }

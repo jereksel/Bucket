@@ -61,7 +61,7 @@ class PrioritiesPresenterTest: FunSpec() {
 
             prioritiesPresenter.getApplication()
 
-            verify(view).addApplications(argThat { toList() == listOf(installedTheme) })
+            verify(view).addApplications(argThat { toList() == listOf("appb") })
 
         }
 

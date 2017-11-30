@@ -9,7 +9,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppThemeToolbar" parent="android:Theme.Material.Light">
+    <style name="AppThemeToolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

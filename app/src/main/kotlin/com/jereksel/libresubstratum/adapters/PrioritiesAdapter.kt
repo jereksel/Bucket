@@ -3,6 +3,8 @@ package com.jereksel.libresubstratum.adapters
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,6 +26,12 @@ class PrioritiesAdapter(
         holder.itemView.setOnClickListener {
             PrioritiesDetailViewStarter.start(it.context, appId)
         }
+        holder.border.visibility =
+                if (position == apps.lastIndex) {
+                    INVISIBLE
+                } else {
+                    VISIBLE
+                }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,6 +44,8 @@ class PrioritiesAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView by bindView(R.id.imageView)
         val textView: TextView by bindView(R.id.textView)
+
+        val border: View by bindView(R.id.border)
     }
 
 }
