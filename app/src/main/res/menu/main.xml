@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_mix_n_match"
-        android:title="Mix'n'Match"
+        android:id="@+id/action_priorities"
+        android:title="Priorities"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_installed"
