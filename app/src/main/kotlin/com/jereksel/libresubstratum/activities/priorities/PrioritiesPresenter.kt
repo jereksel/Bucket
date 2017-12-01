@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
@@ -15,21 +16,11 @@ import java.lang.ref.WeakReference
 class PrioritiesPresenter(
         val overlayService: OverlayService,
         val packageManager: IPackageManager
-): Presenter {
-
-    var view = WeakReference<View>(null)
-
-    override fun setView(view: View) {
-        this.view = WeakReference(view)
-    }
-
-    override fun removeView() {
-        view = WeakReference<View>(null)
-    }
+): Presenter() {
 
     override fun getApplication() {
 
-        Observable.fromCallable { packageManager.getInstalledOverlays() }
+        compositeDisposable += Observable.fromCallable { packageManager.getInstalledOverlays() }
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.computation())
                 .flatMap {

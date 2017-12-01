@@ -1,36 +1,24 @@
 package com.jereksel.libresubstratum.activities.prioritiesdetail
 
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.Presenter
-import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.ActivityProxy
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
 
 class PrioritiesDetailPresenter(
         val overlayService: OverlayService,
         val packageManager: IPackageManager,
         val activityProxy: IActivityProxy
-): Presenter {
-
-    var view = WeakReference<View>(null)
+): Presenter() {
 
     lateinit var overlays: List<InstalledOverlay>
 
     var fabShown = false
-
-    override fun setView(view: View) {
-        this.view = WeakReference(view)
-    }
-
-    override fun removeView() {
-        view = WeakReference<View>(null)
-    }
 
     override fun getOverlays(targetId: String) {
 
@@ -64,7 +52,7 @@ class PrioritiesDetailPresenter(
 
     override fun updatePriorities(overlays: List<InstalledOverlay>) {
 
-        Single.fromCallable { overlayService.updatePriorities(overlays.map { it.overlayId }) }
+        compositeDisposable += Single.fromCallable { overlayService.updatePriorities(overlays.map { it.overlayId }) }
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,7 +63,6 @@ class PrioritiesDetailPresenter(
                     view.get()?.hideFab()
                     view.get()?.notifyPrioritiesChanged()
                 }
-
 
     }
 

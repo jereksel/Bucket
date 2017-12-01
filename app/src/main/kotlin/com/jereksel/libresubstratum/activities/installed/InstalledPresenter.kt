@@ -24,21 +24,15 @@ class InstalledPresenter(
         val overlayService: OverlayService,
         val activityProxy: IActivityProxy,
         val metrics: Metrics
-) : Presenter {
+) : Presenter() {
 
     val log = getLogger()
 
-    private var view = WeakReference<View>(null)
     private var subscription: Disposable? = null
     private var overlays: MutableList<InstalledOverlay>? = null
-    private var compositeDisposable = CompositeDisposable()
     private var filter = ""
 
     private var state: MutableMap<String, Boolean>? = null
-
-    override fun setView(view: View) {
-        this.view = WeakReference(view)
-    }
 
     override fun getInstalledOverlays() {
 
@@ -202,10 +196,4 @@ class InstalledPresenter(
             }
         }
     }
-
-    override fun removeView() {
-        compositeDisposable.clear()
-        compositeDisposable = CompositeDisposable()
-    }
-
 }

@@ -7,12 +7,11 @@ import com.jereksel.libresubstratum.data.KeyPair
 
 interface MainContract {
 
-    interface Presenter : MVPPresenter<View> {
-        fun getApplications()
-        fun openThemeScreen(appId: String)
-        fun checkPermissions()
-        fun getKeyPair(appId: String): KeyPair?
-//        fun isThemeEncrypted(appId: String)
+    abstract class Presenter : MVPPresenter<View>() {
+        abstract fun getApplications()
+        abstract fun openThemeScreen(appId: String)
+        abstract fun checkPermissions()
+        abstract fun getKeyPair(appId: String): KeyPair?
     }
 
     interface View : MVPView {

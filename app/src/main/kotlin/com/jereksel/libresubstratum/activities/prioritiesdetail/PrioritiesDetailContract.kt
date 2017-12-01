@@ -6,11 +6,11 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 
 interface PrioritiesDetailContract {
 
-    interface Presenter : MVPPresenter<View> {
-        fun getOverlays(targetId: String)
-        fun updateOverlays(overlays: List<InstalledOverlay>)
-        fun updatePriorities(overlays: List<InstalledOverlay>)
-        fun openAppInSplit(targetId: String)
+    abstract class Presenter : MVPPresenter<View>() {
+        abstract fun getOverlays(targetId: String)
+        abstract fun updateOverlays(overlays: List<InstalledOverlay>)
+        abstract fun updatePriorities(overlays: List<InstalledOverlay>)
+        abstract fun openAppInSplit(targetId: String)
     }
 
     interface View : MVPView {

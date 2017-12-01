@@ -20,32 +20,32 @@ interface DetailedContract {
         fun showError(errors: List<String>)
     }
 
-    interface Presenter : MVPPresenter<View> {
+    abstract class Presenter : MVPPresenter<View>() {
         //Activity
-        fun readTheme(appId: String)
-        fun getAppName(appId: String): String
+        abstract fun readTheme(appId: String)
+        abstract fun getAppName(appId: String): String
 
         //ThemePackAdapter
-        fun getNumberOfThemes(): Int
-        fun setAdapterView(position: Int, view: ThemePackAdapterView)
-        fun setCheckbox(position: Int, checked: Boolean)
+        abstract fun getNumberOfThemes(): Int
+        abstract fun setAdapterView(position: Int, view: ThemePackAdapterView)
+        abstract fun setCheckbox(position: Int, checked: Boolean)
 
-        fun setType1a(position:Int, spinnerPosition: Int)
-        fun setType1b(position:Int, spinnerPosition: Int)
-        fun setType1c(position:Int, spinnerPosition: Int)
-        fun setType2(position:Int, spinnerPosition: Int)
+        abstract fun setType1a(position: Int, spinnerPosition: Int)
+        abstract fun setType1b(position: Int, spinnerPosition: Int)
+        abstract fun setType1c(position: Int, spinnerPosition: Int)
+        abstract fun setType2(position: Int, spinnerPosition: Int)
 
-        fun setType3(type3Extension: Type3Extension)
+        abstract fun setType3(type3Extension: Type3Extension)
 
-        fun compileAndRun(adapterPosition: Int)
-        fun openInSplit(adapterPosition: Int)
-        fun compileRunActivateSelected()
-        fun compileRunSelected()
-        fun selectAll()
-        fun deselectAll()
-        fun setClipboard(s: String)
+        abstract fun compileAndRun(adapterPosition: Int)
+        abstract fun openInSplit(adapterPosition: Int)
+        abstract fun compileRunActivateSelected()
+        abstract fun compileRunSelected()
+        abstract fun selectAll()
+        abstract fun deselectAll()
+        abstract fun setClipboard(s: String)
 
-        fun restartSystemUI()
+        abstract fun restartSystemUI()
     }
 
 }

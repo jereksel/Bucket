@@ -6,9 +6,9 @@ import com.jereksel.libresubstratum.MVPView
 
 interface PrioritiesContract {
 
-    interface Presenter : MVPPresenter<View> {
-        fun getApplication()
-        fun getIcon(appId: String): Drawable?
+    abstract class Presenter : MVPPresenter<View>() {
+        abstract fun getApplication()
+        abstract fun getIcon(appId: String): Drawable?
     }
 
     interface View : MVPView {
