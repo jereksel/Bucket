@@ -91,7 +91,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
                     startActivity<AboutActivity>()
                     true
                 }
-                R.id.action_mix_n_match -> {
+                R.id.action_priorities -> {
                     startActivity<PrioritiesView>()
                     true
                 }
