@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.1.51'
+        kotlin_version = '1.1.61'
         anko_version = '0.10.1'
         support_library_version = "26.1.0"
         aa_version = "4.3.1"
@@ -13,7 +13,7 @@ buildscript {
         slf4j_version = "1.7.25"
         activity_starter_version = "1.00-beta.2"
         logback_android_version = "1.1.1-6"
-        robolectric_version = "3.5"
+        robolectric_version = "3.5.1"
         junit_version = "4.12"
         guava_version = "20.0"
         mockito_version = "2.10.0"

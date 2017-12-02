@@ -18,6 +18,7 @@ import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -62,7 +63,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
                             throw RuntimeException("Cannot be invoked on UI thread")
                         }
 
-                        return Observable.fromPublisher<Pair<ServiceConnection, AidlIInterfacerInterface>> {
+                        return Single.fromPublisher<Pair<ServiceConnection, AidlIInterfacerInterface>> {
 
                             val serviceConnection = object: ServiceConnection {
 
@@ -85,7 +86,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
                         }
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .observeOn(Schedulers.computation())
-                                .blockingFirst()
+                                .blockingGet()
                     }
                 })
 
@@ -113,6 +114,16 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
         val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
         return map.map { OverlayInfo(it.packageName, it.isEnabled) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+        val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
+        return list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
+    }
+
+    override fun updatePriorities(overlayIds: List<String>) {
+        service.changePriority(overlayIds.reversed())
     }
 
     override fun restartSystemUI() {

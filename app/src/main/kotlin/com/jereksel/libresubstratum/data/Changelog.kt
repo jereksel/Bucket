@@ -5,6 +5,7 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
+            +"Add option to change overlays priorities"
             +"Add support for template 11.1.0 (please report any issues)"
             +"Add support for type3-common (please report any issues)"
             +"Fix sorting in main activity"

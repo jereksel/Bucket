@@ -95,11 +95,11 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
     override fun getInstalledTheme(appId: String) = synchronized(lock) {
 
+        log.debug("Reading information of theme {}", appId)
+
         val application = packageManager.getApplicationInfo(appId, GET_META_DATA)
 
         val app = Application(appId, application.metaData)
-
-        log.debug("Reading information of theme {}", appId)
 
         app.let {
             val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)

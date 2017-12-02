@@ -12,6 +12,8 @@ set -e
 ./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.DetailedViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.InstalledViewTest"
+./gradlew app:testFdroidDebugUnitTest --tests "**.PrioritiesViewTest"
+./gradlew app:testFdroidDebugUnitTest --tests "**.PrioritiesDetailViewTest"
 
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.adapters.*"
 
