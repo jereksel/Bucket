@@ -66,12 +66,14 @@ class PrioritiesDetailAdapter(
 
         holder.reorder.setOnTouchListener(listener)
 
-        holder.themeIcon.setOnClickListener {
+        holder.themeIcon.setOnLongClickListener {
             presenter.openAppInSplit(overlay.targetId)
+            true
         }
 
-        holder.targetIcon.setOnClickListener {
+        holder.targetIcon.setOnLongClickListener {
             presenter.openAppInSplit(overlay.targetId)
+            true
         }
 
         listOf(

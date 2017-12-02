@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import android.graphics.drawable.Drawable
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -9,9 +10,11 @@ import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.argThat
+import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.specs.FunSpec
+import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.FutureTask
@@ -62,6 +65,16 @@ class PrioritiesPresenterTest: FunSpec() {
             prioritiesPresenter.getApplication()
 
             verify(view).addApplications(argThat { toList() == listOf("appb") })
+
+        }
+
+        test("getIcon") {
+
+            val appId = "APPID"
+            val d: Drawable = mock()
+
+            whenever(packageManager.getAppIcon(appId)).thenReturn(d)
+            assertThat(prioritiesPresenter.getIcon(appId)).isSameAs(d)
 
         }
 

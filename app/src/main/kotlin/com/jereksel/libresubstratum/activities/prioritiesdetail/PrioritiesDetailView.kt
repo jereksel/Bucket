@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.jereksel.libresubstratum.App
+import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.Presenter
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.View
@@ -18,6 +19,8 @@ import com.jereksel.libresubstratum.adapters.PrioritiesDetailItemTouchHelperCall
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import kotlinx.android.synthetic.main.activity_priorities_detail.*
 import org.jetbrains.anko.toast
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
 
 class PrioritiesDetailView: AppCompatActivity(), View {
@@ -63,6 +66,41 @@ class PrioritiesDetailView: AppCompatActivity(), View {
         val touchHelper = ItemTouchHelper(callback)
         adapter.itemTouchListener = touchHelper
         touchHelper.attachToRecyclerView(recyclerView)
+
+
+        recyclerView.postDelayed ({
+            showTutorial()
+        }, 100)
+
+    }
+
+    private fun showTutorial() {
+
+        val child = recyclerView.layoutManager.findViewByPosition(0) ?: return
+        val rvRow = recyclerView.getChildViewHolder(child) as PrioritiesDetailAdapter.ViewHolder
+        val icon = rvRow.themeIcon
+        val card = rvRow.card
+        val handle = rvRow.reorder
+
+        val config = ShowcaseConfig()
+        config.delay = 500
+
+        val sequence = if(BuildConfig.DEBUG) {
+            return
+        } else {
+            MaterialShowcaseSequence(this, "PrioritiesDetailViewView_1")
+        }
+
+        sequence.setConfig(config)
+
+        sequence.apply {
+            addSequenceItem(icon, "Long click to open this application. When is split mode, app will be opened in second split", "GOT IT")
+            addSequenceItem(card, "Click on card to move it to top of the list", "GOT IT")
+            addSequenceItem(handle, "Click on handle to move card", "GOT IT")
+        }
+
+        sequence.start()
+
 
     }
 
