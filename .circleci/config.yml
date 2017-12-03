@@ -101,7 +101,8 @@ workflows:
     jobs:
       - build
       - test
-      - deploy:
+      - hold:
+          type: approval
           requires:
             - build
             - test
@@ -111,3 +112,6 @@ workflows:
                 - develop
             tags:
               only: /.*/
+      - deploy:
+          requires:
+            - hold
