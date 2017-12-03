@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 public class KeyFinderNative {
 
     static {
-        System.loadLibrary("nativelibresub");
+        System.loadLibrary("bucketnativelib");
     }
 
     //[key, iv]
