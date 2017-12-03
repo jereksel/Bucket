@@ -2,7 +2,7 @@
 <a href="https://zenhub.com"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
 [![Build status](https://ci.appveyor.com/api/projects/status/62xb85pog9klhesc/branch/develop?svg=true)](https://ci.appveyor.com/project/jereksel/bucket/branch/develop)
 [![CircleCI](https://circleci.com/gh/jereksel/Bucket/tree/develop.svg?style=svg&circle-token=7d45fe3bcf9f47596d18d02437c1f6e131df3075)](https://circleci.com/gh/jereksel/Bucket/tree/develop)
-[![codecov](https://codecov.io/gh/jereksel/LibreSubstratum/branch/master/graph/badge.svg?token=U2RvZTObDd)](https://codecov.io/gh/jereksel/LibreSubstratum)
+[![codecov](https://codecov.io/gh/jereksel/Bucket/branch/master/graph/badge.svg)](https://codecov.io/gh/jereksel/Bucket)
 
 ## Stable version (branch `master`) available on Google Play and F-Droid
 
