@@ -18,7 +18,9 @@ import com.jereksel.libresubstratum.activities.database.DatabaseActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
+import com.jereksel.libresubstratum.adapters.PrioritiesAdapter
 import com.jereksel.libresubstratum.data.Changelog
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -88,6 +90,10 @@ open class MainView : AppCompatActivity(), MainContract.View {
                 }
                 R.id.action_about -> {
                     startActivity<AboutActivity>()
+                    true
+                }
+                R.id.action_priorities -> {
+                    startActivity<PrioritiesView>()
                     true
                 }
                 R.id.action_database -> {

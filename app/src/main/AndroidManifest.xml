@@ -20,22 +20,24 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.detailed.DetailedView" />
         <activity android:name=".activities.installed.InstalledView" />
         <activity android:name=".activities.about.AboutActivity" />
-        <activity
-            android:name=".RecViewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
+        <activity android:name=".activities.ErrorActivity"/>
+        <activity android:name=".activities.priorities.PrioritiesView"
+            android:theme="@style/AppThemeToolbar" />
+        <activity android:name=".activities.prioritiesdetail.PrioritiesDetailView"
+            android:theme="@style/AppThemeToolbar" />
+        <activity android:name=".RecViewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
         <activity
             android:name=".activities.database.DatabaseActivity"
             android:label="@string/title_activity_database"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${crashlytics}" />

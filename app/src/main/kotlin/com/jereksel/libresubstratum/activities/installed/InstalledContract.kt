@@ -9,25 +9,27 @@ interface InstalledContract {
 
     interface View : MVPView {
         fun addOverlays(overlays: List<InstalledOverlay>)
+        fun updateOverlays(overlays: List<InstalledOverlay>)
         fun showSnackBar(message: String, buttonText: String, callback: () -> Unit)
         fun refreshRecyclerView()
     }
 
-    interface Presenter : MVPPresenter<View> {
-        fun getInstalledOverlays()
-        fun toggleOverlay(overlayId: String, enabled: Boolean)
-        fun getOverlayInfo(overlayId: String): OverlayInfo?
-        fun openActivity(appId: String): Boolean
-        fun uninstallSelected()
-        fun disableSelected()
-        fun enableSelected()
+    abstract class Presenter : MVPPresenter<View>() {
+        abstract fun getInstalledOverlays()
+        abstract fun toggleOverlay(overlayId: String, enabled: Boolean)
+        abstract fun getOverlayInfo(overlayId: String): OverlayInfo?
+        abstract fun openActivity(appId: String): Boolean
+        abstract fun uninstallSelected()
+        abstract  fun disableSelected()
+        abstract fun enableSelected()
+        abstract fun selectAll()
+        abstract fun deselectAll()
+        abstract fun restartSystemUI()
+        abstract fun setFilter(filter: String)
 
         //RecyclerView
-        fun setState(position: Int, isEnabled: Boolean)
-        fun getState(position: Int): Boolean
-        fun selectAll()
-        fun deselectAll()
-        fun restartSystemUI()
+        abstract fun setState(overlayId: String, isEnabled: Boolean)
+        abstract fun getState(overlayId: String): Boolean
     }
 
 }

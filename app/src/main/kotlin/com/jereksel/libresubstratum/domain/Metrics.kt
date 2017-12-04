@@ -12,4 +12,6 @@ interface Metrics {
     fun userDisabledOverlay(overlayId: String)
 
     fun logOverlayServiceType(overlayService: OverlayService)
+
+    fun getMetrics(): Map<String, String>
 }

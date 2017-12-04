@@ -1,13 +1,14 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.ImageView
-import com.jereksel.libresubstratum.*
+import com.jereksel.libresubstratum.BaseRobolectricTest
+import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.RecViewActivity
+import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.domain.OverlayInfo
@@ -15,19 +16,17 @@ import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_reconly.*
+import org.assertj.android.recyclerview.v7.api.Assertions.assertThat
 import org.jetbrains.anko.find
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
-import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 
 @Suppress("IllegalIdentifier")
@@ -159,6 +158,32 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
             assertEquals(color, viewHolder.targetName.currentTextColor)
         }
 
+    }
+
+    @Test
+    fun `updateOverlays replaces overlays`() {
+
+        val overlays = listOf(
+                InstalledOverlay("overlay1", "", "", null, "", "", null)
+        )
+
+        val adapter_ = InstalledOverlaysAdapter(listOf(), presenter)
+
+        `when`(presenter.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", true))
+
+        recyclerView.run {
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter_
+            measure(0, 0)
+            layout(0, 0, 100, 10000)
+        }
+
+        assertThat(adapter_).hasItemCount(0)
+
+        adapter_.updateOverlays(overlays)
+
+        assertThat(adapter_).hasItemCount(1)
     }
 
 }

@@ -4,11 +4,9 @@ apply plugin: 'groovy'
 apply plugin: "jacoco"
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile kotlinLib
     compile project(":sublib:models")
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile slf4japi
 
     testCompile(
             'junit:junit:4.12',

@@ -56,7 +56,9 @@ class Type1SpinnerArrayAdapterTest: BaseRobolectricTest() {
         adapter = Type1SpinnerArrayAdapter(RuntimeEnvironment.application, objects)
         val parent = ListView(RuntimeEnvironment.application)
         val view = adapter.getView(0, null, parent)
+        val view2 = adapter.getDropDownView(0, null, parent)
         assertThat(view).isNotNull
+        assertThat(view2).isNotNull
     }
 
 }

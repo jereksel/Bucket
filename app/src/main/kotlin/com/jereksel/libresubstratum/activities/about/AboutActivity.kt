@@ -56,9 +56,13 @@ class AboutActivity: AppCompatActivity() {
 
         val crashlyticsAppender = Library("Crashlytics Appender", APACHE2, Author("Allogy Interactive", "2013"))
 
+        val crash = Library("Custom Activity on Crash library", APACHE2, Author("Eduard Ereza", "2014-2017"))
+
+        val elfio = Library("ELFIO", APACHE2, Author("Serge Lamikhov-Center", "2001-2011"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
-                zipUtils, room, codec, crashlyticsAppender)
+                zipUtils, room, codec, crashlyticsAppender, crash, elfio)
                 .sortedBy { it.name }
 
         verticalLayout {

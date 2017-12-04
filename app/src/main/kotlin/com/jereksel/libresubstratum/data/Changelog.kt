@@ -5,6 +5,16 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.2-BETA") {
+            +"Add option to change overlays priorities"
+            +"Add support for template 11.1.0 (please report any issues)"
+            +"Add support for type3-common (please report any issues)"
+            +"Fix sorting in main activity"
+            +"Fix FC in Swift Black (again)"
+            +"Fix FC in installed overlays view"
+            +"Searching in installed overlays view"
+            +"Change toast text that shows when theme cannot be decrypted"
+            +"Add screen about crash after FC"
+            +"Fix text overlay in installed view"
             +"Fix FC in Swift Black"
             +"Changelog dialog"
             +"Spinners now show colors"

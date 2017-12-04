@@ -29,28 +29,19 @@ class DetailedPresenter(
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager,
         private val metrics: Metrics
-) : Presenter {
+) : Presenter() {
 
-    var detailedView: View? = null
+    val detailedView: View?
+        get() = view.get()
+
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
-    var compositeDisposable = CompositeDisposable()
     val log = getLogger()
 
     private var type3: Type3Extension? = null
 
     var init = false
-
-    override fun setView(view: DetailedContract.View) {
-        detailedView = view
-    }
-
-    override fun removeView() {
-        detailedView = null
-        compositeDisposable.clear()
-        compositeDisposable = CompositeDisposable()
-    }
 
     override fun readTheme(appId: String) {
 

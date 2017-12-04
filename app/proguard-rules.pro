@@ -67,6 +67,8 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+-keep class android.support.v7.widget.SearchView { *; }
+
 # https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-square-retrofit2.pro
 # Retrofit 2.X
 ## https://square.github.io/retrofit/ ##
@@ -90,3 +92,4 @@
 -keep class com.fasterxml.jackson.databind.ObjectWriter {
     public ** writeValueAsString(**);
 }
+
