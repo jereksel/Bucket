@@ -9,7 +9,7 @@ init:
   - 7z x "tools_r25.2.3-windows.zip" > nul
   - appveyor DownloadFile https://dl.google.com/android/repository/android-ndk-r15c-windows-x86_64.zip
   - 7z x "android-ndk-r15c-windows-x86_64.zip" > nul
-  - cd "C:\projects\libresubstratum"
+  - cd "C:\projects\bucket"
 
 install:
   - gradlew -version
