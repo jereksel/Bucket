@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LibreSubstratum</string>
+    <string name="app_name">Bucket</string>
     <string name="settings_icons">Settings Icons</string>
     <string name="systemui_headers">System UI Headers</string>
     <string name="systemui_navigation">System UI Navigation</string>
