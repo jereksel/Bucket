@@ -279,9 +279,7 @@ class DetailedPresenter(
 
     override fun selectAll() {
 
-        try {
-            themePackState.isEmpty()
-        } catch (e: UninitializedPropertyAccessException) {
+        if (!this::themePackState.isInitialized) {
             return
         }
 
@@ -295,9 +293,7 @@ class DetailedPresenter(
 
     override fun deselectAll() {
 
-        try {
-            themePackState.isEmpty()
-        } catch (e: UninitializedPropertyAccessException) {
+        if (!this::themePackState.isInitialized) {
             return
         }
 
