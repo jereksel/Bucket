@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.database
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.jereksel.libresubstratum.domain.SubsDatabaseDownloader
@@ -21,15 +22,15 @@ class DatabaseViewModel(
 
 //    @Volatile
 //    private var appsInvoked = false
-    private var apps : MutableLiveData<List<SubstratumDatabaseTheme>>? = null
-    val clearTheme = MutableLiveData<List<String>>()
-    val darkTheme = MutableLiveData<List<String>>()
-    val lightThemes = MutableLiveData<List<String>>()
+    private var apps: MutableLiveData<List<SubstratumDatabaseTheme>>? = null
+    private var clearTheme: MutableLiveData<List<SubstratumDatabaseTheme>>? = null
+    private var darkTheme: MutableLiveData<List<SubstratumDatabaseTheme>>? = null
+    private var lightThemes: MutableLiveData<List<SubstratumDatabaseTheme>>? = null
     val plugin = MutableLiveData<List<String>>()
     val samsung = MutableLiveData<List<String>>()
     val wallpapers = MutableLiveData<List<String>>()
 
-    fun getApps(): MutableLiveData<List<SubstratumDatabaseTheme>> {
+    fun getApps(): LiveData<List<SubstratumDatabaseTheme>> {
 
         val apps = apps
 
@@ -44,85 +45,93 @@ class DatabaseViewModel(
 
     }
 
+    fun getClearTheme(): LiveData<List<SubstratumDatabaseTheme>> {
+
+        val themes = clearTheme
+
+        if (themes == null) {
+            val newThemes = MutableLiveData<List<SubstratumDatabaseTheme>>()
+            this.clearTheme = newThemes
+            asyncGetClearThemes()
+            return newThemes
+        } else {
+            return themes
+        }
+
+    }
+
+    fun getDarkTheme(): LiveData<List<SubstratumDatabaseTheme>> {
+
+        val themes = darkTheme
+
+        if (themes == null) {
+            val newThemes = MutableLiveData<List<SubstratumDatabaseTheme>>()
+            this.darkTheme = newThemes
+            asyncGetDarkThemes()
+            return newThemes
+        } else {
+            return themes
+        }
+
+    }
+
+
+    fun getLightTheme(): LiveData<List<SubstratumDatabaseTheme>> {
+
+        val themes = lightThemes
+
+        if (themes == null) {
+            val newThemes = MutableLiveData<List<SubstratumDatabaseTheme>>()
+            this.lightThemes = newThemes
+            asyncGetLightThemes()
+            return newThemes
+        } else {
+            return themes
+        }
+
+    }
+
+
     private fun asyncGetApps() {
         compositeDisposable += downloader.getApps()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe { v ->
-                    apps?.value = v
+                    apps?.postValue(v)
                 }
     }
 
-//    init {
-////        computeApps()
-//        computeApps()
-//    }
-//
-//    fun computeApps() {
-//        compositeDisposable += downloader.getApps()
-//                .observeOn(Schedulers.io())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe { v ->
-//                    apps.postValue(v)
-//                }
-//    }
+    private fun asyncGetClearThemes() {
+        compositeDisposable += downloader.getClearThemes()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe { v ->
+                    clearTheme?.postValue(v)
+                }
+    }
+
+    private fun asyncGetDarkThemes() {
+        compositeDisposable += downloader.getDarkThemes()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe { v ->
+                    darkTheme?.postValue(v)
+                }
+
+    }
+
+    private fun asyncGetLightThemes() {
+        compositeDisposable += downloader.getLightThemes()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe { v ->
+                    lightThemes?.postValue(v)
+                }
+
+    }
 
     override fun onCleared() {
         compositeDisposable.dispose()
     }
-
-    fun computeApps2() {
-
-//        Schedulers.io().scheduleDirect {
-//            Thread.sleep(10000)
-//            val list = (1..10).map { "app$it" }
-//            apps.postValue(list)
-//        }
-
-
-//        val module = JacksonXmlModule()
-//        module.setDefaultUseWrapper(false)
-//        val xmlMapper = XmlMapper(module)
-//
-//        xmlMapper.registerModule(KotlinModule())
-
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://raw.githubusercontent.com/")
-//                .addConverterFactory(JacksonConverterFactory.create(xmlMapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-
-        val api = retrofit.create(Api::class.java)
-
-        api.getApps()
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe {
-//                    apps.postValue(it.themes)
-                }
-
-
-    }
-
-    interface Api {
-
-        @GET("substratum/database/master/substratum_tab_apps.xml")
-        fun getApps(): Observable<substratum>
-
-    }
-
-    data class substratum(
-//        @JsonProperty
-//        @JacksonXmlProperty(localName = "event")
-        val themes: List<theme>
-    )
-
-    data class theme(
-            val author: String
-    )
-
-//    fun getApps() {
-//        apps.observe()
-//    }
 
 }

@@ -32,6 +32,7 @@ class XmlConverterTest: FunSpec() {
 
             val theme = themes[0]
 
+            assertThat(theme.name).isEqualTo("Beltz Theme")
             assertThat(theme.author).isEqualTo("Jimmy Setiawan")
             assertThat(theme.link).isEqualTo("https://play.google.com/store/apps/details?id=bitsykolayers.Midnight")
             assertThat(theme.packageId).isEqualTo("bitsykolayers.Midnight")

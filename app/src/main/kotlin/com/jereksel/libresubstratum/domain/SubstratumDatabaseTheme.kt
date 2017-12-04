@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.domain
 
 data class SubstratumDatabaseTheme(
+        val name: String,
         val author: String,
         //Play store link is basically https://play.google.com/store/apps/details?id= + packageId
         val link: String,

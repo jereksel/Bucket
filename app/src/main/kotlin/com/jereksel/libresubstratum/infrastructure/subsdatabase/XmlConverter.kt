@@ -29,6 +29,7 @@ object XmlConverter {
                     it as? Element
                 }
                 .map {
+                    val name = it.getAttribute("id")
                     val author = it["author"]
                     val packageId = it["package"]
                     val pricing = it["pricing"]
@@ -41,15 +42,15 @@ object XmlConverter {
                     val image = it["image"]
                     val backgroundImage = it["backgroundimage"]
 
-                    SubstratumDatabaseTheme(author, link, packageId, enumPricing,
+                    SubstratumDatabaseTheme(name, author, link, packageId, enumPricing,
                             enumSupports, image, backgroundImage)
                 }
 
     }
 
-    private fun stringToPricing(s: String) = when(s) {
-        "Free" -> FREE
-        "Paid" -> PAID
+    private fun stringToPricing(s: String) = when(s.toLowerCase()) {
+        "free" -> FREE
+        "paid" -> PAID
         else -> {
             throw RuntimeException("Unknown pricing $s")
         }

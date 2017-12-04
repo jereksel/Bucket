@@ -37,7 +37,7 @@ class DatabaseViewModelTest: BaseRobolectricTest() {
     @Test
     fun ABC() {
 
-        val list = listOf(SubstratumDatabaseTheme("", "", "", Pricing.PAID, listOf(), "", ""))
+        val list = listOf(SubstratumDatabaseTheme("", "", "", "", Pricing.PAID, listOf(), "", ""))
 
         whenever(subsDatabaseDownloader.getApps()).thenReturn(Single.just(list))
 

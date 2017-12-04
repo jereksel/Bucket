@@ -234,6 +234,9 @@ dependencies {
     testCompile "android.arch.core:core-testing:1.0.0"
     compile "android.arch.lifecycle:reactivestreams:1.0.0"
 
+    compile glide
+    kapt glideProcessor
+
     //Dagger
     compile dagger
     kapt daggerCompiler

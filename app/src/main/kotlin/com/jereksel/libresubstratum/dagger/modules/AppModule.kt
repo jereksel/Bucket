@@ -19,6 +19,7 @@ import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.infrastructure.subsdatabase.GithubSubsDatabaseDownloader
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -116,6 +117,17 @@ open class AppModule(private val application: Application) {
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
     }
+
+    @Provides
+    open fun providesDatabaseViewModelFactory(
+            downloader: SubsDatabaseDownloader
+    ): DatabaseViewModelFactory {
+        return DatabaseViewModelFactoryImpl(downloader)
+    }
+
+    @Provides
+    open fun providesSubsDatabaseDownloader(
+    ): SubsDatabaseDownloader = GithubSubsDatabaseDownloader()
 
     @Provides
     open fun providesPrioritiesPresenter(

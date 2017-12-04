@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum.activities.database
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.arch.persistence.room.Database
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -13,19 +12,25 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.os.Bundle
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
-import android.widget.TextView
+import com.jereksel.libresubstratum.App
 
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.database.DatabaseActivity.PlaceholderFragment.Companion.FragmentType.*
+import com.jereksel.libresubstratum.adapters.DatabaseAdapter
+import com.jereksel.libresubstratum.domain.DatabaseViewModelFactory
 import com.jereksel.libresubstratum.domain.SubstratumDatabaseTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import kotlinx.android.synthetic.main.activity_database.*
-import org.jetbrains.anko.find
+import kotlinx.android.synthetic.main.fragment_database.*
+import javax.inject.Inject
 
 class DatabaseActivity : AppCompatActivity() {
 
@@ -61,15 +66,15 @@ class DatabaseActivity : AppCompatActivity() {
         mViewPager.adapter = mSectionsPagerAdapter
 
         tabLayout.setupWithViewPager(mViewPager)
-
-        val viewMode = ViewModelProviders.of(this).get(DatabaseViewModel::class.java)
-
-        viewMode.getApps().observe(this, Observer<List<SubstratumDatabaseTheme>> {
-            val data = it
-            if (data != null) {
-                log.debug("Apps: {}", data)
-            }
-        })
+//
+//        val viewMode = ViewModelProviders.of(this).get(DatabaseViewModel::class.java)
+//
+//        viewMode.getApps().observe(this, Observer<List<SubstratumDatabaseTheme>> {
+//            val data = it
+//            if (data != null) {
+//                log.debug("Apps: {}", data)
+//            }
+//        })
 
         val fab = findViewById<View>(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view ->
@@ -109,7 +114,7 @@ class DatabaseActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1)
+            return PlaceholderFragment.newInstance(position)
         }
 
         override fun getCount(): Int {
@@ -118,12 +123,13 @@ class DatabaseActivity : AppCompatActivity() {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            when (position) {
-                0 -> return "SECTION 1"
-                1 -> return "SECTION 2"
-                2 -> return "SECTION 3"
-            }
-            return null
+            return PlaceholderFragment.Companion.FragmentType.get(position).name
+//            when (position) {
+//                0 -> return "SECTION 1"
+//                1 -> return "SECTION 2"
+//                2 -> return "SECTION 3"
+//            }
+//            return null
         }
     }
 
@@ -132,13 +138,35 @@ class DatabaseActivity : AppCompatActivity() {
      */
     class PlaceholderFragment : Fragment() {
 
+        @Inject
+        lateinit var viewModelFactory: DatabaseViewModelFactory
+
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_database, container, false)
-            val textView = rootView.find<TextView>(R.id.section_label)
-            textView.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
 
-            ViewModelProviders.of(this).get(DatabaseViewModel::class.java)
+            val type = FragmentType.get(arguments.getInt(ARG_SECTION_NUMBER))
+
+            (context.applicationContext as App).getAppComponent(context).inject(this)
+
+            val viewModel = ViewModelProviders.of(this, viewModelFactory).get(DatabaseViewModel::class.java)
+
+            val observable = when(type) {
+                CLEAR -> viewModel.getClearTheme()
+                DARK -> viewModel.getDarkTheme()
+                LIGHT -> viewModel.getLightTheme()
+            }
+
+            observable
+                    .observe(this, Observer<List<SubstratumDatabaseTheme>> {
+
+                        recyclerView.apply {
+                            layoutManager = LinearLayoutManager(context)
+                            itemAnimator = DefaultItemAnimator()
+                            adapter = DatabaseAdapter((it ?: listOf()))
+                        }
+
+                    })
 
             return rootView
         }
@@ -160,6 +188,16 @@ class DatabaseActivity : AppCompatActivity() {
                 args.putInt(ARG_SECTION_NUMBER, sectionNumber)
                 fragment.arguments = args
                 return fragment
+            }
+
+            enum class FragmentType(val id: Int) {
+                CLEAR(0),
+                DARK(1),
+                LIGHT(2);
+
+                companion object {
+                    fun get(id: Int) = values().first { it.id == id }
+                }
             }
         }
     }

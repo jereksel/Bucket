@@ -1,6 +1,8 @@
 package com.jereksel.libresubstratum.dagger.components
 
 import com.jereksel.libresubstratum.activities.ErrorActivity
+import com.jereksel.libresubstratum.activities.database.DatabaseActivity
+import com.jereksel.libresubstratum.activities.database.DatabaseActivity.PlaceholderFragment
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainView
@@ -21,4 +23,5 @@ interface AppComponent {
     fun inject(view: ErrorActivity)
     fun inject(view: PrioritiesView)
     fun inject(view: PrioritiesDetailView)
+    fun inject(view: PlaceholderFragment)
 }

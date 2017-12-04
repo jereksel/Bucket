@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clickable="true"
+    android:elevation="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardCornerRadius="4dp">
 
-    <TextView
-        android:id="@+id/textView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:textSize="20pt"
-        android:gravity="center"
-        android:text="OVERLAY NAME"
-        android:layout_height="60dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/overlayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/icon"
+            android:text="OVERLAY NAME" />
+
+        <TextView
+            android:id="@+id/overlayAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/overlayName"
+            android:layout_toEndOf="@+id/icon"
+            android:text="OVERLAY AUTHOR" />
+
+        <ImageView
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="192dp"
+            android:layout_below="@+id/icon"
+            android:src="@mipmap/ic_launcher" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

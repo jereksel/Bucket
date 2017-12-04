@@ -29,33 +29,58 @@ class GithubSubsDatabaseDownloader: SubsDatabaseDownloader {
 
     }
 
-    fun computeApps() {
+    override fun getClearThemes(): Single<List<SubstratumDatabaseTheme>> {
 
-//        Schedulers.io().scheduleDirect {
-//            Thread.sleep(10000)
-//            val list = (1..10).map { "app$it" }
-//            apps.postValue(list)
-//        }
+        return api.getClearThemes()
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .map {
+                    XmlConverter.convert(it)
+                }
+    }
 
+    override fun getDarkThemes(): Single<List<SubstratumDatabaseTheme>> {
 
-//        val module = JacksonXmlModule()
-//        module.setDefaultUseWrapper(false)
-//        val xmlMapper = XmlMapper(module)
-//
-//        xmlMapper.registerModule(KotlinModule())
+        return api.getDarkThemes()
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .map {
+                    XmlConverter.convert(it)
+                }
+    }
 
+    override fun getLightThemes(): Single<List<SubstratumDatabaseTheme>> {
 
-/*                .subscribe {
-                    apps.postValue(it.themes)
-                }*/
-
-
+        return api.getLightThemes()
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .map {
+                    XmlConverter.convert(it)
+                }
     }
 
     interface Api {
 
         @GET("substratum/database/master/substratum_tab_apps.xml")
         fun getApps(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_clearthemes.xml")
+        fun getClearThemes(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_darkthemes.xml")
+        fun getDarkThemes(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_lightthemes.xml")
+        fun getLightThemes(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_plugins.xml")
+        fun getPlugins(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_samsung.xml")
+        fun getSamsung(): Single<String>
+
+        @GET("substratum/database/master/substratum_tab_wallpapers.xml")
+        fun getWallpapers(): Single<String>
 
     }
 }
