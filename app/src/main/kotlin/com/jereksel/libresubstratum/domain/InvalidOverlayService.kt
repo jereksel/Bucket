@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.domain
 
+import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
 class InvalidOverlayService(val message: String): OverlayService {
@@ -32,11 +33,11 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun updatePriorities(overlayIds: List<String>) {
+    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

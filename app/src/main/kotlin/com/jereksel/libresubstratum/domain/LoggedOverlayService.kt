@@ -1,6 +1,8 @@
 package com.jereksel.libresubstratum.domain
 
+import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
+import java.util.concurrent.Future
 
 class LoggedOverlayService(
         val overlayService: OverlayService,
@@ -35,9 +37,8 @@ class LoggedOverlayService(
     override fun getOverlaysPrioritiesForTarget(targetAppId: String) =
             overlayService.getOverlaysPrioritiesForTarget(targetAppId)
 
-    override fun updatePriorities(overlayIds: List<String>) {
-        overlayService.updatePriorities(overlayIds)
-    }
+    override fun updatePriorities(overlayIds: List<String>) =
+            overlayService.updatePriorities(overlayIds)
 
     override fun requiredPermissions() = overlayService.requiredPermissions()
 

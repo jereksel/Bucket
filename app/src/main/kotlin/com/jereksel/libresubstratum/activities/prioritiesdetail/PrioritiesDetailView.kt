@@ -18,6 +18,9 @@ import com.jereksel.libresubstratum.adapters.PrioritiesDetailAdapter
 import com.jereksel.libresubstratum.adapters.PrioritiesDetailItemTouchHelperCallback
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import kotlinx.android.synthetic.main.activity_priorities_detail.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.toast
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
@@ -40,12 +43,14 @@ class PrioritiesDetailView: AppCompatActivity(), View {
         (application as App).getAppComponent(this).inject(this)
         ActivityStarter.fill(this)
         presenter.setView(this)
-        presenter.getOverlays(targetId)
+        async(UI) {
+            presenter.getOverlays(targetId)
+        }
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         fab.hide(false)
 
-        fab.setOnClickListener {
+        fab.onClick {
             presenter.updatePriorities(adapter.overlays)
         }
 

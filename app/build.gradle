@@ -225,6 +225,12 @@ dependencies {
         compile lib
     }
 
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
+        exclude group: "com.google.guava"
+    }
+
     //RxStuff
     compile rxjava
     compile rxkotlin
@@ -362,4 +368,10 @@ play {
 
 androidExtensions {
     experimental = true
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

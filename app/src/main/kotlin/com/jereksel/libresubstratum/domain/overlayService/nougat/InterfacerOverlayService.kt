@@ -13,15 +13,18 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import com.google.common.cache.RemovalListener
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
@@ -33,6 +36,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val service: AidlIInterfacerInterface
         get() = interfacerCache.get(Unit).second
+
+    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10))
 
     @Suppress("JoinDeclarationAndAssignment")
     private val omsCache : LoadingCache<Unit, IOverlayManager>
@@ -117,13 +122,21 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
-        val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
-        return list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> {
+
+        return executor.submit(Callable<List<OverlayInfo>> {
+            val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
+            list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
+        })
+
     }
 
-    override fun updatePriorities(overlayIds: List<String>) {
-        service.changePriority(overlayIds.reversed())
+    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> {
+
+        return executor.submit {
+           service.changePriority(overlayIds.reversed())
+        }
+
     }
 
     override fun restartSystemUI() {
