@@ -86,7 +86,7 @@ class ErrorActivity : AppCompatActivity() {
 
             val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", "jereksel@gmail.com", null))
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "LibreSubstratum bug report")
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bucket bug report")
             emailIntent.putExtra(Intent.EXTRA_TEXT, fullMessage)
             startActivity(Intent.createChooser(emailIntent, "Send email..."))
 
