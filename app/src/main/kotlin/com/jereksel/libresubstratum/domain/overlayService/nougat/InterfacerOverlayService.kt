@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.om.IOverlayManager
 import android.content.pm.PackageManager
+import android.os.AsyncTask
 import android.os.IBinder
 import android.os.Looper
 import android.support.v4.content.ContextCompat
@@ -13,6 +14,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import com.google.common.cache.RemovalListener
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.jereksel.libresubstratum.domain.OverlayInfo
@@ -22,9 +24,13 @@ import com.jereksel.omslib.OMSLib
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.guava.asListenableFuture
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
@@ -98,18 +104,24 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     }
 
-    override fun enableOverlay(id: String) {
+    override fun enableOverlay(id: String) = executor.submit {
         service.enableOverlays(listOf(id))
     }
 
-    override fun disableOverlay(id: String) {
+    override fun disableOverlay(id: String) = executor.submit {
         service.disableOverlays(listOf(id))
     }
+
+    override fun enableExclusive(id: String) = async(CommonPool) {
+
+        val overlayInfo = getOverlayInfo(id)
+
+    }.asListenableFuture()
 
     override fun getOverlayInfo(id: String): OverlayInfo? {
         val info = oms.getOverlayInfo(id, 0)
         return if (info != null) {
-            OverlayInfo(id, info.isEnabled)
+            OverlayInfo(id, info.targetPackageName, info.isEnabled)
         } else {
             null
         }
@@ -118,7 +130,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     @Suppress("UNCHECKED_CAST")
     override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
         val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
-        return map.map { OverlayInfo(it.packageName, it.isEnabled) }
+        return map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -126,7 +138,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
         return executor.submit(Callable<List<OverlayInfo>> {
             val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
-            list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
+            list.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }.reversed()
         })
 
     }

@@ -41,19 +41,6 @@ class PrioritiesDetailPresenter(
 
         view.get()?.setOverlays(mapped)
 
-//
-//        Schedulers.io().scheduleDirect {
-//            val installedOverlays = packageManager.getInstalledOverlays()
-//            val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
-//            val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).filter { it.enabled }
-//            val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
-//            overlays = mapped
-//
-//            AndroidSchedulers.mainThread().scheduleDirect {
-//                view.get()?.setOverlays(mapped)
-//            }
-//        }
-
     }
 
     override fun updateOverlays(overlays: List<InstalledOverlay>) {

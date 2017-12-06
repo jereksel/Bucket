@@ -5,11 +5,15 @@ import java.io.File
 
 class InvalidOverlayService(val message: String): OverlayService {
 
-    override fun enableOverlay(id: String) {
+    override fun enableExclusive(id: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun disableOverlay(id: String) {
+    override fun enableOverlay(id: String): ListenableFuture<*> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun disableOverlay(id: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

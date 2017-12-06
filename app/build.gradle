@@ -248,7 +248,7 @@ dependencies {
     }
 
     compile 'com.github.clans:fab:1.6.4'
-
+    compile "com.github.akarnokd:rxjava2-extensions:0.18.1"
     compile 'org.zeroturnaround:zt-zip:1.12'
 
     //Logging

@@ -4,9 +4,12 @@ import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
 interface OverlayService {
-    fun enableOverlay(id: String)
+    fun enableOverlay(id: String): ListenableFuture<*>
 
-    fun disableOverlay(id: String)
+    fun disableOverlay(id: String): ListenableFuture<*>
+
+    //Oreo has it in AIDL
+    fun enableExclusive(id: String): ListenableFuture<*>
 
     fun getOverlayInfo(id: String): OverlayInfo?
 
