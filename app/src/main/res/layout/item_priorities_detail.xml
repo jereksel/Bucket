@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:elevation="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardCornerRadius="4dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/icons"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/theme_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
+
+            <ImageView
+                android:id="@+id/target_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="24dp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/recText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/reorder"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/icons"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/target_name"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target name" />
+
+            <TextView
+                android:id="@+id/theme_type1a"
+                android:layout_width="wrap_content"
+                android:text="@string/theme_type1a_list"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/theme_type1b"
+                android:layout_width="wrap_content"
+                android:text="@string/theme_type1b_list"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/theme_type1c"
+                android:layout_width="wrap_content"
+                android:text="@string/theme_type1c_list"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/theme_type2"
+                android:layout_width="wrap_content"
+                android:text="@string/theme_type2_list"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/theme_type3"
+                android:layout_width="wrap_content"
+                android:text="@string/theme_type3_list"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:src="@drawable/ic_reorder_black_24dp"
+            android:id="@+id/reorder"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:padding="8dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/icons" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

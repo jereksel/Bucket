@@ -1,18 +1,31 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.activities.detailed
 
-import android.os.AsyncTask
-import android.util.Log
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
-import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
-import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
@@ -33,30 +46,23 @@ class DetailedPresenter(
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager,
         private val metrics: Metrics
-) : Presenter {
+) : Presenter() {
 
-    var detailedView: View? = null
+    val detailedView: View?
+        get() = view.get()
+
     lateinit var themePackState: List<ThemePackAdapterState>
     lateinit var themePack: ThemePack
     lateinit var appId: String
-    var compositeDisposable = CompositeDisposable()
     val log = getLogger()
 
     private var type3: Type3Extension? = null
 
     var init = false
 
-    override fun setView(view: DetailedContract.View) {
-        detailedView = view
-    }
-
-    override fun removeView() {
-        detailedView = null
-        compositeDisposable.clear()
-        compositeDisposable = CompositeDisposable()
-    }
-
     override fun readTheme(appId: String) {
+
+        log.debug("Reading {}", appId)
 
         val extractLocation = File(packageManager.getCacheFolder(), appId)
 
@@ -149,7 +155,7 @@ class DetailedPresenter(
     //TODO: Change name
     fun areVersionsTheSame(app1: String, app2: String): Boolean {
 
-        Log.d("areVersionTheSame", "$app1 vs $app2")
+        log.debug("areVersionTheSame", "$app1 vs $app2")
 
         val app1Info = packageManager.getAppVersion(app1)
         val app2Info = packageManager.getAppVersion(app2)
@@ -159,6 +165,7 @@ class DetailedPresenter(
 
     fun getOverlayIdForTheme(position: Int): String {
 
+        log.debug("Getting overlayId for theme {} and types3 {} for position {} state overlay {} state of type3 {}", themePack.themes[position], themePack.type3, position, themePackState[position], type3)
 
         val theme = themePack.themes[position]
         val state = themePackState[position]
@@ -173,7 +180,7 @@ class DetailedPresenter(
         val type2 = theme.type2?.extensions?.getOrNull(state.type2)
         val type3 = type3
 
-        return ThemeNameUtils.getTargetOverlayName(
+        val id = ThemeNameUtils.getTargetOverlayName(
                 destAppId,
                 themeName,
                 type1a,
@@ -182,6 +189,10 @@ class DetailedPresenter(
                 type2,
                 type3
         )
+
+        log.debug("OverlayId: {}", id)
+
+        return id
     }
 
     override fun getAppName(appId: String) = packageManager.getAppName(appId)
@@ -220,6 +231,7 @@ class DetailedPresenter(
 
     override fun openInSplit(adapterPosition: Int) {
         val app = themePack.themes[adapterPosition].application
+        log.debug("Opening {} in split", app)
         if (!activityProxy.openActivityInSplit(app)) {
             detailedView?.showToast("App couldn't be opened")
         }
@@ -283,6 +295,11 @@ class DetailedPresenter(
     }
 
     override fun selectAll() {
+
+        if (!this::themePackState.isInitialized) {
+            return
+        }
+
         themePackState.forEachIndexed { index, state ->
             if (!state.checked) {
                 detailedView?.refreshHolder(index)
@@ -292,6 +309,11 @@ class DetailedPresenter(
     }
 
     override fun deselectAll() {
+
+        if (!this::themePackState.isInitialized) {
+            return
+        }
+
         themePackState.forEachIndexed { index, state ->
             if (state.checked) {
                 detailedView?.refreshHolder(index)
@@ -301,6 +323,7 @@ class DetailedPresenter(
     }
 
     override fun restartSystemUI() {
+        log.debug("Resetting SystemUI")
         Observable.just("")
                 .observeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -313,6 +336,8 @@ class DetailedPresenter(
 
         positions.forEach { themePackState[it].compiling = true; detailedView?.refreshHolder(it) }
 
+        log.debug("Compiling overlays for {}", positions.map { themePack.themes[it].application })
+
         val disp = positions.toList().toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -320,6 +345,7 @@ class DetailedPresenter(
                     val overlay = getOverlayIdForTheme(it)
 
                     if (packageManager.isPackageInstalled(overlay) && areVersionsTheSame(overlay, appId)) {
+                        log.debug("{} is installed and has the same version", overlay)
                         afterInstalling(it)
                         themePackState[it].compiling = false
                         detailedView?.refreshHolder(it)
@@ -407,9 +433,7 @@ class DetailedPresenter(
         val info = overlayService.getOverlayInfo(overlay)
         if (info?.enabled == false) {
             val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            metrics.userEnabledOverlay(overlay)
-            overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
-            overlayService.disableOverlays(overlays.map { it.overlayId })
+            overlays.forEach { overlayService.disableOverlay(it.overlayId) }
             overlayService.enableOverlay(overlay)
         }
     }
@@ -422,10 +446,9 @@ class DetailedPresenter(
             if (!info.enabled) {
                 val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
 
-                metrics.userEnabledOverlay(overlay)
                 overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
 
-                overlayService.disableOverlays(overlays.map { it.overlayId })
+                overlays.forEach { overlayService.disableOverlay(it.overlayId) }
                 overlayService.enableOverlay(overlay)
             } else {
                 metrics.userDisabledOverlay(overlay)

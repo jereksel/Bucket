@@ -40,7 +40,7 @@ class InstalledViewTest: BaseRobolectricTest() {
     lateinit var activity: View
     lateinit var presenter: Presenter
 
-    var activityCasted by ResettableLazy { activity as AppCompatActivity? }
+    var activityCasted by ResettableLazy { activity as InstalledView? }
 //    var swipeToRefresh by ResettableLazy { activityCasted!!.swiperefresh }
     var recyclerView by ResettableLazy { activityCasted!!.recyclerView }
 
@@ -143,7 +143,7 @@ class InstalledViewTest: BaseRobolectricTest() {
 
         recyclerView.getChildAt(0).performClick()
 
-        verify(presenter).setState(0, true)
+        verify(presenter).setState("appid1", true)
 
     }
 
@@ -157,8 +157,8 @@ class InstalledViewTest: BaseRobolectricTest() {
                 )
         )
 
-        whenever(presenter.getState(0)).thenReturn(true)
-        whenever(presenter.getState(1)).thenReturn(false)
+        whenever(presenter.getState("appid1")).thenReturn(true)
+        whenever(presenter.getState("appid2")).thenReturn(false)
         whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", true))
         whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", false))
 
@@ -188,6 +188,12 @@ class InstalledViewTest: BaseRobolectricTest() {
         verify(presenter).uninstallSelected()
 
         reset(presenter)
+    }
+
+    @Test
+    fun `Text changes from searchview are passed to presenter`() {
+        activityCasted!!.onQueryTextChange("new text")
+        verify(presenter).setFilter("new text")
     }
 
     @Test

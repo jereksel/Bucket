@@ -1,16 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//UNCOMMENT TO ENABLE TESTS - REMEMBER TO DO BUILD BEFORE
-//apply plugin: 'groovyx.android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
-//apply plugin: 'com.github.kt3k.coveralls'
-//apply plugin: 'net.saliman.cobertura'
-
 apply plugin: 'jacoco'
-//apply plugin: 'jacoco-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
@@ -21,12 +15,7 @@ buildscript {
     }
 
     dependencies {
-        // These docs use an open ended version so that our plugin
-        // can be updated quickly in response to Android tooling updates
-
-        // We recommend changing it to the latest version from our changelog:
-        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
-        classpath 'io.fabric.tools:gradle:1.24.1'
+        classpath 'io.fabric.tools:gradle:1.24.4'
     }
 }
 
@@ -46,28 +35,24 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-/*
-buildscript {
-    dependencies {
-        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:1.1.0'
-    }
-}
-*/
-
 task copyTestClasses(type: Copy) {
     from "build/tmp/kotlin-classes/debugUnitTest"
     into "build/intermediates/classes/debug"
 }
 
-//kapt {
-////    generateStubs = true
-//    arguments {
-////        arg("androidManifestFile", variant.outputs[0]?.processResourcesTask?.manifestFile ?: "")
-//        arg("androidManifestFile", variant.outputs[0].processResourcesk.manifestFile)
-//    }
-//}
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
 
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
+
+def beta = true
+
+if(System.getenv("CIRCLE_TAG")) {
+    beta = false
+}
 
 android {
     playAccountConfigs {
@@ -78,7 +63,8 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
-        def nextVersion = "0.1"
+        buildConfigField "boolean", "BETA", beta.toString()
+        def nextVersion = "0.2"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 26
@@ -93,7 +79,7 @@ android {
                 versionName "${nextVersion}-BETA-${code}-${shortTag}"
             }
         } else if (project.hasProperty("fdroid")) {
-            versionCode 1
+            versionCode 2
             versionName nextVersion
         } else {
             versionCode 9999
@@ -108,6 +94,12 @@ android {
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         ndk {
             abiFilters 'armeabi-v7a', "arm64-v8a"
+        }
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_PLATFORM=android-24',
+                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
+            }
         }
     }
     signingConfigs {
@@ -144,6 +136,11 @@ android {
         fdroid {
             dimension "store"
             versionNameSuffix "-fdroid"
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'src/main/jni/CMakeLists.txt'
         }
     }
     packagingOptions {
@@ -221,26 +218,22 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile kotlinLib
 
     //Support library
-    compile "com.android.support:appcompat-v7:$support_library_version"
-    compile "com.android.support:recyclerview-v7:$support_library_version"
-    compile "com.android.support:cardview-v7:$support_library_version"
-    compile "com.android.support:design:$support_library_version"
+    supportLibrary.each { name, lib ->
+        compile lib
+    }
 
     //RxStuff
-    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile rxjava
+    compile rxkotlin
+    compile rxandroid
 
     //Dagger
-    compile "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    compile dagger
+    kapt daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
-//    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
-//    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
@@ -250,34 +243,33 @@ dependencies {
 
     compile 'com.github.clans:fab:1.6.4'
 
+    compile 'org.zeroturnaround:zt-zip:1.12'
+
     //Logging
     compile "com.github.tony19:logback-android-core:$logback_android_version"
     compile "com.github.tony19:logback-android-classic:$logback_android_version"
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    playCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+    compile slf4japi
+    playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
     }
 
-    //AndroidAnnotations
-//    kapt "org.androidannotations:androidannotations:$aa_version"
-//    kaptTest "org.androidannotations:androidannotations:$aa_version"
-//    kaptAndroidTest "org.androidannotations:androidannotations:$aa_version"
-//    compile "org.androidannotations:androidannotations-api:$aa_version"
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
     compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
-    compile "org.jetbrains.anko:anko:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
+    compile anko
+    compile ankoRecyclerView
 
     compile 'com.github.kittinunf.result:result:1.2.0'
 
     //Signing
     compile project(":zipsigner:combined")
     compile project(":aapt:lib")
+
+    compile project(":libs:changelogdialog")
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
@@ -286,32 +278,35 @@ dependencies {
     //So Proguard would shut up
     compile 'com.google.j2objc:j2objc-annotations:1.3'
     compile 'com.google.errorprone:error_prone_annotations:2.1.1'
-    compile 'com.google.guava:guava:20.0'
-    androidTestCompile 'com.google.guava:guava:20.0'
+    compile guava
+    androidTestCompile guava
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
+
+    compile 'cat.ereza:customactivityoncrash:2.1.0'
+
+    compile "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     compile project(":sublib:models")
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
+    compile project(':sublib:compilerassetmanager')
 
     //Testing
-    testCompile 'junit:junit:4.12'
-/*    testCompile 'org.codehaus.groovy:groovy:2.4.7:grooid'
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
-        exclude group: 'org.codehaus.groovy'
-        exclude group: 'junit'
-    }
-    testCompile 'cglib:cglib-nodep:3.2.4'*/
-    testCompile "org.robolectric:robolectric:3.4.2"
-    testCompile 'org.mockito:mockito-core:2.7.19'
+    testCompile junit
+
+    testCompile kotlinReflect
+    testCompile mockito
+    testCompile robolectric
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
-    testCompile ('io.kotlintest:kotlintest:1.3.5') {
+    testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
         exclude group: "org.jetbrains.kotlin"
     }
-    testCompile ("com.nhaarman:mockito-kotlin:1.3.0") {
+    testCompile ("com.nhaarman:mockito-kotlin:$mockito_kotlin_version") {
         exclude group: "org.jetbrains.kotlin"
     }
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -323,6 +318,8 @@ dependencies {
     })
 
     testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
     //assertj android
     testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
@@ -338,23 +335,7 @@ dependencies {
     testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
     testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
 
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    compile project(path: ':sublib:compiler')
-    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
-    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
-    androidTestCompile group: 'commons-io', name: 'commons-io', version: '2.5'
-    androidTestCompile 'org.mockito:mockito-core:2.10.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestCompile ('io.kotlintest:kotlintest:1.3.5') {
-        exclude group: "org.jetbrains.kotlin"
-    }
-    androidTestCompile ("com.nhaarman:mockito-kotlin:1.5.0") {
-        exclude group: "org.jetbrains.kotlin"
-    }
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
@@ -367,7 +348,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     })
-    compile project(path: ':sublib:compilerassetmanager')
 }
 
 play {

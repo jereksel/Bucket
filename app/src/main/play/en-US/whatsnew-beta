@@ -1,12 +1,3 @@
-Add option to restart SystemUI
-Fix lag in multiple places
-Fix "Your ROM is too old to support this app" message
-Fix theme name in overlayid (fixes Subs compability with themes such as AospUI)
-Support for encrypted themes
-About screen
-Fix some issues with uninstalling
-Add tutorial in theme view
-Faster theme compiling
-Proguard
-Faster theme reading
-Fix FC when entering, exiting overlay list
+LibreSubstratum is now Bucket: https://plus.google.com/117376207394302665227/posts/U9Vcpg7rnHz
+
+Beta changelog is now available in application

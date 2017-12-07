@@ -1,8 +1,6 @@
 package com.jereksel.libresubstratum.domain
 
 import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.jereksel.libresubstratum.extensions.getLogger
 import javax.inject.Inject
 
@@ -12,26 +10,33 @@ import javax.inject.Inject
 class CrashlitycsMetrics
 @Inject constructor(): Metrics {
 
+    val data = mutableMapOf<String, String>()
+
     val log = getLogger()
 
     override fun userEnteredTheme(themeId: String) {
-        Answers.getInstance().logCustom(CustomEvent("Entered theme")
-                .putCustomAttribute("themeId", themeId))
+        data["currentTheme"] = themeId
+        Crashlytics.setString("currentTheme", themeId)
+        log.debug("User entered theme {}", themeId)
     }
 
     override fun userCompiledOverlay(themeId: String, targetApp: String) {
-        Answers.getInstance().logCustom(CustomEvent("Compiled overlay")
-                .putCustomAttribute("themeId", themeId)
-                .putCustomAttribute("targetApp", targetApp))
+        log.debug("User compiled overlay from theme {} for app {}", themeId, targetApp)
     }
 
     override fun userEnabledOverlay(overlayId: String) {
-        Answers.getInstance().logCustom(CustomEvent("Enabled overlay")
-                .putCustomAttribute("overlayId", overlayId))
+        log.debug("User enabled overlay {}", overlayId)
     }
 
     override fun userDisabledOverlay(overlayId: String) {
-        Answers.getInstance().logCustom(CustomEvent("Disabled overlay")
-                .putCustomAttribute("overlayId", overlayId))
+        log.debug("User disabled overlay {}", overlayId)
     }
+
+    override fun logOverlayServiceType(overlayService: OverlayService) {
+        data["overlayService"] = overlayService.javaClass.toString()
+        Crashlytics.setString("overlayService", overlayService.javaClass.toString())
+        log.debug("User overlayService: {}", overlayService.javaClass.toString())
+    }
+
+    override fun getMetrics() = data
 }

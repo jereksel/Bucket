@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.Dialog
@@ -9,13 +26,18 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import com.jereksel.changelogdialog.ChangeLogDialog
 import com.jereksel.libresubstratum.App
+import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.adapters.MainViewAdapter
+import com.jereksel.libresubstratum.adapters.PrioritiesAdapter
+import com.jereksel.libresubstratum.data.Changelog
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeDispose
@@ -41,6 +63,8 @@ open class MainView : AppCompatActivity(), MainContract.View {
         swiperefresh.isRefreshing = true
         swiperefresh.setOnRefreshListener { presenter.getApplications() }
         presenter.getApplications()
+
+        ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
     }
 
     override fun onResume() {
@@ -82,6 +106,10 @@ open class MainView : AppCompatActivity(), MainContract.View {
                 }
                 R.id.action_about -> {
                     startActivity<AboutActivity>()
+                    true
+                }
+                R.id.action_priorities -> {
+                    startActivity<PrioritiesView>()
                     true
                 }
                 else ->

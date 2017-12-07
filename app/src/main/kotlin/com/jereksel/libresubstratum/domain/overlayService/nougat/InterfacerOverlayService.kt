@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.domain.overlayService.nougat
 
 import android.content.ComponentName
@@ -19,6 +36,7 @@ import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import projekt.substratum.IInterfacerInterface
@@ -67,7 +85,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
                             throw RuntimeException("Cannot be invoked on UI thread")
                         }
 
-                        return Observable.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
+                        return Single.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
 
                             val serviceConnection = object: ServiceConnection {
 
@@ -90,19 +108,19 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
                         }
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .observeOn(Schedulers.computation())
-                                .blockingFirst()
+                                .blockingGet()
                     }
                 })
 
 
     }
 
-    override fun enableOverlays(ids: List<String>) {
-        service.enableOverlay(ids, false)
+    override fun enableOverlay(id: String) {
+        service.enableOverlay(listOf(id), false)
     }
 
-    override fun disableOverlays(ids: List<String>) {
-        service.disableOverlay(ids, false)
+    override fun disableOverlay(id: String) {
+        service.disableOverlay(listOf(id), false)
     }
 
     override fun getOverlayInfo(id: String): OverlayInfo? {
@@ -120,6 +138,16 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         return map.map { OverlayInfo(it.packageName, it.isEnabled) }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+        val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
+        return list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
+    }
+
+    override fun updatePriorities(overlayIds: List<String>) {
+        service.changePriority(overlayIds.reversed(), false)
+    }
+
     override fun restartSystemUI() {
         service.restartSystemUI()
     }
@@ -128,8 +156,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         service.installPackage(listOf(apk.absolutePath))
     }
 
-    override fun uninstallApk(appIds: List<String>) {
-        service.uninstallPackage(appIds, false)
+    override fun uninstallApk(appId: String) {
+        service.uninstallPackage(listOf(appId), false)
     }
 
     override fun requiredPermissions(): List<String> {

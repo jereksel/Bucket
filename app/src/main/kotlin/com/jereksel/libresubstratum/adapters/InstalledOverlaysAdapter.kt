@@ -1,6 +1,26 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
+import android.support.v7.util.DiffUtil
+import android.support.v7.util.SortedList
+import android.support.v7.util.SortedList.INVALID_POSITION
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
@@ -12,16 +32,16 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.data.KeyPair
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import java.security.Key
-import java.util.*
 
 class InstalledOverlaysAdapter(
-        val apps: List<InstalledOverlay>,
+        apps: List<InstalledOverlay>,
         val presenter: Presenter
 ): RecyclerView.Adapter<ViewHolder>() {
+
+    val comparator = compareBy<InstalledOverlay>({ it.sourceThemeName.toLowerCase() }, { it.targetName.toLowerCase() }, { it.type1a },
+            { it.type1b }, { it.type1c }, { it.type2 }, { it.type3 })
+
+    val apps = apps.toMutableList()
 
     override fun getItemCount() = apps.size
 
@@ -32,6 +52,7 @@ class InstalledOverlaysAdapter(
         val overlay = apps[position]
 
         val info = presenter.getOverlayInfo(overlay.overlayId)
+        val overlayId = overlay.overlayId
 
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
@@ -40,9 +61,9 @@ class InstalledOverlaysAdapter(
         holder.targetName.setTextColor(color)
 
         holder.checkbox.setOnCheckedChangeListener(null)
-        holder.checkbox.isChecked = presenter.getState(position)
+        holder.checkbox.isChecked = presenter.getState(overlayId)
         holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
-            presenter.setState(position, isChecked)
+            presenter.setState(overlayId, isChecked)
         }
 
         holder.view.setOnClickListener {
@@ -104,4 +125,35 @@ class InstalledOverlaysAdapter(
     fun destroy() {
         destroyed = true
     }
+
+    class InstalledOverlayDiffCallback(
+            val originalList: List<InstalledOverlay>,
+            val newList: List<InstalledOverlay>
+    ): DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return originalList[oldItemPosition].overlayId == newList[newItemPosition].overlayId
+        }
+
+        override fun getOldListSize() = originalList.size
+
+        override fun getNewListSize() = newList.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return originalList[oldItemPosition] == newList[newItemPosition]
+        }
+
+    }
+
+    fun updateOverlays(overlays: List<InstalledOverlay>) {
+
+        val diff = DiffUtil.calculateDiff(InstalledOverlayDiffCallback(apps, overlays))
+
+        apps.clear()
+        apps.addAll(overlays)
+
+        diff.dispatchUpdatesTo(this)
+
+    }
+
 }
+

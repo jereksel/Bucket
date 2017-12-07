@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.activities.about
 
 import android.os.Bundle
@@ -48,11 +65,21 @@ class AboutActivity: AppCompatActivity() {
 
         val guava = Library("Guava", APACHE2, Author("Guava contributors", "2010-present"))
 
+        val zipUtils = Library("zt-zip", APACHE2, Author("ZeroTurnaround LLC.", "2012"))
+
+        val room = Library("Room", APACHE2, Author("The Android Open Source Project", "2017"))
+
+        val codec = Library("Apache Commons Codec", APACHE2, Author("The Apache Software Foundation", "2002-2017"))
+
         val crashlyticsAppender = Library("Crashlytics Appender", APACHE2, Author("Allogy Interactive", "2013"))
+
+        val crash = Library("Custom Activity on Crash library", APACHE2, Author("Eduard Ereza", "2014-2017"))
+
+        val elfio = Library("ELFIO", APACHE2, Author("Serge Lamikhov-Center", "2001-2011"))
 
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
-                crashlyticsAppender)
+                zipUtils, room, codec, crashlyticsAppender, crash, elfio)
                 .sortedBy { it.name }
 
         verticalLayout {

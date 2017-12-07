@@ -1,19 +1,45 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
+import android.content.om.IOverlayManager
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailPresenter
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
+import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -31,14 +57,32 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesThemeReader(packageManager: IPackageManager): IThemeReader {
-        return ThemeReader(packageManager)
+    open fun providesThemeReader(
+            packageManager: IPackageManager,
+            keyFinder: IKeyFinder
+    ): IThemeReader {
+        return ThemeReader(application, packageManager, keyFinder)
     }
 
     @Provides
     @Singleton
-    open fun providesOverlayService(): OverlayService {
-        return OverlayServiceFactory.getOverlayService(application)
+    @Named("default")
+    open fun providesOverlayService(
+            @Named("group") metrics: Metrics
+    ): OverlayService {
+        val service = OverlayServiceFactory.getOverlayService(application)
+        metrics.logOverlayServiceType(service)
+        return service
+    }
+
+    @Provides
+    @Singleton
+    @Named("logged")
+    open fun providesLoggedOverlayService(
+            @Named("default") overlayService: OverlayService,
+            @Named("group") metrics: Metrics
+    ): OverlayService {
+        return LoggedOverlayService(overlayService, metrics)
     }
 
     @Provides
@@ -56,8 +100,8 @@ open class AppModule(private val application: Application) {
     open fun providesMainPresenter(
             packageManager: IPackageManager,
             themeReader: IThemeReader,
-            overlayService: OverlayService,
-            metrics: Metrics,
+            @Named("logged") overlayService: OverlayService,
+            @Named("group") metrics: Metrics,
             keyFinder: IKeyFinder
     ): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService, metrics, keyFinder)
@@ -71,11 +115,11 @@ open class AppModule(private val application: Application) {
     open fun providesDetailedPresenter(
             packageManager: IPackageManager,
             getThemeInfoUseCase: IGetThemeInfoUseCase,
-            overlayService: OverlayService,
+            @Named("logged") overlayService: OverlayService,
             activityProxy: IActivityProxy,
             compileThemeUseCase: ICompileThemeUseCase,
             clipboardManager: ClipboardManager,
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): DetailedContract.Presenter {
         return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, compileThemeUseCase, clipboardManager, metrics)
     }
@@ -83,11 +127,28 @@ open class AppModule(private val application: Application) {
     @Provides
     open fun providesInstalledPresenter(
             packageManager: IPackageManager,
-            overlayService: OverlayService,
+            @Named("logged") overlayService: OverlayService,
             activityProxy: IActivityProxy,
-            metrics: Metrics
+            @Named("group") metrics: Metrics
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
+    }
+
+    @Provides
+    open fun providesPrioritiesPresenter(
+            packageManager: IPackageManager,
+            @Named("logged") overlayService: OverlayService
+    ): PrioritiesContract.Presenter {
+        return PrioritiesPresenter(overlayService, packageManager)
+    }
+
+    @Provides
+    open fun providesDetailedPrioritiesPresenter(
+            packageManager: IPackageManager,
+            @Named("logged") overlayService: OverlayService,
+            activityProxy: IActivityProxy
+    ): PrioritiesDetailContract.Presenter {
+        return PrioritiesDetailPresenter(overlayService, packageManager, activityProxy)
     }
 
     @Provides
@@ -111,8 +172,15 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
+    open fun providesThemePackDatabase(
+    ): ThemePackDatabase = ThemeInfoGuavaCache()
+
+    @Provides
+    @Singleton
     open fun providesGetThemeInfoUseCase(
-            keyFinder: IKeyFinder
-    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(application, keyFinder)
+            packageManager: IPackageManager,
+            themePackDatabase: ThemePackDatabase,
+            themeReader: IThemeReader
+    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
 
 }

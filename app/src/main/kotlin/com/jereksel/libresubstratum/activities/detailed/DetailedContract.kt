@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.activities.detailed
 
 import com.jereksel.libresubstratum.MVPPresenter
@@ -20,32 +37,32 @@ interface DetailedContract {
         fun showError(errors: List<String>)
     }
 
-    interface Presenter : MVPPresenter<View> {
+    abstract class Presenter : MVPPresenter<View>() {
         //Activity
-        fun readTheme(appId: String)
-        fun getAppName(appId: String): String
+        abstract fun readTheme(appId: String)
+        abstract fun getAppName(appId: String): String
 
         //ThemePackAdapter
-        fun getNumberOfThemes(): Int
-        fun setAdapterView(position: Int, view: ThemePackAdapterView)
-        fun setCheckbox(position: Int, checked: Boolean)
+        abstract fun getNumberOfThemes(): Int
+        abstract fun setAdapterView(position: Int, view: ThemePackAdapterView)
+        abstract fun setCheckbox(position: Int, checked: Boolean)
 
-        fun setType1a(position:Int, spinnerPosition: Int)
-        fun setType1b(position:Int, spinnerPosition: Int)
-        fun setType1c(position:Int, spinnerPosition: Int)
-        fun setType2(position:Int, spinnerPosition: Int)
+        abstract fun setType1a(position: Int, spinnerPosition: Int)
+        abstract fun setType1b(position: Int, spinnerPosition: Int)
+        abstract fun setType1c(position: Int, spinnerPosition: Int)
+        abstract fun setType2(position: Int, spinnerPosition: Int)
 
-        fun setType3(type3Extension: Type3Extension)
+        abstract fun setType3(type3Extension: Type3Extension)
 
-        fun compileAndRun(adapterPosition: Int)
-        fun openInSplit(adapterPosition: Int)
-        fun compileRunActivateSelected()
-        fun compileRunSelected()
-        fun selectAll()
-        fun deselectAll()
-        fun setClipboard(s: String)
+        abstract fun compileAndRun(adapterPosition: Int)
+        abstract fun openInSplit(adapterPosition: Int)
+        abstract fun compileRunActivateSelected()
+        abstract fun compileRunSelected()
+        abstract fun selectAll()
+        abstract fun deselectAll()
+        abstract fun setClipboard(s: String)
 
-        fun restartSystemUI()
+        abstract fun restartSystemUI()
     }
 
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.jereksel.libresubstratum.domain
 
 import android.content.Context
@@ -46,6 +63,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
         return getApplications()
                 .filter { it.metadata.has(metadataOverlayTarget) }
                 .map {
+
+                    log.debug("Reading information of overlay {}", it.appId)
+
                     val overlay = it.appId
                     val parent = it.metadata.getString(metadataOverlayParent)
                     val parentIcon = getAppIcon(parent)
@@ -78,6 +98,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .filter { it.metadata.has(MainPresenter.SUBSTRATUM_AUTHOR) }
                 .filter { it.metadata.has(MainPresenter.SUBSTRATUM_NAME) }
                 .map {
+
+                    log.debug("Reading information of theme {}", it.appId)
+
                     val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
                     val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
@@ -88,6 +111,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
     }
 
     override fun getInstalledTheme(appId: String) = synchronized(lock) {
+
+        log.debug("Reading information of theme {}", appId)
 
         val application = packageManager.getApplicationInfo(appId, GET_META_DATA)
 
