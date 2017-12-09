@@ -21,6 +21,9 @@ import com.jereksel.changelogdialog.changelog
 
 object Changelog {
     val changelog = changelog {
+        version("0.2.1") {
+            +"Fix FC on 64 bit devices"
+        }
         version("0.2") {
             +"Add option to change overlays priorities"
             +"Add support for template 11.1.0"
