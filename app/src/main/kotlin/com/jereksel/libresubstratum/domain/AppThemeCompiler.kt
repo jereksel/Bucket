@@ -43,9 +43,11 @@ class AppThemeCompiler(
 
     val log = getLogger()
 
-    val aapt = getFile(File(app.applicationInfo.dataDir), "lib", "libaaptcomplete.so")
+    val aapt = getFile(File(app.applicationInfo.nativeLibraryDir), "libaaptcomplete.so")
 
     init {
+        //So unpack is forced
+        System.loadLibrary("aaptcomplete")
         log.debug("AAPT version: {}", ProcessBuilder().command(listOf(aapt.absolutePath, "v")).start().inputStream.bufferedReader().readText())
     }
 
