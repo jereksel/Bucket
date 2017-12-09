@@ -64,7 +64,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         buildConfigField "boolean", "BETA", beta.toString()
-        def nextVersion = "0.2"
+        def nextVersion = "0.2.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 26
@@ -79,7 +79,7 @@ android {
                 versionName "${nextVersion}-BETA-${code}-${shortTag}"
             }
         } else if (project.hasProperty("fdroid")) {
-            versionCode 2
+            versionCode 3
             versionName nextVersion
         } else {
             versionCode 9999
