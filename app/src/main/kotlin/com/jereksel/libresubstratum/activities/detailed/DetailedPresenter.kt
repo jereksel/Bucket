@@ -36,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.guava.await
 import java.io.File
 
 class DetailedPresenter(
@@ -375,14 +376,14 @@ class DetailedPresenter(
                     if (file != null) {
 
                         log.debug("Installing overlay {}", file)
-                        overlayService.installApk(file)
+                        overlayService.installApk(file).get()
                         log.debug("Installing overlay {} finished", file)
                         val overlay = getOverlayIdForTheme(it.second)
 
                         //Replacing substratum theme (the keys are different and overlay can't be just replaced)
                         if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
-                            overlayService.uninstallApk(overlay)
-                            overlayService.installApk(file)
+                            overlayService.uninstallApk(overlay).get()
+                            overlayService.installApk(file).get()
                         }
 
                         file.delete()

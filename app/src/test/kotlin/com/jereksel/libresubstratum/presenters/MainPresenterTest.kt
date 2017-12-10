@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
@@ -33,6 +34,7 @@ class MainPresenterTest : FunSpec() {
         presenter = MainPresenter(packageManager, themeReader, overlayService, mock(), keyFinder)
         presenter.setView(view)
 
+        initOS(overlayService)
         initRxJava()
     }
 

@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.graphics.drawable.Drawable
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -34,6 +35,7 @@ class PrioritiesPresenterTest: FunSpec() {
         MockitoAnnotations.initMocks(this)
         prioritiesPresenter = PrioritiesPresenter(overlayService, packageManager)
         initRxJava()
+        initOS(overlayService)
     }
 
     init {
@@ -49,12 +51,12 @@ class PrioritiesPresenterTest: FunSpec() {
                     installedOverlayFactory("appc1", "appc")
             ))
 
-            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", false))
-            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", true))
+            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", "", false))
+            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", "",true))
+            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", "",true))
+            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", "",true))
+            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", "",true))
+            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", "",true))
 
             val installedTheme = InstalledTheme("", "", "", true, "", FutureTask { null })
 

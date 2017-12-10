@@ -32,11 +32,11 @@ interface OverlayService {
 
     fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
 
-    fun restartSystemUI()
+    fun restartSystemUI(): ListenableFuture<*>
 
-    fun installApk(apk: File)
+    fun installApk(apk: File): ListenableFuture<*>
 
-    fun uninstallApk(appId: String)
+    fun uninstallApk(appId: String): ListenableFuture<*>
 
     fun requiredPermissions(): List<String>
 

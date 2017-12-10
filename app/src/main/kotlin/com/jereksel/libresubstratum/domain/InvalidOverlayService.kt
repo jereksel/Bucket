@@ -42,15 +42,15 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun restartSystemUI() {
+    override fun restartSystemUI(): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun installApk(apk: File) {
+    override fun installApk(apk: File): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun uninstallApk(appId: String) {
+    override fun uninstallApk(appId: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

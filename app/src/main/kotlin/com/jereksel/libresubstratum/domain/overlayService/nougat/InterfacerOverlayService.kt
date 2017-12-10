@@ -29,7 +29,6 @@ import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.common.cache.*
-import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFutureTask
 import com.google.common.util.concurrent.Service
 import com.google.common.cache.CacheBuilder
@@ -45,11 +44,16 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import projekt.substratum.IInterfacerInterface
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
+import kotlinx.coroutines.experimental.rx2.await
+import kotlinx.coroutines.experimental.rx2.awaitFirst
+import kotlinx.coroutines.experimental.rx2.awaitSingle
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Callable
@@ -60,6 +64,10 @@ import java.util.concurrent.TimeUnit
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val log = getLogger()
+
+    //http://www.donnfelker.com/rxjava-with-aidl-services/
+    private val omsRx: BehaviorSubject<IOverlayManager> = BehaviorSubject.create()
+    private val interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
 
     private val oms: IOverlayManager
         get() = omsCache.get(Unit)
@@ -79,7 +87,21 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     val INTERFACER_BINDED = INTERFACER_PACKAGE + ".INITIALIZE"
     val STATUS_CHANGED = INTERFACER_PACKAGE + ".STATUS_CHANGED"
 
+    private val interfacerServiceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            interfacerRx.onNext(IInterfacerInterface.Stub.asInterface(service))
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            interfacerRx.onComplete()
+        }
+
+    }
+
     init {
+
+        omsRx.onNext(OMSLib.getOMS())
+
 
         omsCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)
@@ -127,16 +149,22 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
                     }
                 })
 
+        val intent = Intent(INTERFACER_BINDED)
+        intent.`package` = INTERFACER_PACKAGE
+        // binding to remote service
+        context.bindService(intent, interfacerServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
-    override fun enableOverlay(id: String) = executor.submit {
-        service.enableOverlay(listOf(id), false)
-    }
+    override fun enableOverlay(id: String) = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.enableOverlay(listOf(id), false)
+    }.asListenableFuture()
 
-    override fun disableOverlay(id: String) = executor.submit {
-        service.disableOverlay(listOf(id), false)
-    }
+    override fun disableOverlay(id: String) = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.disableOverlay(listOf(id), false)
+    }.asListenableFuture()
 
     override fun enableExclusive(id: String) = async(CommonPool) {
 
@@ -169,26 +197,25 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     }
 
-    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> {
+    override fun updatePriorities(overlayIds: List<String>) = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.changePriority(overlayIds.reversed(), false)
+    }.asListenableFuture()
 
-        return executor.submit {
-           service.changePriority(overlayIds.reversed())
-            service.changePriority(overlayIds.reversed(), false)
-        }
+    override fun restartSystemUI() = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.restartSystemUI()
+    }.asListenableFuture()
 
-    }
+    override fun installApk(apk: File) = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.installPackage(listOf(apk.absolutePath))
+    }.asListenableFuture()
 
-    override fun restartSystemUI() {
-        service.restartSystemUI()
-    }
-
-    override fun installApk(apk: File) {
-        service.installPackage(listOf(apk.absolutePath))
-    }
-
-    override fun uninstallApk(appId: String) {
-        service.uninstallPackage(listOf(appId), false)
-    }
+    override fun uninstallApk(appId: String) = async(CommonPool) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.uninstallPackage(listOf(appId), false)
+    }.asListenableFuture()
 
     override fun requiredPermissions(): List<String> {
         return allPermissions()

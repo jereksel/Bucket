@@ -32,6 +32,8 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter.ViewHolder
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 class InstalledOverlaysAdapter(
         apps: List<InstalledOverlay>,
@@ -72,7 +74,9 @@ class InstalledOverlaysAdapter(
 
         holder.view.setOnLongClickListener {
             if (info != null) {
-                presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+                async(UI) {
+                    presenter.toggleOverlay(overlay.overlayId, !info.enabled)
+                }
             }
             notifyItemChanged(position)
             true

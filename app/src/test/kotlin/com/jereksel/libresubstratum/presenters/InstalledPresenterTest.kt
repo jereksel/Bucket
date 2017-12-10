@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -11,6 +12,8 @@ import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import org.assertj.core.api.Assertions.*
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.*
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -33,6 +36,7 @@ class InstalledPresenterTest : FunSpec() {
         presenter = InstalledPresenter(packageManager, overlayService, activityProxy, mock())
         presenter.setView(view)
 
+        initOS(overlayService)
         initRxJava()
     }
 
@@ -59,12 +63,18 @@ class InstalledPresenterTest : FunSpec() {
         }
 
         test("Snackbar is shown when overlays for com.android.systemui.* is enabled/disabled") {
-            presenter.toggleOverlay("com.android.systemui.navbar", true)
+            runBlocking {
+                presenter.toggleOverlay("com.android.systemui.navbar", true)
+            }
             verify(view).showSnackBar(any(), any(), any())
         }
 
         test("Snackbar is not shown for other overlays") {
-            presenter.toggleOverlay("com.jereksel.libresubstratum", true)
+            whenever(overlayService.enableOverlay(any())).thenReturn(Unit.toFuture())
+            whenever(overlayService.disableOverlay(any())).thenReturn(Unit.toFuture())
+            runBlocking {
+                presenter.toggleOverlay("com.jereksel.libresubstratum", true)
+            }
             verify(view, never()).showSnackBar(any(), any(), any())
         }
 
@@ -81,7 +91,10 @@ class InstalledPresenterTest : FunSpec() {
                     row(false)
             )) { enabled ->
                 reset(overlayService)
-                presenter.toggleOverlay("app", enabled)
+                initOS(overlayService)
+                runBlocking {
+                    presenter.toggleOverlay("app", enabled)
+                }
                 if (enabled) {
                     verify(overlayService).enableOverlay("app")
                     verify(overlayService, never()).disableOverlay("app")
@@ -114,7 +127,7 @@ class InstalledPresenterTest : FunSpec() {
 
             whenever(overlayService.getOverlayInfo(any())).then {
                 val id: String = it.getArgument(0)
-                OverlayInfo(id, false)
+                OverlayInfo(id, "", false)
             }
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
@@ -138,25 +151,34 @@ class InstalledPresenterTest : FunSpec() {
 
         test("Selected overlays are uninstalled during uninstallSelected") {
             prepare()
-            presenter.uninstallSelected()
+            whenever(overlayService.uninstallApk(any())).thenReturn(Unit.toFuture())
+            runBlocking {
+                presenter.uninstallSelected()
+            }
             verify(overlayService).uninstallApk("overlay1")
             verify(overlayService).uninstallApk("overlay2")
             verify(overlayService).uninstallApk("overlay4")
         }
         test("Selected overlays are enabled during enableSelected") {
             prepare()
-            whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", true))
-            whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", true))
-            presenter.enableSelected()
+            whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", "", true))
+            whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", "", true))
+            whenever(overlayService.enableOverlay(any())).thenReturn(Unit.toFuture())
+            runBlocking {
+                presenter.enableSelected()
+            }
             verify(overlayService).enableOverlay("overlay2")
             verify(overlayService).enableOverlay("overlay4")
             verify(overlayService, times(2)).enableOverlay(any())
         }
         test("Selected overlays are disabled during disableSelected") {
             prepare()
-            whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", true))
-            whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", true))
-            presenter.disableSelected()
+            whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", "", true))
+            whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", "", true))
+            whenever(overlayService.disableOverlay(any())).thenReturn(Unit.toFuture())
+            runBlocking {
+                presenter.disableSelected()
+            }
             verify(overlayService).disableOverlay("overlay2")
             verify(overlayService).disableOverlay("overlay4")
             verify(overlayService, times(2)).disableOverlay(any())
@@ -182,7 +204,7 @@ class InstalledPresenterTest : FunSpec() {
 
             whenever(overlayService.getOverlayInfo(any())).then {
                 val id: String = it.getArgument(0)
-                OverlayInfo(id, false)
+                OverlayInfo(id, "", false)
             }
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
@@ -228,7 +250,7 @@ class InstalledPresenterTest : FunSpec() {
         test("selectAll with filter selects only overlays that are shown to user") {
             whenever(overlayService.getOverlayInfo(any())).then {
                 val id: String = it.getArgument(0)
-                OverlayInfo(id, false)
+                OverlayInfo(id, "", false)
             }
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
@@ -261,7 +283,7 @@ class InstalledPresenterTest : FunSpec() {
 
             whenever(overlayService.getOverlayInfo(any())).then {
                 val id: String = it.getArgument(0)
-                OverlayInfo(id, false)
+                OverlayInfo(id, "", false)
             }
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(

@@ -25,30 +25,35 @@ class LoggedOverlayService(
         val overlayService: OverlayService,
         val metrics: Metrics
 ): OverlayService {
-    override fun enableOverlay(id: String) {
+
+    override fun enableOverlay(id: String): ListenableFuture<*> {
         metrics.userEnabledOverlay(id)
-        overlayService.enableOverlay(id)
+        return overlayService.enableOverlay(id)
     }
 
-    override fun disableOverlay(id: String) {
+    override fun disableOverlay(id: String): ListenableFuture<*> {
         metrics.userDisabledOverlay(id)
-        overlayService.disableOverlay(id)
+        return overlayService.disableOverlay(id)
+    }
+
+    override fun enableExclusive(id: String): ListenableFuture<*> {
+        return overlayService.enableExclusive(id)
     }
 
     override fun getOverlayInfo(id: String) = overlayService.getOverlayInfo(id)
 
     override fun getAllOverlaysForApk(appId: String) = overlayService.getAllOverlaysForApk(appId)
 
-    override fun restartSystemUI() {
-        overlayService.restartSystemUI()
+    override fun restartSystemUI(): ListenableFuture<*> {
+        return overlayService.restartSystemUI()
     }
 
-    override fun installApk(apk: File) {
-        overlayService.installApk(apk)
+    override fun installApk(apk: File): ListenableFuture<*> {
+        return overlayService.installApk(apk)
     }
 
-    override fun uninstallApk(appId: String) {
-        overlayService.uninstallApk(appId)
+    override fun uninstallApk(appId: String): ListenableFuture<*> {
+        return overlayService.uninstallApk(appId)
     }
 
     override fun getOverlaysPrioritiesForTarget(targetAppId: String) =
