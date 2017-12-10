@@ -28,7 +28,7 @@ interface OverlayService {
     //Oreo has it in AIDL
     fun enableExclusive(id: String): ListenableFuture<*>
 
-    fun getOverlayInfo(id: String): OverlayInfo?
+    fun getOverlayInfo(id: String): ListenableFuture<OverlayInfo?>
 
     fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
 

@@ -67,8 +67,9 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val log = getLogger()
 
     //http://www.donnfelker.com/rxjava-with-aidl-services/
+    //FIXME
     private val omsRx: BehaviorSubject<IOverlayManager> = BehaviorSubject.create()
-    private val interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
+    private var interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
 
     private val oms: IOverlayManager = OMSLib.getOMS()
 
@@ -85,18 +86,24 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            interfacerRx.onComplete()
+//            interfacerRx.onComplete()
+            val oldrx = interfacerRx
+            interfacerRx = BehaviorSubject.create()
+            oldrx.onComplete()
+            initInterfacer()
         }
 
     }
 
-    init {
-
+    private fun initInterfacer() {
         val intent = Intent(INTERFACER_BINDED)
         intent.`package` = INTERFACER_PACKAGE
         // binding to remote service
         context.bindService(intent, interfacerServiceConnection, Context.BIND_AUTO_CREATE);
+    }
 
+    init {
+        initInterfacer()
     }
 
     override fun enableOverlay(id: String) = async(CommonPool) {
@@ -111,7 +118,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     override fun enableExclusive(id: String) = async(CommonPool) {
 
-        val overlayInfo = getOverlayInfo(id) ?: return@async
+        val overlayInfo = getOverlayInfo(id).await() ?: return@async
 
         getAllOverlaysForApk(overlayInfo.targetId)
                 .filter { it.enabled }
@@ -122,14 +129,14 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     }.asListenableFuture()
 
-    override fun getOverlayInfo(id: String): OverlayInfo? {
+    override fun getOverlayInfo(id: String) = async(CommonPool) {
         val info = oms.getOverlayInfo(id, 0)
-        return if (info != null) {
+        if (info != null) {
             OverlayInfo(id, info.targetPackageName, info.isEnabled)
         } else {
             null
         }
-    }
+    }.asListenableFuture()
 
     @Suppress("UNCHECKED_CAST")
     override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {

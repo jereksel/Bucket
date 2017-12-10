@@ -104,7 +104,7 @@ class InstalledPresenter(
 
         selectedOverlays()
                 .map { it.overlayId }
-                .filter { overlayService.getOverlayInfo(it)?.enabled == false }
+                .filter { overlayService.getOverlayInfo(it).await()?.enabled == false }
                 .forEach { overlayService.enableOverlay(it).await() }
 
         deselectAll()
@@ -116,7 +116,7 @@ class InstalledPresenter(
 
         selectedOverlays()
                 .map { it.overlayId }
-                .filter { overlayService.getOverlayInfo(it)?.enabled == true }
+                .filter { overlayService.getOverlayInfo(it).await()?.enabled == true }
                 .forEach { overlayService.disableOverlay(it).await() }
 
         deselectAll()
@@ -134,7 +134,7 @@ class InstalledPresenter(
         view.get()?.refreshRecyclerView()
     }
 
-    override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId)
+    override fun getOverlayInfo(overlayId: String) = overlayService.getOverlayInfo(overlayId).get()
 
     override fun openActivity(appId: String) = activityProxy.openActivityInSplit(appId)
 
