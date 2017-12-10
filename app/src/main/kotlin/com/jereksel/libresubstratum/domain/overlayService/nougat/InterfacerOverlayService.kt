@@ -27,6 +27,11 @@ import android.os.AsyncTask
 import android.os.IBinder
 import android.os.Looper
 import android.support.v4.content.ContextCompat
+import android.util.Log
+import com.google.common.cache.*
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFutureTask
+import com.google.common.util.concurrent.Service
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -41,10 +46,12 @@ import com.jereksel.omslib.OMSLib
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import projekt.substratum.IInterfacerInterface
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
 import java.io.File
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
@@ -57,7 +64,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val oms: IOverlayManager
         get() = omsCache.get(Unit)
 
-    private val service: AidlIInterfacerInterface
+    private val service: IInterfacerInterface
         get() = interfacerCache.get(Unit).second
 
     val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10))
@@ -65,10 +72,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     @Suppress("JoinDeclarationAndAssignment")
     private val omsCache : LoadingCache<Unit, IOverlayManager>
 
-    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>>
+    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, IInterfacerInterface>>
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
+    val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
     val INTERFACER_BINDED = INTERFACER_PACKAGE + ".INITIALIZE"
+    val STATUS_CHANGED = INTERFACER_PACKAGE + ".STATUS_CHANGED"
 
     init {
 
@@ -81,23 +90,23 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
         interfacerCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)
-                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>> {
+                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, IInterfacerInterface>> {
                     notification -> context.unbindService(notification.value.first)
                 })
-                .build(object: CacheLoader<Unit, Pair<ServiceConnection, AidlIInterfacerInterface>>() {
-                    override fun load(key: Unit): Pair<ServiceConnection, AidlIInterfacerInterface> {
+                .build(object: CacheLoader<Unit, Pair<ServiceConnection, IInterfacerInterface>>() {
+                    override fun load(key: Unit): Pair<ServiceConnection, IInterfacerInterface> {
 
                         if (Looper.getMainLooper().thread == Thread.currentThread()) {
                             throw RuntimeException("Cannot be invoked on UI thread")
                         }
 
-                        return Single.fromPublisher<Pair<ServiceConnection, AidlIInterfacerInterface>> {
+                        return Single.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
 
                             val serviceConnection = object: ServiceConnection {
 
                                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                                     log.debug("Interfacer service connected")
-                                    val service = AidlIInterfacerInterface.asInterface(binder)!!
+                                    val service = IInterfacerInterface.Stub.asInterface(binder)
                                     it.onNext(Pair(this, service))
                                     it.onComplete()
                                 }
@@ -122,11 +131,11 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     override fun enableOverlay(id: String) = executor.submit {
-        service.enableOverlays(listOf(id))
+        service.enableOverlay(listOf(id), false)
     }
 
     override fun disableOverlay(id: String) = executor.submit {
-        service.disableOverlays(listOf(id))
+        service.disableOverlay(listOf(id), false)
     }
 
     override fun enableExclusive(id: String) = async(CommonPool) {
@@ -164,6 +173,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
         return executor.submit {
            service.changePriority(overlayIds.reversed())
+            service.changePriority(overlayIds.reversed(), false)
         }
 
     }
@@ -173,11 +183,11 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     override fun installApk(apk: File) {
-        service.installPackages(listOf(apk.absolutePath))
+        service.installPackage(listOf(apk.absolutePath))
     }
 
     override fun uninstallApk(appId: String) {
-        service.removePackages(listOf(appId))
+        service.uninstallPackage(listOf(appId), false)
     }
 
     override fun requiredPermissions(): List<String> {
