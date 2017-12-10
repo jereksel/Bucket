@@ -51,6 +51,7 @@ import projekt.substratum.IInterfacerInterface
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
+import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.await
 import kotlinx.coroutines.experimental.rx2.awaitFirst
 import kotlinx.coroutines.experimental.rx2.awaitSingle
@@ -69,18 +70,9 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val omsRx: BehaviorSubject<IOverlayManager> = BehaviorSubject.create()
     private val interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
 
-    private val oms: IOverlayManager
-        get() = omsCache.get(Unit)
-
-    private val service: IInterfacerInterface
-        get() = interfacerCache.get(Unit).second
+    private val oms: IOverlayManager = OMSLib.getOMS()
 
     val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10))
-
-    @Suppress("JoinDeclarationAndAssignment")
-    private val omsCache : LoadingCache<Unit, IOverlayManager>
-
-    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, IInterfacerInterface>>
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
     val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
@@ -99,55 +91,6 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     init {
-
-        omsRx.onNext(OMSLib.getOMS())
-
-
-        omsCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(1, TimeUnit.MINUTES)
-                .build(object: CacheLoader<Unit, IOverlayManager>() {
-                    override fun load(key: Unit) = OMSLib.getOMS()!!
-                })
-
-
-        interfacerCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(1, TimeUnit.MINUTES)
-                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, IInterfacerInterface>> {
-                    notification -> context.unbindService(notification.value.first)
-                })
-                .build(object: CacheLoader<Unit, Pair<ServiceConnection, IInterfacerInterface>>() {
-                    override fun load(key: Unit): Pair<ServiceConnection, IInterfacerInterface> {
-
-                        if (Looper.getMainLooper().thread == Thread.currentThread()) {
-                            throw RuntimeException("Cannot be invoked on UI thread")
-                        }
-
-                        return Single.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
-
-                            val serviceConnection = object: ServiceConnection {
-
-                                override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                                    log.debug("Interfacer service connected")
-                                    val service = IInterfacerInterface.Stub.asInterface(binder)
-                                    it.onNext(Pair(this, service))
-                                    it.onComplete()
-                                }
-
-                                override fun onServiceDisconnected(name: ComponentName) {
-                                    it.onError(RuntimeException("Service disconnected"))
-                                }
-                            }
-
-                            val intent = Intent(INTERFACER_BINDED)
-                            intent.`package` = INTERFACER_PACKAGE
-                            // binding to remote service
-                            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-                        }
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .observeOn(Schedulers.computation())
-                                .blockingGet()
-                    }
-                })
 
         val intent = Intent(INTERFACER_BINDED)
         intent.`package` = INTERFACER_PACKAGE
@@ -168,7 +111,14 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     override fun enableExclusive(id: String) = async(CommonPool) {
 
-        val overlayInfo = getOverlayInfo(id)
+        val overlayInfo = getOverlayInfo(id) ?: return@async
+
+        getAllOverlaysForApk(overlayInfo.targetId)
+                .filter { it.enabled }
+                .forEach { disableOverlay(it.overlayId).await() }
+
+        enableOverlay(id).await()
+
 
     }.asListenableFuture()
 

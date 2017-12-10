@@ -274,7 +274,7 @@ class DetailedPresenter(
                     themePackState[position].compiling = false
                     val overlayId = getOverlayIdForTheme(position)
                     if (packageManager.isPackageInstalled(overlayId)) {
-                        activateExclusive(position)
+                        overlayService.enableExclusive(getOverlayIdForTheme(position)).get()
                     }
                     detailedView?.increaseDialogProgress()
                 },
@@ -325,12 +325,7 @@ class DetailedPresenter(
 
     override fun restartSystemUI() {
         log.debug("Resetting SystemUI")
-        Observable.just("")
-                .observeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
-                    overlayService.restartSystemUI()
-                }
+        overlayService.restartSystemUI()
     }
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
