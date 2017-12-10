@@ -120,7 +120,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
         val overlayInfo = getOverlayInfo(id).await() ?: return@async
 
-        getAllOverlaysForApk(overlayInfo.targetId)
+        getAllOverlaysForApk(overlayInfo.targetId).await()
                 .filter { it.enabled }
                 .forEach { disableOverlay(it.overlayId).await() }
 
@@ -138,21 +138,17 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         }
     }.asListenableFuture()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
+    override fun getAllOverlaysForApk(appId: String) = async(CommonPool) {
+        @Suppress("UNCHECKED_CAST")
         val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
-        return map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
-    }
+        map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
+    }.asListenableFuture()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> {
-
-        return executor.submit(Callable<List<OverlayInfo>> {
-            val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
-            list.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }.reversed()
-        })
-
-    }
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String) = async(CommonPool) {
+        @Suppress("UNCHECKED_CAST")
+        val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
+        list.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }.reversed()
+    }.asListenableFuture()
 
     override fun updatePriorities(overlayIds: List<String>) = async(CommonPool) {
         val interfacer = interfacerRx.firstOrError().await()

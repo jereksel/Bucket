@@ -30,7 +30,7 @@ interface OverlayService {
 
     fun getOverlayInfo(id: String): ListenableFuture<OverlayInfo?>
 
-    fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
+    fun getAllOverlaysForApk(appId: String): ListenableFuture<List<OverlayInfo>>
 
     fun restartSystemUI(): ListenableFuture<*>
 

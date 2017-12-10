@@ -446,15 +446,10 @@ class DetailedPresenter(
         val info = overlayService.getOverlayInfo(overlay).get()
         if (info != null) {
             if (!info.enabled) {
-                val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-
-                overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
-
-                overlays.forEach { overlayService.disableOverlay(it.overlayId) }
-                overlayService.enableOverlay(overlay)
+                overlayService.enableExclusive(overlay).get()
             } else {
                 metrics.userDisabledOverlay(overlay)
-                overlayService.disableOverlay(overlay)
+                overlayService.disableOverlay(overlay).get()
             }
         }
     }
