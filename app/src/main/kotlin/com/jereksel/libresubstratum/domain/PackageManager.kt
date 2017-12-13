@@ -17,12 +17,19 @@
 
 package com.jereksel.libresubstratum.domain
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.graphics.drawable.Drawable
+import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.data.InstalledTheme
+import java.io.File
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+interface PackageManager {
+    fun getInstalledThemes(): List<InstalledTheme>
+    fun getInstalledTheme(appId: String): InstalledTheme
+    fun getInstalledOverlays(): List<InstalledOverlay>
+    fun getAppVersion(appId: String): Pair<Int, String>
+    fun getAppIcon(appId: String): Drawable?
+    fun getAppName(appId: String): String
+    fun isPackageInstalled(appId: String): Boolean
+    fun getAppLocation(appId: String): File
+    fun getCacheFolder(): File
 }

@@ -18,7 +18,6 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
-import android.content.om.IOverlayManager
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.activities.main.MainContract
@@ -30,13 +29,12 @@ import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailPresenter
 import com.jereksel.libresubstratum.domain.*
-import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
-import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
+import com.jereksel.libresubstratum.infrastructure.themeinfo.guavacache.ThemeInfoGuavaCache
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCaseImpl
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCaseImpl
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
-import dagger.Binds
+import com.jereksel.libresubstratum.infrastructure.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -51,17 +49,17 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesPackageManager(application: Application): IPackageManager {
-        return AppPackageManager(application)
+    open fun providesPackageManager(application: Application): PackageManager {
+        return AndroidPackageManager(application)
     }
 
     @Provides
     @Singleton
     open fun providesThemeReader(
-            packageManager: IPackageManager,
-            keyFinder: IKeyFinder
-    ): IThemeReader {
-        return ThemeReader(application, packageManager, keyFinder)
+            packageManager: PackageManager,
+            keyFinder: KeyFinder
+    ): ThemeReader {
+        return AndroidThemeReader(application, packageManager, keyFinder)
     }
 
     @Provides
@@ -87,37 +85,37 @@ open class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    open fun providesActivityProxy(): IActivityProxy = ActivityProxy(application)
+    open fun providesActivityProxy(): ActivityProxy = AndroidActivityProxy(application)
 
     @Provides
     @Singleton
     open fun providesThemeCompiler(
-            packageManager: IPackageManager,
-            keyFinder: IKeyFinder
-    ): ThemeCompiler = AppThemeCompiler(application, packageManager, keyFinder)
+            packageManager: PackageManager,
+            keyFinder: KeyFinder
+    ): ThemeCompiler = AndroidThemeCompiler(application, packageManager, keyFinder)
 
     @Provides
     open fun providesMainPresenter(
-            packageManager: IPackageManager,
-            themeReader: IThemeReader,
+            packageManager: PackageManager,
+            themeReader: ThemeReader,
             @Named("logged") overlayService: OverlayService,
             @Named("group") metrics: Metrics,
-            keyFinder: IKeyFinder
+            keyFinder: KeyFinder
     ): MainContract.Presenter {
         return MainPresenter(packageManager, themeReader, overlayService, metrics, keyFinder)
     }
 
     @Provides
     @Singleton
-    open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
+    open fun provideThemeExtractor(): ThemeExtractor = AndroidThemeExtractor()
 
     @Provides
     open fun providesDetailedPresenter(
-            packageManager: IPackageManager,
-            getThemeInfoUseCase: IGetThemeInfoUseCase,
+            packageManager: PackageManager,
+            getThemeInfoUseCase: GetThemeInfoUseCase,
             @Named("logged") overlayService: OverlayService,
-            activityProxy: IActivityProxy,
-            compileThemeUseCase: ICompileThemeUseCase,
+            activityProxy: ActivityProxy,
+            compileThemeUseCase: CompileThemeUseCase,
             clipboardManager: ClipboardManager,
             @Named("group") metrics: Metrics
     ): DetailedContract.Presenter {
@@ -126,9 +124,9 @@ open class AppModule(private val application: Application) {
 
     @Provides
     open fun providesInstalledPresenter(
-            packageManager: IPackageManager,
+            packageManager: PackageManager,
             @Named("logged") overlayService: OverlayService,
-            activityProxy: IActivityProxy,
+            activityProxy: ActivityProxy,
             @Named("group") metrics: Metrics
     ): InstalledContract.Presenter {
         return InstalledPresenter(packageManager, overlayService, activityProxy, metrics)
@@ -136,7 +134,7 @@ open class AppModule(private val application: Application) {
 
     @Provides
     open fun providesPrioritiesPresenter(
-            packageManager: IPackageManager,
+            packageManager: PackageManager,
             @Named("logged") overlayService: OverlayService
     ): PrioritiesContract.Presenter {
         return PrioritiesPresenter(overlayService, packageManager)
@@ -144,9 +142,9 @@ open class AppModule(private val application: Application) {
 
     @Provides
     open fun providesDetailedPrioritiesPresenter(
-            packageManager: IPackageManager,
+            packageManager: PackageManager,
             @Named("logged") overlayService: OverlayService,
-            activityProxy: IActivityProxy
+            activityProxy: ActivityProxy
     ): PrioritiesDetailContract.Presenter {
         return PrioritiesDetailPresenter(overlayService, packageManager, activityProxy)
     }
@@ -154,10 +152,10 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesCompileThemeUseCase(
-            packageManager: IPackageManager,
+            packageManager: PackageManager,
             themeCompiler: ThemeCompiler
-    ): ICompileThemeUseCase {
-        return CompileThemeUseCase(packageManager, themeCompiler)
+    ): CompileThemeUseCase {
+        return CompileThemeUseCaseImpl(packageManager, themeCompiler)
     }
 
     @Provides
@@ -167,8 +165,8 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesKeyFinder(
-            packageManager: IPackageManager
-    ): IKeyFinder = KeyFinder(application, packageManager)
+            packageManager: PackageManager
+    ): KeyFinder = AndroidKeyFinder(application, packageManager)
 
     @Provides
     @Singleton
@@ -178,9 +176,9 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun providesGetThemeInfoUseCase(
-            packageManager: IPackageManager,
+            packageManager: PackageManager,
             themePackDatabase: ThemePackDatabase,
-            themeReader: IThemeReader
-    ): IGetThemeInfoUseCase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
+            themeReader: ThemeReader
+    ): GetThemeInfoUseCase = GetThemeInfoUseCaseImpl(packageManager, themePackDatabase, themeReader)
 
 }

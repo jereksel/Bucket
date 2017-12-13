@@ -19,27 +19,24 @@ package com.jereksel.libresubstratum.activities.installed
 
 import com.github.kittinunf.result.Result
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.Presenter
-import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IActivityProxy
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.ActivityProxy
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.Metrics
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
 
 class InstalledPresenter(
-        val packageManager: IPackageManager,
+        val packageManager: PackageManager,
         val overlayService: OverlayService,
-        val activityProxy: IActivityProxy,
+        val activityProxy: ActivityProxy,
         val metrics: Metrics
 ) : Presenter() {
 

@@ -27,13 +27,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.KeyPair
-import com.jereksel.libresubstratum.domain.KeyFinder
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
@@ -43,8 +40,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
-import java.security.KeyFactory
 
 class MainViewAdapter(
         val apps: List<InstalledTheme>,
@@ -142,7 +137,7 @@ class MainViewAdapter(
 //        holder.lock.visibility = if (app.isEncrypted) View.VISIBLE else View.GONE
         holder.lock.setOnClickListener {
 //            onClickSubject.onNext(app)
-//            val keys = KeyFinder(holder.lock.context).getKey(app.appId)
+//            val keys = AndroidKeyFinder(holder.lock.context).getKey(app.appId)
 //            it.context.toast(keys.toString())
             it.context.longToast(R.string.unsupported_template_toast)
         }

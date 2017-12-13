@@ -24,26 +24,25 @@ import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.*
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class DetailedPresenter(
-        private val packageManager: IPackageManager,
-        private val getThemeInfoUseCase: IGetThemeInfoUseCase,
+        private val packageManager: PackageManager,
+        private val getThemeInfoUseCase: GetThemeInfoUseCase,
         private val overlayService: OverlayService,
-        private val activityProxy: IActivityProxy,
-        private val compileThemeUseCase: ICompileThemeUseCase,
+        private val activityProxy: ActivityProxy,
+        private val compileThemeUseCase: CompileThemeUseCase,
         private val clipboardManager: ClipboardManager,
         private val metrics: Metrics
 ) : Presenter() {

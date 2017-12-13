@@ -7,8 +7,8 @@ import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.dagger.modules.AppModule
 import com.jereksel.libresubstratum.domain.*
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import io.kotlintest.mock.mock
 import org.mockito.Mockito
 
@@ -22,13 +22,13 @@ class MockedApp : App() {
 
     override fun getAppModule(): AppModule {
         return object : AppModule(this) {
-            override fun providesMainPresenter(packageManager: IPackageManager, themeReader: IThemeReader, overlayService: OverlayService, metrics: Metrics, keyFinder: IKeyFinder) = mockedMainPresenter
-            override fun providesDetailedPresenter(packageManager: IPackageManager, getThemeInfoUseCase: IGetThemeInfoUseCase, overlayService: OverlayService, activityProxy: IActivityProxy, compileThemeUseCase: ICompileThemeUseCase, clipboardManager: ClipboardManager, metrics: Metrics): DetailedContract.Presenter = mockedDetailedPresenter
-            override fun providesInstalledPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy, metrics: Metrics): InstalledContract.Presenter = mockedInstalledPresenter
-            override fun providesPrioritiesPresenter(packageManager: IPackageManager, overlayService: OverlayService) = mockedPrioritiesPresenter
-            override fun providesDetailedPrioritiesPresenter(packageManager: IPackageManager, overlayService: OverlayService, activityProxy: IActivityProxy) = mockedPrioritiesDetailPresenter
+            override fun providesMainPresenter(packageManager: PackageManager, themeReader: ThemeReader, overlayService: OverlayService, metrics: Metrics, keyFinder: KeyFinder) = mockedMainPresenter
+            override fun providesDetailedPresenter(packageManager: PackageManager, getThemeInfoUseCase: GetThemeInfoUseCase, overlayService: OverlayService, activityProxy: ActivityProxy, compileThemeUseCase: CompileThemeUseCase, clipboardManager: ClipboardManager, metrics: Metrics): DetailedContract.Presenter = mockedDetailedPresenter
+            override fun providesInstalledPresenter(packageManager: PackageManager, overlayService: OverlayService, activityProxy: ActivityProxy, metrics: Metrics): InstalledContract.Presenter = mockedInstalledPresenter
+            override fun providesPrioritiesPresenter(packageManager: PackageManager, overlayService: OverlayService) = mockedPrioritiesPresenter
+            override fun providesDetailedPrioritiesPresenter(packageManager: PackageManager, overlayService: OverlayService, activityProxy: ActivityProxy) = mockedPrioritiesDetailPresenter
 
-            override fun providesThemeCompiler(packageManager: IPackageManager, keyFinder: IKeyFinder): ThemeCompiler = mock()
+            override fun providesThemeCompiler(packageManager: PackageManager, keyFinder: KeyFinder): ThemeCompiler = mock()
         }
     }
 }

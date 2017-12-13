@@ -3,10 +3,9 @@ package com.jereksel.libresubstratum.domain
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.jereksel.libresubstratum.BaseRobolectricTest
+import com.jereksel.libresubstratum.infrastructure.SharedPreferencesPersistentMetrics
 import com.nhaarman.mockito_kotlin.mock
-import io.kotlintest.specs.FunSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.data.MapEntry
 import org.assertj.core.data.MapEntry.entry
 import org.junit.Before
 import org.junit.Test

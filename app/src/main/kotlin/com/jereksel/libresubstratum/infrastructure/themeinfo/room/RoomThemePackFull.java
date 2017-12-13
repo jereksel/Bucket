@@ -15,14 +15,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.infrastructure.themeinfo.room;
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Relation;
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+import java.util.List;
+
+public class RoomThemePackFull {
+    @Embedded
+    public RoomThemePack themePack;
+    @Relation(parentColumn = "id", entityColumn = "theme_pack_id")
+    List<RoomTheme> themeList;
+    @Relation(parentColumn = "id", entityColumn = "theme_pack_id")
+    List<RoomType3Extension> type3Extension;
 }

@@ -15,14 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.infrastructure.nougat
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.content.Context
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+class WDUCommitsOverlayService(context: Context): WODUCommitsOverlayService(context) {
+    override fun allPermissions() = super.allPermissions() + "projekt.interfacer.permission.ACCESS_SERVICE_INNER"
 }

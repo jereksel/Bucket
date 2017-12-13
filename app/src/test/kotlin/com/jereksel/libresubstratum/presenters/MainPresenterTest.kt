@@ -4,10 +4,10 @@ import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.infrastructure.InvalidOverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
-import org.junit.Assert
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
@@ -18,13 +18,13 @@ class MainPresenterTest : FunSpec() {
     @Mock
     lateinit var view : View
     @Mock
-    lateinit var packageManager : IPackageManager
+    lateinit var packageManager : PackageManager
     @Mock
-    lateinit var themeReader: IThemeReader
+    lateinit var themeReader: ThemeReader
     @Mock
     lateinit var overlayService: OverlayService
     @Mock
-    lateinit var keyFinder: IKeyFinder
+    lateinit var keyFinder: KeyFinder
 
     lateinit var presenter : MainPresenter
 
