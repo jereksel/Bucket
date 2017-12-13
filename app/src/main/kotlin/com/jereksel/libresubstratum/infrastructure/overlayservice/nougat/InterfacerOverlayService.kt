@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.infrastructure.nougat
+package com.jereksel.libresubstratum.infrastructure.overlayservice.nougat
 
 import android.content.ComponentName
 import android.content.Context

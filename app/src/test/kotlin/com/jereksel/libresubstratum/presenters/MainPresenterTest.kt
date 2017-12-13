@@ -4,7 +4,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract.View
 import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.domain.*
-import com.jereksel.libresubstratum.infrastructure.InvalidOverlayService
+import com.jereksel.libresubstratum.infrastructure.overlayservice.InvalidOverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec

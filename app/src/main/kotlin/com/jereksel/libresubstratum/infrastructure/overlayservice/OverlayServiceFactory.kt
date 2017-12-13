@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.infrastructure
+package com.jereksel.libresubstratum.infrastructure.overlayservice
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -24,8 +24,8 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.N
 import android.os.Build.VERSION_CODES.N_MR1
 import com.jereksel.libresubstratum.domain.OverlayService
-import com.jereksel.libresubstratum.infrastructure.nougat.WDUCommitsOverlayService
-import com.jereksel.libresubstratum.infrastructure.nougat.WODUCommitsOverlayService
+import com.jereksel.libresubstratum.infrastructure.overlayservice.nougat.WDUCommitsOverlayService
+import com.jereksel.libresubstratum.infrastructure.overlayservice.nougat.WODUCommitsOverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 
 object OverlayServiceFactory {

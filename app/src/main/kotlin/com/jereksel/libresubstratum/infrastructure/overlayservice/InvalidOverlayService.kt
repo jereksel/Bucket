@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.infrastructure
+package com.jereksel.libresubstratum.infrastructure.overlayservice
 
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
