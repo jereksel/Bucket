@@ -59,8 +59,8 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
         presenter.setView(this)
         presenter.getInstalledOverlays()
         fab_uninstall.onClick(jobs) { fab.close(true); presenter.uninstallSelected() }
-        fab_enable.onClick { fab.close(true); presenter.enableSelected() }
-        fab_disable.onClick { fab.close(true); presenter.disableSelected() }
+        fab_enable.onClick(jobs) { fab.close(true); presenter.enableSelected() }
+        fab_disable.onClick(jobs) { fab.close(true); presenter.disableSelected() }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
@@ -159,7 +159,6 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
     override fun onQueryTextSubmit(query: String): Boolean {
         return false
     }
-
 
     override fun onRetainCustomNonConfigurationInstance() = presenter
 
