@@ -49,7 +49,7 @@ object ThemeNameUtils {
         return "$appId.$themeName$type1String$type2String$type3String".replace(" ", "")
                 .replace("-", "").replace("_", "").replace("/", "").replace("#", "")
                 .replace("[", "").replace("]", "").replace("(", "").replace(")", "")
-                .replace("!", "").replace("+", "")
+                .replace("!", "").replace("+", "").replace("│", "").replace("|", "")
     }
 
 }
