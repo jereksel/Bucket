@@ -66,14 +66,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val log = getLogger()
 
-    //http://www.donnfelker.com/rxjava-with-aidl-services/
-    //FIXME
     private val omsRx: BehaviorSubject<IOverlayManager> = BehaviorSubject.create()
     private var interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
 
     private val oms: IOverlayManager = OMSLib.getOMS()
 
-    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10))
+    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5))
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
     val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
@@ -82,15 +80,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val interfacerServiceConnection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            log.debug("Interfacer connected")
             interfacerRx.onNext(IInterfacerInterface.Stub.asInterface(service))
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-//            interfacerRx.onComplete()
-            val oldrx = interfacerRx
-            interfacerRx = BehaviorSubject.create()
-            oldrx.onComplete()
-            initInterfacer()
+            log.debug("Interfacer disconnected")
         }
 
     }
@@ -116,18 +111,19 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         interfacer.disableOverlay(listOf(id), false)
     }.asListenableFuture()
 
-    override fun enableExclusive(id: String) = async(CommonPool) {
+    //When we use CommonPool on everything we have possibility of deadlock
+    //enableExclusive is only method that uses other async methods
+    override fun enableExclusive(id: String) = executor.submit {
 
-        val overlayInfo = getOverlayInfo(id).await() ?: return@async
+        val overlayInfo = getOverlayInfo(id).get() ?: return@submit
 
-        getAllOverlaysForApk(overlayInfo.targetId).await()
+        getAllOverlaysForApk(overlayInfo.targetId).get()
                 .filter { it.enabled }
-                .forEach { disableOverlay(it.overlayId).await() }
+                .forEach { disableOverlay(it.overlayId).get() }
 
-        enableOverlay(id).await()
+        enableOverlay(id).get()
 
-
-    }.asListenableFuture()
+    }
 
     override fun getOverlayInfo(id: String) = async(CommonPool) {
         val info = oms.getOverlayInfo(id, 0)
