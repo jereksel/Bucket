@@ -38,7 +38,7 @@ class InvalidOverlayService(val message: String): OverlayService {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
+    override fun getAllOverlaysForApk(appId: String): ListenableFuture<List<OverlayInfo>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
