@@ -35,6 +35,7 @@ import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCaseImpl
 import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.infrastructure.*
+import com.jereksel.libresubstratum.infrastructure.overlayservice.OverlayServiceFactory
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
