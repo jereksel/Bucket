@@ -3,13 +3,11 @@ package com.jereksel.changelogdialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.support.v7.app.AlertDialog
-import android.webkit.WebView
-import it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
 import android.view.LayoutInflater
 import it.gmariotti.changelibs.library.internal.ChangeLogRecyclerViewAdapter
-import android.content.DialogInterface
-import it.gmariotti.changelibs.library.internal.ChangeLogAdapter
 import it.gmariotti.changelibs.library.internal.ChangeLogRow
+import it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
+import org.jire.kton.kton
 import java.util.*
 
 object ChangeLogDialog {
@@ -69,11 +67,6 @@ object ChangeLogDialog {
         }
 
         add(LinkedList(rows))
-
-
-//        changeLog.versions.forEach { version ->
-//
-//        }
 
     }
 
