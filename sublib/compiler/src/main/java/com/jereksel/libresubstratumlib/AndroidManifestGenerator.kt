@@ -17,11 +17,11 @@ class AndroidManifestGenerator(val testing: Boolean = false) {
         val target = theme.fixedTargetApp
         val themeId = theme.targetThemeId
 
-        val type1a = theme.getType("a")
-        val type1b = theme.getType("b")
-        val type1c = theme.getType("c")
-        val type2 = theme.getType2()
-        val type3 = theme.getType3()
+        val type1a = theme.getType("a").replace("&", "&amp;")
+        val type1b = theme.getType("b").replace("&", "&amp;")
+        val type1c = theme.getType("c").replace("&", "&amp;")
+        val type2 = theme.getType2().replace("&", "&amp;")
+        val type3 = theme.getType3().replace("&", "&amp;")
 
         val xmlnsAndroid = if (testing) {
             "http://schemas.android.com/apk/lib/$appId"
