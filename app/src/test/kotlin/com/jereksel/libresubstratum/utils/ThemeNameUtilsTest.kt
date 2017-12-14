@@ -29,7 +29,11 @@ class ThemeNameUtilsTest: FunSpec() {
                     row("com.android.settings", "My Theme", null, null, null, null, Type3Extension("Type3", true), "com.android.settings.MyTheme"),
                     row("com.android.settings", "My Theme", null, null, null, null, Type3Extension("Type3",false), "com.android.settings.MyTheme.Type3"),
 
-                    row("com.android.settings", "My Theme", null, null, null, Type2Extension("Type2",false), Type3Extension("Type3", false), "com.android.settings.MyTheme.Type2.Type3")
+                    row("com.android.settings", "My Theme", null, null, null, Type2Extension("Type2",false), Type3Extension("Type3", false), "com.android.settings.MyTheme.Type2.Type3"),
+
+                    row("android", "PitchBlack│Nougat✔Oreo✔Oxygen 8.0 Substratum Theme", null, null, null, null, null, "android.PitchBlackNougatOreoOxygen8.0SubstratumTheme"),
+
+                    row("android", "Compound", Type1Extension("Black & White", false), null, null, null, null, "android.Compound.BlackWhite")
 
             )
 
