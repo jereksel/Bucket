@@ -20,10 +20,11 @@ set -e
 
 # Non-Robolectric
 
-./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.presenters.*"
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.data.*"
-./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.utils.*"
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.domain.*"
+./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.infrastructure.*"
+./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.presenters.*"
+./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.utils.*"
 
 ./gradlew sublib:reader:test
 ./gradlew sublib:compiler:test
