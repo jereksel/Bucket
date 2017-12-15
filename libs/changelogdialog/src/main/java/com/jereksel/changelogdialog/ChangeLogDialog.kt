@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import it.gmariotti.changelibs.library.internal.ChangeLogRecyclerViewAdapter
 import it.gmariotti.changelibs.library.internal.ChangeLogRow
 import it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
-import org.jire.kton.kton
 import java.util.*
 
 object ChangeLogDialog {
