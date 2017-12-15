@@ -26,6 +26,7 @@ interface PrioritiesContract {
     abstract class Presenter : MVPPresenter<View>() {
         abstract fun getApplication()
         abstract fun getIcon(appId: String): Drawable?
+        abstract fun getAppName(appId: String): String
     }
 
     interface View : MVPView {

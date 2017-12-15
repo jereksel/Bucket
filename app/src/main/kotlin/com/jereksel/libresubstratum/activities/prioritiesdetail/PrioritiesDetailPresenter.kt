@@ -44,7 +44,7 @@ class PrioritiesDetailPresenter(
         Schedulers.io().scheduleDirect {
             val installedOverlays = packageManager.getInstalledOverlays()
             val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
-            val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).filter { it.enabled }
+            val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId)
             val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
             overlays = mapped
 
@@ -82,6 +82,27 @@ class PrioritiesDetailPresenter(
                 }
 
     }
+
+    override fun toggleOverlay(overlayId: String, callback: () -> Unit) {
+        val overlay = overlayService.getOverlayInfo(overlayId)!!
+
+        Schedulers.io().scheduleDirect {
+
+            if (overlay.enabled) {
+                overlayService.disableOverlay(overlayId)
+            } else {
+                overlayService.enableOverlay(overlayId)
+            }
+
+            AndroidSchedulers.mainThread().scheduleDirect {
+                callback()
+            }
+
+        }
+
+    }
+
+    override fun isEnabled(overlayId: String) = overlayService.getOverlayInfo(overlayId)?.enabled == true
 
     override fun openAppInSplit(targetId: String) {
         activityProxy.openActivityInSplit(targetId)

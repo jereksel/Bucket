@@ -17,6 +17,7 @@
 
 package com.jereksel.libresubstratum.adapters
 
+import android.graphics.Color
 import android.support.v4.view.MotionEventCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -36,6 +37,7 @@ import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.SimpleDiffCallback
 import kotterknife.bindView
+import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -53,6 +55,11 @@ class PrioritiesDetailAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val overlay = overlays[position]
+
+        val isEnabled = presenter.isEnabled(overlay.overlayId)
+
+        val color = if(isEnabled) Color.GREEN else Color.RED
+        holder.targetName.setTextColor(color)
 
         holder.targetIcon.setImageDrawable(overlay.targetDrawable)
         holder.themeIcon.setImageDrawable(overlay.sourceThemeDrawable)
@@ -81,6 +88,13 @@ class PrioritiesDetailAdapter(
             DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, newOverlays)).dispatchUpdatesTo(this)
         }
 
+        holder.card.setOnLongClickListener {
+            presenter.toggleOverlay(overlay.overlayId) {
+                notifyItemChanged(holder.adapterPosition)
+            }
+            true
+        }
+
         holder.reorder.setOnTouchListener(listener)
 
         holder.themeIcon.setOnLongClickListener {
@@ -102,7 +116,7 @@ class PrioritiesDetailAdapter(
         ).forEach { (name, view, stringId) ->
             if (!name.isNullOrEmpty()) {
                 val text = view.context.getString(stringId)
-                view.text = Html.fromHtml("<b>$text:</b> $name")
+                view.text = Html.fromHtml("<b>$text:</b> ${name?.replace("_", " ")}")
                 view.visibility = View.VISIBLE
             } else {
                 view.visibility = View.GONE

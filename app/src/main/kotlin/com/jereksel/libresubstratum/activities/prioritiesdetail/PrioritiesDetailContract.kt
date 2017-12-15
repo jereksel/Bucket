@@ -28,6 +28,8 @@ interface PrioritiesDetailContract {
         abstract fun updateOverlays(overlays: List<InstalledOverlay>)
         abstract fun updatePriorities(overlays: List<InstalledOverlay>)
         abstract fun openAppInSplit(targetId: String)
+        abstract fun toggleOverlay(overlayId: String, callback: () -> Unit)
+        abstract fun isEnabled(overlayId: String): Boolean
     }
 
     interface View : MVPView {
