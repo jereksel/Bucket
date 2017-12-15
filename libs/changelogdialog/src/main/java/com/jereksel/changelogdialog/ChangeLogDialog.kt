@@ -3,7 +3,11 @@ package com.jereksel.changelogdialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.support.v7.app.AlertDialog
-import android.webkit.WebView
+import android.view.LayoutInflater
+import it.gmariotti.changelibs.library.internal.ChangeLogRecyclerViewAdapter
+import it.gmariotti.changelibs.library.internal.ChangeLogRow
+import it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
+import java.util.*
 
 object ChangeLogDialog {
 
@@ -22,28 +26,18 @@ object ChangeLogDialog {
 
         if (code != lastCode) {
 
-            prefs.edit().putInt("LAST_CODE", code).apply()
+            val layoutInflater = context.getSystemService(
+                    Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val chgList = layoutInflater.inflate(R.layout.changelogdialog_dialog, null) as ChangeLogRecyclerView
 
-            val html = changeLog.versions
-                    .filterNot { !beta && it.beta }
-                    .map {
-                        """
-                        <div>
-                        <h3>${it.version}</h3>
-                        <ul>
-                            ${it.changes.map { "<li>$it</li>" }.joinToString(separator = "")}
-                        </ul>
-                        </div>
-                        """
-                    }.joinToString(separator = "")
+            (chgList.adapter as ChangeLogRecyclerViewAdapter).add(changeLog)
+
+            prefs.edit().putInt("LAST_CODE", code).apply()
 
             val alert = AlertDialog.Builder(context)
             alert.setTitle("Changelog")
 
-            val wv = WebView(context)
-            wv.loadData(html, "text/html", null)
-
-            alert.setView(wv)
+            alert.setView(chgList)
             alert.setNegativeButton("Close", { dialog, _ -> dialog.dismiss() })
             alert.show()
 
@@ -51,4 +45,29 @@ object ChangeLogDialog {
 
     }
 
+    private fun ChangeLogRecyclerViewAdapter.add(changeLog: ChangeLog) {
+
+        val rows = changeLog.versions.flatMap { version ->
+
+            val header = ChangeLogRow()
+            header.isHeader = true
+            header.versionName = version.version
+            header.changeDate = " "
+
+            val rows = version.changes.map { change ->
+                val row = ChangeLogRow()
+                row.changeText = change
+                row.isBulletedList = true
+                row
+            }
+
+            listOf(header, *rows.toTypedArray())
+
+        }
+
+        add(LinkedList(rows))
+
+    }
+
 }
+
