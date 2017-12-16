@@ -42,5 +42,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "com.android.support:appcompat-v7:$support_library_version"
+    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     testCompile 'junit:junit:4.12'
 }
