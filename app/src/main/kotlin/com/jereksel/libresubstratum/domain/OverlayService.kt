@@ -20,6 +20,9 @@ package com.jereksel.libresubstratum.domain
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
+/**
+ * "*" means nothing is returned
+ */
 interface OverlayService {
     fun enableOverlay(id: String): ListenableFuture<*>
 
@@ -44,8 +47,5 @@ interface OverlayService {
 
     fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>>
 
-    /**
-     * Returns Future<*>, because nothing is computed
-     */
     fun updatePriorities(overlayIds: List<String>): ListenableFuture<*>
 }
