@@ -19,7 +19,7 @@ package com.jereksel.libresubstratum.infrastructure.overlayservice.nougat
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.NameNotFoundException
 import android.provider.Settings
 
 open class WODUCommitsOverlayService(context: Context): InterfacerOverlayService(context) {
@@ -29,7 +29,7 @@ open class WODUCommitsOverlayService(context: Context): InterfacerOverlayService
 
         try {
             context.packageManager.getPackageInfo("projekt.substratum", 0)
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (e: NameNotFoundException) {
             return "Please install Substratum app (it's required for Interfacer to function properly)"
         }
 
