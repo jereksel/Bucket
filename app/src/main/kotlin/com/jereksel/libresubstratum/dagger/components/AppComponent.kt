@@ -26,6 +26,7 @@ import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetail
 import com.jereksel.libresubstratum.dagger.modules.AppModule
 import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
 import com.jereksel.libresubstratum.dagger.modules.MetricsModule
+import com.jereksel.libresubstratum.receivers.UninstallReceiver
 import dagger.Component
 import javax.inject.Singleton
 
@@ -38,4 +39,5 @@ interface AppComponent {
     fun inject(view: ErrorActivity)
     fun inject(view: PrioritiesView)
     fun inject(view: PrioritiesDetailView)
+    fun inject(view: UninstallReceiver)
 }

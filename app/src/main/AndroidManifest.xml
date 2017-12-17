@@ -33,6 +33,16 @@
         <activity android:name=".RecViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             />
+        <receiver
+            android:name=".receivers.UninstallReceiver"
+            android:enabled="true"
+            android:priority="999" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" >
+                </action>
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${crashlytics}"
