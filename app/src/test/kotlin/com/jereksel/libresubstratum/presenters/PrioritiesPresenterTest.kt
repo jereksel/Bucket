@@ -19,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.FutureTask
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 
 class PrioritiesPresenterTest: FunSpec() {
 
@@ -51,12 +52,12 @@ class PrioritiesPresenterTest: FunSpec() {
                     installedOverlayFactory("appc1", "appc")
             ))
 
-            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", "", false))
-            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", "",true))
-            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", "",true))
-            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", "",true))
-            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", "",true))
-            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", "",true))
+            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", "", false).toFuture())
+            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", "",true).toFuture())
 
             val installedTheme = InstalledTheme("", "", "", true, "", FutureTask { null })
 

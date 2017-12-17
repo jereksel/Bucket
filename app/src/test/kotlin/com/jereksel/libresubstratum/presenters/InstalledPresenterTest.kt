@@ -161,8 +161,8 @@ class InstalledPresenterTest : FunSpec() {
         }
         test("Selected overlays are enabled during enableSelected") {
             prepare()
-            whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", "", true))
-            whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", "", true))
+            whenever(overlayService.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", "", true).toFuture())
+            whenever(overlayService.getOverlayInfo("overlay3")).thenReturn(OverlayInfo("overlay3", "", true).toFuture())
             whenever(overlayService.enableOverlay(any())).thenReturn(Unit.toFuture())
             runBlocking {
                 presenter.enableSelected()
@@ -173,8 +173,8 @@ class InstalledPresenterTest : FunSpec() {
         }
         test("Selected overlays are disabled during disableSelected") {
             prepare()
-            whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", "", true))
-            whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", "", true))
+            whenever(overlayService.getOverlayInfo("overlay2")).thenReturn(OverlayInfo("overlay2", "", true).toFuture())
+            whenever(overlayService.getOverlayInfo("overlay4")).thenReturn(OverlayInfo("overlay4", "", true).toFuture())
             whenever(overlayService.disableOverlay(any())).thenReturn(Unit.toFuture())
             runBlocking {
                 presenter.disableSelected()
