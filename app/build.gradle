@@ -161,6 +161,9 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
+    dataBinding {
+        enabled = true
+    }
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests.all {
@@ -224,6 +227,15 @@ dependencies {
     supportLibrary.each { name, lib ->
         compile lib
     }
+
+    compile "android.arch.lifecycle:extensions:1.0.0"
+    compile "android.arch.lifecycle:reactivestreams:1.0.0"
+    testCompile "android.arch.core:core-testing:1.0.0"
+    kapt 'com.android.databinding:compiler:2.3.3'
+//    kapt 'com.android.databinding:compiler:1.0'
+//    compile 'com.android.databinding:library:1.0'
+//    compile 'com.android.databinding:adapters:1.0'
+
 
     //RxStuff
     compile rxjava
@@ -362,4 +374,10 @@ play {
 
 androidExtensions {
     experimental = true
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

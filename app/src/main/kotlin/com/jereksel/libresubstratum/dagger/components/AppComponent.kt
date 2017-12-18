@@ -26,11 +26,12 @@ import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetail
 import com.jereksel.libresubstratum.dagger.modules.AppModule
 import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
 import com.jereksel.libresubstratum.dagger.modules.MetricsModule
+import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(AppModule::class, MetricsModule::class, GroupMetricsModule::class))
+@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
 interface AppComponent {
     fun inject(view: MainView)
     fun inject(view: DetailedView)

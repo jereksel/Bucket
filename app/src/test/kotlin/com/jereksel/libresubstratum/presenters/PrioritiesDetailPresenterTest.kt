@@ -69,7 +69,7 @@ class PrioritiesDetailPresenterTest: FunSpec() {
         }
 
 
-        test("updatePriorities passes overlayid to overlayService") {
+        test("updatePriorities passes overlayid to overlayManager") {
 
             prioritiesDetailPresenter.updatePriorities(listOf(
                     InstalledOverlay("overlay1", "", "", null, "app", "", null),

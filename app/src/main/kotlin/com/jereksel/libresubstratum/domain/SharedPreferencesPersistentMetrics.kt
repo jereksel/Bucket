@@ -47,7 +47,7 @@ class SharedPreferencesPersistentMetrics
     override fun getMetrics(): Map<String, String> {
         return mapOf(
                 "currentTheme" to sharedPreferences.getString(THEME_KEY, null),
-                "overlayService" to sharedPreferences.getString(OVERLAY_SERVICE_TYPE_KEY, null)
+                "overlayManager" to sharedPreferences.getString(OVERLAY_SERVICE_TYPE_KEY, null)
         )
                 .filterValues { it != null }
 

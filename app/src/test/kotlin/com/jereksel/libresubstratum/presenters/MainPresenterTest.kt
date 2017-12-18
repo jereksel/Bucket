@@ -58,13 +58,13 @@ class MainPresenterTest : FunSpec() {
             presenter.getApplications()
             verify(view).addApplications(argThat { map { it.name } == listOf("a App", "u App", "Z App") })
         }
-        test("If overlayService returns non empty list of permissions they're passed to view") {
+        test("If overlayManager returns non empty list of permissions they're passed to view") {
             val perms = listOf("perm1", "perm2")
             whenever(overlayService.requiredPermissions()).thenReturn(perms)
             presenter.checkPermissions()
             verify(view).requestPermissions(perms)
         }
-        test("If overlayService returns empty list of permissions and non-empty message, message is shown") {
+        test("If overlayManager returns empty list of permissions and non-empty message, message is shown") {
             val message = "Do something"
             whenever(overlayService.requiredPermissions()).thenReturn(listOf())
             whenever(overlayService.additionalSteps()).thenReturn(message)
@@ -72,7 +72,7 @@ class MainPresenterTest : FunSpec() {
             verify(view, never()).requestPermissions(any())
             verify(view).showUndismissableDialog(message)
         }
-        test("If overlayService returns empty list and null message, nothing is shown") {
+        test("If overlayManager returns empty list and null message, nothing is shown") {
             whenever(overlayService.requiredPermissions()).thenReturn(listOf())
             whenever(overlayService.additionalSteps()).thenReturn(null)
             presenter.checkPermissions()

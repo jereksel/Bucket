@@ -18,6 +18,8 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.Dialog
+import android.arch.lifecycle.*
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog.Builder
@@ -35,15 +37,15 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
-import com.jereksel.libresubstratum.adapters.MainViewAdapter
-import com.jereksel.libresubstratum.adapters.PrioritiesAdapter
 import com.jereksel.libresubstratum.data.Changelog
 import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.databinding.ActivityMainBinding
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 open class MainView : AppCompatActivity(), MainContract.View {
@@ -51,18 +53,50 @@ open class MainView : AppCompatActivity(), MainContract.View {
     val log = getLogger()
 
     @Inject lateinit var presenter: Presenter
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
+    lateinit var viewModel: MainViewViewModel
+
     var clickSubscriptions: Disposable? = null
     private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
         (application as App).getAppComponent(this).inject(this)
-        presenter.setView(this)
+
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         setSupportActionBar(toolbar)
-        swiperefresh.isRefreshing = true
-        swiperefresh.setOnRefreshListener { presenter.getApplications() }
-        presenter.getApplications()
+
+        viewModel = ViewModelProviders.of(this, factory).get()
+//        viewModel.apps.observe(this) {
+//
+//            binding.appList = it ?: listOf()
+//
+////            toast(it.toString())
+//        }
+
+//        binding.viewmodel = viewModel
+
+        binding.viewModel = viewModel
+
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(this@MainView)
+            itemAnimator = DefaultItemAnimator()
+            adapter = MainViewAdapter(presenter)
+        }
+
+        viewModel.init()
+
+
+//        presenter.setView(this)
+//        setSupportActionBar(toolbar)
+//        swiperefresh.isRefreshing = true
+//        swiperefresh.setOnRefreshListener { presenter.getApplications() }
+//        presenter.getApplications()
 
         ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
     }
@@ -77,13 +111,13 @@ open class MainView : AppCompatActivity(), MainContract.View {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
             itemAnimator = DefaultItemAnimator()
-            adapter = MainViewAdapter(list, presenter)
+            adapter = MainViewAdapter(presenter)
         }
         clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
                 .getClickObservable()
                 .subscribe {
                     log.debug("Opening {}", it)
-                    presenter.openThemeScreen(it.appId)
+                    presenter.openThemeScreen(it)
                 }
         swiperefresh.isRefreshing = false
     }
@@ -146,4 +180,12 @@ open class MainView : AppCompatActivity(), MainContract.View {
         }
     }
 
+    private inline fun <reified T> ViewModelProvider.get()
+            where T: ViewModel =
+            this.get(T::class.java)
+
+    private inline fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, crossinline function: (T?) -> Unit) =
+            this.observe(lifecycleOwner, android.arch.lifecycle.Observer { function(it) })
+
 }
+

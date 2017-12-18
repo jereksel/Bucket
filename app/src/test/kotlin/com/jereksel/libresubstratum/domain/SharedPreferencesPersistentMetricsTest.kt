@@ -45,7 +45,7 @@ class SharedPreferencesPersistentMetricsTest: BaseRobolectricTest() {
     fun `getMetrics returned data saved in SharedPreferences`() {
         sp.edit().putString(metrics.THEME_KEY, "theme").commit()
         sp.edit().putString(metrics.OVERLAY_SERVICE_TYPE_KEY, "overlay").commit()
-        assertThat(metrics.getMetrics()).containsExactly(entry("currentTheme", "theme"), entry("overlayService", "overlay"))
+        assertThat(metrics.getMetrics()).containsExactly(entry("currentTheme", "theme"), entry("overlayManager", "overlay"))
     }
 
     @Test
