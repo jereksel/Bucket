@@ -6,6 +6,7 @@ import android.support.annotation.VisibleForTesting;
 
 import com.jereksel.libresubstratum.activities.ErrorActivity;
 import com.jereksel.libresubstratum.dagger.components.AppComponent;
+import com.jereksel.libresubstratum.dagger.components.BaseComponent;
 import com.jereksel.libresubstratum.dagger.components.DaggerAppComponent;
 import com.jereksel.libresubstratum.dagger.modules.AppModule;
 
@@ -36,11 +37,11 @@ public class App extends Application {
                 .build();
     }
 
-    protected AppModule getAppModule() {
+    private AppModule getAppModule() {
         return new AppModule(this);
     }
 
-    public AppComponent getAppComponent(Context context) {
+    public BaseComponent getAppComponent(Context context) {
         App app = (App) context.getApplicationContext();
         if (app.component == null) {
             app.component = app.createComponent();

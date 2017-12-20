@@ -17,6 +17,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.KeyPair
+import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.`when`
@@ -54,7 +55,8 @@ class MainViewTest2 : BaseRobolectricTest() {
     fun setup() {
         RxJavaPlugins.reset()
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedMainPresenter
+        presenter = MockedApp.mockedMainPresenter
+        reset(presenter)
         activityController = Robolectric.buildActivity(MainView::class.java).create().resume()
         activity = activityController.get()
     }
