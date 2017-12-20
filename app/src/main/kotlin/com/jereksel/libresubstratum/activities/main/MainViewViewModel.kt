@@ -17,6 +17,8 @@
 
 package com.jereksel.libresubstratum.activities.main
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
@@ -28,6 +30,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -47,6 +50,9 @@ class MainViewViewModel @Inject constructor(
 
     val swipeToRefresh = ObservableBoolean(true)
     override fun getSwipeToRefreshObservable() = swipeToRefresh
+
+    val _dialogContent = MutableLiveData<String>()
+    override fun getDialogContent() = _dialogContent
 
     @Volatile
     var initialized = false
@@ -125,7 +131,22 @@ class MainViewViewModel @Inject constructor(
         init()
     }
 
+    override fun tickChecks() {
+
+        Thread {
+
+            while (true) {
+                Thread.sleep(1000)
+                _dialogContent.postValue(UUID.randomUUID().toString())
+            }
+
+        }.start()
+
+    }
+
     override fun onCleared() {
         compositeDisposable.clear()
     }
+
+
 }

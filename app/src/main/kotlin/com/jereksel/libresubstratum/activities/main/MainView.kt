@@ -79,6 +79,13 @@ open class MainView : AppCompatActivity(), MainContract.View {
             adapter = MainViewAdapter(presenter)
         }
 
+        viewModel.getDialogContent().observe(this) { message ->
+            dismissDialog()
+            if (!message.isNullOrEmpty()) {
+                showUndismissableDialog(message!!)
+            }
+        }
+
         viewModel.init()
 
         ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
@@ -87,6 +94,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     override fun onResume() {
         super.onResume()
         presenter.checkPermissions()
+        viewModel.tickChecks()
     }
 
     override fun addApplications(list: List<InstalledTheme>) {
@@ -155,6 +163,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
         super.onDestroy()
         presenter.removeView()
         clickSubscriptions?.safeDispose()
+        dismissDialog()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

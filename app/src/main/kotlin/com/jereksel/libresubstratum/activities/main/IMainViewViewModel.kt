@@ -17,6 +17,7 @@
 
 package com.jereksel.libresubstratum.activities.main
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
@@ -24,7 +25,9 @@ import android.databinding.ObservableList
 abstract class IMainViewViewModel: ViewModel() {
     abstract fun getAppsObservable(): ObservableList<MainViewModel>
     abstract fun getSwipeToRefreshObservable(): ObservableBoolean
+    abstract fun getDialogContent(): LiveData<String>
 
     abstract fun reset()
     abstract fun init()
+    abstract fun tickChecks()
 }
