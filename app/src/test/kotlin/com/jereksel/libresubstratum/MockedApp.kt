@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
@@ -35,6 +36,8 @@ class MockedApp : App() {
         val mockedPrioritiesPresenter: PrioritiesContract.Presenter = Mockito.mock(PrioritiesContract.Presenter::class.java)
         @JvmStatic
         val mockedPrioritiesDetailPresenter: PrioritiesDetailContract.Presenter = Mockito.mock(PrioritiesDetailContract.Presenter::class.java)
+        @JvmStatic
+        val viewModelFactory: ViewModelProvider.Factory = Mockito.mock(ViewModelProvider.Factory::class.java)
 
         @Module
         class TestModule {
@@ -52,6 +55,8 @@ class MockedApp : App() {
             @Provides
             @Named("persistent")
             fun metrics(): Metrics = mock()
+            @Provides
+            fun factory() = viewModelFactory
 
         }
 
