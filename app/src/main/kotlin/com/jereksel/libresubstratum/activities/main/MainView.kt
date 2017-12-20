@@ -52,21 +52,20 @@ open class MainView : AppCompatActivity(), MainContract.View {
     val log = getLogger()
 
     @Inject lateinit var presenter: Presenter
-
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+    @Inject lateinit var factory: ViewModelProvider.Factory
 
     lateinit var viewModel: IMainViewViewModel
+
+    lateinit var binding: ActivityMainBinding
 
     var clickSubscriptions: Disposable? = null
     private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         (application as App).getAppComponent(this).inject(this)
 
-        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setSupportActionBar(toolbar)
 
