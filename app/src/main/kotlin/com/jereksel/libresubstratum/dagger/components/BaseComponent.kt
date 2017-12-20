@@ -17,13 +17,18 @@
 
 package com.jereksel.libresubstratum.dagger.components
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
-import dagger.Component
-import javax.inject.Singleton
+import com.jereksel.libresubstratum.activities.ErrorActivity
+import com.jereksel.libresubstratum.activities.detailed.DetailedView
+import com.jereksel.libresubstratum.activities.installed.InstalledView
+import com.jereksel.libresubstratum.activities.main.MainView
+import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
+import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailView
 
-@Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
-interface AppComponent: BaseComponent
+interface BaseComponent {
+    fun inject(view: MainView)
+    fun inject(view: DetailedView)
+    fun inject(view: InstalledView)
+    fun inject(view: ErrorActivity)
+    fun inject(view: PrioritiesView)
+    fun inject(view: PrioritiesDetailView)
+}
