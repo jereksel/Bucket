@@ -45,7 +45,6 @@ import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 open class MainView : AppCompatActivity(), MainContract.View {
@@ -57,7 +56,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
-    lateinit var viewModel: MainViewViewModel
+    lateinit var viewModel: IMainViewViewModel
 
     var clickSubscriptions: Disposable? = null
     private var dialog: Dialog? = null
@@ -72,14 +71,6 @@ open class MainView : AppCompatActivity(), MainContract.View {
         setSupportActionBar(toolbar)
 
         viewModel = ViewModelProviders.of(this, factory).get()
-//        viewModel.apps.observe(this) {
-//
-//            binding.appList = it ?: listOf()
-//
-////            toast(it.toString())
-//        }
-
-//        binding.viewmodel = viewModel
 
         binding.viewModel = viewModel
 
@@ -90,13 +81,6 @@ open class MainView : AppCompatActivity(), MainContract.View {
         }
 
         viewModel.init()
-
-
-//        presenter.setView(this)
-//        setSupportActionBar(toolbar)
-//        swiperefresh.isRefreshing = true
-//        swiperefresh.setOnRefreshListener { presenter.getApplications() }
-//        presenter.getApplications()
 
         ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
     }
@@ -185,7 +169,7 @@ open class MainView : AppCompatActivity(), MainContract.View {
             this.get(T::class.java)
 
     private inline fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, crossinline function: (T?) -> Unit) =
-            this.observe(lifecycleOwner, android.arch.lifecycle.Observer { function(it) })
+            this.observe(lifecycleOwner, Observer { function(it) })
 
 }
 

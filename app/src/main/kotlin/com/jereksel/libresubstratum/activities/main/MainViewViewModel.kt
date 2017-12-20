@@ -17,7 +17,6 @@
 
 package com.jereksel.libresubstratum.activities.main
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
@@ -27,11 +26,8 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
-import java.util.concurrent.Executors
+import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -39,25 +35,54 @@ class MainViewViewModel @Inject constructor(
         val packageManager: IPackageManager,
         @Named("logged") val overlayService: OverlayService,
         val keyFinder: IKeyFinder
-): ViewModel() {
+): IMainViewViewModel() {
+
+    sealed class Change {
+        data class Key(val id: Int, val keyAvailable: Boolean) : Change()
+        data class Image(val id: Int, val location: String) : Change()
+    }
 
     val apps: ObservableList<MainViewModel> = ObservableArrayList()
+    override fun getAppsObservable() = apps
 
     val swipeToRefresh = ObservableBoolean(true)
-
-    val executor = Executors.newSingleThreadExecutor()
+    override fun getSwipeToRefreshObservable() = swipeToRefresh
 
     @Volatile
     var initialized = false
 
-    val compositeDisposable = CompositeDisposable()
+    var compositeDisposable = CompositeDisposable()
 
-    fun init() {
+    override fun init() {
         if (initialized) {
             return
         }
 
         initialized = true
+
+        val subject = BehaviorSubject.create<Change>()
+
+        compositeDisposable += subject
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe { change ->
+
+                    when(change) {
+                        is Change.Key -> {
+                            val (id, keyAvailable) = change
+                            val theme = apps[id]
+                            val newTheme = theme.copy(keyAvailable = keyAvailable)
+                            apps[id] = newTheme
+                        }
+                        is Change.Image -> {
+                            val (id, image) = change
+                            val theme = apps[id]
+                            val newTheme = theme.copy(heroImage = image)
+                            apps[id] = newTheme
+                        }
+                    }
+
+                }
 
         compositeDisposable += Schedulers.io().scheduleDirect {
 
@@ -69,69 +94,38 @@ class MainViewViewModel @Inject constructor(
 
             swipeToRefresh.set(false)
 
-            themes.forEachIndexed {index, installedTheme ->
+            themes.forEachIndexed { index, installedTheme ->
 
-                Schedulers.io().scheduleDirect {
-
+                compositeDisposable += Schedulers.io().scheduleDirect {
                     installedTheme.heroImage.run()
-
-                    val image = installedTheme.heroImage.get()!!
-
-                    executor.execute {
-
-                        val theme = apps[index]
-
-                        val newTheme = theme.copy(heroImage = image.absolutePath)
-
-                        apps[index] = newTheme
-
+                    try {
+                        val image = installedTheme.heroImage.get()!!
+                        subject.onNext(Change.Image(index, image.absolutePath))
+                    } catch (ignored: InterruptedException) {
                     }
-
                 }
 
-
-                Schedulers.io().scheduleDirect {
-
+                compositeDisposable += Schedulers.io().scheduleDirect {
                     val key = keyFinder.getKey(installedTheme.appId)
-
-                    executor.execute {
-
-                        val theme = apps[index]
-
-                        val newTheme = theme.copy(keyAvailable = key != null)
-
-                        apps[index] = newTheme
-
-                    }
-
+                    subject.onNext(Change.Key(index, key != null))
                 }
-
 
             }
 
         }
 
+    }
 
-
-/*
-        compositeDisposable += { packageManager.getInstalledThemes() }.toSingle()
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .flattenAsObservable { it }
-                .map {
-                    MainViewModel(it.appId, it.name)
-                }
-                .toList()
-                .subscribe { models ->
-                    swipeToRefresh.set(false)
-                    apps.clear()
-                    apps.addAll(models)
-                }*/
-
+    override fun reset() {
+        swipeToRefresh.set(true)
+        apps.clear()
+        compositeDisposable.clear()
+        compositeDisposable = CompositeDisposable()
+        initialized = false
+        init()
     }
 
     override fun onCleared() {
         compositeDisposable.clear()
-        executor.shutdownNow()
     }
 }

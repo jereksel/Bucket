@@ -19,6 +19,7 @@ package com.jereksel.libresubstratum.activities.main
 
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.util.DiffUtil
+import android.support.v7.util.DiffUtil.DiffResult
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -80,7 +81,10 @@ class MainViewAdapter(
 
         }
 
-        holder.view.setOnClickListener { onClickSubject.onNext(app.appId) }
+        holder.view.setOnClickListener {
+            onClickSubject.onNext(app.appId)
+        }
+
         holder.lock.setOnClickListener {
             it.context.longToast(R.string.unsupported_template_toast)
         }
@@ -115,7 +119,7 @@ class MainViewAdapter(
 
     fun getClickObservable() = onClickSubject
 
-    private fun <E> DiffCallBack<E>.calculate(): DiffUtil.DiffResult {
+    private fun <E> DiffCallBack<E>.calculate(): DiffResult {
         return DiffUtil.calculateDiff(this)
     }
 

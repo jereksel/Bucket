@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <import type="com.jereksel.libresubstratum.activities.main.MainViewViewModel" />
+        <import type="com.jereksel.libresubstratum.activities.main.IMainViewViewModel" />
         <variable
             name="viewModel"
-            type="MainViewViewModel" />
+            type="IMainViewViewModel" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,12 +28,13 @@
             android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:refreshing="@{viewModel.swipeToRefresh}"
+            app:refreshing="@{viewModel.getSwipeToRefreshObservable()}"
+            app:onRefreshListener="@{() -> viewModel.reset()}"
             android:layout_below="@id/toolbar">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                app:items="@{viewModel.apps}"
+                app:items="@{viewModel.getAppsObservable()}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
