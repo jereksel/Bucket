@@ -9,6 +9,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailView
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.android.synthetic.main.activity_priorities_detail.*
@@ -39,7 +40,8 @@ class PrioritiesDetailViewTest: BaseRobolectricTest() {
     fun setup() {
         RxJavaPlugins.reset()
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedPrioritiesDetailPresenter
+        presenter = MockedApp.mockedPrioritiesDetailPresenter
+        reset(presenter)
         val intent = Intent(ShadowApplication.getInstance().applicationContext, PrioritiesDetailView::class.java)
         val APP_ID_EXTRA = "com.jereksel.libresubstratum.activities.prioritiesdetail.targetIdStarterKey"
         intent.putExtra(APP_ID_EXTRA, appId)

@@ -47,7 +47,8 @@ class InstalledViewTest: BaseRobolectricTest() {
     @Before
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedInstalledPresenter
+        presenter = MockedApp.mockedInstalledPresenter
+        reset(presenter)
         activityController = Robolectric.buildActivity(InstalledView::class.java).create()
         activity = activityController.get()
     }
