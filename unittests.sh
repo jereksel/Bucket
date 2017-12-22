@@ -10,6 +10,7 @@ set -e
 # Robolectric
 
 ./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewTest"
+./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewMVVMTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewTest2"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.DetailedViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.InstalledViewTest"
@@ -20,6 +21,7 @@ set -e
 
 # Non-Robolectric
 
+./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewViewModelTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.presenters.*"
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.data.*"
 ./gradlew app:testFdroidDebugUnitTest --tests "com.jereksel.libresubstratum.utils.*"

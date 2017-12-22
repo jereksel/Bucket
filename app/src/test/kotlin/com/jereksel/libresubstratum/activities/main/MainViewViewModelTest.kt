@@ -95,6 +95,44 @@ class MainViewViewModelTest: FunSpec() {
 
         }
 
+        test("When permissions are required they are passed to permissions live event") {
+
+            whenever(overlayService.requiredPermissions()).thenReturn(listOf("permission1", "permission2"))
+
+            mainViewViewModel.tickChecks()
+
+            assertThat(mainViewViewModel.getPermissions().value).containsOnly(
+                    "permission1", "permission2"
+            )
+
+        }
+
+        test("When permissions are not required and there is other message available it is shown") {
+
+            val message = "Dialog message"
+
+            whenever(overlayService.requiredPermissions()).thenReturn(listOf())
+            whenever(overlayService.additionalSteps()).thenReturn(message)
+
+            mainViewViewModel.tickChecks()
+
+            assertThat(mainViewViewModel.getPermissions().value).isNullOrEmpty()
+            assertThat(mainViewViewModel.getDialogContent().value).isEqualTo(message)
+
+        }
+
+        test("When permissions are not required and there are no messages nothing is passed") {
+
+            whenever(overlayService.requiredPermissions()).thenReturn(listOf())
+            whenever(overlayService.additionalSteps()).thenReturn(null)
+
+            mainViewViewModel.tickChecks()
+
+            assertThat(mainViewViewModel.getPermissions().value).isNullOrEmpty()
+            assertThat(mainViewViewModel.getDialogContent().value).isNullOrEmpty()
+
+        }
+
     }
 
 }

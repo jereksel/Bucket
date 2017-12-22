@@ -26,7 +26,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.main.MainPresenter
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.InstalledTheme
@@ -47,6 +46,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 "com.android.systemui.tiles" to "Tiles"
         )
     }
+
+    val SUBSTRATUM_LEGACY = "Substratum_Legacy"
+    val SUBSTRATUM_NAME = "Substratum_Name"
+    val SUBSTRATUM_AUTHOR = "Substratum_Author"
 
     val metadataOverlayTarget = "Substratum_Target"
     val metadataOverlayParent = "Substratum_Parent"
@@ -95,14 +98,14 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
     override fun getInstalledThemes(): List<InstalledTheme> {
         return getApplications()
-                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_AUTHOR) }
-                .filter { it.metadata.has(MainPresenter.SUBSTRATUM_NAME) }
+                .filter { it.metadata.has(SUBSTRATUM_AUTHOR) }
+                .filter { it.metadata.has(SUBSTRATUM_NAME) }
                 .map {
 
                     log.debug("Reading information of theme {}", it.appId)
 
-                    val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
-                    val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+                    val name = it.metadata.getString(SUBSTRATUM_NAME)
+                    val author = it.metadata.getString(SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
                     val pluginVersion = it.metadata.getString("Substratum_Plugin")
                     InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
@@ -119,8 +122,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
         val app = Application(appId, application.metaData)
 
         app.let {
-            val name = it.metadata.getString(MainPresenter.SUBSTRATUM_NAME)
-            val author = it.metadata.getString(MainPresenter.SUBSTRATUM_AUTHOR)
+            val name = it.metadata.getString(SUBSTRATUM_NAME)
+            val author = it.metadata.getString(SUBSTRATUM_AUTHOR)
             val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
             val pluginVersion = it.metadata.getString("Substratum_Plugin")
             InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })

@@ -30,31 +30,21 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.data.DiffCallBack
-import com.jereksel.libresubstratum.data.InstalledTheme
-import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
-import io.reactivex.Observable
 import io.reactivex.android.MainThreadDisposable.verifyMainThread
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.toObservable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
 import java.io.File
 
 class MainViewAdapter(
-        val presenter: Presenter
+        val viewModel: IMainViewViewModel
 ) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
 
     var apps: List<MainViewModel> = listOf()
 
     val log = getLogger()
-
-    private val onClickSubject = PublishSubject.create<String>()!!
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
@@ -82,7 +72,7 @@ class MainViewAdapter(
         }
 
         holder.view.setOnClickListener {
-            onClickSubject.onNext(app.appId)
+            viewModel.getAppToOpen().postValue(app.appId)
         }
 
         holder.lock.setOnClickListener {
@@ -116,8 +106,6 @@ class MainViewAdapter(
         val lock: ImageView by bindView(R.id.lock)
         val progressBar: ProgressBar by bindView(R.id.progressBar)
     }
-
-    fun getClickObservable() = onClickSubject
 
     private fun <E> DiffCallBack<E>.calculate(): DiffResult {
         return DiffUtil.calculateDiff(this)

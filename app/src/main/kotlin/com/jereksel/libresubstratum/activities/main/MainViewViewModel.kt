@@ -17,12 +17,11 @@
 
 package com.jereksel.libresubstratum.activities.main
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
+import com.jereksel.libresubstratum.data.SingleLiveEvent
 import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
@@ -30,7 +29,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -53,6 +51,12 @@ class MainViewViewModel @Inject constructor(
 
     val _dialogContent = MutableLiveData<String>()
     override fun getDialogContent() = _dialogContent
+
+    val _permissionsToRequest = SingleLiveEvent<List<String>>()
+    override fun getPermissions() = _permissionsToRequest
+
+    val _appToOpen = SingleLiveEvent<String>()
+    override fun getAppToOpen() = _appToOpen
 
     @Volatile
     var initialized = false
@@ -132,21 +136,21 @@ class MainViewViewModel @Inject constructor(
     }
 
     override fun tickChecks() {
-
-        Thread {
-
-            while (true) {
-                Thread.sleep(1000)
-                _dialogContent.postValue(UUID.randomUUID().toString())
-            }
-
-        }.start()
-
+        val perms = overlayService.requiredPermissions()
+        if (perms.isNotEmpty()) {
+            _permissionsToRequest.postValue(perms)
+            return
+        }
+        val message = overlayService.additionalSteps()
+        if (message != null) {
+            _dialogContent.postValue(message)
+            return
+        }
+        _dialogContent.postValue("")
     }
 
     override fun onCleared() {
         compositeDisposable.clear()
     }
-
 
 }
