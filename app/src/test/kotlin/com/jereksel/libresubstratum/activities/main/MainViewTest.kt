@@ -53,7 +53,7 @@ import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
 
 @Suppress("IllegalIdentifier")
-class MainViewMVVMTest : BaseRobolectricTest() {
+class MainViewTest : BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<MainView>
     lateinit var activity : AppCompatActivity

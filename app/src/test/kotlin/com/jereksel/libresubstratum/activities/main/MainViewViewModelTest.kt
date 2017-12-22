@@ -133,6 +133,55 @@ class MainViewViewModelTest: FunSpec() {
 
         }
 
+        test("Reset removed apps and redownloads them") {
+
+            val test = TestScheduler()
+
+            RxJavaPlugins.reset()
+            RxJavaPlugins.setComputationSchedulerHandler { TestScheduler() }
+            RxJavaPlugins.setIoSchedulerHandler { test }
+
+            whenever(packageManager.getInstalledThemes()).thenReturn(listOf(
+                    InstalledTheme("app1", "Theme 1", "", false, "", FutureTask { File("") }),
+                    InstalledTheme("app2", "Theme 2", "", false, "", FutureTask { File("") })
+            ))
+
+            mainViewViewModel.init()
+
+            assertThat(mainViewViewModel.apps).isEmpty()
+
+            test.triggerActions()
+
+            assertThat(mainViewViewModel.apps).containsExactly(
+                    MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
+                    MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath)
+            )
+
+
+            whenever(packageManager.getInstalledThemes()).thenReturn(listOf(
+                    InstalledTheme("app1", "Theme 1", "", false, "", FutureTask { File("") }),
+                    InstalledTheme("app2", "Theme 2", "", false, "", FutureTask { File("") }),
+                    InstalledTheme("app3", "Theme 3", "", false, "", FutureTask { File("") })
+            ))
+
+            mainViewViewModel.reset()
+
+            assertThat(mainViewViewModel.apps).isEmpty()
+            assertThat(mainViewViewModel.getSwipeToRefreshObservable().get()).isTrue()
+
+            test.triggerActions()
+
+            assertThat(mainViewViewModel.apps).containsExactly(
+                    MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
+                    MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath),
+                    MainViewModel("app3", "Theme 3", keyAvailable = false, heroImage = File("").absolutePath)
+            )
+
+            assertThat(mainViewViewModel.getSwipeToRefreshObservable().get()).isFalse()
+
+
+        }
+
     }
 
 }

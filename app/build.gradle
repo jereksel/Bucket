@@ -232,10 +232,6 @@ dependencies {
     compile "android.arch.lifecycle:reactivestreams:1.0.0"
     testCompile "android.arch.core:core-testing:1.0.0"
     kapt 'com.android.databinding:compiler:2.3.3'
-//    kapt 'com.android.databinding:compiler:1.0'
-//    compile 'com.android.databinding:library:1.0'
-//    compile 'com.android.databinding:adapters:1.0'
-
 
     //RxStuff
     compile rxjava
