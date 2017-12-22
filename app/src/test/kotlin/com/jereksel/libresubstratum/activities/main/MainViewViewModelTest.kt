@@ -84,11 +84,11 @@ class MainViewViewModelTest: FunSpec() {
 
             mainViewViewModel.init()
 
-            assertThat(mainViewViewModel.apps).isEmpty()
+            assertThat(mainViewViewModel.getAppsObservable()).isEmpty()
 
             test.triggerActions()
 
-            assertThat(mainViewViewModel.apps).containsExactly(
+            assertThat(mainViewViewModel.getAppsObservable()).containsExactly(
                     MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath)
             )
@@ -148,11 +148,11 @@ class MainViewViewModelTest: FunSpec() {
 
             mainViewViewModel.init()
 
-            assertThat(mainViewViewModel.apps).isEmpty()
+            assertThat(mainViewViewModel.getAppsObservable()).isEmpty()
 
             test.triggerActions()
 
-            assertThat(mainViewViewModel.apps).containsExactly(
+            assertThat(mainViewViewModel.getAppsObservable()).containsExactly(
                     MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath)
             )
@@ -166,12 +166,12 @@ class MainViewViewModelTest: FunSpec() {
 
             mainViewViewModel.reset()
 
-            assertThat(mainViewViewModel.apps).isEmpty()
+            assertThat(mainViewViewModel.getAppsObservable()).isEmpty()
             assertThat(mainViewViewModel.getSwipeToRefreshObservable().get()).isTrue()
 
             test.triggerActions()
 
-            assertThat(mainViewViewModel.apps).containsExactly(
+            assertThat(mainViewViewModel.getAppsObservable()).containsExactly(
                     MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app3", "Theme 3", keyAvailable = false, heroImage = File("").absolutePath)

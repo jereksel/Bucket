@@ -43,19 +43,19 @@ class MainViewViewModel @Inject constructor(
         data class Image(val id: Int, val location: String) : Change()
     }
 
-    val apps: ObservableList<MainViewModel> = ObservableArrayList()
+    private val apps: ObservableList<MainViewModel> = ObservableArrayList()
     override fun getAppsObservable() = apps
 
-    val swipeToRefresh = ObservableBoolean(true)
+    private val swipeToRefresh = ObservableBoolean(true)
     override fun getSwipeToRefreshObservable() = swipeToRefresh
 
-    val _dialogContent = MutableLiveData<String>()
+    private val _dialogContent = MutableLiveData<String>()
     override fun getDialogContent() = _dialogContent
 
-    val _permissionsToRequest = SingleLiveEvent<List<String>>()
+    private val _permissionsToRequest = SingleLiveEvent<List<String>>()
     override fun getPermissions() = _permissionsToRequest
 
-    val _appToOpen = SingleLiveEvent<String>()
+    private val _appToOpen = SingleLiveEvent<String>()
     override fun getAppToOpen() = _appToOpen
 
     @Volatile
