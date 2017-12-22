@@ -4,6 +4,7 @@ import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
+import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.plugins.RxJavaPlugins
 import org.junit.After
@@ -24,7 +25,8 @@ class PrioritiesViewTest: BaseRobolectricTest() {
     fun setup() {
         RxJavaPlugins.reset()
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedPrioritiesPresenter
+        presenter = MockedApp.mockedPrioritiesPresenter
+        reset(presenter)
         activityController = Robolectric.buildActivity(PrioritiesView::class.java).create().resume()
         activity = activityController.get()
     }

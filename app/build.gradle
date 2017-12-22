@@ -239,6 +239,7 @@ dependencies {
     //Dagger
     compile dagger
     kapt daggerCompiler
+    kaptTest daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
 
     //Kotterknife
@@ -297,6 +298,8 @@ dependencies {
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
     compile project(':sublib:compilerassetmanager')
+
+    compile "android.arch.lifecycle:runtime:1.0.3"
 
     //Testing
     testCompile junit
