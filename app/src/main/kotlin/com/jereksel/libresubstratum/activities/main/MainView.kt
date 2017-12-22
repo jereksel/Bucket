@@ -42,6 +42,8 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
+import com.jereksel.libresubstratum.utils.ViewModelUtils.get
+import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
 
 open class MainView : AppCompatActivity() {
 
@@ -154,13 +156,6 @@ open class MainView : AppCompatActivity() {
             viewModel.tickChecks()
         }
     }
-
-    private inline fun <reified T> ViewModelProvider.get()
-            where T: ViewModel =
-            this.get(T::class.java)
-
-    private inline fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, crossinline function: (T?) -> Unit) =
-            this.observe(lifecycleOwner, Observer { function(it) })
 
 }
 
