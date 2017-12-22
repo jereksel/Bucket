@@ -9,9 +9,7 @@ set -e
 
 # Robolectric
 
-./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewMVVMTest"
-./gradlew app:testFdroidDebugUnitTest --tests "**.MainViewTest2"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.DetailedViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.InstalledViewTest"
 ./gradlew app:testFdroidDebugUnitTest --tests "**.PrioritiesViewTest"

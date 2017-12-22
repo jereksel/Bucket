@@ -22,8 +22,6 @@ import android.content.ComponentName
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
-import android.databinding.ViewDataBinding
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
@@ -34,16 +32,14 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
-import com.nhaarman.mockito_kotlin.*
-import io.reactivex.internal.operators.observable.ObservableLift
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.plugins.RxJavaPlugins.*
-import org.assertj.android.api.Assertions.assertThat
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
+import org.assertj.android.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.setRemoveAssertJRelatedElementsFromStackTrace
-import org.hamcrest.Matchers
 import org.jetbrains.anko.find
 import org.junit.After
 import org.junit.Before
@@ -60,8 +56,7 @@ import org.robolectric.shadows.ShadowToast
 class MainViewMVVMTest : BaseRobolectricTest() {
 
     lateinit var activityController : ActivityController<MainView>
-    lateinit var activity : MainContract.View
-    lateinit var presenter: MainContract.Presenter
+    lateinit var activity : AppCompatActivity
 
     var activityCasted by ResettableLazy { activity as AppCompatActivity? }
     var swipeToRefresh by ResettableLazy { activityCasted!!.swiperefresh }

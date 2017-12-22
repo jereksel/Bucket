@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
-import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.dagger.components.AppComponent
@@ -27,8 +26,6 @@ class MockedApp : App() {
 
     companion object {
         @JvmStatic
-        val mockedMainPresenter: MainContract.Presenter = Mockito.mock(MainContract.Presenter::class.java)
-        @JvmStatic
         val mockedDetailedPresenter: DetailedContract.Presenter = Mockito.mock(DetailedContract.Presenter::class.java)
         @JvmStatic
         val mockedInstalledPresenter: InstalledContract.Presenter = Mockito.mock(InstalledContract.Presenter::class.java)
@@ -42,8 +39,6 @@ class MockedApp : App() {
         @Module
         class TestModule {
 
-            @Provides
-            fun main(): MainContract.Presenter = mockedMainPresenter
             @Provides
             fun detailed(): DetailedContract.Presenter = mockedDetailedPresenter
             @Provides
