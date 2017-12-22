@@ -17,6 +17,7 @@
 
 #include <jni.h>
 #include <string>
+#include <memory>
 
 #include <dlfcn.h>
 
@@ -80,30 +81,33 @@ extern "C" {
 JNIEXPORT jobjectArray JNICALL
 Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env, jclass type,
                                                                      jstring location_) {
-    const char *location = env->GetStringUTFChars(location_, 0);
+
+    auto location = std::unique_ptr<const char, std::function<void(const char *)>>(env->GetStringUTFChars(location_, 0),
+                                                                        [=](char const* p) { env->ReleaseStringUTFChars(location_, p); });
 
     elfio reader;
 
-    reader.load(location);
+    reader.load(location.get());
 
     auto keyFun = symbol_tables(std::cout, reader, KEY);
     auto ivFun = symbol_tables(std::cout, reader, IV);
-
-    auto lib = dlopen(location, RTLD_LAZY);
-
-    if (lib == nullptr) {
-        return nullptr;
-    }
 
     //dlsym has broken signature (void*, const char*, _Symbol)
     auto mydlsym = (void* (*)(void*, const char*))dlsym;
     auto mydlclose = (void (*)(void*))dlclose;
 
-    auto getKey = (jbyteArray(*)(JNIEnv*)) mydlsym(lib, keyFun.data());
-    auto getIV = (jbyteArray(*)(JNIEnv*)) mydlsym(lib, ivFun.data());
+    auto lib = std::unique_ptr<void, std::function<void(void*)>>(dlopen(location.get(), RTLD_LAZY),
+                                                                 [=](void* l) { mydlclose(l); });
+
+    if (lib == nullptr) {
+        return nullptr;
+    }
+
+
+    auto getKey = (jbyteArray(*)(JNIEnv*)) mydlsym(lib.get(), keyFun.data());
+    auto getIV = (jbyteArray(*)(JNIEnv*)) mydlsym(lib.get(), ivFun.data());
 
     if (getKey == nullptr || getIV == nullptr) {
-        mydlclose(lib);
         return nullptr;
     }
 
@@ -116,10 +120,6 @@ Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env
 
     env->SetObjectArrayElement(arr, 0, key);
     env->SetObjectArrayElement(arr, 1, iv);
-
-    mydlclose(lib);
-
-    env->ReleaseStringUTFChars(location_, location);
 
     return arr;
 
