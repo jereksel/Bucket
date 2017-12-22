@@ -25,6 +25,7 @@ import com.jereksel.libresubstratum.data.SingleLiveEvent
 import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
@@ -42,6 +43,8 @@ class MainViewViewModel @Inject constructor(
         data class Key(val id: Int, val keyAvailable: Boolean) : Change()
         data class Image(val id: Int, val location: String) : Change()
     }
+
+    val log = getLogger()
 
     private val apps: ObservableList<MainViewModel> = ObservableArrayList()
     override fun getAppsObservable() = apps
