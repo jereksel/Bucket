@@ -80,6 +80,8 @@ class MainViewViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .subscribe { change ->
 
+                    log.debug("Received change: {}", change)
+
                     when(change) {
                         is Change.Key -> {
                             val (id, keyAvailable) = change
@@ -120,6 +122,7 @@ class MainViewViewModel @Inject constructor(
 
                 compositeDisposable += Schedulers.io().scheduleDirect {
                     val key = keyFinder.getKey(installedTheme.appId)
+                    log.debug("Key for {}: {}", installedTheme.appId, key)
                     subject.onNext(Change.Key(index, key != null))
                 }
 
@@ -130,11 +133,11 @@ class MainViewViewModel @Inject constructor(
     }
 
     override fun reset() {
-        swipeToRefresh.set(true)
-        apps.clear()
         compositeDisposable.clear()
         compositeDisposable = CompositeDisposable()
         initialized = false
+        swipeToRefresh.set(true)
+        apps.clear()
         init()
     }
 
