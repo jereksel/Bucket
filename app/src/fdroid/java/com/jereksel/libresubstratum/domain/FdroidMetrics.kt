@@ -30,8 +30,8 @@ class FdroidMetrics
     }
 
     override fun logOverlayServiceType(overlayService: OverlayService) {
-        data["overlayManager"] = overlayService.javaClass.toString()
-        log.debug("User overlayManager: {}", overlayService.javaClass.toString())
+        data["overlayService"] = overlayService.javaClass.toString()
+        log.debug("User overlayService: {}", overlayService.javaClass.toString())
     }
 
     override fun getMetrics() = data
