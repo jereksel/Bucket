@@ -83,7 +83,7 @@ Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env
                                                                      jstring location_) {
 
     auto location = std::unique_ptr<const char, std::function<void(const char *)>>(env->GetStringUTFChars(location_, 0),
-                                                                        [=](char const* p) { env->ReleaseStringUTFChars(location_, p); });
+                                                                                   [=](char const* p) { env->ReleaseStringUTFChars(location_, p); });
 
     elfio reader;
 
