@@ -28,6 +28,7 @@ import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.Type3Data
 import com.jereksel.libresubstratumlib.Type3Extension
+import com.nhaarman.mockito_kotlin.reset
 import org.jetbrains.anko.find
 import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.ShadowApplication
@@ -57,7 +58,8 @@ class DetailedViewTest: BaseRobolectricTest() {
     @Before
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedDetailedPresenter
+        presenter = MockedApp.mockedDetailedPresenter
+        reset(presenter)
         val intent = Intent(ShadowApplication.getInstance().applicationContext, DetailedView::class.java)
         val APP_ID_EXTRA = "com.jereksel.libresubstratum.activities.detailed.appIdStarterKey"
         intent.putExtra(APP_ID_EXTRA, appId)

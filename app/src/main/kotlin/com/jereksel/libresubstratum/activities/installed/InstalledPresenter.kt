@@ -91,11 +91,8 @@ class InstalledPresenter(
 
         for (pckg in toUninstall) {
             overlays?.remove(pckg)
+            view.get()?.updateOverlays(getFilteredApps())
             overlayService.uninstallApk(pckg.overlayId).await()
-            val overlays = overlays
-            if (overlays != null) {
-                view.get()?.addOverlays(overlays)
-            }
         }
 
     }

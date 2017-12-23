@@ -21,6 +21,11 @@ import com.jereksel.changelogdialog.changelog
 
 object Changelog {
     val changelog = changelog {
+        betaVersion("0.3") {
+            +"Use Changelog Library instead of WebView"
+            +"Fix compilation issues with more theme packs (Compound)"
+            +"Fix PitchBlack compilation issues"
+        }
         version("0.2.1") {
             +"Fix FC on 64 bit devices"
         }

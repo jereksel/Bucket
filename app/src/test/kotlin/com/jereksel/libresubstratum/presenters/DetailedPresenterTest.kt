@@ -17,6 +17,8 @@ import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
+import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable

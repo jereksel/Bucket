@@ -25,7 +25,10 @@ import kotlinx.coroutines.experimental.launch
 
 object ViewUtils {
 
-    fun View.onClick(mutableCollection: MutableSet<Job>, job: suspend CoroutineScope.() -> Unit) {
+    fun View.onClick(
+            mutableCollection: MutableSet<Job>,
+            job: suspend CoroutineScope.() -> Unit
+    ) {
         setOnClickListener {
             mutableCollection += launch(UI) {
                 job()
