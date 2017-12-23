@@ -27,7 +27,6 @@ import org.junit.Assert.assertNull
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.File
-import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 import java.util.concurrent.FutureTask
 
 class DetailedPresenterTest : FunSpec() {
