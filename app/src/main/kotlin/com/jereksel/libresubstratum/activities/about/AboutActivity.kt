@@ -79,9 +79,12 @@ class AboutActivity: AppCompatActivity() {
 
         val changelogLib = Library("ChangeLog Library", APACHE2, Author("Gabriele Mariotti", "2013-2015"))
 
+        val rx2Extensions = Library("RxJava2Extensions", APACHE2, Author("David Karnok", "2016-\${year}"))
+
         val libraries = listOf(maven, kotlin, support, rxandroid, rxjava, rxkotlin, dagger,
                 kotterknife, fab, logback, msv, activityStarter, anko, result, picasso, guava,
-                zipUtils, room, codec, crashlyticsAppender, crash, elfio, changelogLib)
+                zipUtils, room, codec, crashlyticsAppender, crash, elfio, changelogLib,
+                rx2Extensions)
                 .sortedBy { it.name }
 
         verticalLayout {
