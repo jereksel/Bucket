@@ -127,7 +127,7 @@ class InstalledPresenterTest : FunSpec() {
 
             whenever(overlayService.getOverlayInfo(any())).then {
                 val id: String = it.getArgument(0)
-                OverlayInfo(id, "", false)
+                OverlayInfo(id, "", false).toFuture()
             }
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
