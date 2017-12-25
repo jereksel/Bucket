@@ -393,7 +393,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(overlayService.installApk(File("/"))).then {
                 overlayVersion = Pair(2, "v1.1")
-                Unit
+                Unit.toFuture()
             }
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenAnswer { overlayVersion }
@@ -424,7 +424,8 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
-                installed = true; Unit
+                installed = true;
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -442,9 +443,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileAndRun(0)
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
-
+            verify(overlayService).enableExclusive("app1.MyTheme")
         }
         test("When overlays cannot be installed, it's removed and installed again") {
 
@@ -468,8 +468,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileAndRun(0)
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).uninstallApk("app1.MyTheme")
+            verify(overlayService).enableExclusive("app1.MyTheme")
             verify(overlayService, times(2)).installApk(File("/"))
 
         }
@@ -515,6 +515,7 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(overlayService.installApk(File("/"))).then {
                 installed = true; Unit
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -549,7 +550,9 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
-                installed = true; Unit
+                println("File")
+                installed = true
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
@@ -569,8 +572,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileRunActivateSelected()
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
+            verify(overlayService).enableExclusive("app1.MyTheme")
         }
 
         // OTHER
