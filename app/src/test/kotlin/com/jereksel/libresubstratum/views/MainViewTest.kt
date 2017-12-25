@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jereksel.libresubstratum.*
+import com.jereksel.libresubstratum.ShadowSnackbar.reset
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
@@ -17,6 +18,7 @@ import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.KeyPair
+import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.`when`
@@ -54,7 +56,8 @@ class MainViewTest: BaseRobolectricTest() {
     fun setup() {
         RxJavaPlugins.reset()
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedMainPresenter
+        presenter = MockedApp.mockedMainPresenter
+        reset(presenter)
         activityController = Robolectric.buildActivity(MainView::class.java).create().resume()
         activity = activityController.get()
     }
