@@ -19,8 +19,8 @@ package com.jereksel.libresubstratum.activities.prioritiesdetail
 
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IActivityProxy
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.ActivityProxy
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,8 +29,8 @@ import io.reactivex.schedulers.Schedulers
 
 class PrioritiesDetailPresenter(
         val overlayService: OverlayService,
-        val packageManager: IPackageManager,
-        val activityProxy: IActivityProxy
+        val packageManager: PackageManager,
+        val activityProxy: ActivityProxy
 ): Presenter() {
 
     lateinit var overlays: List<InstalledOverlay>

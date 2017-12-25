@@ -15,14 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.infrastructure;
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.support.annotation.Nullable;
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+public class AndroidKeyFinderNative {
+
+    static {
+        System.loadLibrary("bucketnativelib");
+    }
+
+    //[key, iv]
+    @Nullable
+    public static native byte[][] getKeyAndIV(String location);
 }

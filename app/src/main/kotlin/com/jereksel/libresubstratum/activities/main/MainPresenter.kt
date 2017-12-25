@@ -18,22 +18,19 @@
 package com.jereksel.libresubstratum.activities.main
 
 import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
-import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.extensions.getLogger
-import com.jereksel.libresubstratum.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 
 class MainPresenter(
-        val packageManager: IPackageManager,
-        val themeReader: IThemeReader,
+        val packageManager: PackageManager,
+        val themeReader: ThemeReader,
         val overlayService: OverlayService,
         val metrics: Metrics,
-        val keyFinder: IKeyFinder
+        val keyFinder: KeyFinder
 ) : Presenter() {
 
     val log = getLogger()

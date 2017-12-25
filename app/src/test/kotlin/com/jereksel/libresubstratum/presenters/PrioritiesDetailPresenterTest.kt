@@ -3,8 +3,8 @@ package com.jereksel.libresubstratum.presenters
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IActivityProxy
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.ActivityProxy
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
@@ -21,9 +21,9 @@ class PrioritiesDetailPresenterTest: FunSpec() {
     @Mock
     lateinit var overlayService: OverlayService
     @Mock
-    lateinit var packageManager: IPackageManager
+    lateinit var packageManager: PackageManager
     @Mock
-    lateinit var activityProxy: IActivityProxy
+    lateinit var activityProxy: ActivityProxy
     @Mock
     lateinit var view: PrioritiesDetailContract.View
 

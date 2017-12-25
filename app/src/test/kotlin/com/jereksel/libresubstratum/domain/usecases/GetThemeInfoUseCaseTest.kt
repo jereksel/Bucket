@@ -1,7 +1,7 @@
 package com.jereksel.libresubstratum.domain.usecases
 
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.PackageManager
+import com.jereksel.libresubstratum.domain.ThemeReader
 import com.jereksel.libresubstratum.domain.ThemePackDatabase
 import com.jereksel.libresubstratumlib.ThemePack
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
@@ -18,13 +18,13 @@ import java.io.File
 class GetThemeInfoUseCaseTest: FunSpec() {
 
     @Mock
-    lateinit var packageManager: IPackageManager
+    lateinit var packageManager: PackageManager
 //    @Mock
     lateinit var themePackDatabase: HashMapThemePackDatabase
     @Mock
-    lateinit var themeReader: IThemeReader
+    lateinit var themeReader: ThemeReader
 
-    lateinit var usecase: GetThemeInfoUseCase
+    lateinit var usecase: GetThemeInfoUseCaseImpl
 
     val resources = File(File(javaClass.classLoader.getResource("a").path).parentFile, "usecases/getthemeinfo")
 
@@ -33,7 +33,7 @@ class GetThemeInfoUseCaseTest: FunSpec() {
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
         themePackDatabase = HashMapThemePackDatabase()
-        usecase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
+        usecase = GetThemeInfoUseCaseImpl(packageManager, themePackDatabase, themeReader)
     }
 
     init {

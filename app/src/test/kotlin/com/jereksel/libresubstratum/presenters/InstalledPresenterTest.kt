@@ -3,8 +3,8 @@ package com.jereksel.libresubstratum.presenters
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IActivityProxy
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.ActivityProxy
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
@@ -20,11 +20,11 @@ class InstalledPresenterTest : FunSpec() {
     @Mock
     lateinit var view: InstalledContract.View
     @Mock
-    lateinit var packageManager: IPackageManager
+    lateinit var packageManager: PackageManager
     @Mock
     lateinit var overlayService: OverlayService
     @Mock
-    lateinit var activityProxy: IActivityProxy
+    lateinit var activityProxy: ActivityProxy
 
     lateinit var presenter: InstalledPresenter
 

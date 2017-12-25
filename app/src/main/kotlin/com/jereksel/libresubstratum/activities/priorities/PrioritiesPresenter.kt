@@ -19,20 +19,18 @@ package com.jereksel.libresubstratum.activities.priorities
 
 import com.google.common.collect.ArrayListMultimap
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract.Presenter
-import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract.View
 import com.jereksel.libresubstratum.data.InstalledOverlay
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
 
 class PrioritiesPresenter(
         val overlayService: OverlayService,
-        val packageManager: IPackageManager
+        val packageManager: PackageManager
 ): Presenter() {
 
     override fun getApplication() {

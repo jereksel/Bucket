@@ -17,22 +17,34 @@
 
 package com.jereksel.libresubstratum.domain.usecases
 
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.IThemeReader
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.ThemeCompiler
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
-import com.jereksel.libresubstratumlib.Theme
 import com.jereksel.libresubstratumlib.ThemePack
 import com.jereksel.libresubstratumlib.ThemeToCompile
 import com.jereksel.libresubstratumlib.Type1DataToCompile
 import io.reactivex.Observable
 import java.io.File
 
-class CompileThemeUseCase(
-        private val packageManager: IPackageManager,
+interface CompileThemeUseCase {
+
+    fun execute(
+            themePack: ThemePack,
+            themeId: String,
+            destAppId: String,
+            type1aName: String?,
+            type1bName: String?,
+            type1cName: String?,
+            type2Name: String?,
+            type3Name: String?
+    ): Observable<File>
+}
+
+class CompileThemeUseCaseImpl(
+        private val packageManager: PackageManager,
         private val themeCompiler: ThemeCompiler
-): ICompileThemeUseCase {
+): CompileThemeUseCase {
 
     val log = getLogger()
 

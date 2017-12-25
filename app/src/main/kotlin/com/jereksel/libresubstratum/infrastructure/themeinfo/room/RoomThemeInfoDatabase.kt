@@ -15,14 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.infrastructure.themeinfo.room
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+@Database(entities = arrayOf(
+        RoomTheme::class,
+        RoomThemePack::class,
+        RoomType1aExtension::class,
+        RoomType1bExtension::class,
+        RoomType1cExtension::class,
+        RoomType2Extension::class,
+        RoomType3Extension::class
+), version = 1)
+abstract class RoomThemeInfoDatabase: RoomDatabase() {
+    abstract fun abstractThemeInfo(): RoomThemePackDao
 }

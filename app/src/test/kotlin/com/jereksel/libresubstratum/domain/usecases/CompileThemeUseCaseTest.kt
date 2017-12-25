@@ -14,15 +14,15 @@ import java.util.concurrent.FutureTask
 class CompileThemeUseCaseTest: FunSpec() {
 
     @Mock
-    lateinit var packageManager: IPackageManager
+    lateinit var packageManager: PackageManager
     @Mock
     lateinit var themeCompiler: ThemeCompiler
 
-    lateinit var useCase: ICompileThemeUseCase
+    lateinit var useCase: CompileThemeUseCase
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        useCase = CompileThemeUseCase(packageManager, themeCompiler)
+        useCase = CompileThemeUseCaseImpl(packageManager, themeCompiler)
 
         initRxJava()
 

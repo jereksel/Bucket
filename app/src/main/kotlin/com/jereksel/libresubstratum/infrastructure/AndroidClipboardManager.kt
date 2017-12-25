@@ -15,14 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.domain
+package com.jereksel.libresubstratum.infrastructure
 
-import com.jereksel.libresubstratum.data.KeyPair
+import android.content.ClipData
+import android.content.Context
+import com.jereksel.libresubstratum.domain.ClipboardManager
 
-interface KeyFinder {
-    /**
-     * When key is not needed KeyPair([], []) is returned
-     * Null is returned when key can't be found - theme cannot be decrypted
-     */
-    fun getKey(appId: String): KeyPair?
+class AndroidClipboardManager(private val context: Context): ClipboardManager {
+    override fun addToClipboard(message: String) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val clip = ClipData.newPlainText("BucketThemeManager", message)
+        clipboard.primaryClip = clip
+    }
 }

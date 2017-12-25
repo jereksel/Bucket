@@ -8,11 +8,11 @@ import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.domain.ClipboardManager
-import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.PackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
+import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
@@ -31,13 +31,13 @@ class DetailedPresenterTest : FunSpec() {
     @Mock
     lateinit var view: View
     @Mock
-    lateinit var packageManager: IPackageManager
+    lateinit var packageManager: PackageManager
     @Mock
-    lateinit var getThemeInfoUseCase: IGetThemeInfoUseCase
+    lateinit var getThemeInfoUseCase: GetThemeInfoUseCase
     @Mock
     lateinit var overlayService: OverlayService
     @Mock
-    lateinit var compileThemeUseCase: ICompileThemeUseCase
+    lateinit var compileThemeUseCase: CompileThemeUseCase
     @Mock
     lateinit var clipboardManager: ClipboardManager
 

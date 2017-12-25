@@ -73,13 +73,13 @@ symbol_tables( std::ostream& out, const elfio& reader, METHOD method)
 
 extern "C" {
     JNIEXPORT jobjectArray JNICALL
-    Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env, jclass type,
+    Java_com_jereksel_libresubstratum_infrastructure_AndroidKeyFinderNative_getKeyAndIV(JNIEnv *env, jclass type,
                                                                          jstring location_);
 };
 
 
 JNIEXPORT jobjectArray JNICALL
-Java_com_jereksel_libresubstratum_domain_KeyFinderNative_getKeyAndIV(JNIEnv *env, jclass type,
+Java_com_jereksel_libresubstratum_infrastructure_AndroidKeyFinderNative_getKeyAndIV(JNIEnv *env, jclass type,
                                                                      jstring location_) {
 
     auto location = std::unique_ptr<const char, std::function<void(const char *)>>(env->GetStringUTFChars(location_, 0),
