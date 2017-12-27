@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
+import com.jakewharton.rxrelay2.ReplayRelay
 import com.jereksel.libresubstratum.data.SingleLiveEvent
 import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
@@ -29,7 +30,6 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -73,7 +73,7 @@ class MainViewViewModel @Inject constructor(
 
         initialized = true
 
-        val subject = BehaviorSubject.create<Change>()
+        val subject = ReplayRelay.create<Change>()
 
         compositeDisposable += subject
                 .observeOn(Schedulers.io())
@@ -115,7 +115,7 @@ class MainViewViewModel @Inject constructor(
                     installedTheme.heroImage.run()
                     try {
                         val image = installedTheme.heroImage.get()!!
-                        subject.onNext(Change.Image(index, image.absolutePath))
+                        subject.accept(Change.Image(index, image.absolutePath))
                     } catch (ignored: InterruptedException) {
                     }
                 }
@@ -123,7 +123,7 @@ class MainViewViewModel @Inject constructor(
                 compositeDisposable += Schedulers.io().scheduleDirect {
                     val key = keyFinder.getKey(installedTheme.appId)
                     log.debug("Key for {}: {}", installedTheme.appId, key)
-                    subject.onNext(Change.Key(index, key != null))
+                    subject.accept(Change.Key(index, key != null))
                 }
 
             }
