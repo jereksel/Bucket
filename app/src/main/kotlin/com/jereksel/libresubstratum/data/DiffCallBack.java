@@ -15,15 +15,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.dagger.components
+package com.jereksel.libresubstratum.data;
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
-import dagger.Component
-import javax.inject.Singleton
+import android.support.v7.util.DiffUtil;
 
-@Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
-interface AppComponent: BaseComponent
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class DiffCallBack<E> extends DiffUtil.Callback {
+    protected List<E> oldList = new ArrayList<>();
+    protected List<E> newList = new ArrayList<>();
+
+    public DiffCallBack(List<E> oldList, List<E> newList) {
+        this.oldList = oldList;
+        this.newList = newList;
+    }
+
+    @Override
+    public int getOldListSize() {
+        return oldList.size();
+    }
+
+    @Override
+    public int getNewListSize() {
+        return newList.size();
+    }
+}

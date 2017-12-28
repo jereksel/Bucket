@@ -15,15 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.dagger.components
+package com.jereksel.libresubstratum.activities.main
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
-import dagger.Component
-import javax.inject.Singleton
+import android.databinding.BindingAdapter
+import android.support.v7.widget.RecyclerView
 
-@Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
-interface AppComponent: BaseComponent
+object MainBindings {
+
+    @JvmStatic
+    @BindingAdapter("app:items")
+    fun setItems(recyclerView: RecyclerView, items: List<MainViewModel>) {
+        (recyclerView.adapter as? MainViewAdapter)?.updateItems(ArrayList(items))
+    }
+
+}
