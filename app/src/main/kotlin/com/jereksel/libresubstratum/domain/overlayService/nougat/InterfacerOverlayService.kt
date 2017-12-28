@@ -50,8 +50,10 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val oms: IOverlayManager = OMSLib.getOMS()
 
     val threadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-%d").build()
+    val enableExclusiveThreadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-enable-exclusive-%d").build()
 
     val dispatcher = Executors.newFixedThreadPool(5, threadFactory).asCoroutineDispatcher()
+    val enableExclusiveDispatcher = Executors.newFixedThreadPool(2, threadFactory).asCoroutineDispatcher()
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
     val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
@@ -93,7 +95,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     //When we use CommonPool on everything we have possibility of deadlock
     //enableExclusive is only method that uses other async methods
-    override fun enableExclusive(id: String) = async(dispatcher) {
+    override fun enableExclusive(id: String) = async(enableExclusiveDispatcher) {
 
         val overlayInfo = getOverlayInfo(id).await() ?: return@async
 
@@ -146,7 +148,7 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
         interfacer.uninstallPackage(listOf(appId), false)
     }.asListenableFuture()
 
-    override fun requiredPermissions(): List<String> {
+    override final fun requiredPermissions(): List<String> {
         return allPermissions()
                 .filter { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED }
     }
