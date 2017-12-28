@@ -15,15 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.dagger.components
+package com.jereksel.libresubstratum.dagger.modules
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
-import dagger.Component
-import javax.inject.Singleton
+import com.jereksel.libresubstratum.activities.main.MainViewViewModel
+import dagger.Binds
+import dagger.multibindings.IntoMap
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import com.jereksel.libresubstratum.activities.main.MainViewModel
+import dagger.Module
 
-@Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
-interface AppComponent: BaseComponent
+@Module
+abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewViewModel::class)
+    abstract fun bindUserViewModel(mainViewModel: MainViewViewModel): ViewModel
+
+    @Binds
+    abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
+
+}
