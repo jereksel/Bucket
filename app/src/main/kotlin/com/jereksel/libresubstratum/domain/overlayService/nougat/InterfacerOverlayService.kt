@@ -23,20 +23,27 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.om.IOverlayManager
 import android.content.pm.PackageManager
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.support.v4.content.ContextCompat
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
+import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.BehaviorSubject.createDefault
 import projekt.substratum.IInterfacerInterface
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.await
+import org.funktionale.option.Option
+import org.funktionale.option.Option.*
+import org.funktionale.option.Option.Companion.empty
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -44,8 +51,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val log = getLogger()
 
-    private val omsRx: BehaviorSubject<IOverlayManager> = BehaviorSubject.create()
-    private var interfacerRx: BehaviorSubject<IInterfacerInterface> = BehaviorSubject.create()
+    private val interfacerBS: BehaviorSubject<Option<IInterfacerInterface>> = createDefault(empty())
+    private val interfacerRx: Observable<IInterfacerInterface> = interfacerBS.filter { it.isDefined() }.map { it.get() }
 
     private val oms: IOverlayManager = OMSLib.getOMS()
 
@@ -63,11 +70,12 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     private val interfacerServiceConnection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             log.debug("Interfacer connected")
-            interfacerRx.onNext(IInterfacerInterface.Stub.asInterface(service))
+            interfacerBS.onNext(Some(IInterfacerInterface.Stub.asInterface(service)))
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             log.debug("Interfacer disconnected")
+            interfacerBS.onNext(empty())
         }
 
     }
@@ -80,7 +88,9 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     init {
-        initInterfacer()
+        Handler(Looper.getMainLooper()).post {
+            initInterfacer()
+        }
     }
 
     override fun enableOverlay(id: String) = async(dispatcher) {

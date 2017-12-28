@@ -239,6 +239,8 @@ dependencies {
     testCompile "android.arch.core:core-testing:1.0.0"
     kapt 'com.android.databinding:compiler:2.3.3'
 
+    compile "org.funktionale:funktionale-option:1.2"
+
     //RxStuff
     compile rxjava
     compile rxkotlin
