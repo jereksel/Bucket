@@ -15,15 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.dagger.components
+package com.jereksel.libresubstratum.utils
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
-import dagger.Component
-import javax.inject.Singleton
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 
-@Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
-interface AppComponent: BaseComponent
+object LiveDataUtils {
+
+    fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, function: (T?) -> Unit) =
+            this.observe(lifecycleOwner, Observer { function(it) })
+
+}

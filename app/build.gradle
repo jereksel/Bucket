@@ -161,6 +161,9 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
+    dataBinding {
+        enabled = true
+    }
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests.all {
@@ -231,6 +234,11 @@ dependencies {
         exclude group: "com.google.guava"
     }
 
+    compile "android.arch.lifecycle:extensions:1.0.0"
+    compile "android.arch.lifecycle:reactivestreams:1.0.0"
+    testCompile "android.arch.core:core-testing:1.0.0"
+    kapt 'com.android.databinding:compiler:2.3.3'
+
     //RxStuff
     compile rxjava
     compile rxkotlin
@@ -247,6 +255,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+
+    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
     compile 'com.github.clans:fab:1.6.4'
     compile "com.github.akarnokd:rxjava2-extensions:0.18.1"

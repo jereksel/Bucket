@@ -20,8 +20,6 @@ package com.jereksel.libresubstratum.dagger.modules
 import android.app.Application
 import android.content.om.IOverlayManager
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
-import com.jereksel.libresubstratum.activities.main.MainPresenter
-import com.jereksel.libresubstratum.activities.main.MainContract
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
@@ -95,17 +93,6 @@ open class AppModule(private val application: Application) {
             packageManager: IPackageManager,
             keyFinder: IKeyFinder
     ): ThemeCompiler = AppThemeCompiler(application, packageManager, keyFinder)
-
-    @Provides
-    open fun providesMainPresenter(
-            packageManager: IPackageManager,
-            themeReader: IThemeReader,
-            @Named("logged") overlayService: OverlayService,
-            @Named("group") metrics: Metrics,
-            keyFinder: IKeyFinder
-    ): MainContract.Presenter {
-        return MainPresenter(packageManager, themeReader, overlayService, metrics, keyFinder)
-    }
 
     @Provides
     @Singleton
