@@ -60,14 +60,14 @@ android {
             jsonFile = file('LibreSubstratum.json')
         }
     }
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         buildConfigField "boolean", "BETA", beta.toString()
         def nextVersion = "0.2.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
-        targetSdkVersion 26
+        targetSdkVersion 27
         if (System.getenv("CIRCLECI")) {
             def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
             versionCode code
@@ -251,6 +251,8 @@ dependencies {
     kapt daggerCompiler
     kaptTest daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
+
+    compile 'eu.chainfire:libsuperuser:1.0.0.201704021214'
 
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {

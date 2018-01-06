@@ -30,6 +30,7 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.guava.await
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -141,13 +142,14 @@ class MainViewViewModel @Inject constructor(
         init()
     }
 
-    override fun tickChecks() {
+    override suspend fun tickChecks() {
         val perms = overlayService.requiredPermissions()
         if (perms.isNotEmpty()) {
             _permissionsToRequest.postValue(perms)
             return
         }
-        val message = overlayService.additionalSteps()
+        _dialogContent.postValue("Checking system...")
+        val message = overlayService.additionalSteps().await()
         if (message != null) {
             _dialogContent.postValue(message)
             return

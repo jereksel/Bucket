@@ -44,6 +44,8 @@ import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 import com.jereksel.libresubstratum.utils.ViewModelUtils.get
 import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 open class MainView : AppCompatActivity() {
 
@@ -105,7 +107,9 @@ open class MainView : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.tickChecks()
+        async(UI) {
+            viewModel.tickChecks()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -153,7 +157,9 @@ open class MainView : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == 123 && permissions.isNotEmpty()) {
-            viewModel.tickChecks()
+            async(UI) {
+                viewModel.tickChecks()
+            }
         }
     }
 

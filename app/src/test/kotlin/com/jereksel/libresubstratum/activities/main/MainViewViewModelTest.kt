@@ -26,6 +26,7 @@ import com.jereksel.libresubstratum.domain.KeyFinder
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initLiveData
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -34,6 +35,7 @@ import io.kotlintest.specs.FunSpec
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.TestScheduler
+import kotlinx.coroutines.experimental.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -99,7 +101,9 @@ class MainViewViewModelTest: FunSpec() {
 
             whenever(overlayService.requiredPermissions()).thenReturn(listOf("permission1", "permission2"))
 
-            mainViewViewModel.tickChecks()
+            runBlocking {
+                mainViewViewModel.tickChecks()
+            }
 
             assertThat(mainViewViewModel.getPermissions().value).containsOnly(
                     "permission1", "permission2"
@@ -112,9 +116,11 @@ class MainViewViewModelTest: FunSpec() {
             val message = "Dialog message"
 
             whenever(overlayService.requiredPermissions()).thenReturn(listOf())
-            whenever(overlayService.additionalSteps()).thenReturn(message)
+            whenever(overlayService.additionalSteps()).thenReturn(message.toFuture())
 
-            mainViewViewModel.tickChecks()
+            runBlocking {
+                mainViewViewModel.tickChecks()
+            }
 
             assertThat(mainViewViewModel.getPermissions().value).isNullOrEmpty()
             assertThat(mainViewViewModel.getDialogContent().value).isEqualTo(message)
@@ -126,7 +132,9 @@ class MainViewViewModelTest: FunSpec() {
             whenever(overlayService.requiredPermissions()).thenReturn(listOf())
             whenever(overlayService.additionalSteps()).thenReturn(null)
 
-            mainViewViewModel.tickChecks()
+            runBlocking {
+                mainViewViewModel.tickChecks()
+            }
 
             assertThat(mainViewViewModel.getPermissions().value).isNullOrEmpty()
             assertThat(mainViewViewModel.getDialogContent().value).isNullOrEmpty()

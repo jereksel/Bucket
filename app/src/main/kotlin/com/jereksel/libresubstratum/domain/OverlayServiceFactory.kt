@@ -22,18 +22,26 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.VERSION.RELEASE
 import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.N
-import android.os.Build.VERSION_CODES.N_MR1
+import android.os.Build.VERSION_CODES.*
 import android.provider.Settings
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoOverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
+import eu.chainfire.libsuperuser.Shell
+import java.io.File
 
 object OverlayServiceFactory {
 
     val log = getLogger()
 
     fun getOverlayService(context: Context): OverlayService {
+
+        val o = listOf(O, O_MR1)
+
+        if (o.contains(SDK_INT) && suExists()) {
+            return OreoOverlayService(context)
+        }
 
         val supportedAndroidVersions = listOf(N, N_MR1)
 
@@ -73,5 +81,16 @@ object OverlayServiceFactory {
 
     }
 
+    private fun suExists(): Boolean {
+
+        val PATH = System.getenv("PATH").split(":")
+
+        return PATH
+                .asSequence()
+                .map { "${it}${File.separator}su" }
+                .any { File(it).exists() }
+
+
+    }
 
 }
