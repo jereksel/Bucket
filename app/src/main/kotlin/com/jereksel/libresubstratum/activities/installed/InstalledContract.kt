@@ -33,12 +33,12 @@ interface InstalledContract {
 
     abstract class Presenter : MVPPresenter<View>() {
         abstract fun getInstalledOverlays()
-        abstract fun toggleOverlay(overlayId: String, enabled: Boolean)
+        abstract suspend fun toggleOverlay(overlayId: String, enabled: Boolean)
         abstract fun getOverlayInfo(overlayId: String): OverlayInfo?
         abstract fun openActivity(appId: String): Boolean
-        abstract fun uninstallSelected()
-        abstract  fun disableSelected()
-        abstract fun enableSelected()
+        suspend abstract fun uninstallSelected()
+        suspend abstract fun disableSelected()
+        suspend abstract fun enableSelected()
         abstract fun selectAll()
         abstract fun deselectAll()
         abstract fun restartSystemUI()

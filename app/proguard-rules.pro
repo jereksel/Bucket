@@ -68,3 +68,7 @@
 }
 
 -keep class android.support.v7.widget.SearchView { *; }
+
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

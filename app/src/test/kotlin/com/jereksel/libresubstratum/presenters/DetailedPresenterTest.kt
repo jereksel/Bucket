@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
@@ -16,6 +17,8 @@ import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.*
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
+import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable
@@ -51,6 +54,7 @@ class DetailedPresenterTest : FunSpec() {
         presenter = presenter1
         presenter.setView(view)
 
+        initOS(overlayService)
         initRxJava()
     }
 
@@ -319,7 +323,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(1, "v1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", true).toFuture())
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
             whenever(getThemeInfoUseCase.getThemeInfo("themeid")).thenReturn(themes)
@@ -339,7 +343,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", true).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
             val view: ThemePackAdapterView = mock()
@@ -364,7 +368,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", true).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -389,11 +393,11 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(overlayService.installApk(File("/"))).then {
                 overlayVersion = Pair(2, "v1.1")
-                Unit
+                Unit.toFuture()
             }
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenAnswer { overlayVersion }
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", true))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", true).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -420,12 +424,13 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
-                installed = true; Unit
+                installed = true;
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", false).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -438,9 +443,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileAndRun(0)
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
-
+            verify(overlayService).enableExclusive("app1.MyTheme")
         }
         test("When overlays cannot be installed, it's removed and installed again") {
 
@@ -451,7 +455,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(true)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1.0"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", false).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -464,8 +468,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileAndRun(0)
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).uninstallApk("app1.MyTheme")
+            verify(overlayService).enableExclusive("app1.MyTheme")
             verify(overlayService, times(2)).installApk(File("/"))
 
         }
@@ -478,7 +482,7 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenReturn(false)
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
 //            whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(1, "v1.0"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", false).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -511,11 +515,12 @@ class DetailedPresenterTest : FunSpec() {
 
             whenever(overlayService.installApk(File("/"))).then {
                 installed = true; Unit
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", false).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -545,12 +550,14 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
-                installed = true; Unit
+                println("File")
+                installed = true
+                Unit.toFuture()
             }
 
             whenever(packageManager.getAppVersion("themeid")).thenReturn(Pair(2, "v1.1"))
             whenever(packageManager.getAppVersion("app1.MyTheme")).thenReturn(Pair(2, "v1.1"))
-            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", false))
+            whenever(overlayService.getOverlayInfo("app1.MyTheme")).thenReturn(OverlayInfo("app1.MyTheme", "", false).toFuture())
 
             val themes = ThemePack(listOf(Theme("app1")))
 
@@ -565,8 +572,8 @@ class DetailedPresenterTest : FunSpec() {
             presenter.compileRunActivateSelected()
 
             verify(presenter1).compileForPositionObservable(0)
-            verify(overlayService).enableOverlay("app1.MyTheme")
             verify(overlayService).installApk(File("/"))
+            verify(overlayService).enableExclusive("app1.MyTheme")
         }
 
         // OTHER

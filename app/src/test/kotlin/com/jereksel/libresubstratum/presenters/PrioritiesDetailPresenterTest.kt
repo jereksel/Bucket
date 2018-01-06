@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.presenters
 
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -7,11 +8,14 @@ import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.specs.FunSpec
+import kotlinx.coroutines.experimental.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -34,6 +38,7 @@ class PrioritiesDetailPresenterTest: FunSpec() {
         prioritiesDetailPresenter = PrioritiesDetailPresenter(overlayService, packageManager, activityProxy)
         prioritiesDetailPresenter.setView(view)
         initRxJava()
+        initOS(overlayService)
     }
 
     init {
@@ -50,10 +55,12 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(installedOverlay)
             whenever(overlayService.getOverlaysPrioritiesForTarget("app")).thenReturn(
-                    listOf(OverlayInfo("overlay1", true), OverlayInfo("overlay2", true), OverlayInfo("overlay3", false))
+                    listOf(OverlayInfo("overlay1", "", true), OverlayInfo("overlay2", "", true), OverlayInfo("overlay3", "", false)).toFuture()
             )
 
-            prioritiesDetailPresenter.getOverlays("app")
+            runBlocking {
+                prioritiesDetailPresenter.getOverlays("app")
+            }
 
             verify(view).setOverlays(listOf(
                     InstalledOverlay("overlay1", "", "", null, "app", "", null),
@@ -71,11 +78,15 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
         test("updatePriorities passes overlayid to overlayService") {
 
-            prioritiesDetailPresenter.updatePriorities(listOf(
-                    InstalledOverlay("overlay1", "", "", null, "app", "", null),
-                    InstalledOverlay("overlay2", "", "", null, "app", "", null),
-                    InstalledOverlay("overlay3", "", "", null, "app", "", null)
-            ))
+            whenever(overlayService.updatePriorities(any())).thenReturn(Unit.toFuture())
+
+            runBlocking {
+                prioritiesDetailPresenter.updatePriorities(listOf(
+                        InstalledOverlay("overlay1", "", "", null, "app", "", null),
+                        InstalledOverlay("overlay2", "", "", null, "app", "", null),
+                        InstalledOverlay("overlay3", "", "", null, "app", "", null)
+                ))
+            }
 
             verify(overlayService).updatePriorities(listOf(
                     "overlay1", "overlay2", "overlay3"
@@ -96,10 +107,12 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(installedOverlay)
             whenever(overlayService.getOverlaysPrioritiesForTarget("app")).thenReturn(
-                    listOf(OverlayInfo("overlay1", true), OverlayInfo("overlay2", true), OverlayInfo("overlay3", false))
+                    listOf(OverlayInfo("overlay1", "", true), OverlayInfo("overlay2", "", true), OverlayInfo("overlay3", "", false)).toFuture()
             )
 
-            prioritiesDetailPresenter.getOverlays("app")
+            runBlocking {
+                prioritiesDetailPresenter.getOverlays("app")
+            }
 
             prioritiesDetailPresenter.fabShown = false
 
@@ -126,5 +139,5 @@ class PrioritiesDetailPresenterTest: FunSpec() {
         }
 
     }
-
 }
+

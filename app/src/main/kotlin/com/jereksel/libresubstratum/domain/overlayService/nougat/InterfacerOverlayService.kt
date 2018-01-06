@@ -23,144 +23,142 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.om.IOverlayManager
 import android.content.pm.PackageManager
+import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.support.v4.content.ContextCompat
-import android.util.Log
-import com.google.common.cache.*
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.ListenableFutureTask
-import com.google.common.util.concurrent.Service
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.omslib.OMSLib
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.BehaviorSubject.createDefault
 import projekt.substratum.IInterfacerInterface
+import kotlinx.coroutines.experimental.asCoroutineDispatcher
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.guava.asListenableFuture
+import kotlinx.coroutines.experimental.guava.await
+import kotlinx.coroutines.experimental.rx2.await
+import org.funktionale.option.Option
+import org.funktionale.option.Option.*
+import org.funktionale.option.Option.Companion.empty
 import java.io.File
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.Executors
 
 abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val log = getLogger()
 
-    private val oms: IOverlayManager
-        get() = omsCache.get(Unit)
+    private val interfacerBS: BehaviorSubject<Option<IInterfacerInterface>> = createDefault(empty())
+    private val interfacerRx: Observable<IInterfacerInterface> = interfacerBS.filter { it.isDefined() }.map { it.get() }
 
-    private val service: IInterfacerInterface
-        get() = interfacerCache.get(Unit).second
+    private val oms: IOverlayManager = OMSLib.getOMS()
 
-    @Suppress("JoinDeclarationAndAssignment")
-    private val omsCache : LoadingCache<Unit, IOverlayManager>
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-%d").build()
+    val enableExclusiveThreadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-enable-exclusive-%d").build()
 
-    private val interfacerCache : LoadingCache<Unit, Pair<ServiceConnection, IInterfacerInterface>>
+    val dispatcher = Executors.newFixedThreadPool(5, threadFactory).asCoroutineDispatcher()
+    val enableExclusiveDispatcher = Executors.newFixedThreadPool(2, threadFactory).asCoroutineDispatcher()
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
     val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
     val INTERFACER_BINDED = INTERFACER_PACKAGE + ".INITIALIZE"
     val STATUS_CHANGED = INTERFACER_PACKAGE + ".STATUS_CHANGED"
 
+    private val interfacerServiceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            log.debug("Interfacer connected")
+            interfacerBS.onNext(Some(IInterfacerInterface.Stub.asInterface(service)))
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            log.debug("Interfacer disconnected")
+            interfacerBS.onNext(empty())
+        }
+
+    }
+
+    private fun initInterfacer() {
+        val intent = Intent(INTERFACER_BINDED)
+        intent.`package` = INTERFACER_PACKAGE
+        // binding to remote service
+        context.bindService(intent, interfacerServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     init {
-
-        omsCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(1, TimeUnit.MINUTES)
-                .build(object: CacheLoader<Unit, IOverlayManager>() {
-                    override fun load(key: Unit) = OMSLib.getOMS()!!
-                })
-
-
-        interfacerCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(1, TimeUnit.MINUTES)
-                .removalListener(RemovalListener<Unit, Pair<ServiceConnection, IInterfacerInterface>> {
-                    notification -> context.unbindService(notification.value.first)
-                })
-                .build(object: CacheLoader<Unit, Pair<ServiceConnection, IInterfacerInterface>>() {
-                    override fun load(key: Unit): Pair<ServiceConnection, IInterfacerInterface> {
-
-                        if (Looper.getMainLooper().thread == Thread.currentThread()) {
-                            throw RuntimeException("Cannot be invoked on UI thread")
-                        }
-
-                        return Single.fromPublisher<Pair<ServiceConnection, IInterfacerInterface>> {
-
-                            val serviceConnection = object: ServiceConnection {
-
-                                override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                                    log.debug("Interfacer service connected")
-                                    val service = IInterfacerInterface.Stub.asInterface(binder)
-                                    it.onNext(Pair(this, service))
-                                    it.onComplete()
-                                }
-
-                                override fun onServiceDisconnected(name: ComponentName) {
-                                    it.onError(RuntimeException("Service disconnected"))
-                                }
-                            }
-
-                            val intent = Intent(INTERFACER_BINDED)
-                            intent.`package` = INTERFACER_PACKAGE
-                            // binding to remote service
-                            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-                        }
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .observeOn(Schedulers.computation())
-                                .blockingGet()
-                    }
-                })
-
-
-    }
-
-    override fun enableOverlay(id: String) {
-        service.enableOverlay(listOf(id), false)
-    }
-
-    override fun disableOverlay(id: String) {
-        service.disableOverlay(listOf(id), false)
-    }
-
-    override fun getOverlayInfo(id: String): OverlayInfo? {
-        val info = oms.getOverlayInfo(id, 0)
-        return if (info != null) {
-            OverlayInfo(id, info.isEnabled)
-        } else {
-            null
+        Handler(Looper.getMainLooper()).post {
+            initInterfacer()
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
+    override fun enableOverlay(id: String) = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.enableOverlay(listOf(id), false)
+    }.asListenableFuture()
+
+    override fun disableOverlay(id: String) = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.disableOverlay(listOf(id), false)
+    }.asListenableFuture()
+
+    //When we use CommonPool on everything we have possibility of deadlock
+    //enableExclusive is only method that uses other async methods
+    override fun enableExclusive(id: String) = async(enableExclusiveDispatcher) {
+
+        val overlayInfo = getOverlayInfo(id).await() ?: return@async
+
+        getAllOverlaysForApk(overlayInfo.targetId).await()
+                .filter { it.enabled }
+                .forEach { disableOverlay(it.overlayId).await() }
+
+        enableOverlay(id).get()
+
+    }.asListenableFuture()
+
+    override fun getOverlayInfo(id: String) = async(dispatcher) {
+        val info = oms.getOverlayInfo(id, 0)
+        if (info != null) {
+            OverlayInfo(id, info.targetPackageName, info.isEnabled)
+        } else {
+            null
+        }
+    }.asListenableFuture()
+
+    override fun getAllOverlaysForApk(appId: String) = async(dispatcher) {
+        @Suppress("UNCHECKED_CAST")
         val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
-        return map.map { OverlayInfo(it.packageName, it.isEnabled) }
-    }
+        map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
+    }.asListenableFuture()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String) = async(dispatcher) {
+        @Suppress("UNCHECKED_CAST")
         val list = oms.getOverlayInfosForTarget(targetAppId, 0) as List<android.content.om.OverlayInfo>
-        return list.map { OverlayInfo(it.packageName, it.isEnabled) }.reversed()
-    }
+        list.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }.reversed()
+    }.asListenableFuture()
 
-    override fun updatePriorities(overlayIds: List<String>) {
-        service.changePriority(overlayIds.reversed(), false)
-    }
+    override fun updatePriorities(overlayIds: List<String>) = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.changePriority(overlayIds.reversed(), false)
+    }.asListenableFuture()
 
-    override fun restartSystemUI() {
-        service.restartSystemUI()
-    }
+    override fun restartSystemUI() = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.restartSystemUI()
+    }.asListenableFuture()
 
-    override fun installApk(apk: File) {
-        service.installPackage(listOf(apk.absolutePath))
-    }
+    override fun installApk(apk: File) = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.installPackage(listOf(apk.absolutePath))
+    }.asListenableFuture()
 
-    override fun uninstallApk(appId: String) {
-        service.uninstallPackage(listOf(appId), false)
-    }
+    override fun uninstallApk(appId: String) = async(dispatcher) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.uninstallPackage(listOf(appId), false)
+    }.asListenableFuture()
 
-    override fun requiredPermissions(): List<String> {
+    override final fun requiredPermissions(): List<String> {
         return allPermissions()
                 .filter { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED }
     }
