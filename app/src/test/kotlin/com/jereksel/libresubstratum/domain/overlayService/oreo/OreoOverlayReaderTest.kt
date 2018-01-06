@@ -33,14 +33,19 @@ class OreoOverlayReaderTest {
             [x] com.google.android.theme.pixel
             [ ] com.google.android.theme.stock
 
+            com.android.settings
+            --- com.android.settings.aThemeLightDark
+
             com.android.systemui
             [ ] com.android.systemui.theme.dark
+
         """.trimIndent()
 
         val expected = ArrayListMultimap.create<String, OverlayInfo>()
         with(expected) {
             put("android", OverlayInfo("com.google.android.theme.pixel", "android", true))
             put("android", OverlayInfo("com.google.android.theme.stock", "android", false))
+            put("com.android.settings", OverlayInfo("com.android.settings.aThemeLightDark", "com.android.settings", false))
             put("com.android.systemui", OverlayInfo("com.android.systemui.theme.dark", "com.android.systemui", false))
         }
 

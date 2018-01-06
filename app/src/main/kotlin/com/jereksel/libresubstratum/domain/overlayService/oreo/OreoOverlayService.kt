@@ -113,7 +113,7 @@ class OreoOverlayService(
     override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> = executor.submit {
         val appIds = overlayIds.reversed()
         for (i in 0 until appIds.size - 1) {
-            Shell.SU.run("cmd overlay ${overlayIds[i]} ${overlayIds[i+1]}")
+            Shell.SU.run("cmd overlay set-priority ${overlayIds[i+1]} ${overlayIds[i]}")
         }
         update.set(true)
     }

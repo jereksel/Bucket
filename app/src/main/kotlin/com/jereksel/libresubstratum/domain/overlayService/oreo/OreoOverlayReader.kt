@@ -36,6 +36,9 @@ object OreoOverlayReader {
                         val enabled = line[1].equals('x', ignoreCase = true)
                         val name = line.drop(3).trim()
                         map.put(currentApp, OverlayInfo(name, currentApp, enabled))
+                    } else if (line.startsWith("---")) {
+                        val name = line.drop(3).trim()
+                        map.put(currentApp, OverlayInfo(name, currentApp, false))
                     } else {
                         currentApp = line
                     }
