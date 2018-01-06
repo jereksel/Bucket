@@ -30,34 +30,35 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import eu.chainfire.libsuperuser.Shell
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.guava.asListenableFuture
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.codec.digest.MessageDigestAlgorithms.MD5
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 class OreoOverlayService(
         val context: Context
 ) : OverlayService {
 
-    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreooverlayservice-thread-%d").build()
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreooverlayservice-thread-%d").build()!!
 
-    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))
+    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))!!
 
-    val RESTART_UI = "pkill -f com.android.systemui"
+    private val RESTART_UI = "pkill -f com.android.systemui"
 
-    override fun enableOverlay(id: String) = executor.submit {
+    override fun enableOverlay(id: String): ListenableFuture<*> = executor.submit {
         Shell.SU.run(listOf("cmd overlay enable $id"))
+        update.set(true)
     }
 
-    override fun disableOverlay(id: String) = executor.submit {
+    override fun disableOverlay(id: String): ListenableFuture<*> = executor.submit {
         Shell.SU.run(listOf("cmd overlay disable $id"))
+        update.set(true)
     }
 
-    override fun enableExclusive(id: String) = executor.submit {
+    override fun enableExclusive(id: String): ListenableFuture<*> = executor.submit {
         val state = getCurrentState()
         val application = state.entries().find { it.value.overlayId == id }?.key ?: return@submit
         state[application]
@@ -67,7 +68,7 @@ class OreoOverlayService(
                 }
 
         Shell.SU.run(listOf("cmd overlay enable $id"))
-
+        update.set(true)
     }
 
     override fun getOverlayInfo(id: String) = executor.sub {
@@ -79,19 +80,21 @@ class OreoOverlayService(
         getCurrentState()[appId].toList()
     }
 
-    override fun restartSystemUI() = executor.submit {
+    override fun restartSystemUI(): ListenableFuture<*> = executor.submit {
         Shell.SU.run(RESTART_UI)
     }
 
-    override fun installApk(apk: File) = executor.submit {
+    override fun installApk(apk: File): ListenableFuture<*> = executor.submit {
         Shell.SU.run(listOf("pm install ${apk.absolutePath}"))
+        update.set(true)
     }
 
-    override fun uninstallApk(appId: String) = executor.submit {
+    override fun uninstallApk(appId: String): ListenableFuture<*> = executor.submit {
         Shell.SU.run(listOf("pm uninstall $appId"))
+        update.set(true)
     }
 
-    override fun additionalSteps(): ListenableFuture<String?> = async(CommonPool) {
+    override fun additionalSteps(): ListenableFuture<String?> = executor.sub {
 
         val suAvailable = Shell.SU.available()
 
@@ -101,15 +104,18 @@ class OreoOverlayService(
             "Please enable root permission for Bucket"
         }
 
-    }.asListenableFuture()
-
-
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> = executor.sub {
+        getCurrentState()[targetAppId].toList().reversed()
+    }
+
+    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> = executor.submit {
+        val appIds = overlayIds.reversed()
+        for (i in 0 until appIds.size - 1) {
+            Shell.SU.run("cmd overlay ${overlayIds[i]} ${overlayIds[i+1]}")
+        }
+        update.set(true)
     }
 
     override fun requiredPermissions(): List<String> {
@@ -121,13 +127,21 @@ class OreoOverlayService(
     var lastChecksum: ByteArray = byteArrayOf()
     val lock = java.lang.Object()
 
+    val update = AtomicBoolean(true)
+    var lastUpdate = System.currentTimeMillis()
+    val updateTime = TimeUnit.MINUTES.toMillis(1)
+
     private fun getCurrentState(): Multimap<String, OverlayInfo> = synchronized(lock) {
-        val output = Shell.SU.run("cmd overlay list").joinToString(separator = "\n")
-        val checksum = DigestUtils(MD5).digest(output)
-        if (!Arrays.equals(lastChecksum, checksum)) {
-            val state = OreoOverlayReader.read(output)
-            lastState = state
-            lastChecksum = checksum
+        if (update.getAndSet(false) || lastUpdate + updateTime < System.currentTimeMillis()) {
+            lastUpdate = System.currentTimeMillis()
+            val output = Shell.SU.run("cmd overlay list").joinToString(separator = "\n")
+            val checksum = DigestUtils(MD5).digest(output)
+            if (!Arrays.equals(lastChecksum, checksum)) {
+                val state = OreoOverlayReader.read(output)
+                lastState = state
+                lastChecksum = checksum
+            }
+
         }
 
         lastState
