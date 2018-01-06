@@ -105,7 +105,7 @@ class InstalledPresenterTest : FunSpec() {
             }
 
         }
-        test("Set lastState is persistent") {
+        test("Set state is persistent") {
 
             whenever(packageManager.getInstalledOverlays()).thenReturn(
                     listOf(

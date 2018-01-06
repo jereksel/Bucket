@@ -183,7 +183,7 @@ class DetailedPresenter(
 
     fun getOverlayIdForTheme(position: Int): String {
 
-        log.debug("Getting overlayId for theme {} and types3 {} for position {} lastState overlay {} lastState of type3 {}", themePack.themes[position], themePack.type3, position, themePackState[position], type3)
+        log.debug("Getting overlayId for theme {} and types3 {} for position {} state overlay {} state of type3 {}", themePack.themes[position], themePack.type3, position, themePackState[position], type3)
 
         val theme = themePack.themes[position]
         val state = themePackState[position]

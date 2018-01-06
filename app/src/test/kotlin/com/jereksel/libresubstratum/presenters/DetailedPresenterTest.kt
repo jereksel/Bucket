@@ -578,7 +578,7 @@ class DetailedPresenterTest : FunSpec() {
 
         // OTHER
 
-        test("Select all changes lastState of unselected items and resets them") {
+        test("Select all changes state of unselected items and resets them") {
 
             whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
 
@@ -600,7 +600,7 @@ class DetailedPresenterTest : FunSpec() {
 
         }
 
-        test("Deselect all changes lastState of selected items and resets them") {
+        test("Deselect all changes state of selected items and resets them") {
 
             whenever(packageManager.isPackageInstalled(any())).thenReturn(true)
 
