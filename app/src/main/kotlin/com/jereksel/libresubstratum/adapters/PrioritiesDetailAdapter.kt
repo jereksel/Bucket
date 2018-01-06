@@ -18,7 +18,6 @@
 package com.jereksel.libresubstratum.adapters
 
 import android.graphics.Color
-import android.support.v4.view.MotionEventCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -31,7 +30,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract.Presenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -88,11 +86,9 @@ class PrioritiesDetailAdapter(
             DiffUtil.calculateDiff(SimpleDiffCallback(oldOverlays, newOverlays)).dispatchUpdatesTo(this)
         }
 
-        holder.card.setOnLongClickListener {
-            presenter.toggleOverlay(overlay.overlayId) {
-                notifyItemChanged(holder.adapterPosition)
-            }
-            true
+        holder.card.onLongClick(returnValue = true) {
+            presenter.toggleOverlay(overlay.overlayId)
+            notifyItemChanged(holder.adapterPosition)
         }
 
         holder.reorder.setOnTouchListener(listener)

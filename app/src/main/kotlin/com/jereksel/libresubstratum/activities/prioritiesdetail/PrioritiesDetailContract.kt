@@ -28,7 +28,7 @@ interface PrioritiesDetailContract {
         abstract fun updateOverlays(overlays: List<InstalledOverlay>)
         abstract suspend fun updatePriorities(overlays: List<InstalledOverlay>)
         abstract fun openAppInSplit(targetId: String)
-        abstract fun toggleOverlay(overlayId: String, callback: () -> Unit)
+        abstract suspend fun toggleOverlay(overlayId: String)
         abstract fun isEnabled(overlayId: String): Boolean
     }
 

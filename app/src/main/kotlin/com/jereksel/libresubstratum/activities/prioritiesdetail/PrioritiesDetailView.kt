@@ -111,7 +111,7 @@ class PrioritiesDetailView: AppCompatActivity(), View {
         val sequence = if(BuildConfig.DEBUG) {
             return
         } else {
-            MaterialShowcaseSequence(this, "PrioritiesDetailViewView_1")
+            MaterialShowcaseSequence(this, "PrioritiesDetailViewView_2")
         }
 
         sequence.setConfig(config)
@@ -119,6 +119,7 @@ class PrioritiesDetailView: AppCompatActivity(), View {
         sequence.apply {
             addSequenceItem(icon, "Long click to open this application. When is split mode, app will be opened in second split", "GOT IT")
             addSequenceItem(card, "Click on card to move it to top of the list", "GOT IT")
+            addSequenceItem(card, "Long click on card to enable/disable overlay", "GOT IT")
             addSequenceItem(handle, "Click on handle to move card", "GOT IT")
         }
 

@@ -83,26 +83,18 @@ class PrioritiesDetailPresenter(
 
     }
 
-    override fun toggleOverlay(overlayId: String, callback: () -> Unit) {
-        val overlay = overlayService.getOverlayInfo(overlayId)!!
+    override suspend fun toggleOverlay(overlayId: String) {
+        val overlay = overlayService.getOverlayInfo(overlayId).await()!!
 
-        Schedulers.io().scheduleDirect {
-
-            if (overlay.enabled) {
-                overlayService.disableOverlay(overlayId)
-            } else {
-                overlayService.enableOverlay(overlayId)
-            }
-
-            AndroidSchedulers.mainThread().scheduleDirect {
-                callback()
-            }
-
+        if (overlay.enabled) {
+            overlayService.disableOverlay(overlayId).await()
+        } else {
+            overlayService.enableOverlay(overlayId).await()
         }
 
     }
 
-    override fun isEnabled(overlayId: String) = overlayService.getOverlayInfo(overlayId)?.enabled == true
+    override fun isEnabled(overlayId: String) = overlayService.getOverlayInfo(overlayId).get()?.enabled == true
 
     override fun openAppInSplit(targetId: String) {
         activityProxy.openActivityInSplit(targetId)
