@@ -17,22 +17,35 @@
 
 package com.jereksel.libresubstratum.domain
 
+import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
+/**
+ * "*" means nothing is returned
+ */
 interface OverlayService {
-    fun enableOverlay(id: String)
-    fun disableOverlay(id: String)
-    fun getOverlayInfo(id: String): OverlayInfo?
-    fun getAllOverlaysForApk(appId: String): List<OverlayInfo>
-    fun restartSystemUI()
-    fun installApk(apk: File)
-    fun uninstallApk(appId: String)
+    fun enableOverlay(id: String): ListenableFuture<*>
+
+    fun disableOverlay(id: String): ListenableFuture<*>
+
+    //Oreo has it in AIDL
+    fun enableExclusive(id: String): ListenableFuture<*>
+
+    fun getOverlayInfo(id: String): ListenableFuture<OverlayInfo?>
+
+    fun getAllOverlaysForApk(appId: String): ListenableFuture<List<OverlayInfo>>
+
+    fun restartSystemUI(): ListenableFuture<*>
+
+    fun installApk(apk: File): ListenableFuture<*>
+
+    fun uninstallApk(appId: String): ListenableFuture<*>
 
     fun requiredPermissions(): List<String>
 
     fun additionalSteps(): String?
 
-    fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo>
+    fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>>
 
-    fun updatePriorities(overlayIds: List<String>)
+    fun updatePriorities(overlayIds: List<String>): ListenableFuture<*>
 }

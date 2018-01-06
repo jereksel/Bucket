@@ -17,27 +17,20 @@
 
 package com.jereksel.libresubstratum
 
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.cancelAndJoin
-import kotlinx.coroutines.experimental.runBlocking
-import java.lang.ref.WeakReference
+import com.jereksel.libresubstratum.domain.OverlayService
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.whenever
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 
-open class MVPPresenter<T> where T: MVPView {
+object Utils {
 
-    protected var view = WeakReference<T>(null)
-    protected var compositeDisposable = CompositeDisposable()
-    protected var jobs: Set<Job> = HashSet()
-
-    fun setView(view: T) {
-        this.view = WeakReference(view)
+    fun initOS(overlayService: OverlayService) {
+        whenever(overlayService.enableOverlay(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.disableOverlay(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.uninstallApk(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.installApk(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.enableExclusive(any())).thenReturn(Unit.toFuture())
     }
 
-    fun removeView() {
-        this.view = WeakReference<T>(null)
-        compositeDisposable.dispose()
-        compositeDisposable = CompositeDisposable()
-        jobs.forEach { it.cancel() }
-        jobs = HashSet()
-    }
 }
+

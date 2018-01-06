@@ -18,6 +18,7 @@
 package com.jereksel.libresubstratum.activities.detailed
 
 import com.github.kittinunf.result.Result
+import com.google.common.collect.ArrayListMultimap
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
 import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
@@ -36,6 +37,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.guava.await
 import java.io.File
 
 class DetailedPresenter(
@@ -100,7 +105,12 @@ class DetailedPresenter(
     //So we won't be stuck in refresh loop
     val seq = mutableSetOf<Int>()
 
+    val adapterJobs = ArrayListMultimap.create<ThemePackAdapterView, Job>()
+
     override fun setAdapterView(position: Int, view: ThemePackAdapterView) {
+
+        adapterJobs.get(view).forEach { it.cancel() }
+        adapterJobs.removeAll(view)
 
         if (compiling) {
             return
@@ -133,7 +143,6 @@ class DetailedPresenter(
         if (isOverlayInstalled) {
             val overlayVersionInfo = packageManager.getAppVersion(overlay)
             val themeVersionInfo = packageManager.getAppVersion(appId)
-            val overlayInfo = overlayService.getOverlayInfo(overlay)
 
             if (overlayVersionInfo.first != themeVersionInfo.first) {
                 //Overlay can be updated
@@ -142,11 +151,20 @@ class DetailedPresenter(
                 view.setInstalled(null, null)
             }
 
-            if (overlayInfo != null) {
-                view.setEnabled(overlayInfo.enabled)
-            } else {
-                view.setEnabled(false)
+
+            val job = async(UI) {
+
+                val overlayInfo = overlayService.getOverlayInfo(overlay).await()
+
+                if (overlayInfo != null) {
+                    view.setEnabled(overlayInfo.enabled)
+                } else {
+                    view.setEnabled(false)
+                }
+
             }
+
+            adapterJobs.put(view, job)
         }
 
         view.setCompiling(state.compiling)
@@ -273,7 +291,7 @@ class DetailedPresenter(
                     themePackState[position].compiling = false
                     val overlayId = getOverlayIdForTheme(position)
                     if (packageManager.isPackageInstalled(overlayId)) {
-                        activateExclusive(position)
+                        overlayService.enableExclusive(getOverlayIdForTheme(position)).get()
                     }
                     detailedView?.increaseDialogProgress()
                 },
@@ -324,12 +342,7 @@ class DetailedPresenter(
 
     override fun restartSystemUI() {
         log.debug("Resetting SystemUI")
-        Observable.just("")
-                .observeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
-                    overlayService.restartSystemUI()
-                }
+        overlayService.restartSystemUI()
     }
 
     private fun compilePositions(positions: List<Int>, afterInstalling: (Int) -> Unit, onComplete: () -> Unit = {}): Disposable {
@@ -375,14 +388,14 @@ class DetailedPresenter(
                     if (file != null) {
 
                         log.debug("Installing overlay {}", file)
-                        overlayService.installApk(file)
+                        overlayService.installApk(file).get()
                         log.debug("Installing overlay {} finished", file)
                         val overlay = getOverlayIdForTheme(it.second)
 
                         //Replacing substratum theme (the keys are different and overlay can't be just replaced)
                         if (packageManager.isPackageInstalled(overlay) && !areVersionsTheSame(overlay, appId)) {
-                            overlayService.uninstallApk(overlay)
-                            overlayService.installApk(file)
+                            overlayService.uninstallApk(overlay).get()
+                            overlayService.installApk(file).get()
                         }
 
                         file.delete()
@@ -427,32 +440,16 @@ class DetailedPresenter(
 
     }
 
-    fun activateExclusive(position: Int) {
-        val theme = themePack.themes[position]
-        val overlay = getOverlayIdForTheme(position)
-        val info = overlayService.getOverlayInfo(overlay)
-        if (info?.enabled == false) {
-            val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-            overlays.forEach { overlayService.disableOverlay(it.overlayId) }
-            overlayService.enableOverlay(overlay)
-        }
-    }
-
     fun toggle(position: Int) {
         val theme = themePack.themes[position]
         val overlay = getOverlayIdForTheme(position)
-        val info = overlayService.getOverlayInfo(overlay)
+        val info = overlayService.getOverlayInfo(overlay).get()
         if (info != null) {
             if (!info.enabled) {
-                val overlays = overlayService.getAllOverlaysForApk(theme.application).filter { it.enabled }
-
-                overlays.map { it.overlayId }.forEach { metrics.userDisabledOverlay(it) }
-
-                overlays.forEach { overlayService.disableOverlay(it.overlayId) }
-                overlayService.enableOverlay(overlay)
+                overlayService.enableExclusive(overlay).get()
             } else {
                 metrics.userDisabledOverlay(overlay)
-                overlayService.disableOverlay(overlay)
+                overlayService.disableOverlay(overlay).get()
             }
         }
     }

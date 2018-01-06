@@ -15,29 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum
+package com.jereksel.libresubstratum.utils
 
-import io.reactivex.disposables.CompositeDisposable
+import android.view.View
+import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.cancelAndJoin
-import kotlinx.coroutines.experimental.runBlocking
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
-open class MVPPresenter<T> where T: MVPView {
+object ViewUtils {
 
-    protected var view = WeakReference<T>(null)
-    protected var compositeDisposable = CompositeDisposable()
-    protected var jobs: Set<Job> = HashSet()
-
-    fun setView(view: T) {
-        this.view = WeakReference(view)
+    fun View.onClick(
+            mutableCollection: MutableSet<Job>,
+            job: suspend CoroutineScope.() -> Unit
+    ) {
+        setOnClickListener {
+            mutableCollection += launch(UI) {
+                job()
+            }
+        }
     }
 
-    fun removeView() {
-        this.view = WeakReference<T>(null)
-        compositeDisposable.dispose()
-        compositeDisposable = CompositeDisposable()
-        jobs.forEach { it.cancel() }
-        jobs = HashSet()
-    }
 }

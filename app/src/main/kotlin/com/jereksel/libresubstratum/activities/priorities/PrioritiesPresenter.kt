@@ -52,7 +52,7 @@ class PrioritiesPresenter(
 
                 }
                 .filter { it.value.size > 1 }
-                .map { it.key to it.value.map { overlayService.getOverlayInfo(it.overlayId)?.enabled == true } }
+                .map { it.key to it.value.map { overlayService.getOverlayInfo(it.overlayId).get()?.enabled == true } }
                 .map { it.first to it.second.filter { it } }
                 .filter { it.second.size > 1 }
                 .map { it.first }

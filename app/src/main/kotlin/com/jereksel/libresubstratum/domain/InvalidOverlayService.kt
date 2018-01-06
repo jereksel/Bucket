@@ -17,43 +17,48 @@
 
 package com.jereksel.libresubstratum.domain
 
+import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
 class InvalidOverlayService(val message: String): OverlayService {
 
-    override fun enableOverlay(id: String) {
+    override fun enableExclusive(id: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun disableOverlay(id: String) {
+    override fun enableOverlay(id: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getOverlayInfo(id: String): OverlayInfo {
+    override fun disableOverlay(id: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getAllOverlaysForApk(appId: String): List<OverlayInfo> {
+    override fun getOverlayInfo(id: String): ListenableFuture<OverlayInfo?> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun restartSystemUI() {
+    override fun getAllOverlaysForApk(appId: String): ListenableFuture<List<OverlayInfo>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun installApk(apk: File) {
+    override fun restartSystemUI(): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun uninstallApk(appId: String) {
+    override fun installApk(apk: File): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): List<OverlayInfo> {
+    override fun uninstallApk(appId: String): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun updatePriorities(overlayIds: List<String>) {
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

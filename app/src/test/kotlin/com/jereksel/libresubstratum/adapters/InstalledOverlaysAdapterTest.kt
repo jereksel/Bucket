@@ -16,6 +16,7 @@ import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.mock.`when`
 import io.kotlintest.mock.mock
 import kotlinx.android.synthetic.main.activity_reconly.*
+import kotlinx.coroutines.experimental.runBlocking
 import org.assertj.android.recyclerview.v7.api.Assertions.assertThat
 import org.jetbrains.anko.find
 import org.junit.After
@@ -64,7 +65,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", "", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -76,7 +77,9 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val child = recyclerView.layoutManager.findViewByPosition(0)
         child.performLongClick()
-        verify(presenter).toggleOverlay("id", true)
+        runBlocking {
+            verify(presenter).toggleOverlay("id", true)
+        }
 
     }
 
@@ -87,7 +90,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", "", false))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)
@@ -110,7 +113,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", false))
+        `when`(presenter.getOverlayInfo("id")).thenReturn(OverlayInfo("id", "", false))
         `when`(presenter.openActivity("targetid")).thenReturn(false)
 
         recyclerView.run {
@@ -143,7 +146,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
             val adapter_ = InstalledOverlaysAdapter(apps, presenter)
 
-            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, enabled))
+            `when`(presenter.getOverlayInfo(id)).thenReturn(OverlayInfo(id, "", enabled))
 
             recyclerView.run {
                 layoutManager = LinearLayoutManager(context)
@@ -169,7 +172,7 @@ class InstalledOverlaysAdapterTest: BaseRobolectricTest() {
 
         val adapter_ = InstalledOverlaysAdapter(listOf(), presenter)
 
-        `when`(presenter.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", true))
+        `when`(presenter.getOverlayInfo("overlay1")).thenReturn(OverlayInfo("overlay1", "", true))
 
         recyclerView.run {
             layoutManager = LinearLayoutManager(context)

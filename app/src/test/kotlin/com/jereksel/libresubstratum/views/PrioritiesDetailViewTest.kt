@@ -13,6 +13,7 @@ import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.android.synthetic.main.activity_priorities_detail.*
+import kotlinx.coroutines.experimental.runBlocking
 import org.assertj.android.recyclerview.v7.api.Assertions.assertThat
 import org.assertj.android.api.Assertions.assertThat
 import org.junit.After
@@ -51,7 +52,9 @@ class PrioritiesDetailViewTest: BaseRobolectricTest() {
 
     @Test
     fun `getOverlays is called after start`() {
-        verify(presenter).getOverlays(appId)
+        runBlocking {
+            verify(presenter).getOverlays(appId)
+        }
     }
 
     @Test
