@@ -64,7 +64,8 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
             verify(view).setOverlays(listOf(
                     InstalledOverlay("overlay1", "", "", null, "app", "", null),
-                    InstalledOverlay("overlay2", "", "", null, "app", "", null)
+                    InstalledOverlay("overlay2", "", "", null, "app", "", null),
+                    InstalledOverlay("overlay3", "", "", null, "app", "", null)
             ))
 
 
@@ -118,6 +119,7 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
             prioritiesDetailPresenter.updateOverlays(listOf(
                     InstalledOverlay("overlay2", "", "", null, "app", "", null),
+                    InstalledOverlay("overlay3", "", "", null, "app", "", null),
                     InstalledOverlay("overlay1", "", "", null, "app", "", null)
             ))
 
@@ -129,7 +131,8 @@ class PrioritiesDetailPresenterTest: FunSpec() {
 
             prioritiesDetailPresenter.updateOverlays(listOf(
                     InstalledOverlay("overlay1", "", "", null, "app", "", null),
-                    InstalledOverlay("overlay2", "", "", null, "app", "", null)
+                    InstalledOverlay("overlay2", "", "", null, "app", "", null),
+                    InstalledOverlay("overlay3", "", "", null, "app", "", null)
             ))
 
             verify(view).hideFab()

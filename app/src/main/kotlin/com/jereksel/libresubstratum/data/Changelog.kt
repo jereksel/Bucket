@@ -22,6 +22,7 @@ import com.jereksel.changelogdialog.changelog
 object Changelog {
     val changelog = changelog {
         betaVersion("0.3") {
+            +"Show disabled overlays in priorities"
             +"Rewrite activity with theme packs (now it properly support rotating and resizing)"
             +"Use Changelog Library instead of WebView"
             +"Fix compilation issues with more theme packs (Compound)"
