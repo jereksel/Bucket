@@ -52,11 +52,8 @@ class PrioritiesPresenter(
 
                 }
                 .filter { it.value.size > 1 }
-                .map { it.key to it.value.map { overlayService.getOverlayInfo(it.overlayId).get()?.enabled == true } }
-                .map { it.first to it.second.filter { it } }
-                .filter { it.second.size > 1 }
-                .map { it.first }
-//                .map { packageManager.getInstalledTheme(it) }
+                .map { it.key }
+                .sorted { t1, t2 -> String.CASE_INSENSITIVE_ORDER.compare(getAppName(t1), getAppName(t2)) }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { themes ->
@@ -66,4 +63,7 @@ class PrioritiesPresenter(
     }
 
     override fun getIcon(appId: String) = packageManager.getAppIcon(appId)
+
+    override fun getAppName(appId: String) = packageManager.getAppName(appId)
+
 }

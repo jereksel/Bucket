@@ -52,7 +52,7 @@ class PrioritiesDetailPresenter(
 
         val installedOverlays = packageManager.getInstalledOverlays()
         val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
-        val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).await().filter { it.enabled }
+        val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).await()
         val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
         overlays = mapped
 
@@ -82,6 +82,19 @@ class PrioritiesDetailPresenter(
         view.get()?.notifyPrioritiesChanged()
 
     }
+
+    override suspend fun toggleOverlay(overlayId: String) {
+        val overlay = overlayService.getOverlayInfo(overlayId).await()!!
+
+        if (overlay.enabled) {
+            overlayService.disableOverlay(overlayId).await()
+        } else {
+            overlayService.enableOverlay(overlayId).await()
+        }
+
+    }
+
+    override fun isEnabled(overlayId: String) = overlayService.getOverlayInfo(overlayId).get()?.enabled == true
 
     override fun openAppInSplit(targetId: String) {
         activityProxy.openActivityInSplit(targetId)
