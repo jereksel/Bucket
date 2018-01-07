@@ -30,10 +30,7 @@ import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetail
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
 import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
-import com.jereksel.libresubstratum.domain.usecases.CompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.GetThemeInfoUseCase
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.usecases.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -169,5 +166,11 @@ open class AppModule(private val application: Application) {
             themePackDatabase: ThemePackDatabase,
             themeReader: IThemeReader
     ): IGetThemeInfoUseCase = GetThemeInfoUseCase(packageManager, themePackDatabase, themeReader)
+
+    @Provides
+    open fun providesCleanUnusedOverlays(
+            packageManager: IPackageManager,
+            @Named("logged") overlayService: OverlayService
+    ): ICleanUnusedOverlays = CleanUnusedOverlays(packageManager, overlayService)
 
 }

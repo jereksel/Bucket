@@ -23,6 +23,7 @@ import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailView
+import com.jereksel.libresubstratum.receivers.UninstallReceiver
 
 interface BaseComponent {
     fun inject(view: MainView)
@@ -31,4 +32,5 @@ interface BaseComponent {
     fun inject(view: ErrorActivity)
     fun inject(view: PrioritiesView)
     fun inject(view: PrioritiesDetailView)
+    fun inject(receiver: UninstallReceiver)
 }

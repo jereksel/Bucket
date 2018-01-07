@@ -57,7 +57,7 @@ class MainViewViewModelTest: FunSpec() {
 
     override fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        mainViewViewModel = MainViewViewModel(packageManager, overlayService, keyFinder)
+        mainViewViewModel = MainViewViewModel(packageManager, overlayService, keyFinder, mock())
         initRxJava()
         initLiveData()
     }

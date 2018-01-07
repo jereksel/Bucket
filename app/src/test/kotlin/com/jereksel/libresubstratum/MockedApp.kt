@@ -6,18 +6,13 @@ import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
-import com.jereksel.libresubstratum.dagger.components.AppComponent
 import com.jereksel.libresubstratum.dagger.components.BaseComponent
-import com.jereksel.libresubstratum.dagger.components.DaggerAppComponent
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.domain.*
-import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
-import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.domain.Metrics
+import com.jereksel.libresubstratum.domain.usecases.ICleanUnusedOverlays
 import dagger.Component
 import dagger.Module
 import dagger.Provides
 import io.kotlintest.mock.mock
-import org.bouncycastle.jcajce.provider.symmetric.ARC4
 import org.mockito.Mockito
 import javax.inject.Named
 import javax.inject.Singleton
@@ -52,6 +47,8 @@ class MockedApp : App() {
             fun metrics(): Metrics = mock()
             @Provides
             fun factory() = viewModelFactory
+            @Provides
+            fun iCleanUnusedOverlays(): ICleanUnusedOverlays = mock()
 
         }
 
