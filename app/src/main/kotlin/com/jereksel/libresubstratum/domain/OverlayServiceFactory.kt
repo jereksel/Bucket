@@ -40,14 +40,18 @@ object OverlayServiceFactory {
         val o = listOf(O, O_MR1)
 
         if (o.contains(SDK_INT) && suExists()) {
-            return OreoOverlayService(context)
+            if (suExists()) {
+                return OreoOverlayService(context)
+            } else {
+                return InvalidOverlayService("Root is required for Oreo support")
+            }
         }
 
         val supportedAndroidVersions = listOf(N, N_MR1)
 
         if (!supportedAndroidVersions.contains(SDK_INT)) {
             log.error("Not supported android version: {} {}", SDK_INT, RELEASE)
-            return InvalidOverlayService("This app works only on Android Nougat")
+            return InvalidOverlayService("This app works only on Android Nougat or rooted Oreo")
         }
 
         try {
