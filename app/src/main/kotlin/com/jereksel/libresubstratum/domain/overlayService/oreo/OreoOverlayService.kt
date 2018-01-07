@@ -64,7 +64,7 @@ class OreoOverlayService(
         state[application]
                 .filter { it.enabled }
                 .forEach {
-                    Shell.SU.run(listOf("cmd overlay disable $id"))
+                    Shell.SU.run(listOf("cmd overlay disable ${it.overlayId}"))
                 }
 
         Shell.SU.run(listOf("cmd overlay enable $id"))
@@ -94,11 +94,18 @@ class OreoOverlayService(
         update.set(true)
     }
 
+    var suAccepted = false
+
     override fun additionalSteps(): ListenableFuture<String?> = executor.sub {
+
+        if (suAccepted) {
+            return@sub null
+        }
 
         val suAvailable = Shell.SU.available()
 
         if (suAvailable) {
+            suAccepted = true
             null
         } else {
             "Please enable root permission for Bucket"
