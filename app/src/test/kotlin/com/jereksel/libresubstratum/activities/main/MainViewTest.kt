@@ -37,6 +37,7 @@ import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.runBlocking
 import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
 import org.assertj.android.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThat
@@ -97,7 +98,9 @@ class MainViewTest : BaseRobolectricTest() {
 
     @Test
     fun `tickChecks is called`() {
-        verify(viewModel).tickChecks()
+        runBlocking {
+            verify(viewModel).tickChecks()
+        }
     }
 
     @Test

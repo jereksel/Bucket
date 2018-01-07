@@ -43,7 +43,7 @@ interface OverlayService {
 
     fun requiredPermissions(): List<String>
 
-    fun additionalSteps(): String?
+    fun additionalSteps(): ListenableFuture<String?>
 
     fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>>
 

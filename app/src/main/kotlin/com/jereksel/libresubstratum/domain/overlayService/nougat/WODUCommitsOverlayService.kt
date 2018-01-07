@@ -21,24 +21,26 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
+import com.google.common.util.concurrent.ListenableFuture
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 
 open class WODUCommitsOverlayService(context: Context): InterfacerOverlayService(context) {
     override fun allPermissions() = listOf(WRITE_EXTERNAL_STORAGE)
 
-    override fun additionalSteps(): String? {
+    override fun additionalSteps(): ListenableFuture<String?> {
 
         try {
             context.packageManager.getPackageInfo("projekt.substratum", 0)
         } catch (e: PackageManager.NameNotFoundException) {
-            return "Please install Substratum app (it's required for Interfacer to function properly)"
+            return "Please install Substratum app (it's required for Interfacer to function properly)".toFuture()
         }
 
         val areAllPackagesAllowed = Settings.Secure.getInt(context.contentResolver, "force_authorize_substratum_packages", 0) == 1
 
         return if (!areAllPackagesAllowed) {
-            """Please turn on "Force authorize every theme app" in developer settings"""
+            """Please turn on "Force authorize every theme app" in developer settings""".toFuture()
         } else {
-            null
+            null.toFuture()
         }
     }
 

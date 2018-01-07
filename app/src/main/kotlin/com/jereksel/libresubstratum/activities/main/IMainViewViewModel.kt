@@ -35,5 +35,5 @@ abstract class IMainViewViewModel: ViewModel() {
 
     abstract fun reset()
     abstract fun init()
-    abstract fun tickChecks()
+    abstract suspend fun tickChecks()
 }
