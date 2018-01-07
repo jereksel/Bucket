@@ -130,7 +130,7 @@ class MainViewViewModelTest: FunSpec() {
         test("When permissions are not required and there are no messages nothing is passed") {
 
             whenever(overlayService.requiredPermissions()).thenReturn(listOf())
-            whenever(overlayService.additionalSteps()).thenReturn(null)
+            whenever(overlayService.additionalSteps()).thenReturn(null.toFuture())
 
             runBlocking {
                 mainViewViewModel.tickChecks()
