@@ -17,6 +17,7 @@
 
 package com.jereksel.libresubstratum.domain
 
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 
@@ -64,5 +65,5 @@ class InvalidOverlayService(val message: String): OverlayService {
 
     override fun requiredPermissions() = listOf<String>()
 
-    override fun additionalSteps() = message
+    override fun additionalSteps(): ListenableFuture<String?> = message.toFuture()
 }

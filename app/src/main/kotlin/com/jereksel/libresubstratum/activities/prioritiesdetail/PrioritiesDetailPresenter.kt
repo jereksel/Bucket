@@ -53,7 +53,7 @@ class PrioritiesDetailPresenter(
         val installedOverlays = packageManager.getInstalledOverlays()
         val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
         val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).await()
-        val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
+        val mapped = priorities.mapNotNull { installedOverlaysMap[it.overlayId] }
         overlays = mapped
 
         view.get()?.setOverlays(mapped)
