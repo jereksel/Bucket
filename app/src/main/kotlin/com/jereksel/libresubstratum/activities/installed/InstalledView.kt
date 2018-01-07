@@ -23,9 +23,9 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
@@ -33,13 +33,13 @@ import com.jereksel.libresubstratum.activities.installed.InstalledContract.Prese
 import com.jereksel.libresubstratum.activities.installed.InstalledContract.View
 import com.jereksel.libresubstratum.adapters.InstalledOverlaysAdapter
 import com.jereksel.libresubstratum.data.InstalledOverlay
+import com.jereksel.libresubstratum.utils.ViewUtils.onClick
 import kotlinx.android.synthetic.main.activity_installed.*
-import org.jetbrains.anko.toast
+import kotlinx.coroutines.experimental.Job
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import javax.inject.Inject
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.SearchView
 
 
 open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextListener {
@@ -49,6 +49,8 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
     var layoutState: Parcelable? = null
     var adapter: InstalledOverlaysAdapter? = null
 
+    val jobs = HashSet<Job>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_installed)
@@ -56,9 +58,9 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
         presenter = (lastCustomNonConfigurationInstance ?: presenter) as Presenter
         presenter.setView(this)
         presenter.getInstalledOverlays()
-        fab_uninstall.setOnClickListener { fab.close(true); presenter.uninstallSelected() }
-        fab_enable.setOnClickListener { fab.close(true); presenter.enableSelected() }
-        fab_disable.setOnClickListener { fab.close(true); presenter.disableSelected() }
+        fab_uninstall.onClick(jobs) { fab.close(true); presenter.uninstallSelected() }
+        fab_enable.onClick(jobs) { fab.close(true); presenter.enableSelected() }
+        fab_disable.onClick(jobs) { fab.close(true); presenter.disableSelected() }
     }
 
     override fun addOverlays(overlays: List<InstalledOverlay>) {
@@ -158,7 +160,12 @@ open class InstalledView : AppCompatActivity(), View, SearchView.OnQueryTextList
         return false
     }
 
-
     override fun onRetainCustomNonConfigurationInstance() = presenter
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.removeView()
+        jobs.forEach { it.cancel() }
+    }
 
 }

@@ -15,22 +15,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum.utils
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
 
-interface PrioritiesContract {
+object FutureUtils {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
+    class FinishedFuture<T>(
+            val element: T
+    ): ListenableFuture<T> {
+        override fun isDone() = true
+
+        override fun get() = element
+
+        override fun get(timeout: Long, unit: TimeUnit?) = element
+
+        override fun cancel(mayInterruptIfRunning: Boolean) = true
+
+        override fun addListener(listener: Runnable, executor: Executor) =
+                executor.execute { listener.run() }
+
+        override fun isCancelled() = false
+
     }
 
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
-    }
-
+    public fun <T> T.toFuture() = FinishedFuture(this)
 }

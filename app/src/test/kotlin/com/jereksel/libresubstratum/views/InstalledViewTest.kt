@@ -18,6 +18,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.mock
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_installed.*
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.anko.find
 import org.junit.*
 import org.junit.Assert.*
@@ -47,7 +48,8 @@ class InstalledViewTest: BaseRobolectricTest() {
     @Before
     fun setup() {
         val app = RuntimeEnvironment.application as MockedApp
-        presenter = app.mockedInstalledPresenter
+        presenter = MockedApp.mockedInstalledPresenter
+        reset(presenter)
         activityController = Robolectric.buildActivity(InstalledView::class.java).create()
         activity = activityController.get()
     }
@@ -86,7 +88,7 @@ class InstalledViewTest: BaseRobolectricTest() {
                 )
         )
 
-        whenever(presenter.getOverlayInfo("appid")).thenReturn(OverlayInfo("appid", true))
+        whenever(presenter.getOverlayInfo("appid")).thenReturn(OverlayInfo("appid", "", true))
 
         recyclerView.measure(0, 0)
         recyclerView.layout(0, 0, 100, 10000)
@@ -110,8 +112,8 @@ class InstalledViewTest: BaseRobolectricTest() {
                 )
         )
 
-        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", true))
-        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", false))
+        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", "", true))
+        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", "", false))
 
         recyclerView.measure(0, 0)
         recyclerView.layout(0, 0, 100, 10000)
@@ -133,8 +135,8 @@ class InstalledViewTest: BaseRobolectricTest() {
                 )
         )
 
-        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", true))
-        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", false))
+        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", "", true))
+        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", "", false))
 
         recyclerView.measure(0, 0)
         recyclerView.layout(0, 0, 100, 10000)
@@ -159,8 +161,8 @@ class InstalledViewTest: BaseRobolectricTest() {
 
         whenever(presenter.getState("appid1")).thenReturn(true)
         whenever(presenter.getState("appid2")).thenReturn(false)
-        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", true))
-        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", false))
+        whenever(presenter.getOverlayInfo("appid1")).thenReturn(OverlayInfo("appid1", "", true))
+        whenever(presenter.getOverlayInfo("appid2")).thenReturn(OverlayInfo("appid2", "", false))
 
         recyclerView.measure(0, 0)
         recyclerView.layout(0, 0, 100, 10000)
@@ -175,17 +177,23 @@ class InstalledViewTest: BaseRobolectricTest() {
     fun `Fab click test`() {
 
         activityCasted!!.fab_enable.callOnClick()
-        verify(presenter).enableSelected()
+        runBlocking {
+            verify(presenter).enableSelected()
+        }
 
         reset(presenter)
 
         activityCasted!!.fab_disable.callOnClick()
-        verify(presenter).disableSelected()
+        runBlocking {
+            verify(presenter).disableSelected()
+        }
 
         reset(presenter)
 
         activityCasted!!.fab_uninstall.callOnClick()
-        verify(presenter).uninstallSelected()
+        runBlocking {
+            verify(presenter).uninstallSelected()
+        }
 
         reset(presenter)
     }

@@ -18,6 +18,8 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.Dialog
+import android.arch.lifecycle.*
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog.Builder
@@ -33,63 +35,77 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
-import com.jereksel.libresubstratum.activities.main.MainContract.Presenter
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
-import com.jereksel.libresubstratum.adapters.MainViewAdapter
-import com.jereksel.libresubstratum.adapters.PrioritiesAdapter
 import com.jereksel.libresubstratum.data.Changelog
-import com.jereksel.libresubstratum.data.InstalledTheme
+import com.jereksel.libresubstratum.databinding.ActivityMainBinding
 import com.jereksel.libresubstratum.extensions.getLogger
-import com.jereksel.libresubstratum.extensions.safeDispose
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
+import com.jereksel.libresubstratum.utils.ViewModelUtils.get
+import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
 
-open class MainView : AppCompatActivity(), MainContract.View {
+open class MainView : AppCompatActivity() {
 
     val log = getLogger()
 
-    @Inject lateinit var presenter: Presenter
-    var clickSubscriptions: Disposable? = null
+    @Inject lateinit var factory: ViewModelProvider.Factory
+
+    lateinit var viewModel: IMainViewViewModel
+
+    lateinit var binding: ActivityMainBinding
+
     private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         (application as App).getAppComponent(this).inject(this)
-        presenter.setView(this)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         setSupportActionBar(toolbar)
-        swiperefresh.isRefreshing = true
-        swiperefresh.setOnRefreshListener { presenter.getApplications() }
-        presenter.getApplications()
+
+        viewModel = ViewModelProviders.of(this, factory).get()
+
+        binding.viewModel = viewModel
+
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(this@MainView)
+            itemAnimator = DefaultItemAnimator()
+            adapter = MainViewAdapter(viewModel)
+        }
+
+        viewModel.getDialogContent().observe(this) { message ->
+            dismissDialog()
+            if (!message.isNullOrEmpty()) {
+                showUndismissableDialog(message!!)
+            }
+        }
+
+        viewModel.getPermissions().observe(this) { permissions ->
+            if (permissions == null || permissions.isEmpty()) {
+                return@observe
+            }
+
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), 123)
+
+        }
+
+        viewModel.getAppToOpen().observe(this) { appId ->
+            if (!appId.isNullOrEmpty()) {
+                viewModel.getAppToOpen().postValue(null)
+                DetailedViewStarter.start(this, appId)
+            }
+        }
+
+        viewModel.init()
 
         ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.checkPermissions()
-    }
-
-    override fun addApplications(list: List<InstalledTheme>) {
-        clickSubscriptions?.safeDispose()
-        with(recyclerView) {
-            layoutManager = LinearLayoutManager(this@MainView)
-            itemAnimator = DefaultItemAnimator()
-            adapter = MainViewAdapter(list, presenter)
-        }
-        clickSubscriptions = (recyclerView.adapter as MainViewAdapter)
-                .getClickObservable()
-                .subscribe {
-                    log.debug("Opening {}", it)
-                    presenter.openThemeScreen(it.appId)
-                }
-        swiperefresh.isRefreshing = false
-    }
-
-    override fun openThemeFragment(appId: String) {
-        DetailedViewStarter.start(this, appId)
+        viewModel.tickChecks()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -116,17 +132,13 @@ open class MainView : AppCompatActivity(), MainContract.View {
                     super.onOptionsItemSelected(item)
             }
 
-    override fun requestPermissions(perms: List<String>) {
-        ActivityCompat.requestPermissions(this, perms.toTypedArray(), 123)
-    }
-
-    override fun dismissDialog() {
+    private fun dismissDialog() {
        if (dialog?.isShowing == true) {
            dialog?.dismiss()
        }
     }
 
-    override fun showUndismissableDialog(message: String) {
+    private fun showUndismissableDialog(message: String) {
         val builder = Builder(this)
         builder.setTitle("Required action")
         builder.setMessage(message)
@@ -136,14 +148,14 @@ open class MainView : AppCompatActivity(), MainContract.View {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.removeView()
-        clickSubscriptions?.safeDispose()
+        dismissDialog()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == 123 && permissions.isNotEmpty()) {
-            presenter.checkPermissions()
+            viewModel.tickChecks()
         }
     }
 
 }
+

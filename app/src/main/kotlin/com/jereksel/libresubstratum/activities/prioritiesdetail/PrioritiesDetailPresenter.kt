@@ -26,6 +26,15 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.guava.await
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.rx2.await
+import org.jetbrains.anko.Android
+import org.jetbrains.anko.custom.async
+import org.jetbrains.anko.doAsync
+import java.util.concurrent.CompletableFuture
 
 class PrioritiesDetailPresenter(
         val overlayService: OverlayService,
@@ -37,21 +46,17 @@ class PrioritiesDetailPresenter(
 
     var fabShown = false
 
-    override fun getOverlays(targetId: String) {
+    suspend override fun getOverlays(targetId: String) {
 
         fabShown = false
 
-        Schedulers.io().scheduleDirect {
-            val installedOverlays = packageManager.getInstalledOverlays()
-            val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
-            val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).filter { it.enabled }
-            val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
-            overlays = mapped
+        val installedOverlays = packageManager.getInstalledOverlays()
+        val installedOverlaysMap = installedOverlays.map { it.overlayId to it }.toMap()
+        val priorities = overlayService.getOverlaysPrioritiesForTarget(targetId).await()
+        val mapped = priorities.map { installedOverlaysMap[it.overlayId]!! }
+        overlays = mapped
 
-            AndroidSchedulers.mainThread().scheduleDirect {
-                view.get()?.setOverlays(mapped)
-            }
-        }
+        view.get()?.setOverlays(mapped)
 
     }
 
@@ -67,21 +72,29 @@ class PrioritiesDetailPresenter(
 
     }
 
-    override fun updatePriorities(overlays: List<InstalledOverlay>) {
+    suspend override fun updatePriorities(overlays: List<InstalledOverlay>) {
 
-        compositeDisposable += Single.fromCallable { overlayService.updatePriorities(overlays.map { it.overlayId }) }
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { _ ->
-                    //Copy list
-                    this.overlays = overlays.toMutableList()
-                    fabShown = false
-                    view.get()?.hideFab()
-                    view.get()?.notifyPrioritiesChanged()
-                }
+        overlayService.updatePriorities(overlays.map { it.overlayId }).await()
+
+        this@PrioritiesDetailPresenter.overlays = overlays.toMutableList()
+        fabShown = false
+        view.get()?.hideFab()
+        view.get()?.notifyPrioritiesChanged()
 
     }
+
+    override suspend fun toggleOverlay(overlayId: String) {
+        val overlay = overlayService.getOverlayInfo(overlayId).await()!!
+
+        if (overlay.enabled) {
+            overlayService.disableOverlay(overlayId).await()
+        } else {
+            overlayService.enableOverlay(overlayId).await()
+        }
+
+    }
+
+    override fun isEnabled(overlayId: String) = overlayService.getOverlayInfo(overlayId).get()?.enabled == true
 
     override fun openAppInSplit(targetId: String) {
         activityProxy.openActivityInSplit(targetId)

@@ -18,12 +18,16 @@
 package com.jereksel.libresubstratum
 
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.cancelAndJoin
+import kotlinx.coroutines.experimental.runBlocking
 import java.lang.ref.WeakReference
 
 open class MVPPresenter<T> where T: MVPView {
 
     protected var view = WeakReference<T>(null)
     protected var compositeDisposable = CompositeDisposable()
+    protected var jobs: Set<Job> = HashSet()
 
     fun setView(view: T) {
         this.view = WeakReference(view)
@@ -33,5 +37,7 @@ open class MVPPresenter<T> where T: MVPView {
         this.view = WeakReference<T>(null)
         compositeDisposable.dispose()
         compositeDisposable = CompositeDisposable()
+        jobs.forEach { it.cancel() }
+        jobs = HashSet()
     }
 }

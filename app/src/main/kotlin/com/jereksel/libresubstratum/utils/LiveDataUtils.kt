@@ -15,22 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum.utils
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 
-interface PrioritiesContract {
+object LiveDataUtils {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
-    }
-
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
-    }
+    fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, function: (T?) -> Unit) =
+            this.observe(lifecycleOwner, Observer { function(it) })
 
 }

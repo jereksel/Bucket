@@ -15,22 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum.activities.main
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import com.jereksel.libresubstratum.data.DiffCallBack
 
-interface PrioritiesContract {
+class MainViewModelDiffCallBack(oldList: List<MainViewModel>, newList: List<MainViewModel>) : DiffCallBack<MainViewModel>(oldList, newList) {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].appId == newList[newItemPosition].appId
     }
-
 }

@@ -15,22 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum.activities.main
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import android.databinding.BindingAdapter
+import android.support.v7.widget.RecyclerView
 
-interface PrioritiesContract {
+object MainBindings {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
-    }
-
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
+    @JvmStatic
+    @BindingAdapter("app:items")
+    fun setItems(recyclerView: RecyclerView, items: List<MainViewModel>) {
+        (recyclerView.adapter as? MainViewAdapter)?.updateItems(ArrayList(items))
     }
 
 }

@@ -161,6 +161,9 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
+    dataBinding {
+        enabled = true
+    }
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests.all {
@@ -225,6 +228,19 @@ dependencies {
         compile lib
     }
 
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
+        exclude group: "com.google.guava"
+    }
+
+    compile "android.arch.lifecycle:extensions:1.0.0"
+    compile "android.arch.lifecycle:reactivestreams:1.0.0"
+    testCompile "android.arch.core:core-testing:1.0.0"
+    kapt 'com.android.databinding:compiler:2.3.3'
+
+    compile "org.funktionale:funktionale-option:1.2"
+
     //RxStuff
     compile rxjava
     compile rxkotlin
@@ -233,6 +249,7 @@ dependencies {
     //Dagger
     compile dagger
     kapt daggerCompiler
+    kaptTest daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
 
     //Kotterknife
@@ -241,8 +258,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    compile 'com.github.clans:fab:1.6.4'
+    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
+    compile 'com.github.clans:fab:1.6.4'
+    compile "com.github.akarnokd:rxjava2-extensions:0.18.1"
     compile 'org.zeroturnaround:zt-zip:1.12'
 
     //Logging
@@ -291,6 +310,8 @@ dependencies {
     compile project(":sublib:reader")
     compile project(":sublib:themereaderassetmanager")
     compile project(':sublib:compilerassetmanager')
+
+    compile "android.arch.lifecycle:runtime:1.0.3"
 
     //Testing
     testCompile junit
@@ -362,4 +383,10 @@ play {
 
 androidExtensions {
     experimental = true
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

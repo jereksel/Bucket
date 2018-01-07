@@ -15,22 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum.dagger.modules
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import com.jereksel.libresubstratum.activities.main.MainViewViewModel
+import dagger.Binds
+import dagger.multibindings.IntoMap
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import com.jereksel.libresubstratum.activities.main.MainViewModel
+import dagger.Module
 
-interface PrioritiesContract {
+@Module
+abstract class ViewModelModule {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
-    }
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewViewModel::class)
+    abstract fun bindUserViewModel(mainViewModel: MainViewViewModel): ViewModel
 
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
-    }
+    @Binds
+    abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 
 }

@@ -15,22 +15,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.priorities
+package com.jereksel.libresubstratum
 
-import android.graphics.drawable.Drawable
-import com.jereksel.libresubstratum.MVPPresenter
-import com.jereksel.libresubstratum.MVPView
+import com.jereksel.libresubstratum.domain.OverlayService
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.whenever
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 
-interface PrioritiesContract {
+object Utils {
 
-    abstract class Presenter : MVPPresenter<View>() {
-        abstract fun getApplication()
-        abstract fun getIcon(appId: String): Drawable?
-        abstract fun getAppName(appId: String): String
-    }
-
-    interface View : MVPView {
-        fun addApplications(applications: List<String>)
+    fun initOS(overlayService: OverlayService) {
+        whenever(overlayService.enableOverlay(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.disableOverlay(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.uninstallApk(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.installApk(any())).thenReturn(Unit.toFuture())
+        whenever(overlayService.enableExclusive(any())).thenReturn(Unit.toFuture())
     }
 
 }
+

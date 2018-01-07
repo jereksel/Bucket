@@ -39,7 +39,7 @@ class PrioritiesAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val appId = apps[position]
         holder.imageView.setImageDrawable(presenter.getIcon(appId))
-        holder.textView.text = appId
+        holder.textView.text = presenter.getAppName(appId)
         holder.itemView.setOnClickListener {
             PrioritiesDetailViewStarter.start(it.context, appId)
         }

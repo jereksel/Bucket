@@ -1,6 +1,7 @@
 package com.jereksel.libresubstratum.presenters
 
 import android.graphics.drawable.Drawable
+import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesPresenter
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -9,15 +10,13 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.FutureTask
+import com.jereksel.libresubstratum.utils.FutureUtils.toFuture
 
 class PrioritiesPresenterTest: FunSpec() {
 
@@ -34,6 +33,7 @@ class PrioritiesPresenterTest: FunSpec() {
         MockitoAnnotations.initMocks(this)
         prioritiesPresenter = PrioritiesPresenter(overlayService, packageManager)
         initRxJava()
+        initOS(overlayService)
     }
 
     init {
@@ -49,22 +49,31 @@ class PrioritiesPresenterTest: FunSpec() {
                     installedOverlayFactory("appc1", "appc")
             ))
 
-            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", false))
-            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", true))
-            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", true))
+            whenever(overlayService.getOverlayInfo("appa1")).thenReturn(OverlayInfo("", "", false).toFuture())
+            whenever(overlayService.getOverlayInfo("appa2")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb1")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb2")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", "",true).toFuture())
+            whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", "",true).toFuture())
 
-            val installedTheme = InstalledTheme("", "", "", true, "", FutureTask { null })
+            val installedThemea = InstalledTheme("", "", "", true, "", FutureTask { null })
+            val installedThemeb = InstalledTheme("", "", "", true, "", FutureTask { null })
 
-            whenever(packageManager.getInstalledTheme("appb")).thenReturn(installedTheme)
+            whenever(packageManager.getAppName("appa")).thenReturn("Z")
+            whenever(packageManager.getAppName("appb")).thenReturn("A")
+
+            whenever(packageManager.getInstalledTheme("appa")).thenReturn(installedThemea)
+            whenever(packageManager.getInstalledTheme("appb")).thenReturn(installedThemeb)
+
+            val captor = argumentCaptor<List<String>>()
 
             prioritiesPresenter.setView(view)
 
             prioritiesPresenter.getApplication()
 
-            verify(view).addApplications(argThat { toList() == listOf("appb") })
+            verify(view).addApplications(captor.capture())
+
+            assertThat(captor.firstValue).containsExactly("appb", "appa")
 
         }
 
@@ -75,6 +84,16 @@ class PrioritiesPresenterTest: FunSpec() {
 
             whenever(packageManager.getAppIcon(appId)).thenReturn(d)
             assertThat(prioritiesPresenter.getIcon(appId)).isSameAs(d)
+
+        }
+
+        test("getAppName") {
+
+            val appId = "APPID"
+            val appName = "My app"
+
+            whenever(packageManager.getAppName(appId)).thenReturn(appName)
+            assertThat(prioritiesPresenter.getAppName(appId)).isEqualTo(appName)
 
         }
 
