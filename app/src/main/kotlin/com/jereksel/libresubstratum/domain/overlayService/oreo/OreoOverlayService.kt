@@ -42,19 +42,17 @@ class OreoOverlayService(
         val context: Context
 ) : OverlayService {
 
-    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreooverlayservice-thread-%d").build()!!
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-overlay-service-thread-%d").build()!!
 
     val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))!!
 
-    private val RESTART_UI = "pkill -f com.android.systemui"
-
     override fun enableOverlay(id: String): ListenableFuture<*> = executor.submit {
-        Shell.SU.run(listOf("cmd overlay enable $id"))
+        Shell.SU.run("cmd overlay enable $id")
         update.set(true)
     }
 
     override fun disableOverlay(id: String): ListenableFuture<*> = executor.submit {
-        Shell.SU.run(listOf("cmd overlay disable $id"))
+        Shell.SU.run("cmd overlay disable $id")
         update.set(true)
     }
 
@@ -64,10 +62,10 @@ class OreoOverlayService(
         state[application]
                 .filter { it.enabled }
                 .forEach {
-                    Shell.SU.run(listOf("cmd overlay disable ${it.overlayId}"))
+                    Shell.SU.run("cmd overlay disable ${it.overlayId}")
                 }
 
-        Shell.SU.run(listOf("cmd overlay enable $id"))
+        Shell.SU.run("cmd overlay enable $id")
         update.set(true)
     }
 
@@ -81,16 +79,16 @@ class OreoOverlayService(
     }
 
     override fun restartSystemUI(): ListenableFuture<*> = executor.submit {
-        Shell.SU.run(RESTART_UI)
+        Shell.SU.run("pkill -f com.android.systemui")
     }
 
     override fun installApk(apk: File): ListenableFuture<*> = executor.submit {
-        Shell.SU.run(listOf("pm install ${apk.absolutePath}"))
+        Shell.SU.run("pm install ${apk.absolutePath}")
         update.set(true)
     }
 
     override fun uninstallApk(appId: String): ListenableFuture<*> = executor.submit {
-        Shell.SU.run(listOf("pm uninstall $appId"))
+        Shell.SU.run("pm uninstall $appId")
         update.set(true)
     }
 
