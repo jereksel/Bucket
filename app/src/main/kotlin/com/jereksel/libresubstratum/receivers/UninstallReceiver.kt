@@ -21,58 +21,28 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.jereksel.libresubstratum.App
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.jereksel.libresubstratum.domain.OverlayService
+import com.jereksel.libresubstratum.domain.usecases.ICleanUnusedOverlays
 import com.jereksel.libresubstratum.extensions.getLogger
 import javax.inject.Inject
-import javax.inject.Named
 
 class UninstallReceiver: BroadcastReceiver() {
 
     val log = getLogger()
 
     @Inject
-    @field:Named("logged")
-    lateinit var overlayService: OverlayService
-
-    @Inject
-    @field:Named
-    lateinit var packageManager: IPackageManager
+    lateinit var cleanUnusedOverlays: ICleanUnusedOverlays
 
     override fun onReceive(context: Context, intent: Intent) {
 
         (context.applicationContext as App).getAppComponent(context).inject(this)
 
         val isReplaced = intent.getBooleanExtra("EXTRA_REPLACING", false)
-        val app = intent.data.schemeSpecificPart
 
         if (isReplaced) {
             return
         }
 
-        log.debug("Uninstalling overlays for $app")
-
-        val installedOverlays = overlayService.getAllOverlaysForApk(app)
-
-        log.debug("Installed overlays: $installedOverlays")
-
-        overlayService.getAllOverlaysForApk(app).forEach {
-            try {
-                overlayService.uninstallApk(it.overlayId)
-            } catch (e: Exception) {
-                log.error("Cannot remove ${it.overlayId}", e)
-            }
-        }
-
-        packageManager.getInstalledOverlays()
-                .filter { it.sourceThemeId == app }
-                .forEach {
-                    try {
-                        overlayService.uninstallApk(it.overlayId)
-                    } catch (e: Exception) {
-                        log.error("Cannot remove ${it.overlayId}", e)
-                    }
-                }
+        cleanUnusedOverlays.clean()
 
     }
 }

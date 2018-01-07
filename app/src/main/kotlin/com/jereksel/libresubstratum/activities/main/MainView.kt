@@ -18,7 +18,8 @@
 package com.jereksel.libresubstratum.activities.main
 
 import android.app.Dialog
-import android.arch.lifecycle.*
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -39,11 +40,11 @@ import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.data.Changelog
 import com.jereksel.libresubstratum.databinding.ActivityMainBinding
 import com.jereksel.libresubstratum.extensions.getLogger
+import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
+import com.jereksel.libresubstratum.utils.ViewModelUtils.get
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
-import com.jereksel.libresubstratum.utils.ViewModelUtils.get
-import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
 
 open class MainView : AppCompatActivity() {
 
