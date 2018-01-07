@@ -33,6 +33,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.guava.await
+import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -75,9 +76,7 @@ class MainViewViewModel @Inject constructor(
             return
         }
 
-        Schedulers.io().scheduleDirect {
-            cleanUnusedOverlays.clean()
-        }
+        cleanUnusedOverlays.clean()
 
         initialized = true
 

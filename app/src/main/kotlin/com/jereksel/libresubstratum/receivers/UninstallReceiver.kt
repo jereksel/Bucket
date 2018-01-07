@@ -34,13 +34,9 @@ class UninstallReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
+        log.debug("UninstallReceiver invoked")
+
         (context.applicationContext as App).getAppComponent(context).inject(this)
-
-        val isReplaced = intent.getBooleanExtra("EXTRA_REPLACING", false)
-
-        if (isReplaced) {
-            return
-        }
 
         cleanUnusedOverlays.clean()
 

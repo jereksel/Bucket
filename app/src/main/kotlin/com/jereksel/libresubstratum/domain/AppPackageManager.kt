@@ -227,8 +227,12 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return SYSTEMUI[appId]!!
         }
 
-        val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
-        return context.packageManager.getApplicationLabel(appInfo).toString()
+        try {
+            val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
+            return context.packageManager.getApplicationLabel(appInfo).toString()
+        } catch (e: PackageManager.NameNotFoundException) {
+            return ""
+        }
     }
 
     override fun getAppVersion(appId: String): Pair<Int, String> {

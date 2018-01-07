@@ -53,6 +53,7 @@ class CleanUnusedOverlays(
 
             if (!packageManager.isPackageInstalled(themeAppId) || !packageManager.isPackageInstalled(targetAppId)) {
                 try {
+                    log.debug("Removing overlay: $overlayId")
                     overlayManager.uninstallApk(overlayId).get()
                 } catch (e: Exception) {
                     log.error("Cannot remove $overlayId", e)

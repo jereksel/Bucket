@@ -38,7 +38,7 @@
             android:enabled="true"
             android:priority="999" >
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" >
+                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" >
                 </action>
                 <data android:scheme="package" />
             </intent-filter>
