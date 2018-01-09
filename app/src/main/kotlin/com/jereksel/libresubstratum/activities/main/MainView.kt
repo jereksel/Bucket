@@ -35,6 +35,7 @@ import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
+import com.jereksel.libresubstratum.activities.detailed2.DetailedActivity
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.data.Changelog
@@ -130,7 +131,8 @@ open class MainView : AppCompatActivity() {
                     true
                 }
                 R.id.action_priorities -> {
-                    startActivity<PrioritiesView>()
+//                    startActivity<PrioritiesView>()
+                    startActivity<DetailedActivity>()
                     true
                 }
                 else ->

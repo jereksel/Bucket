@@ -254,6 +254,10 @@ dependencies {
 
     compile 'eu.chainfire:libsuperuser:1.0.0.201704021214'
 
+    compile 'com.hannesdorfmann.mosby3:mvi:3.1.0'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
     //Kotterknife
     compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
         exclude group: 'com.android.support', module: 'support-v4'
