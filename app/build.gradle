@@ -246,6 +246,8 @@ dependencies {
     compile rxkotlin
     compile rxandroid
 
+    testCompile 'com.rubylichtenstein:rxtest:1.0.5'
+
     //Dagger
     compile dagger
     kapt daggerCompiler

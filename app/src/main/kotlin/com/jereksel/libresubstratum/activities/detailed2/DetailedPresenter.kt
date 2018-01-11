@@ -1,27 +1,32 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
+import com.jereksel.libresubstratum.activities.detailed2.DetailedViewState.Companion.INITIAL
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class DetailedPresenter: MviBasePresenter<DetailedView, DetailedViewState>() {
+class DetailedPresenter @Inject constructor(
+        val actionProcessor: DetailedActionProcessorHolder
+): MviBasePresenter<DetailedView, DetailedViewState>() {
 
-    val o = Observable
-            .interval(100, TimeUnit.MILLISECONDS)
-            .scan(0) { t1, _ -> t1 + 1 }
+    lateinit var appId: String
 
     override fun bindIntents() {
 
-        Observable.mergeArray(
-                Observable.just(DetailedAction.InitialAction)
-        )
+//        val o = Observable.mergeArray(
+//                Observable.just(DetailedAction.InitialAction)
+//        )
+//                .map { DetailedResult.ListLoaded(listOf()) }
 
-        val observable = o
-                .scan(DetailedViewState(0), { old, num -> old.copy(number = num) })
+        val o = intent(DetailedView::getActions)
+                .mergeWith(Observable.just(DetailedAction.InitialAction(appId)))
+                .compose(actionProcessor.actionProcessor)
+                .scan(INITIAL, DetailedReducer)
                 .observeOn(AndroidSchedulers.mainThread())
 
-        subscribeViewState(observable, DetailedView::render)
+        subscribeViewState(o, DetailedView::render)
 
     }
 

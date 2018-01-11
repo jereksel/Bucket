@@ -3,6 +3,7 @@ package com.jereksel.libresubstratum
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
+import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
@@ -49,6 +50,9 @@ class MockedApp : App() {
             fun factory() = viewModelFactory
             @Provides
             fun iCleanUnusedOverlays(): ICleanUnusedOverlays = mock()
+
+            @Provides
+            fun detailedPresenter(): com.jereksel.libresubstratum.activities.detailed2.DetailedPresenter = mock()
 
         }
 

@@ -11,4 +11,9 @@ data class DetailedViewState(
             val data: List<Type3Extension>,
             val position: Int
     )
+
+    companion object {
+        val INITIAL = DetailedViewState(0, null)
+    }
+
 }
