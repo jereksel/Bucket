@@ -7,6 +7,7 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -59,7 +60,71 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                     }
                     .toObservable()
+                    .flatMap {
+
+                        val type3 = it.type3?.data?.get(0)
+
+                        val actions = it.themes.map {
+
+                            val type1a = it.type1a?.data?.get(0)
+                            val type1b = it.type1b?.data?.get(0)
+                            val type1c = it.type1c?.data?.get(0)
+                            val type2 = it.type2?.data?.get(0)
+
+                            DetailedAction.GetInfoAction(
+                                    appId = appId,
+                                    targetAppId = it.appId,
+                                    type1a = type1a,
+                                    type1b = type1b,
+                                    type1c = type1c,
+                                    type2 = type2,
+                                    type3 = type3
+                            )
+
+                        }
+
+                        Observable.merge(
+                            Observable.just(it),
+                            getInfoProcessor.apply(Observable.fromIterable(actions))
+                        )
+
+                    }
                     .observeOn(AndroidSchedulers.mainThread())
+        }
+
+    }
+
+    val getInfoProcessor = ObservableTransformer<DetailedAction.GetInfoAction, DetailedResult> { actions ->
+
+        actions.flatMap { selection ->
+
+            Observable.fromCallable {
+
+                val themeName = packageManager.getAppName(selection.appId)
+
+                val overlayId = ThemeNameUtils.getTargetOverlayName(
+                        appId = selection.targetAppId,
+                        themeName = themeName,
+                        type1a = selection.type1a,
+                        type1b = selection.type1b,
+                        type1c = selection.type1c,
+                        type2 = selection.type2,
+                        type3 = selection.type3
+                )
+
+                val isInstalled = packageManager.isPackageInstalled(overlayId)
+
+                if (isInstalled) {
+                    DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.INSTALLED)
+                } else {
+                    DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.REMOVED)
+                }
+
+            }
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
+
+
         }
 
     }
@@ -69,16 +134,29 @@ class DetailedActionProcessorHolder @Inject constructor(
 
         actions.flatMap { selection ->
 
-            Observable.just(when(selection) {
-                is DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
-                is DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
-                is DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
-                is DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
-            })
+            val result: DetailedResult
+            val action: DetailedAction.GetInfoAction
 
-//            when(it) {
-//            }
+//            Observable.just(when(selection) {
+            when(selection) {
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
+                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
 
+                }
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
+                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
+                }
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
+                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
+                }
+                is DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
+                    result = DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
+                }
+            }
+
+//            })
+
+                Observable.just(result)
 
         }
     }

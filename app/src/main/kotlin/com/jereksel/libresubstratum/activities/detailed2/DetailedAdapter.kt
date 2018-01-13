@@ -34,21 +34,27 @@ class DetailedAdapter(
         holder.appName.text = theme.name
         holder.appIcon.setImageDrawable(detailedPresenter.getAppIcon(theme.appId))
 
-        if (theme.state == DetailedViewState.State.DEFAULT) {
+        if (theme.compilationState == DetailedViewState.CompilationState.DEFAULT) {
             holder.overlay.visibility = GONE
         }
 
+        when(theme.installedState) {
+            DetailedViewState.InstalledState.UNKNOWN -> holder.upToDate.text = "LOADING"
+            DetailedViewState.InstalledState.INSTALLED -> holder.upToDate.text = "INSTALLED"
+            DetailedViewState.InstalledState.REMOVED -> holder.upToDate.text = "REMOVED"
+        }
+
         holder.type1aSpinner((theme.type1a?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1a?.position ?: 0)
-        holder.type1aView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1aView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(theme, holder.adapterPosition, it)) }
 
         holder.type1bSpinner((theme.type1b?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1b?.position ?: 0)
-        holder.type1bView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1bView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(theme, holder.adapterPosition, it)) }
 
         holder.type1cSpinner((theme.type1c?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1c?.position ?: 0)
-        holder.type1cView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1cView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(theme, holder.adapterPosition, it)) }
 
         holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type1c?.position ?: 0)
-        holder.type2Spinner.selectListener { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
+        holder.type2Spinner.selectListener { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(theme, holder.adapterPosition, it)) }
 
     }
 

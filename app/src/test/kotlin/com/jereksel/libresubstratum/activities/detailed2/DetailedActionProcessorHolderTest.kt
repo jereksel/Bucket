@@ -154,7 +154,7 @@ class DetailedActionProcessorHolderTest: FunSpec() {
                     .toList()
                     .blockingGet()
 
-            assertThat(list).containsExactly(expected)
+            assertThat(list).startsWith(expected)
 
 
         }

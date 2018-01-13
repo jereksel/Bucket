@@ -1,9 +1,12 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
 import com.jereksel.libresubstratum.utils.ListUtils.replace
 
 object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedViewState> {
+
+    val log = getLogger()
 
     override fun apply(t1: DetailedViewState, t2: DetailedResult): DetailedViewState {
         return when(t2) {
@@ -20,7 +23,8 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                                     it.type1b?.let { DetailedViewState.Type1(it.data, 0) },
                                     it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
                                     it.type2?.let { DetailedViewState.Type2(it.data, 0) },
-                                    DetailedViewState.State.DEFAULT
+                                    DetailedViewState.CompilationState.DEFAULT,
+                                    DetailedViewState.InstalledState.UNKNOWN
                             )
 
                         },
@@ -104,6 +108,32 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
 
                     }
                 }
+            }
+            is DetailedResult.InstalledStateResult -> {
+
+                val result = t2.result
+                val targetApp = t2.targetApp
+
+                val themePack = t1.themePack
+
+                val themes = themePack?.themes
+
+                val newThemes = themes?.replace({it.appId == targetApp}, {
+                    it.copy(
+                            installedState = result
+                    )
+                })
+
+                if (newThemes != null) {
+                    t1.copy(
+                            themePack = themePack.copy(
+                                    themes = newThemes
+                            )
+                    )
+                } else {
+                    t1
+                }
+
             }
         }
     }

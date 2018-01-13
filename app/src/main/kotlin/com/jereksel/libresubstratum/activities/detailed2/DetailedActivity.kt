@@ -21,6 +21,8 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     @Arg
     lateinit var appId : String
 
+    lateinit var viewState: DetailedViewState
+
     val log = getLogger()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +50,8 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
 
     override fun render(viewState: DetailedViewState) {
 //        toast(viewState.toString())
+
+        this.viewState = viewState
 
         if (viewState.themePack != null) {
             (recyclerView.adapter as DetailedAdapter).update(viewState.themePack.themes)

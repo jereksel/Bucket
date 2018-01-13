@@ -20,7 +20,8 @@ data class DetailedViewState(
             val type1b: Type1?,
             val type1c: Type1?,
             val type2: Type2?,
-            val state: State
+            val compilationState: CompilationState,
+            val installedState: InstalledState
     )
 
     data class Type1(
@@ -42,10 +43,16 @@ data class DetailedViewState(
         val INITIAL = DetailedViewState(null)
     }
 
-    enum class State {
+    enum class CompilationState {
         DEFAULT,
         COMPILING,
         INSTALLING
+    }
+
+    enum class InstalledState {
+        UNKNOWN,
+        INSTALLED,
+        REMOVED
     }
 
 }
