@@ -24,21 +24,12 @@ import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
-import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratumlib.Type3Data
-import com.jereksel.libresubstratumlib.Type3Extension
+import com.jereksel.libresubstratumlib.*
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import com.rubylichtenstein.rxtest.assertions.assertThat
-import com.rubylichtenstein.rxtest.assertions.shouldEmit
-import com.rubylichtenstein.rxtest.assertions.shouldHave
-import com.rubylichtenstein.rxtest.extentions.test
-import com.rubylichtenstein.rxtest.matchers.Matcher
-import com.rubylichtenstein.rxtest.matchers.complete
-import com.rubylichtenstein.rxtest.matchers.noErrors
 import io.kotlintest.specs.FunSpec
 import io.reactivex.Observable
-import io.reactivex.observers.BaseTestConsumer
+import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
@@ -67,58 +58,108 @@ class DetailedActionProcessorHolderTest: FunSpec() {
 
     init {
 
+        //loadListProcessor
+
         test("Load theme info test - null type3") {
             val appId = "appId"
             val theme = ThemePack(listOf(), null)
             whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
 
-            Observable.just(DetailedAction.InitialAction(appId))
+            val list = Observable.just(DetailedAction.InitialAction(appId))
                     .compose(presenter.loadListProcessor)
-                    .test {
-                        it shouldEmit DetailedResult.ListLoaded(listOf())
-                        it should complete()
-                        it shouldHave noErrors()
-                    }
+                    .toList()
+                    .blockingGet()
 
-        }
-
-        test("Load theme info test - empty type3") {
-            val appId = "appId"
-            val theme = ThemePack(listOf(), Type3Data())
-            whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
-
-
-            Observable.just(DetailedAction.InitialAction(appId))
-                    .compose(presenter.loadListProcessor)
-                    .test {
-                        it shouldEmit DetailedResult.ListLoaded(listOf())
-                        it should complete()
-                        it shouldHave noErrors()
-                    }
+            assertThat(list).containsExactly(DetailedResult.ListLoaded(listOf(), null))
 
         }
 
         test("Load theme info test - nonnull type3") {
             val appId = "appId"
+            val appName = "Awesome theme"
             val theme = ThemePack(listOf(), Type3Data(listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))))
             whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
+            whenever(packageManager.getAppName(appId)).thenReturn(appName)
 
+            val expected = DetailedResult.ListLoaded(
+                    listOf(),
+                    DetailedResult.ListLoaded.Type3(
+                            listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))
+                    )
+            )
 
-            Observable.just(DetailedAction.InitialAction(appId))
+            val list = Observable.just(DetailedAction.InitialAction(appId))
                     .compose(presenter.loadListProcessor)
-                    .test {
-                        it shouldEmit DetailedResult.ListLoaded(listOf(Type3Extension("Default", true), Type3Extension("Oreo", false)))
-                        it should complete()
-                        it shouldHave noErrors()
-                    }
+                    .toList()
+                    .blockingGet()
+
+            assertThat(list).containsExactly(expected)
 
         }
 
+        //TODO: Test - no types
 
+        test("Load theme info test - all types") {
+
+            val appId = "appId"
+            val appName = "Awesome theme"
+
+            val theme = ThemePack(listOf(
+                    Theme(
+                            application = "app1",
+                            type1 = listOf(
+                                    Type1Data(
+                                            listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("blue", false)),
+                                            "a"
+                                    ),
+                                    Type1Data(
+                                            listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("black", false)),
+                                            "b"
+                                    ),
+                                    Type1Data(
+                                            listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("white", false)),
+                                            "c"
+                                    )
+                            ),
+                            type2 = Type2Data(
+                                    listOf(Type2Extension("SELECT ONE", true), Type2Extension("pink", false))
+                            )
+                    )),
+                    Type3Data(listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))))
+
+            whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
+            whenever(packageManager.getAppName(appId)).thenReturn(appName)
+            whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
+            whenever(packageManager.getAppName("app1")).thenReturn("My app")
+
+            val expected = DetailedResult.ListLoaded(
+                    listOf(
+                            DetailedResult.ListLoaded.Theme(
+                                    appId = "app1",
+                                    name = "My app",
+                                    type1a = DetailedResult.ListLoaded.Type1(listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("blue", false))),
+                                    type1b = DetailedResult.ListLoaded.Type1(listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("black", false))),
+                                    type1c = DetailedResult.ListLoaded.Type1(listOf(Type1Extension("CHOOSE ONE", true), Type1Extension("white", false))),
+                                    type2 = DetailedResult.ListLoaded.Type2(listOf(Type2Extension("SELECT ONE", true), Type2Extension("pink", false)))
+
+                            )
+                    ),
+                    DetailedResult.ListLoaded.Type3(
+                            listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))
+                    )
+            )
+
+            val list = Observable.just(DetailedAction.InitialAction(appId))
+                    .compose(presenter.loadListProcessor)
+                    .toList()
+                    .blockingGet()
+
+            assertThat(list).containsExactly(expected)
+
+
+        }
 
     }
 
-    infix fun <T, U : BaseTestConsumer<T, U>> BaseTestConsumer<T, U>.should(matcher: Matcher<BaseTestConsumer<T, U>>)
-            = assertThat<T, U>(this, matcher)
-
 }
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ * Copyright (C) 2018 Andrzej Ressel (jereksel@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,36 @@
 
 package com.jereksel.libresubstratum.utils
 
-import android.support.v7.util.DiffUtil
+import io.kotlintest.specs.FunSpec
+import com.jereksel.libresubstratum.utils.ListUtils.replace
+import org.assertj.core.api.Assertions.assertThat
 
-class SimpleDiffCallback<out T>(
-        val oldList: List<T>,
-        val newList: List<T>
-): DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldList[oldItemPosition] == newList[newItemPosition]
+class ListUtilsTest: FunSpec() {
 
-    override fun getOldListSize() = oldList.size
+    init {
 
-    override fun getNewListSize() = newList.size
+        test("Replace with function") {
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            areItemsTheSame(oldItemPosition, newItemPosition)
+            val l = listOf("a", "ab", "abc")
+
+            val l2 = l.replace({it.length == 3}, {it + "d"})
+
+            assertThat(l2).containsExactly("a", "ab", "abcd")
+
+        }
+
+        test("Replace with index") {
+
+            val l = listOf("a", "ab", "abc")
+
+            val l2 = l.replace(0, {it + "d"})
+
+            assertThat(l2).containsExactly("ad", "ab", "abc")
+
+        }
+
+
+    }
+
+
 }

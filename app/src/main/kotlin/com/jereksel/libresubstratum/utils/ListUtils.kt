@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Andrzej Ressel (jereksel@gmail.com)
+ * Copyright (C) 2018 Andrzej Ressel (jereksel@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,20 @@
 
 package com.jereksel.libresubstratum.utils
 
-import android.support.v7.util.DiffUtil
+object ListUtils {
 
-class SimpleDiffCallback<out T>(
-        val oldList: List<T>,
-        val newList: List<T>
-): DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldList[oldItemPosition] == newList[newItemPosition]
+    fun <T> List<T>.replace(filter: (T) -> Boolean, map: (T) -> (T)): List<T> {
+        val i = indexOfFirst(filter)
+        return replace(i, map)
+    }
 
-    override fun getOldListSize() = oldList.size
+    fun <T> List<T>.replace(i: Int, map: (T) -> (T)): List<T> {
 
-    override fun getNewListSize() = newList.size
+        val before = take(i)
+        val el = get(i)
+        val after = drop(i+1)
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            areItemsTheSame(oldItemPosition, newItemPosition)
+        return before + map(el) + after
+    }
+
 }

@@ -1,35 +1,18 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
-import com.jereksel.libresubstratum.domain.IPackageManager
-import com.github.kittinunf.result.Result
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.ArrayListMultimap
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract.Presenter
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract.View
-import com.jereksel.libresubstratum.adapters.ThemePackAdapterView
-import com.jereksel.libresubstratum.data.Type1ExtensionToString
-import com.jereksel.libresubstratum.data.Type2ExtensionToString
-import com.jereksel.libresubstratum.domain.*
+import com.jereksel.libresubstratum.domain.ClipboardManager
+import com.jereksel.libresubstratum.domain.IActivityProxy
+import com.jereksel.libresubstratum.domain.IPackageManager
+import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
-import com.jereksel.libresubstratum.extensions.getLogger
-import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratumlib.Type3Extension
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.ofType
-import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.guava.await
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -54,23 +37,59 @@ class DetailedActionProcessorHolder @Inject constructor(
                     .subscribeOn(Schedulers.io())
                     .map {
                         //Remove apps that are not installed
-//                        val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
-//                        ThemePack(installedApps, it.type3)
-                        DetailedResult.ListLoaded(it.type3?.extensions ?: listOf())
+                        val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
+                        val themePack = ThemePack(installedApps, it.type3)
+
+                        DetailedResult.ListLoaded(themePack.themes.map {
+                            DetailedResult.ListLoaded.Theme(
+                                    it.application,
+                                    packageManager.getAppName(it.application),
+                                    it.type1.find { it.suffix == "a" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    it.type1.find { it.suffix == "b" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
+                            )
+                        },
+                                themePack.type3?.run {
+                                    DetailedResult.ListLoaded.Type3(
+                                            this.extensions
+                                    )
+                                }
+                              )
+
                     }
-//                    .map {
-//                        ThemePack(it.themes.sortedBy { packageManager.getAppName(it.application) }, it.type3)
-//                    }
-                    .observeOn(AndroidSchedulers.mainThread())
                     .toObservable()
+                    .observeOn(AndroidSchedulers.mainThread())
         }
 
+    }
+
+    @VisibleForTesting
+    val changeSpinnerPositionProcessor = ObservableTransformer<DetailedAction.ChangeSpinnerSelection, DetailedResult> { actions ->
+
+        actions.flatMap { selection ->
+
+            Observable.just(when(selection) {
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
+                is DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
+                is DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
+            })
+
+//            when(it) {
+//            }
+
+
+        }
     }
 
     internal val actionProcessor =
             ObservableTransformer<DetailedAction, DetailedResult> { actions ->
                 actions.publish { shared ->
-                    shared.ofType(DetailedAction.InitialAction::class.java).compose(loadListProcessor)
+                    Observable.merge(
+                            shared.ofType(DetailedAction.InitialAction::class.java).compose(loadListProcessor),
+                            shared.ofType(DetailedAction.ChangeSpinnerSelection::class.java).compose(changeSpinnerPositionProcessor)
+                    )
                 }
             }
 
