@@ -14,6 +14,7 @@ import com.jereksel.libresubstratum.activities.detailed2.DetailedViewState.Theme
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.list
+import com.jereksel.libresubstratum.extensions.selectListener
 import com.jereksel.libresubstratum.views.TypeView
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
@@ -23,7 +24,8 @@ class DetailedAdapter(
         val detailedPresenter: DetailedPresenter
 ): RecyclerView.Adapter<DetailedAdapter.ViewHolder>() {
 
-    val clicks = BehaviorSubject.create<DetailedAction>()
+    val recyclerViewDetailedActions = BehaviorSubject.create<DetailedAction>()!!
+    val recyclerViewSimpleUIActions = BehaviorSubject.create<DetailedSimpleUIAction>()!!
 
     override fun getItemCount() = themes.size
 
@@ -36,25 +38,30 @@ class DetailedAdapter(
 
         if (theme.compilationState == DetailedViewState.CompilationState.DEFAULT) {
             holder.overlay.visibility = GONE
+        } else {
+            holder.overlay.visibility = VISIBLE
         }
 
         when(theme.installedState) {
             DetailedViewState.InstalledState.UNKNOWN -> holder.upToDate.text = "LOADING"
             DetailedViewState.InstalledState.INSTALLED -> holder.upToDate.text = "INSTALLED"
+            DetailedViewState.InstalledState.OUTDATED -> holder.upToDate.text = "OUTDATED"
             DetailedViewState.InstalledState.REMOVED -> holder.upToDate.text = "REMOVED"
         }
 
+//        holder.upToDate.text = theme.overlayId
+
         holder.type1aSpinner((theme.type1a?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1a?.position ?: 0)
-        holder.type1aView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(theme, holder.adapterPosition, it)) }
+        holder.type1aView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(holder.adapterPosition, it)) }
 
         holder.type1bSpinner((theme.type1b?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1b?.position ?: 0)
-        holder.type1bView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(theme, holder.adapterPosition, it)) }
+        holder.type1bView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(holder.adapterPosition, it)) }
 
         holder.type1cSpinner((theme.type1c?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1c?.position ?: 0)
-        holder.type1cView.onPositionChange { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(theme, holder.adapterPosition, it)) }
+        holder.type1cView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(holder.adapterPosition, it)) }
 
-        holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type1c?.position ?: 0)
-        holder.type2Spinner.selectListener { clicks.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(theme, holder.adapterPosition, it)) }
+        holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type2?.position ?: 0)
+        holder.type2Spinner.selectListener { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
 
     }
 
@@ -131,23 +138,6 @@ class DetailedAdapter(
             }
         }
 
-    }
-
-    private fun Spinner.selectListener(fn: (Int) -> Unit) {
-
-        var user = false
-
-        this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (user) {
-                    fn(position)
-                } else {
-                    user = true
-                }
-            }
-        }
     }
 
     class ThemeDiffCallback(

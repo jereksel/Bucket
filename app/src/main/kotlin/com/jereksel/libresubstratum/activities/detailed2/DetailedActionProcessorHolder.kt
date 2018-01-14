@@ -26,6 +26,8 @@ class DetailedActionProcessorHolder @Inject constructor(
         private val clipboardManager: ClipboardManager
 ) {
 
+    lateinit var appId: String
+
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
 
@@ -43,12 +45,12 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                         DetailedResult.ListLoaded(themePack.themes.map {
                             DetailedResult.ListLoaded.Theme(
-                                    it.application,
-                                    packageManager.getAppName(it.application),
-                                    it.type1.find { it.suffix == "a" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    it.type1.find { it.suffix == "b" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
+                                    appId = it.application,
+                                    name = packageManager.getAppName(it.application),
+                                    type1a = it.type1.find { it.suffix == "a" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    type1b = it.type1.find { it.suffix == "b" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    type1c = it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                    type2 = it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
                             )
                         },
                                 themePack.type3?.run {
@@ -115,12 +117,14 @@ class DetailedActionProcessorHolder @Inject constructor(
                 val isInstalled = packageManager.isPackageInstalled(overlayId)
 
                 if (isInstalled) {
-                    DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.INSTALLED)
+                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.INSTALLED)
                 } else {
-                    DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.REMOVED)
+                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.REMOVED)
                 }
 
             }
+                    //It's so fast, this is not required
+//                    .startWith(DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.UNKNOWN))
                     .observeOn(Schedulers.io())
                     .subscribeOn(Schedulers.io())
 
@@ -137,27 +141,32 @@ class DetailedActionProcessorHolder @Inject constructor(
             val result: DetailedResult
             val action: DetailedAction.GetInfoAction
 
-//            Observable.just(when(selection) {
             when(selection) {
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
                     result = DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
-
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
                     result = DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
+
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
                     result = DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
+
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
                     result = DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
+
                 }
             }
 
-//            })
+            Observable.just(result)
 
-                Observable.just(result)
+        }
+    }
 
+    private val type3SpinnerProcessor = ObservableTransformer<DetailedAction.ChangeType3SpinnerSelection, DetailedResult> {actions ->
+        actions.flatMap {
+            Observable.just(DetailedResult.ChangeType3SpinnerSelection(it.position))
         }
     }
 
@@ -166,7 +175,9 @@ class DetailedActionProcessorHolder @Inject constructor(
                 actions.publish { shared ->
                     Observable.merge(
                             shared.ofType(DetailedAction.InitialAction::class.java).compose(loadListProcessor),
-                            shared.ofType(DetailedAction.ChangeSpinnerSelection::class.java).compose(changeSpinnerPositionProcessor)
+                            shared.ofType(DetailedAction.ChangeSpinnerSelection::class.java).compose(changeSpinnerPositionProcessor),
+                            shared.ofType(DetailedAction.GetInfoAction::class.java).compose(getInfoProcessor),
+                            shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor)
                     )
                 }
             }

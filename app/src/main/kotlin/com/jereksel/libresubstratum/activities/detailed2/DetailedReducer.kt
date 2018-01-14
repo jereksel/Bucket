@@ -19,6 +19,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                             DetailedViewState.Theme(
                                     it.appId,
                                     it.name,
+                                    "",
                                     it.type1a?.let { DetailedViewState.Type1(it.data, 0) },
                                     it.type1b?.let { DetailedViewState.Type1(it.data, 0) },
                                     it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
@@ -120,7 +121,8 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
 
                 val newThemes = themes?.replace({it.appId == targetApp}, {
                     it.copy(
-                            installedState = result
+                            installedState = result,
+                            overlayId = t2.targetOverlayId
                     )
                 })
 
@@ -133,6 +135,19 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                 } else {
                     t1
                 }
+
+            }
+            is DetailedResult.ChangeType3SpinnerSelection -> {
+
+                val position = t2.position
+
+                t1.copy(
+                        themePack = t1.themePack?.copy(
+                                type3 = t1.themePack.type3?.copy(
+                                        position = position
+                                )
+                        )
+                )
 
             }
         }

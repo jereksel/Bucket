@@ -23,4 +23,6 @@ sealed class DetailedAction {
         class ChangeType1cSpinnerSelection(val theme: DetailedViewState.Theme, val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
         class ChangeType2SpinnerSelection(val theme: DetailedViewState.Theme, val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
     }
+
+    class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
 }

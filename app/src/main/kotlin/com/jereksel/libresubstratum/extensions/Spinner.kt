@@ -17,7 +17,9 @@
 
 package com.jereksel.libresubstratum.extensions
 
+import android.view.View
 import android.widget.Adapter
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 
@@ -35,3 +37,20 @@ fun Spinner.getAllStrings() = this.adapter.getAllStrings()
 fun <T> ArrayAdapter<T>.getAllItems() = (0..count-1).map { this.getItem(it) }
 fun <T> ArrayAdapter<T>.getAllStrings() = getAllItems().map { it.toString() }
 fun Adapter.getAllStrings() = (0 until count).map { this.getItem(it) }.map { it.toString() }
+
+fun Spinner.selectListener(fn: (Int) -> Unit) {
+
+    var user = false
+
+    this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            if (user) {
+                fn(position)
+            } else {
+                user = true
+            }
+        }
+    }
+}

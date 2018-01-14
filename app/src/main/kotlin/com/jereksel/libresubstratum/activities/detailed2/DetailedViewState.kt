@@ -16,6 +16,7 @@ data class DetailedViewState(
     data class Theme(
             val appId: String,
             val name: String,
+            val overlayId: String,
             val type1a: Type1?,
             val type1b: Type1?,
             val type1c: Type1?,
@@ -52,6 +53,7 @@ data class DetailedViewState(
     enum class InstalledState {
         UNKNOWN,
         INSTALLED,
+        OUTDATED,
         REMOVED
     }
 

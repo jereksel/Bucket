@@ -3,13 +3,17 @@ package com.jereksel.libresubstratum.activities.detailed2
 import activitystarter.ActivityStarter
 import activitystarter.Arg
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.hannesdorfmann.mosby3.mvi.MviActivity
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.data.Type3ExtensionToString
 import com.jereksel.libresubstratum.extensions.getLogger
+import com.jereksel.libresubstratum.extensions.list
+import com.jereksel.libresubstratum.extensions.selectListener
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
 import javax.inject.Inject
 
@@ -22,6 +26,8 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     lateinit var appId : String
 
     lateinit var viewState: DetailedViewState
+
+    val simpleUiAction = BehaviorSubject.create<DetailedSimpleUIAction>()
 
     val log = getLogger()
 
@@ -45,7 +51,11 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     }
 
     override fun getActions(): Observable<DetailedAction> {
-        return (recyclerView.adapter as DetailedAdapter).clicks
+        return (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions
+    }
+
+    override fun getSimpleUIActions(): Observable<DetailedSimpleUIAction> {
+        return (recyclerView.adapter as DetailedAdapter).recyclerViewSimpleUIActions.mergeWith(simpleUiAction)
     }
 
     override fun render(viewState: DetailedViewState) {
@@ -56,6 +66,20 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         if (viewState.themePack != null) {
             (recyclerView.adapter as DetailedAdapter).update(viewState.themePack.themes)
         }
+
+        val type3 = viewState.themePack?.type3
+
+        if (type3 != null && type3.data.isNotEmpty()) {
+            spinner.visibility = View.VISIBLE
+            spinner.list = type3.data.map { Type3ExtensionToString(it) }
+            spinner.setSelection(type3.position)
+            spinner.selectListener {
+                simpleUiAction.onNext(DetailedSimpleUIAction.ChangeType3SpinnerSelection(it))
+            }
+        } else {
+            spinner.visibility = View.GONE
+        }
+
 
 //        log.debug(viewState.toString())
 //        textView.text = viewState.number.toString()

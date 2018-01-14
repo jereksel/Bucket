@@ -40,8 +40,11 @@ sealed class DetailedResult {
         class ChangeType2SpinnerSelection(val listPosition: Int, val position: Int): ChangeSpinnerSelection()
     }
 
+    class ChangeType3SpinnerSelection(val position: Int): DetailedResult()
+
     data class InstalledStateResult(
             val targetApp: String,
+            val targetOverlayId: String,
             val result: DetailedViewState.InstalledState
     ): DetailedResult()
 
