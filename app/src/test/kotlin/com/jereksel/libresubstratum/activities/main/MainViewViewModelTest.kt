@@ -80,6 +80,7 @@ class MainViewViewModelTest: FunSpec() {
             RxJavaPlugins.setIoSchedulerHandler { test }
 
             whenever(packageManager.getInstalledThemes()).thenReturn(listOf(
+                    InstalledTheme("app0", "theme 0", "", false, "", FutureTask { File("") }),
                     InstalledTheme("app1", "Theme 1", "", false, "", FutureTask { File("") }),
                     InstalledTheme("app2", "Theme 2", "", false, "", FutureTask { File("") })
             ))
@@ -91,6 +92,7 @@ class MainViewViewModelTest: FunSpec() {
             test.triggerActions()
 
             assertThat(mainViewViewModel.getAppsObservable()).containsExactly(
+                    MainViewModel("app0", "theme 0", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = File("").absolutePath),
                     MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = File("").absolutePath)
             )
