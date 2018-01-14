@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import android.graphics.Color
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -18,6 +19,8 @@ import com.jereksel.libresubstratum.extensions.selectListener
 import com.jereksel.libresubstratum.views.TypeView
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
+import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
+import org.jetbrains.anko.textColor
 
 class DetailedAdapter(
         var themes: List<Theme>,
@@ -36,18 +39,57 @@ class DetailedAdapter(
         holder.appName.text = theme.name
         holder.appIcon.setImageDrawable(detailedPresenter.getAppIcon(theme.appId))
 
+        //Reset
+        holder.checkbox.onCheckedChange { _, _ ->  }
+
+        holder.checkbox.isChecked = theme.checked
+
         if (theme.compilationState == DetailedViewState.CompilationState.DEFAULT) {
             holder.overlay.visibility = GONE
         } else {
             holder.overlay.visibility = VISIBLE
         }
 
-        when(theme.installedState) {
-            DetailedViewState.InstalledState.UNKNOWN -> holder.upToDate.text = "LOADING"
-            DetailedViewState.InstalledState.INSTALLED -> holder.upToDate.text = "INSTALLED"
-            DetailedViewState.InstalledState.OUTDATED -> holder.upToDate.text = "OUTDATED"
-            DetailedViewState.InstalledState.REMOVED -> holder.upToDate.text = "REMOVED"
+        val installedState = theme.installedState
+        val enabledState = theme.enabledState
+
+        holder.upToDate.textColor = Color.BLACK
+        holder.upToDate.text = ""
+
+        holder.appName.textColor = Color.BLACK
+
+        when(enabledState) {
+            DetailedViewState.EnabledState.ENABLED -> holder.appName.textColor = Color.GREEN
+            DetailedViewState.EnabledState.DISABLED -> holder.appName.textColor = Color.RED
+            DetailedViewState.EnabledState.UNKNOWN -> holder.appName.textColor = Color.BLACK
         }
+
+        when(installedState) {
+            is DetailedViewState.InstalledState.Outdated -> {
+                holder.upToDate.text = "OUTDATED"
+                holder.upToDate.textColor = Color.RED
+            }
+            is DetailedViewState.InstalledState.Installed -> {
+                holder.upToDate.text = "Up to date"
+                holder.upToDate.textColor = Color.GREEN
+            }
+        }
+
+//        if (installedState is DetailedViewState.InstalledState.Outdated || installedState is DetailedViewState.InstalledState.Installed) {
+//
+//
+//        } else {
+//
+//        }
+/*
+
+        when(theme.installedState) {
+            is DetailedViewState.InstalledState.Unknown -> holder.upToDate.text = "LOADING"
+            is DetailedViewState.InstalledState.Installed -> holder.upToDate.text = "INSTALLED"
+            is DetailedViewState.InstalledState.Outdated -> holder.upToDate.text = "OUTDATED"
+            is DetailedViewState.InstalledState.Removed -> holder.upToDate.text = "REMOVED"
+        }
+*/
 
 //        holder.upToDate.text = theme.overlayId
 
@@ -62,6 +104,15 @@ class DetailedAdapter(
 
         holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type2?.position ?: 0)
         holder.type2Spinner.selectListener { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
+
+        holder.card.setOnClickListener {
+            val isChecked = holder.checkbox.isChecked
+            recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, !isChecked))
+        }
+
+        holder.checkbox.onCheckedChange { _, isChecked ->
+            recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, !isChecked))
+        }
 
     }
 

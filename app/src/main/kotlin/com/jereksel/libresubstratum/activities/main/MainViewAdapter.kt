@@ -30,12 +30,14 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
+import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.data.DiffCallBack
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
 import io.reactivex.android.MainThreadDisposable.verifyMainThread
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import java.io.File
 
 class MainViewAdapter(
@@ -73,6 +75,10 @@ class MainViewAdapter(
 
         holder.view.setOnClickListener {
             viewModel.getAppToOpen().postValue(app.appId)
+        }
+
+        holder.view.onLongClick(returnValue = true) {
+            DetailedViewStarter.start(holder.view.context, app.appId)
         }
 
         holder.lock.setOnClickListener {

@@ -25,31 +25,17 @@ class DetailedPresenter @Inject constructor(
 
         val simpleProcessor = DetailedSimpleUIActionProcessor(appId, viewStateObservable)
 
-        viewStateObservable.subscribe {
-            log.debug("New state: {}", it)
-        }
-
         val s1 = intent(DetailedView::getSimpleUIActions)
                 .compose(simpleProcessor.actionProcessor)
 
         val s2 = intent(DetailedView::getActions)
-                .mergeWith(Observable.just(DetailedAction.InitialAction(appId)))
+                .startWith(DetailedAction.InitialAction(appId))
 
-//        val o1 = intent(DetailedView::getSimpleUIActions)
-//                .compose(simpleProcessor.actionProcessor)
-//
-//        val o2 = intent(DetailedView::getActions)
-//                .mergeWith(Observable.just(DetailedAction.InitialAction(appId)))
         val states = Observable.merge(s1, s2)
-//        val states = s2
                 .compose(actionProcessor.actionProcessor)
                 .scan(INITIAL, DetailedReducer)
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
-
-//        subscribeViewState(
-//                Observable.merge(o1, o2), DetailedView::render
-//        )
 
         subscribeViewState(states, DetailedView::render)
 

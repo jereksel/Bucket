@@ -25,7 +25,9 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                                     it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
                                     it.type2?.let { DetailedViewState.Type2(it.data, 0) },
                                     DetailedViewState.CompilationState.DEFAULT,
-                                    DetailedViewState.InstalledState.UNKNOWN
+                                    DetailedViewState.EnabledState.UNKNOWN,
+                                    DetailedViewState.InstalledState.Unknown,
+                                    checked = false
                             )
 
                         },
@@ -112,7 +114,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
             }
             is DetailedResult.InstalledStateResult -> {
 
-                val result = t2.result
+                val installedState = t2.installedResult
                 val targetApp = t2.targetApp
 
                 val themePack = t1.themePack
@@ -121,7 +123,8 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
 
                 val newThemes = themes?.replace({it.appId == targetApp}, {
                     it.copy(
-                            installedState = result,
+                            installedState = installedState,
+                            enabledState = t2.enabledState,
                             overlayId = t2.targetOverlayId
                     )
                 })
@@ -149,6 +152,13 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                         )
                 )
 
+            }
+            is DetailedResult.ToggleCheckbox -> {
+                t1.copy(
+                        themePack = t1.themePack?.copy(
+                                themes = t1.themePack.themes.replace(t2.position) { it.copy(checked = t2.state) }
+                        )
+                )
             }
         }
     }

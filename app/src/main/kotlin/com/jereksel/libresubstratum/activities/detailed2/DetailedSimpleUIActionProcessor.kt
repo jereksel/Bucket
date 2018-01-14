@@ -223,7 +223,6 @@ class DetailedSimpleUIActionProcessor(
             Observable.merge(
                     shared.ofType(DetailedSimpleUIAction.ChangeSpinnerSelection::class.java).withLatestFromToPair(viewState).compose(changeSpinnerSelection),
                     shared.ofType(DetailedSimpleUIAction.ChangeType3SpinnerSelection::class.java).withLatestFromToPair(viewState).compose(type3Change)
-//            shared.ofType(DetailedSimpleUIAction.ChangeSpinnerSelection::class.java).withLatestFrom(viewState) {}
             )
 
         }

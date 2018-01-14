@@ -45,7 +45,10 @@ sealed class DetailedResult {
     data class InstalledStateResult(
             val targetApp: String,
             val targetOverlayId: String,
-            val result: DetailedViewState.InstalledState
+            val installedResult: DetailedViewState.InstalledState,
+            val enabledState: DetailedViewState.EnabledState
     ): DetailedResult()
+
+    class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 
 }

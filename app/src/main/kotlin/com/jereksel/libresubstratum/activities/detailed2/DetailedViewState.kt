@@ -22,7 +22,9 @@ data class DetailedViewState(
             val type1c: Type1?,
             val type2: Type2?,
             val compilationState: CompilationState,
-            val installedState: InstalledState
+            val enabledState: EnabledState,
+            val installedState: InstalledState,
+            val checked: Boolean
     )
 
     data class Type1(
@@ -50,11 +52,35 @@ data class DetailedViewState(
         INSTALLING
     }
 
-    enum class InstalledState {
-        UNKNOWN,
-        INSTALLED,
-        OUTDATED,
-        REMOVED
+    sealed class InstalledState {
+        object Unknown: InstalledState()
+
+        data class Installed(
+                val versionName: String,
+                val versionCode: Int
+        ): InstalledState()
+
+        data class Outdated(
+                val currentVersionName: String,
+                val currentVersionCode: Int,
+                val newestVersionName: String,
+                val newestVersionCode: Int
+        ): InstalledState()
+
+        object Removed: InstalledState()
     }
+
+    enum class EnabledState {
+        UNKNOWN,
+        ENABLED,
+        DISABLED
+    }
+
+//    enum class InstalledState {
+//        UNKNOWN,
+//        INSTALLED,
+//        OUTDATED,
+//        REMOVED
+//    }
 
 }

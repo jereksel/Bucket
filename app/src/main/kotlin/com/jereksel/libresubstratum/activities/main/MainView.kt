@@ -132,8 +132,7 @@ open class MainView : AppCompatActivity() {
                     true
                 }
                 R.id.action_priorities -> {
-//                    startActivity<PrioritiesView>()
-                    startActivity<DetailedActivity>()
+                    startActivity<PrioritiesView>()
                     true
                 }
                 else ->

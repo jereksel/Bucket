@@ -14,6 +14,11 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.guava.asListenableFuture
+import kotlinx.coroutines.experimental.guava.await
+import kotlinx.coroutines.experimental.rx2.asSingle
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -52,6 +57,8 @@ class DetailedActionProcessorHolder @Inject constructor(
                                     type1c = it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
                                     type2 = it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
                             )
+                        }.sortedBy {
+                            it.name.toLowerCase()
                         },
                                 themePack.type3?.run {
                                     DetailedResult.ListLoaded.Type3(
@@ -91,16 +98,16 @@ class DetailedActionProcessorHolder @Inject constructor(
                         )
 
                     }
-                    .observeOn(AndroidSchedulers.mainThread())
         }
 
     }
 
+    @VisibleForTesting
     val getInfoProcessor = ObservableTransformer<DetailedAction.GetInfoAction, DetailedResult> { actions ->
 
         actions.flatMap { selection ->
 
-            Observable.fromCallable {
+            async {
 
                 val themeName = packageManager.getAppName(selection.appId)
 
@@ -117,12 +124,22 @@ class DetailedActionProcessorHolder @Inject constructor(
                 val isInstalled = packageManager.isPackageInstalled(overlayId)
 
                 if (isInstalled) {
-                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.INSTALLED)
+                    val (versionCode, versionName) = packageManager.getAppVersion(overlayId)
+                    val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
+                    val enabledState = if (overlayInfo?.enabled == true) {
+                        DetailedViewState.EnabledState.ENABLED
+                    } else {
+                        DetailedViewState.EnabledState.DISABLED
+                    }
+                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Installed(versionName, versionCode), enabledState)
                 } else {
-                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.REMOVED)
+                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Removed, DetailedViewState.EnabledState.UNKNOWN)
                 }
 
             }
+                    .asSingle(CommonPool)
+                    .toObservable()
+
                     //It's so fast, this is not required
 //                    .startWith(DetailedResult.InstalledStateResult(selection.targetAppId, DetailedViewState.InstalledState.UNKNOWN))
                     .observeOn(Schedulers.io())
@@ -136,48 +153,51 @@ class DetailedActionProcessorHolder @Inject constructor(
     @VisibleForTesting
     val changeSpinnerPositionProcessor = ObservableTransformer<DetailedAction.ChangeSpinnerSelection, DetailedResult> { actions ->
 
-        actions.flatMap { selection ->
-
-            val result: DetailedResult
-            val action: DetailedAction.GetInfoAction
+        actions.map { selection ->
 
             when(selection) {
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
-                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
+                    DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(selection.rvPosition, selection.position)
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
-                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
-
+                    DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(selection.rvPosition, selection.position)
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
-                    result = DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
-
+                    DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(selection.rvPosition, selection.position)
                 }
                 is DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
-                    result = DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
-
+                    DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection(selection.rvPosition, selection.position)
                 }
             }
 
-            Observable.just(result)
+//            Observable.just(result)
 
         }
     }
 
-    private val type3SpinnerProcessor = ObservableTransformer<DetailedAction.ChangeType3SpinnerSelection, DetailedResult> {actions ->
-        actions.flatMap {
-            Observable.just(DetailedResult.ChangeType3SpinnerSelection(it.position))
+    @VisibleForTesting
+    val type3SpinnerProcessor = ObservableTransformer<DetailedAction.ChangeType3SpinnerSelection, DetailedResult> {actions ->
+        actions.map {
+            DetailedResult.ChangeType3SpinnerSelection(it.position)
+        }
+    }
+
+    @VisibleForTesting
+    val checkboxToggleProcessor = ObservableTransformer<DetailedAction.ToggleCheckbox, DetailedResult> { actions ->
+        actions.map {
+            DetailedResult.ToggleCheckbox(it.position, it.state)
         }
     }
 
     internal val actionProcessor =
             ObservableTransformer<DetailedAction, DetailedResult> { actions ->
                 actions.publish { shared ->
-                    Observable.merge(
+                    Observable.mergeArray(
                             shared.ofType(DetailedAction.InitialAction::class.java).compose(loadListProcessor),
                             shared.ofType(DetailedAction.ChangeSpinnerSelection::class.java).compose(changeSpinnerPositionProcessor),
                             shared.ofType(DetailedAction.GetInfoAction::class.java).compose(getInfoProcessor),
-                            shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor)
+                            shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor),
+                            shared.ofType(DetailedAction.ToggleCheckbox::class.java).compose(checkboxToggleProcessor)
                     )
                 }
             }

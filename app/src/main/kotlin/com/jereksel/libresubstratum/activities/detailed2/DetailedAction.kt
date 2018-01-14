@@ -25,4 +25,7 @@ sealed class DetailedAction {
     }
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
+
+    class ToggleCheckbox(val position: Int, val state: Boolean): DetailedAction()
+
 }
