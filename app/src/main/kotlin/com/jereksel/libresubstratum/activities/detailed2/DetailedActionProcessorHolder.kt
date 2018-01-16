@@ -13,7 +13,9 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
@@ -32,6 +34,8 @@ class DetailedActionProcessorHolder @Inject constructor(
 ) {
 
     lateinit var appId: String
+
+    val backflow = BehaviorSubject.create<DetailedAction>()
 
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
@@ -189,6 +193,39 @@ class DetailedActionProcessorHolder @Inject constructor(
         }
     }
 
+    @VisibleForTesting
+    val longClickProcessor = ObservableTransformer<DetailedAction.LongClick, DetailedResult> { actions ->
+        actions.flatMap { selection ->
+
+            async {
+
+                val themeName = packageManager.getAppName(selection.appId)
+
+                val overlayId = ThemeNameUtils.getTargetOverlayName(
+                        appId = selection.targetAppId,
+                        themeName = themeName,
+                        type1a = selection.type1a,
+                        type1b = selection.type1b,
+                        type1c = selection.type1c,
+                        type2 = selection.type2,
+                        type3 = selection.type3
+                )
+
+                if (packageManager.isPackageInstalled(overlayId)) {
+
+                }
+
+
+                Unit as DetailedResult
+
+            }.asSingle(CommonPool)
+                    .toObservable()
+
+//            Observable.empty<DetailedResult>()
+////            DetailedResult.ToggleCheckbox(it.position, it.state)
+        }
+    }
+
     internal val actionProcessor =
             ObservableTransformer<DetailedAction, DetailedResult> { actions ->
                 actions.publish { shared ->
@@ -197,7 +234,8 @@ class DetailedActionProcessorHolder @Inject constructor(
                             shared.ofType(DetailedAction.ChangeSpinnerSelection::class.java).compose(changeSpinnerPositionProcessor),
                             shared.ofType(DetailedAction.GetInfoAction::class.java).compose(getInfoProcessor),
                             shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor),
-                            shared.ofType(DetailedAction.ToggleCheckbox::class.java).compose(checkboxToggleProcessor)
+                            shared.ofType(DetailedAction.ToggleCheckbox::class.java).compose(checkboxToggleProcessor),
+                            shared.ofType(DetailedAction.LongClick::class.java).compose(longClickProcessor)
                     )
                 }
             }

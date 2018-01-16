@@ -31,7 +31,9 @@ class DetailedPresenter @Inject constructor(
         val s2 = intent(DetailedView::getActions)
                 .startWith(DetailedAction.InitialAction(appId))
 
-        val states = Observable.merge(s1, s2)
+        val s3 = actionProcessor.backflow
+
+        val states = Observable.merge(s1, s2, s3)
                 .compose(actionProcessor.actionProcessor)
                 .scan(INITIAL, DetailedReducer)
                 .distinctUntilChanged()

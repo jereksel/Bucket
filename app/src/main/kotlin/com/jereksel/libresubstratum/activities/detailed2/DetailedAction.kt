@@ -24,6 +24,16 @@ sealed class DetailedAction {
         class ChangeType2SpinnerSelection(val theme: DetailedViewState.Theme, val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
     }
 
+    class LongClick(
+            val appId: String,
+            val targetAppId: String,
+            val type1a: Type1Extension?,
+            val type1b: Type1Extension?,
+            val type1c: Type1Extension?,
+            val type2: Type2Extension?,
+            val type3: Type3Extension?
+    ): DetailedAction()
+
     class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
 
     class ToggleCheckbox(val position: Int, val state: Boolean): DetailedAction()
