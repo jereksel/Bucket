@@ -42,6 +42,11 @@ sealed class DetailedResult {
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedResult()
 
+    data class InstalledStateBasicResult(
+            val appId: String,
+            var position: Int
+    ): DetailedResult()
+
     data class InstalledStateResult(
             val targetApp: String,
             val targetOverlayId: String,
@@ -49,6 +54,8 @@ sealed class DetailedResult {
             val enabledState: DetailedViewState.EnabledState
     ): DetailedResult()
 
-    class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
+    data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
+
+    data class LongClickBasicResult(val position: Int) : DetailedResult()
 
 }

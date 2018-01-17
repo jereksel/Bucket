@@ -12,13 +12,10 @@ import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.guava.asListenableFuture
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.asSingle
 import javax.inject.Inject
@@ -96,10 +93,19 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                         }
 
-                        Observable.merge(
-                            Observable.just(it),
-                            getInfoProcessor.apply(Observable.fromIterable(actions))
-                        )
+                        val getInfoBasicActions = actions.indices.map { DetailedResult.InstalledStateBasicResult(appId, it) }
+
+//                        val getInfoBasicActions = actions.mapIndexed { index, _ -> DetailedAction.GetInfoBasicAction(index) }
+
+//                        DetailedAction.GetInfoBasicAction()
+
+                        Observable.just(it as DetailedResult)
+                                .mergeWith(Observable.fromIterable(getInfoBasicActions))
+
+//                        Observable.merge(
+//                            Observable.just(it),
+//                            getInfoProcessor.apply(Observable.fromIterable(actions))
+//                        )
 
                     }
         }
@@ -226,6 +232,20 @@ class DetailedActionProcessorHolder @Inject constructor(
         }
     }
 
+    @VisibleForTesting
+    val basicGetInfoProcessor = ObservableTransformer<DetailedAction.GetInfoBasicAction, DetailedResult> { actions ->
+        actions.map {
+            DetailedResult.InstalledStateBasicResult(appId, it.position)
+        }
+    }
+
+    @VisibleForTesting
+    val basicLongClickProcessor = ObservableTransformer<DetailedAction.LongClickLocationAction, DetailedResult> { actions ->
+        actions.map {
+            DetailedResult.LongClickBasicResult(it.position)
+        }
+    }
+
     internal val actionProcessor =
             ObservableTransformer<DetailedAction, DetailedResult> { actions ->
                 actions.publish { shared ->
@@ -235,7 +255,9 @@ class DetailedActionProcessorHolder @Inject constructor(
                             shared.ofType(DetailedAction.GetInfoAction::class.java).compose(getInfoProcessor),
                             shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor),
                             shared.ofType(DetailedAction.ToggleCheckbox::class.java).compose(checkboxToggleProcessor),
-                            shared.ofType(DetailedAction.LongClick::class.java).compose(longClickProcessor)
+                            shared.ofType(DetailedAction.LongClick::class.java).compose(longClickProcessor),
+                            shared.ofType(DetailedAction.GetInfoBasicAction::class.java).compose(basicGetInfoProcessor),
+                            shared.ofType(DetailedAction.LongClickLocationAction::class.java).compose(basicLongClickProcessor)
                     )
                 }
             }

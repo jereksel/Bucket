@@ -17,6 +17,10 @@ sealed class DetailedAction {
             val type3: Type3Extension?
     ): DetailedAction()
 
+    class GetInfoBasicAction(
+            val position: Int
+    ): DetailedAction()
+
     sealed class ChangeSpinnerSelection: DetailedAction() {
         class ChangeType1aSpinnerSelection(val theme: DetailedViewState.Theme, val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
         class ChangeType1bSpinnerSelection(val theme: DetailedViewState.Theme, val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
@@ -33,6 +37,8 @@ sealed class DetailedAction {
             val type2: Type2Extension?,
             val type3: Type3Extension?
     ): DetailedAction()
+
+    class LongClickLocationAction(val position: Int): DetailedAction()
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
 

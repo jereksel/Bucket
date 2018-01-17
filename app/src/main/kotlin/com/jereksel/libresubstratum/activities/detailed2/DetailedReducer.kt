@@ -4,11 +4,11 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
 import com.jereksel.libresubstratum.utils.ListUtils.replace
 
-object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedViewState> {
+object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<DetailedViewState, List<DetailedAction>>> {
 
     val log = getLogger()
 
-    override fun apply(t1: DetailedViewState, t2: DetailedResult): DetailedViewState {
+    override fun apply(t1: DetailedViewState, t2: DetailedResult): Pair<DetailedViewState, List<DetailedAction>> {
         return when(t2) {
 //            is DetailedResult.ListLoaded -> t1.copy(type3 = DetailedViewState.Type3(t2.type3, 0))
             is DetailedResult.ListLoaded -> {
@@ -33,14 +33,14 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                         },
                                 t2.type3?.let { DetailedViewState.Type3(it.data, 0) }
                         )
-                )
+                ) to emptyList()
 
             }
             is DetailedResult.ChangeSpinnerSelection -> {
 
                 val oldThemes = t1.themePack!!.themes
 
-                when(t2) {
+                val state = when(t2) {
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
 
                         val themes = oldThemes.replace(t2.listPosition, {
@@ -111,6 +111,9 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
 
                     }
                 }
+
+                state to emptyList()
+
             }
             is DetailedResult.InstalledStateResult -> {
 
@@ -134,9 +137,9 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                             themePack = themePack.copy(
                                     themes = newThemes
                             )
-                    )
+                    ) to emptyList()
                 } else {
-                    t1
+                    t1 to emptyList()
                 }
 
             }
@@ -150,7 +153,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                                         position = position
                                 )
                         )
-                )
+                ) to emptyList()
 
             }
             is DetailedResult.ToggleCheckbox -> {
@@ -158,7 +161,24 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, DetailedVi
                         themePack = t1.themePack?.copy(
                                 themes = t1.themePack.themes.replace(t2.position) { it.copy(checked = t2.state) }
                         )
+                ) to emptyList()
+            }
+            is DetailedResult.InstalledStateBasicResult -> {
+
+                val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
+
+                val action = DetailedAction.GetInfoAction(
+                        appId = t2.appId,
+                        targetAppId = theme.appId,
+                        type1a = theme.type1a?.data?.get(theme.type1a.position),
+                        type1b = theme.type1b?.data?.get(theme.type1b.position),
+                        type1c = theme.type1c?.data?.get(theme.type1c.position),
+                        type2 = theme.type2?.data?.get(theme.type2.position),
+                        type3 = t1.themePack.type3?.data?.get(t1.themePack.type3.position)
                 )
+
+                return t1 to listOf(action)
+
             }
         }
     }

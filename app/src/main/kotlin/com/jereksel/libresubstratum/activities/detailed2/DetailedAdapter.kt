@@ -20,6 +20,7 @@ import com.jereksel.libresubstratum.views.TypeView
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
 import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
+import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import org.jetbrains.anko.textColor
 
 class DetailedAdapter(
@@ -108,6 +109,10 @@ class DetailedAdapter(
         holder.card.setOnClickListener {
             val isChecked = holder.checkbox.isChecked
             recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, !isChecked))
+        }
+
+        holder.card.onLongClick(returnValue = true) {
+            recyclerViewDetailedActions.onNext(DetailedAction.LongClickLocationAction(holder.adapterPosition))
         }
 
         holder.checkbox.onCheckedChange { _, isChecked ->

@@ -18,19 +18,22 @@
 package com.jereksel.libresubstratum.domain
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 
-class ActivityProxy(val app: Application): IActivityProxy {
+class ActivityProxy(context: Application): IActivityProxy {
+
+    val context: Context = context.applicationContext
 
     override fun openActivityInSplit(appId: String): Boolean {
-        val intent = app.packageManager.getLaunchIntentForPackage(appId)
+        val intent = context.packageManager.getLaunchIntentForPackage(appId)
 
         if (intent != null) {
             intent
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
-            app.startActivity(Intent.createChooser(intent, "Split"));
+            context.startActivity(Intent.createChooser(intent, "Split"));
             return true
         } else {
             return false
@@ -38,6 +41,6 @@ class ActivityProxy(val app: Application): IActivityProxy {
     }
 
     override fun showToast(text: String) {
-        Toast.makeText(app, text, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }
