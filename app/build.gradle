@@ -295,7 +295,7 @@ dependencies {
     implementation project(":zipsigner:combined")
     implementation project(":aapt:lib")
 
-//    compile project(":libs:changelogdialog")
+    implementation project(":libs:changelogdialog")
 
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
