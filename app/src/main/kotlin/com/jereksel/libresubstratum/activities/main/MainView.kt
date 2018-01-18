@@ -29,7 +29,6 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import com.jereksel.changelogdialog.ChangeLogDialog
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
@@ -37,7 +36,6 @@ import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
-import com.jereksel.libresubstratum.data.Changelog
 import com.jereksel.libresubstratum.databinding.ActivityMainBinding
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
@@ -103,7 +101,7 @@ open class MainView : AppCompatActivity() {
 
         viewModel.init()
 
-        ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
+//        ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
     }
 
     override fun onResume() {
