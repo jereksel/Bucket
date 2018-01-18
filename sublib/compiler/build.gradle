@@ -4,9 +4,9 @@ apply plugin: 'groovy'
 apply plugin: "jacoco"
 
 dependencies {
-    compile kotlinLib
-    compile project(":sublib:models")
-    compile slf4japi
+    implementation kotlinLib
+    implementation project(":sublib:models")
+    implementation slf4japi
 
     testCompile(
             'junit:junit:4.12',

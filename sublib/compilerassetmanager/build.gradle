@@ -76,8 +76,9 @@ project.afterEvaluate {
 }
 
 dependencies {
-    compile kotlinLib
-    compile rxjava
+    implementation kotlinLib
+    implementation rxjava
+    implementation slf4japi
 
     testCompile junit
     testCompile robolectric
@@ -90,8 +91,8 @@ dependencies {
     testCompile ("com.nhaarman:mockito-kotlin:$mockito_kotlin_version") {
         exclude group: "org.jetbrains.kotlin"
     }
-    compile project(path: ':sublib:models')
-    compile project(path: ':sublib:compiler')
+    implementation project(path: ':sublib:models')
+    implementation project(path: ':sublib:compiler')
 }
 repositories {
     mavenCentral()
