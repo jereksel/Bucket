@@ -237,6 +237,7 @@ dependencies {
     compile "android.arch.lifecycle:extensions:1.0.0"
     compile "android.arch.lifecycle:reactivestreams:1.0.0"
     testCompile "android.arch.core:core-testing:1.0.0"
+    kapt 'com.android.databinding:compiler:2.3.3'
 
     compile "org.funktionale:funktionale-option:1.2"
 
