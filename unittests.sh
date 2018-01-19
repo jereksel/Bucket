@@ -7,15 +7,16 @@ export GRADLE_OPTS="$GRADLE_OPTS -Dorg.gradle.daemon=false"
 
 set -e
 
-./gradlew app:testFdroidDebugUnitTest
+./gradlew testAll
 
-./gradlew sublib:reader:test
-./gradlew sublib:compiler:test
-./gradlew sublib:themereaderassetmanager:test
-./gradlew sublib:compilerassetmanager:test
-
-./gradlew app:jacocoTestReport
-./gradlew sublib:reader:jacocoTestReport
-./gradlew sublib:compiler:jacocoTestReport
-./gradlew sublib:themereaderassetmanager:jacocoTestReportDebug
-./gradlew sublib:compilerassetmanager:jacocoTestReportDebug
+#./gradlew app:testFdroidDebugUnitTest
+#
+#./gradlew sublib:compiler:test
+#./gradlew sublib:themereaderassetmanager:test
+#./gradlew sublib:compilerassetmanager:test
+#
+#./gradlew app:jacocoTestReport
+#./gradlew sublib:reader:jacocoTestReport
+#./gradlew sublib:compiler:jacocoTestReport
+#./gradlew sublib:themereaderassetmanager:jacocoTestReportDebug
+#./gradlew sublib:compilerassetmanager:jacocoTestReportDebug

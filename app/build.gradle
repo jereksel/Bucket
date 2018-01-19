@@ -402,3 +402,10 @@ kotlin {
         coroutines "enable"
     }
 }
+
+task testAll() {
+    dependsOn("testFdroidDebugUnitTest")
+    dependsOn(":sublib:colorreader:test")
+    dependsOn(":sublib:compilerassetmanager:test")
+    dependsOn(":sublib:themereaderassetmanager:test")
+}
