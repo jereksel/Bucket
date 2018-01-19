@@ -92,7 +92,10 @@ dependencies {
         exclude group: "org.jetbrains.kotlin"
     }
     implementation project(path: ':sublib:models')
-    implementation project(path: ':sublib:compiler')
+    implementation project(path: ':sublib:compilercommon')
+
+    testImplementation project(":sublib:colorreader")
+//    implementation project(path: ':sublib:compiler')
 }
 repositories {
     mavenCentral()

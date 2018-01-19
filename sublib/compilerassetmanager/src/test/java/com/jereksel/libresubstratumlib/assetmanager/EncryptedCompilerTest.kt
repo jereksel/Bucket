@@ -6,6 +6,10 @@ import android.content.res.AssetManager
 import android.os.Build
 import com.jereksel.compilerassetmanager.BuildConfig
 import com.jereksel.libresubstratumlib.*
+import com.jereksel.libresubstratumlib.colorreader.Color
+import com.jereksel.libresubstratumlib.colorreader.ColorReader
+import com.jereksel.libresubstratumlib.compilercommon.ThemeToCompile
+import com.jereksel.libresubstratumlib.compilercommon.Type1DataToCompile
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert
@@ -15,6 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import javax.crypto.Cipher
@@ -26,13 +31,14 @@ import javax.crypto.spec.SecretKeySpec
 @Suppress("IllegalIdentifier")
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP)
+        sdk = [Build.VERSION_CODES.LOLLIPOP]
 )
 class EncryptedCompilerTest {
 
     lateinit var assetManager: AssetManager
     val aapt = TestAaptFactory.get()
-    val aapt2 = TestAaptFactory.get2()
+
+    val aaptLocation = File("${System.getenv("ANDROID_HOME")}${File.separator}build-tools${File.separator}26.0.2${File.separator}aapt")
 
     lateinit var transformer: (InputStream) -> (InputStream)
 
@@ -70,7 +76,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0xffabcdef"), Color("color2", "0x12345678")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0xffabcdef"), Color("color2", "0x12345678")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -83,7 +89,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0x12345678"), Color("color2", "0x00000000"), Color("color3", "0x00000000")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0x12345678"), Color("color2", "0x00000000"), Color("color3", "0x00000000")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -96,7 +102,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x12345678"), Color("color3", "0xffffffff")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x12345678"), Color("color3", "0xffffffff")), getColorsValues(apk).toList())
     }
 
 
@@ -110,7 +116,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x00abcdef")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x00abcdef")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -123,7 +129,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0xffffffff"), Color("color2", "0x00abcdef")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0xffffffff"), Color("color2", "0x00abcdef")), getColorsValues(apk).toList())
     }
 
 
@@ -137,7 +143,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x00abcdef")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0x00000000"), Color("color2", "0x00abcdef")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -150,7 +156,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0xffffffff")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0xffffffff")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -163,7 +169,7 @@ class EncryptedCompilerTest {
         Assert.assertTrue(apk.exists())
         Assert.assertTrue(apk.isFile)
 
-        Assert.assertEquals(listOf(Color("color1", "0x00000000")), aapt2.getColorsValues(apk).toList())
+        Assert.assertEquals(listOf(Color("color1", "0x00000000")), getColorsValues(apk).toList())
     }
 
     @Test
@@ -176,7 +182,7 @@ class EncryptedCompilerTest {
         assertThat(apk.exists()).isTrue()
         assertThat(apk.isFile).isTrue()
 
-        assertThat(aapt2.getColorsValues(apk).toList())
+        assertThat(getColorsValues(apk).toList())
                 .containsExactlyInAnyOrder(Color("color1", "0x00000000"), Color("color2", "0x00abcdef"))
     }
 
@@ -190,9 +196,13 @@ class EncryptedCompilerTest {
         assertThat(apk.exists()).isTrue()
         assertThat(apk.isFile).isTrue()
 
-        assertThat(aapt2.getColorsValues(apk).toList())
+        assertThat(getColorsValues(apk).toList())
                 .containsExactlyInAnyOrder(Color("common_color1", "0xaaaaaaaa"), Color("color1", "0xffffffff"))
 
+    }
+
+    fun getColorsValues(apk: File): List<Color> {
+        return ColorReader.getColorsValues(aaptLocation, apk)
     }
 
     fun compile(

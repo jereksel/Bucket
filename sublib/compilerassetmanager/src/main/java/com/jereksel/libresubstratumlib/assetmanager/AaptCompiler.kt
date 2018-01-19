@@ -1,14 +1,13 @@
 package com.jereksel.libresubstratumlib.assetmanager
 
 import android.content.res.AssetManager
-import com.jereksel.libresubstratumlib.AndroidManifestGenerator
-import com.jereksel.libresubstratumlib.InvalidInvocationException
-import com.jereksel.libresubstratumlib.ThemeToCompile
+import com.jereksel.libresubstratumlib.compilercommon.AndroidManifestGenerator
+import com.jereksel.libresubstratumlib.compilercommon.InvalidInvocationException
+import com.jereksel.libresubstratumlib.compilercommon.ThemeToCompile
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
-import java.nio.file.Files
 
 class AaptCompiler(
         private val aaptPath: String,
