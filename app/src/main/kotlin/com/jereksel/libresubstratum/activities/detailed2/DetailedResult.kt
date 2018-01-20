@@ -6,6 +6,7 @@ import com.jereksel.libresubstratumlib.Type3Extension
 
 sealed class DetailedResult {
     data class ListLoaded(
+            val themeAppId: String,
             val themes: List<Theme>,
             val type3: Type3?
     ): DetailedResult() {
@@ -42,17 +43,24 @@ sealed class DetailedResult {
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedResult()
 
-    data class InstalledStateBasicResult(
-            val appId: String,
-            var position: Int
-    ): DetailedResult()
+    sealed class InstalledStateResult: DetailedResult() {
 
-    data class InstalledStateResult(
-            val targetApp: String,
-            val targetOverlayId: String,
-            val installedResult: DetailedViewState.InstalledState,
-            val enabledState: DetailedViewState.EnabledState
-    ): DetailedResult()
+        data class Result(
+                val targetApp: String,
+                val targetOverlayId: String,
+                val installedResult: DetailedViewState.InstalledState,
+                val enabledState: DetailedViewState.EnabledState
+        ): InstalledStateResult()
+
+        data class PositionResult(
+                var position: Int
+        ): InstalledStateResult()
+
+        data class AppIdResult(
+                val appId: String
+        ): InstalledStateResult()
+    }
+
 
     data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 

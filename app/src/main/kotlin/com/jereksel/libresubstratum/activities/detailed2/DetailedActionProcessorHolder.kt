@@ -32,8 +32,6 @@ class DetailedActionProcessorHolder @Inject constructor(
 
     lateinit var appId: String
 
-    val backflow = BehaviorSubject.create<DetailedAction>()
-
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
 
@@ -49,51 +47,53 @@ class DetailedActionProcessorHolder @Inject constructor(
                         val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
                         val themePack = ThemePack(installedApps, it.type3)
 
-                        DetailedResult.ListLoaded(themePack.themes.map {
-                            DetailedResult.ListLoaded.Theme(
-                                    appId = it.application,
-                                    name = packageManager.getAppName(it.application),
-                                    type1a = it.type1.find { it.suffix == "a" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    type1b = it.type1.find { it.suffix == "b" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    type1c = it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
-                                    type2 = it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
-                            )
-                        }.sortedBy {
-                            it.name.toLowerCase()
-                        },
-                                themePack.type3?.run {
+                        DetailedResult.ListLoaded(
+                                themeAppId = appId,
+                                themes = themePack.themes.map {
+                                    DetailedResult.ListLoaded.Theme(
+                                            appId = it.application,
+                                            name = packageManager.getAppName(it.application),
+                                            type1a = it.type1.find { it.suffix == "a" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                            type1b = it.type1.find { it.suffix == "b" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                            type1c = it.type1.find { it.suffix == "c" }?.let{ DetailedResult.ListLoaded.Type1(it.extension) },
+                                            type2 = it.type2?.let { DetailedResult.ListLoaded.Type2(it.extensions) }
+                                    )
+                                }.sortedBy {
+                                    it.name.toLowerCase()
+                                },
+                                type3 = themePack.type3?.run {
                                     DetailedResult.ListLoaded.Type3(
                                             this.extensions
                                     )
                                 }
-                              )
+                        )
 
                     }
                     .toObservable()
                     .flatMap {
 
-                        val type3 = it.type3?.data?.get(0)
+//                        val type3 = it.type3?.data?.get(0)
+//
+//                        val actions = it.themes.map {
+//
+//                            val type1a = it.type1a?.data?.get(0)
+//                            val type1b = it.type1b?.data?.get(0)
+//                            val type1c = it.type1c?.data?.get(0)
+//                            val type2 = it.type2?.data?.get(0)
+//
+//                            DetailedAction.GetInfoAction(
+//                                    appId = appId,
+//                                    targetAppId = it.appId,
+//                                    type1a = type1a,
+//                                    type1b = type1b,
+//                                    type1c = type1c,
+//                                    type2 = type2,
+//                                    type3 = type3
+//                            )
+//
+//                        }
 
-                        val actions = it.themes.map {
-
-                            val type1a = it.type1a?.data?.get(0)
-                            val type1b = it.type1b?.data?.get(0)
-                            val type1c = it.type1c?.data?.get(0)
-                            val type2 = it.type2?.data?.get(0)
-
-                            DetailedAction.GetInfoAction(
-                                    appId = appId,
-                                    targetAppId = it.appId,
-                                    type1a = type1a,
-                                    type1b = type1b,
-                                    type1c = type1c,
-                                    type2 = type2,
-                                    type3 = type3
-                            )
-
-                        }
-
-                        val getInfoBasicActions = actions.indices.map { DetailedResult.InstalledStateBasicResult(appId, it) }
+                        val getInfoBasicActions = it.themes.indices.map { DetailedResult.InstalledStateResult.PositionResult(it) }
 
 //                        val getInfoBasicActions = actions.mapIndexed { index, _ -> DetailedAction.GetInfoBasicAction(index) }
 
@@ -141,9 +141,9 @@ class DetailedActionProcessorHolder @Inject constructor(
                     } else {
                         DetailedViewState.EnabledState.DISABLED
                     }
-                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Installed(versionName, versionCode), enabledState)
+                    DetailedResult.InstalledStateResult.Result(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Installed(versionName, versionCode), enabledState)
                 } else {
-                    DetailedResult.InstalledStateResult(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Removed, DetailedViewState.EnabledState.UNKNOWN)
+                    DetailedResult.InstalledStateResult.Result(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Removed, DetailedViewState.EnabledState.UNKNOWN)
                 }
 
             }
@@ -219,23 +219,44 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                 if (packageManager.isPackageInstalled(overlayId)) {
 
+                    val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
+
+                    if (overlayInfo != null) {
+
+                        if (overlayInfo.enabled) {
+                            overlayService.disableOverlay(overlayId).await()
+                        } else {
+                            overlayService.enableExclusive(overlayId).await()
+                        }
+
+                    }
+
                 }
+//
+//                val getInfoAction = DetailedAction.GetInfoAction(
+//                        appId = selection.appId,
+//                        targetAppId = selection.targetAppId,
+//                        type1a = selection.type1a,
+//                        type1b = selection.type1b,
+//                        type1c = selection.type1c,
+//                        type2 = selection.type2,
+//                        type3 = selection.type3
+//                )
 
+//                getInfoAction
 
-                Unit as DetailedResult
+                DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId)
 
             }.asSingle(CommonPool)
                     .toObservable()
-
-//            Observable.empty<DetailedResult>()
-////            DetailedResult.ToggleCheckbox(it.position, it.state)
+//                    .flatMap { getInfoProcessor.apply(Observable.just(it)) }
         }
     }
 
     @VisibleForTesting
     val basicGetInfoProcessor = ObservableTransformer<DetailedAction.GetInfoBasicAction, DetailedResult> { actions ->
         actions.map {
-            DetailedResult.InstalledStateBasicResult(appId, it.position)
+            DetailedResult.InstalledStateResult.PositionResult(it.position)
         }
     }
 

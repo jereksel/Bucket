@@ -70,7 +70,7 @@ class DetailedActionProcessorHolderTest: FunSpec() {
                     .toList()
                     .blockingGet()
 
-            assertThat(list).containsExactly(DetailedResult.ListLoaded(listOf(), null))
+            assertThat(list).containsExactly(DetailedResult.ListLoaded(appId, listOf(), null))
 
         }
 
@@ -82,6 +82,7 @@ class DetailedActionProcessorHolderTest: FunSpec() {
             whenever(packageManager.getAppName(appId)).thenReturn(appName)
 
             val expected = DetailedResult.ListLoaded(
+                    appId,
                     listOf(),
                     DetailedResult.ListLoaded.Type3(
                             listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))
@@ -133,6 +134,7 @@ class DetailedActionProcessorHolderTest: FunSpec() {
             whenever(packageManager.getAppName("app1")).thenReturn("My app")
 
             val expected = DetailedResult.ListLoaded(
+                    appId,
                     listOf(
                             DetailedResult.ListLoaded.Theme(
                                     appId = "app1",

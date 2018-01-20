@@ -10,10 +10,10 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
     override fun apply(t1: DetailedViewState, t2: DetailedResult): Pair<DetailedViewState, List<DetailedAction>> {
         return when(t2) {
-//            is DetailedResult.ListLoaded -> t1.copy(type3 = DetailedViewState.Type3(t2.type3, 0))
             is DetailedResult.ListLoaded -> {
 
                 t1.copy(
+                        themeAppId = t2.themeAppId,
                         themePack = DetailedViewState.ThemePack(t2.themes.map {
 
                             DetailedViewState.Theme(
@@ -115,7 +115,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 state to emptyList()
 
             }
-            is DetailedResult.InstalledStateResult -> {
+            is DetailedResult.InstalledStateResult.Result -> {
 
                 val installedState = t2.installedResult
                 val targetApp = t2.targetApp
@@ -163,18 +163,47 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         )
                 ) to emptyList()
             }
-            is DetailedResult.InstalledStateBasicResult -> {
+            is DetailedResult.InstalledStateResult.PositionResult -> {
 
                 val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
 
                 val action = DetailedAction.GetInfoAction(
-                        appId = t2.appId,
+                        appId = t1.themeAppId!!,
                         targetAppId = theme.appId,
-                        type1a = theme.type1a?.data?.get(theme.type1a.position),
-                        type1b = theme.type1b?.data?.get(theme.type1b.position),
-                        type1c = theme.type1c?.data?.get(theme.type1c.position),
-                        type2 = theme.type2?.data?.get(theme.type2.position),
-                        type3 = t1.themePack.type3?.data?.get(t1.themePack.type3.position)
+                        type1a = theme.type1a?.get(),
+                        type1b = theme.type1b?.get(),
+                        type1c = theme.type1c?.get(),
+                        type2 = theme.type2?.get(),
+                        type3 = t1.themePack.type3?.get()
+                )
+
+                return t1 to listOf(action)
+
+            }
+            is DetailedResult.InstalledStateResult.AppIdResult -> {
+
+                val themeLocation = t1.themePack?.themes?.indexOfFirst { it.appId == t2.appId } ?: -1
+
+                if (themeLocation == -1) {
+                    log.error("Cannot find app: {}", t2.appId)
+                    t1 to emptyList()
+                } else {
+                    t1 to listOf(DetailedAction.GetInfoBasicAction(themeLocation))
+                }
+
+            }
+            is DetailedResult.LongClickBasicResult -> {
+
+                val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
+
+                val action = DetailedAction.LongClick(
+                        appId = t1.themeAppId!!,
+                        targetAppId = theme.appId,
+                        type1a = theme.type1a?.get(),
+                        type1b = theme.type1b?.get(),
+                        type1c = theme.type1c?.get(),
+                        type2 = theme.type2?.get(),
+                        type3 = t1.themePack.type3?.get()
                 )
 
                 return t1 to listOf(action)
