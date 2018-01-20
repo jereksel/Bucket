@@ -125,6 +125,7 @@ android {
             minifyEnabled true
             ext.enableCrashlytics = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            matchingFallbacks = ['debug']
         }
     }
     flavorDimensions "store"
@@ -154,6 +155,7 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/*.kotlin_module'
     }
 
     sourceSets {
@@ -165,7 +167,10 @@ android {
         enabled = true
     }
     testOptions {
-        unitTests.returnDefaultValues = true
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
@@ -221,99 +226,103 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    compile kotlinLib
+    implementation kotlinLib
 
     //Support library
     supportLibrary.each { name, lib ->
-        compile lib
+        implementation lib
     }
 
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
         exclude group: "com.google.guava"
     }
 
-    compile "android.arch.lifecycle:extensions:1.0.0"
-    compile "android.arch.lifecycle:reactivestreams:1.0.0"
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    implementation "android.arch.lifecycle:reactivestreams:1.0.0"
     testCompile "android.arch.core:core-testing:1.0.0"
-    kapt 'com.android.databinding:compiler:2.3.3'
+    kapt 'com.android.databinding:compiler:3.0.1'
 
     compile "org.funktionale:funktionale-option:1.2"
 
     //RxStuff
-    compile rxjava
-    compile rxkotlin
-    compile rxandroid
+    implementation rxjava
+    implementation rxkotlin
+    implementation rxandroid
 
     //Dagger
-    compile dagger
+    implementation dagger
     kapt daggerCompiler
     kaptTest daggerCompiler
     testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
 
-    compile 'eu.chainfire:libsuperuser:1.0.0.201704021214'
+    implementation 'eu.chainfire:libsuperuser:1.0.0.201704021214'
 
     //Kotterknife
-    compile 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
+    implementation 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
-    compile 'com.github.clans:fab:1.6.4'
-    compile "com.github.akarnokd:rxjava2-extensions:0.18.1"
-    compile 'org.zeroturnaround:zt-zip:1.12'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation "com.github.akarnokd:rxjava2-extensions:0.18.1"
+    implementation 'org.zeroturnaround:zt-zip:1.12'
 
     //Logging
-    compile "com.github.tony19:logback-android-core:$logback_android_version"
-    compile "com.github.tony19:logback-android-classic:$logback_android_version"
-    compile slf4japi
+    implementation "com.github.tony19:logback-android-core:$logback_android_version"
+    implementation("com.github.tony19:logback-android-classic:$logback_android_version") {
+        exclude group: 'com.google.android'
+    }
+
+    implementation slf4japi
     playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
 
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
-    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
 
-    compile "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
+    implementation "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
-    compile anko
-    compile ankoRecyclerView
+    implementation anko
+    implementation ankoRecyclerView
 
-    compile 'com.github.kittinunf.result:result:1.2.0'
+    implementation 'com.github.kittinunf.result:result:1.2.0'
 
     //Signing
-    compile project(":zipsigner:combined")
-    compile project(":aapt:lib")
+    implementation project(":zipsigner:combined")
+    implementation project(":aapt:lib")
 
-    compile project(":libs:changelogdialog")
+    implementation project(":libs:changelogdialog")
 
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.jereksel:omslib:1.0.2'
+    implementation 'com.jereksel:omslib:1.0.2'
 
     //So Proguard would shut up
-    compile 'com.google.j2objc:j2objc-annotations:1.3'
-    compile 'com.google.errorprone:error_prone_annotations:2.1.1'
-    compile guava
+    implementation 'com.google.j2objc:j2objc-annotations:1.3'
+    implementation 'com.google.errorprone:error_prone_annotations:2.1.2'
+    implementation guava
     androidTestCompile guava
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
 
-    compile 'cat.ereza:customactivityoncrash:2.1.0'
+    implementation 'cat.ereza:customactivityoncrash:2.1.0'
 
-    compile "android.arch.persistence.room:runtime:$room_version"
+    implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
 
-    compile project(":sublib:models")
-    compile project(":sublib:reader")
-    compile project(":sublib:themereaderassetmanager")
-    compile project(':sublib:compilerassetmanager')
+//    implementation project(":sublib:compiler")
+    implementation project(":sublib:models")
+//    implementation project(":sublib:reader")
+    implementation project(":sublib:themereaderassetmanager")
+    api project(':sublib:compilerassetmanager')
 
-    compile "android.arch.lifecycle:runtime:1.0.3"
+    implementation "android.arch.lifecycle:runtime:1.0.3"
 
     //Testing
     testCompile junit
@@ -371,6 +380,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     })
+    compile project(path: ':sublib:compilercommon')
 }
 
 play {
@@ -391,4 +401,11 @@ kotlin {
     experimental {
         coroutines "enable"
     }
+}
+
+task testAll() {
+    dependsOn("testFdroidDebugUnitTest")
+    dependsOn(":sublib:colorreader:test")
+    dependsOn(":sublib:compilerassetmanager:test")
+    dependsOn(":sublib:themereaderassetmanager:test")
 }

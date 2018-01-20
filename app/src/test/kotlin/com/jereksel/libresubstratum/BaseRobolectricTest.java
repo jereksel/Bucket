@@ -24,8 +24,7 @@ import static org.robolectric.shadows.ShadowLooper.runUiThreadTasksIncludingDela
  * Source: https://github.com/mapzen/lost/blob/229afcaad0bf9ae03370b7431f7428ce6823c2d6/lost/src/test/java/com/mapzen/android/lost/BaseRobolectricTest.java
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = MockedApp.class,
+@Config(application = MockedApp.class,
         sdk = Build.VERSION_CODES.N)
 public class BaseRobolectricTest {
 

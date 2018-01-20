@@ -28,11 +28,7 @@ build_script:
 
 test_script:
   - cmd: "%ANDROID_HOME%\\build-tools\\26.0.2\\aapt.exe v"
-  - gradlew testFdroidDebugUnitTest
-  - gradlew sublib:reader:test
-  - gradlew sublib:compiler:test
-  - gradlew sublib:themereaderassetmanager:test
-  - gradlew sublib:compilerassetmanager:test
+  - gradlew testAll
 
 after_test:
   - gradlew --stop

@@ -1,4 +1,7 @@
-package com.jereksel.libresubstratumlib
+package com.jereksel.libresubstratumlib.compilercommon
+
+import com.jereksel.libresubstratumlib.Type2Extension
+import com.jereksel.libresubstratumlib.Type3Extension
 
 data class ThemeToCompile(
         val targetOverlayId: String,
