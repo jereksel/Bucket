@@ -4,6 +4,8 @@ import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.presenters.PresenterTestUtils.initRxJava
 import com.jereksel.libresubstratumlib.*
+import com.jereksel.libresubstratumlib.compilercommon.ThemeToCompile
+import com.jereksel.libresubstratumlib.compilercommon.Type1DataToCompile
 import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.specs.FunSpec
 import org.mockito.Mock

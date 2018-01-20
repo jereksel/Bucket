@@ -4,16 +4,23 @@ apply plugin: 'groovy'
 apply plugin: "jacoco"
 
 dependencies {
-    compile kotlinLib
-    compile project(":sublib:models")
-    compile slf4japi
+    implementation kotlinLib
+    implementation project(":sublib:models")
+    implementation slf4japi
 
     testCompile(
             'junit:junit:4.12',
             'org.codehaus.groovy:groovy-all:2.4.4',
             'org.spockframework:spock-core:1.0-groovy-2.4'
     )
+
+    //https://issuetracker.google.com/issues/65712492
+    testRuntimeOnly files("build/classes/groovy/test")
 }
+
+//compileGroovy.dependsOn compileKotlin
+//compileTestGroovy.dependsOn compileKotlin
+//compileTestGroovy.dependsOn compileTestKotlin
 
 // https://stackoverflow.com/questions/24870464/android-studio-with-java-library-module-unable-to-load-test-resources
 sourceSets {

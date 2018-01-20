@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratumlib
+package com.jereksel.libresubstratumlib.compilercommon
 
 class AndroidManifestGenerator(val testing: Boolean = false) {
 
