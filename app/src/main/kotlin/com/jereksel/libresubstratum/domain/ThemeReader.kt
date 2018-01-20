@@ -26,7 +26,7 @@ class ThemeReader(
         val packageManager: IPackageManager,
         val keyFinder: IKeyFinder
 ): IThemeReader {
-    private val themeReaderImpl = com.jereksel.libresubstratumlib.ThemeReader()
+//    private val themeReaderImpl = com.jereksel.libresubstratumlib.compilercommon.ThemeReader()
     private val themeReaderAssetManager = com.jereksel.themereaderassetmanager.Reader
 
     override fun readThemePack(appId: String): ThemePack {
@@ -37,7 +37,9 @@ class ThemeReader(
 
     override fun isThemeEncrypted(appId: String): Boolean {
         val location = packageManager.getAppLocation(appId)
-        return themeReaderImpl.checkIfEncrypted(location)
+//        return themeReaderImpl.checkIfEncrypted(location)
+        return true
+
     }
 
 }

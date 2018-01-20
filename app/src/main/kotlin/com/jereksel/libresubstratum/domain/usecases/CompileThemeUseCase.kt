@@ -24,8 +24,8 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.Theme
 import com.jereksel.libresubstratumlib.ThemePack
-import com.jereksel.libresubstratumlib.ThemeToCompile
-import com.jereksel.libresubstratumlib.Type1DataToCompile
+import com.jereksel.libresubstratumlib.compilercommon.ThemeToCompile
+import com.jereksel.libresubstratumlib.compilercommon.Type1DataToCompile
 import io.reactivex.Observable
 import java.io.File
 

@@ -1,4 +1,4 @@
-apply plugin: 'java'
+//apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: "jacoco"
@@ -15,7 +15,14 @@ dependencies {
     )
     testCompile "org.slf4j:slf4j-nop:$slf4j_version"
     testCompile project(":sublib:reader")
+
+    //https://issuetracker.google.com/issues/65712492
+    testRuntimeOnly files("build/classes/groovy/test")
 }
+
+//compileGroovy.dependsOn compileKotlin
+//compileTestGroovy.dependsOn compileKotlin
+//compileTestGroovy.dependsOn compileTestKotlin
 
 // https://stackoverflow.com/questions/24870464/android-studio-with-java-library-module-unable-to-load-test-resources
 sourceSets {

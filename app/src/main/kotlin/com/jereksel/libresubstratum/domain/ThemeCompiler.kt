@@ -17,7 +17,7 @@
 
 package com.jereksel.libresubstratum.domain
 
-import com.jereksel.libresubstratumlib.ThemeToCompile
+import com.jereksel.libresubstratumlib.compilercommon.ThemeToCompile
 import java.io.File
 
 interface ThemeCompiler {
