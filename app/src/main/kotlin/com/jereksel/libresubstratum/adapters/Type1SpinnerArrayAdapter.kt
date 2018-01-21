@@ -28,6 +28,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import arrow.syntax.validated.valid
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import org.jetbrains.anko.backgroundColor
@@ -71,16 +72,16 @@ class Type1SpinnerArrayAdapter(
 
         holder.textView.text = type1Extension.toString()
 
-//        if (type1Extension.type1.color.isNotEmpty()) {
-//            val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
-//            val swatch = Palette.Swatch(type1Color, 1)
-//            holder.textView.textColor = swatch.titleTextColor
-//            holder.row.backgroundColor = type1Color
-//        } else {
-//            val type1Color = Color.WHITE
-//            holder.textView.textColor = Color.BLACK
-//            holder.row.backgroundColor = type1Color
-//        }
+        if (type1Extension.type1.color.isNotEmpty()) {
+            val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
+            val swatch = Palette.Swatch(type1Color, 1)
+            holder.textView.textColor = swatch.titleTextColor
+            holder.row.backgroundColor = type1Color
+        } else {
+            val type1Color = Color.WHITE
+            holder.textView.textColor = Color.BLACK
+            holder.row.backgroundColor = type1Color
+        }
 
         return holder.row
     }
@@ -103,22 +104,21 @@ class Type1SpinnerArrayAdapter(
 
         val type1Extension = objects[position]
 
+        val textView = holder.textView
+        val view = holder.row
+
         holder.textView.text = type1Extension.toString()
 
-//        holder..text = type1Extension.toString()
-
-//        if (type1Extension.type1.color.isNotEmpty()) {
-//            val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
-//            val swatch = Palette.Swatch(type1Color, 1)
-//            textView.textColor = swatch.titleTextColor
-//            view.backgroundColor = type1Color
-//        } else {
-//            val type1Color = Color.WHITE
-//            textView.textColor = Color.BLACK
-//            view.backgroundColor = type1Color
-//        }
-
-//        return hol
+        if (type1Extension.type1.color.isNotEmpty()) {
+            val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
+            val swatch = Palette.Swatch(type1Color, 1)
+            textView.textColor = swatch.titleTextColor
+            view.backgroundColor = type1Color
+        } else {
+            val type1Color = Color.WHITE
+            textView.textColor = Color.BLACK
+            view.backgroundColor = type1Color
+        }
 
         return holder.row
 

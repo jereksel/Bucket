@@ -90,39 +90,39 @@
                     android:layout_height="40dp"
                     android:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/type1aview"
-                    android:layout_width="match_parent"
-                    android:visibility="gone"
-                    android:layout_height="40dp"/>
-
-                <Spinner
-                    android:id="@+id/type1bview"
-                    android:layout_width="match_parent"
-                    android:visibility="gone"
-                    android:layout_height="40dp" />
-
-                <Spinner
-                    android:id="@+id/type1cview"
-                    android:layout_width="match_parent"
-                    android:visibility="gone"
-                    android:layout_height="40dp" />
-
-
-                <!--<com.jereksel.libresubstratum.views.TypeView-->
+                <!--<Spinner-->
                     <!--android:id="@+id/type1aview"-->
                     <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content" />-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp"/>-->
 
-                <!--<com.jereksel.libresubstratum.views.TypeView-->
+                <!--<Spinner-->
                     <!--android:id="@+id/type1bview"-->
                     <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content" />-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp" />-->
 
-                <!--<com.jereksel.libresubstratum.views.TypeView-->
+                <!--<Spinner-->
                     <!--android:id="@+id/type1cview"-->
                     <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content" />-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp" />-->
+
+
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1aview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1bview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.jereksel.libresubstratum.views.TypeView
+                    android:id="@+id/type1cview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
