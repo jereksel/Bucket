@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
+apply from: rootProject.file('gradle/generated-kotlin-sources.gradle')
+
 apply plugin: 'jacoco'
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -162,6 +164,10 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
+
+        //Arrow
+        debug.java.srcDirs += 'build/generated/source/kaptKotlin/fdroidDebug'
+//        release.java.srcDirs += 'build/generated/source/kaptKotlin/release'
     }
     dataBinding {
         enabled = true
@@ -226,16 +232,20 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    implementation kotlinLib
+    api kotlinLib
 
     //Support library
     supportLibrary.each { name, lib ->
         implementation lib
     }
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutines_version}", {
+    }
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_version}", {
+    }
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${coroutines_version}", {
+    }
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-guava:${coroutines_version}", {
         exclude group: "com.google.guava"
     }
 
@@ -252,6 +262,14 @@ dependencies {
     implementation rxandroid
 
 //    testCompile 'com.rubylichtenstein:rxtest:1.0.5'
+
+    api  "io.arrow-kt:arrow-optics:$arrow_version"
+    kapt ("io.arrow-kt:arrow-annotations-processor:$arrow_version") {
+        exclude group: "me.eugeniomarletti"
+    }
+    compileOnly ('me.eugeniomarletti:kotlin-metadata:1.2.1') {
+//        force = true
+    }
 
     //Dagger
     implementation dagger

@@ -5,9 +5,11 @@ buildscript {
         kotlin_version = '1.2.20'
         anko_version = '0.10.1'
         support_library_version = "26.1.0"
+        coroutines_version = "0.21.2"
         aa_version = "4.3.1"
         dagger_version = "2.10"
         room_version = "1.0.0"
+        arrow_version = "0.5.5"
         assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
         slf4j_version = "1.7.25"
