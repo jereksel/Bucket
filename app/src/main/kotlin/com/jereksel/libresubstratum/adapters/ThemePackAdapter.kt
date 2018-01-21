@@ -56,11 +56,11 @@ class ThemePackAdapter(
             presenter.setCheckbox(holder.adapterPosition, isChecked)
         }
 
-        holder.type1aView.onPositionChange { presenter.setType1a(holder.adapterPosition, it) }
-
-        holder.type1bView.onPositionChange { presenter.setType1b(holder.adapterPosition, it) }
-
-        holder.type1cView.onPositionChange { presenter.setType1c(holder.adapterPosition, it) }
+//        holder.type1aView.onPositionChange { presenter.setType1a(holder.adapterPosition, it) }
+//
+//        holder.type1bView.onPositionChange { presenter.setType1b(holder.adapterPosition, it) }
+//
+//        holder.type1cView.onPositionChange { presenter.setType1c(holder.adapterPosition, it) }
 
         holder.type2Spinner.selectListener { spinnerPosition ->
             presenter.setType2(holder.adapterPosition, spinnerPosition)
@@ -90,9 +90,9 @@ class ThemePackAdapter(
 
         val upToDate: TextView by bindView(R.id.uptodate)
 
-        val type1aView: TypeView by bindView(R.id.type1aview)
-        val type1bView: TypeView by bindView(R.id.type1bview)
-        val type1cView: TypeView by bindView(R.id.type1cview)
+//        val type1aView: TypeView by bindView(R.id.type1aview)
+//        val type1bView: TypeView by bindView(R.id.type1bview)
+//        val type1cView: TypeView by bindView(R.id.type1cview)
 
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
@@ -122,34 +122,34 @@ class ThemePackAdapter(
         }
 
         override fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
-            if (list.isEmpty()) {
-                type1aView.visibility = GONE
-            } else {
-                type1aView.visibility = VISIBLE
-                type1aView.setType1(list)
-                type1aView.setSelection(position)
-            }
+//            if (list.isEmpty()) {
+//                type1aView.visibility = GONE
+//            } else {
+//                type1aView.visibility = VISIBLE
+//                type1aView.setType1(list)
+//                type1aView.setSelection(position)
+//            }
         }
 
         override fun type1bSpinner(list: List<Type1ExtensionToString>, position: Int) {
-            if (list.isEmpty()) {
-                type1bView.visibility = GONE
-            } else {
-                type1bView.visibility = VISIBLE
-                type1bView.setType1(list)
-                type1bView.setSelection(position)
-            }
+//            if (list.isEmpty()) {
+//                type1bView.visibility = GONE
+//            } else {
+//                type1bView.visibility = VISIBLE
+//                type1bView.setType1(list)
+//                type1bView.setSelection(position)
+//            }
         }
 
 
         override fun type1cSpinner(list: List<Type1ExtensionToString>, position: Int) {
-            if (list.isEmpty()) {
-                type1cView.visibility = GONE
-            } else {
-                type1cView.visibility = VISIBLE
-                type1cView.setType1(list)
-                type1cView.setSelection(position)
-            }
+//            if (list.isEmpty()) {
+//                type1cView.visibility = GONE
+//            } else {
+//                type1cView.visibility = VISIBLE
+//                type1cView.setType1(list)
+//                type1cView.setSelection(position)
+//            }
         }
 
         override fun type2Spinner(list: List<Type2ExtensionToString>, position: Int) {

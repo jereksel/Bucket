@@ -40,7 +40,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 val oldThemes = t1.themePack!!.themes
 
-                val state = when(t2) {
+                when(t2) {
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
 
                         val themes = oldThemes.replace(t2.listPosition, {
@@ -55,7 +55,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        )
+                        )  to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
@@ -72,7 +72,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        )
+                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
@@ -90,7 +90,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        )
+                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
@@ -107,12 +107,12 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        )
+                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
 
                     }
                 }
 
-                state to emptyList()
+//                state to emptyList()
 
             }
             is DetailedResult.InstalledStateResult.Result -> {
@@ -153,7 +153,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                                         position = position
                                 )
                         )
-                ) to emptyList()
+                ) to (t1.themePack?.themes ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
 
             }
             is DetailedResult.ToggleCheckbox -> {

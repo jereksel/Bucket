@@ -10,10 +10,16 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
+import arrow.core.Option
+import arrow.core.ev
+import arrow.core.monad
+import arrow.typeclasses.applicative
+import arrow.typeclasses.binding
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed2.DetailedViewState.Theme
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratum.extensions.selectListener
 import com.jereksel.libresubstratum.views.TypeView
@@ -28,8 +34,9 @@ class DetailedAdapter(
         val detailedPresenter: DetailedPresenter
 ): RecyclerView.Adapter<DetailedAdapter.ViewHolder>() {
 
+    val log = getLogger()
+
     val recyclerViewDetailedActions = BehaviorSubject.create<DetailedAction>()!!
-    val recyclerViewSimpleUIActions = BehaviorSubject.create<DetailedSimpleUIAction>()!!
 
     override fun getItemCount() = themes.size
 
@@ -94,17 +101,19 @@ class DetailedAdapter(
 
 //        holder.upToDate.text = theme.overlayId
 
+//        log.debug(applicative<DetailedViewState.ThemePack>().toString())
+
         holder.type1aSpinner((theme.type1a?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1a?.position ?: 0)
-        holder.type1aView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1aView.selectListener { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(holder.adapterPosition, it)) }
 
         holder.type1bSpinner((theme.type1b?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1b?.position ?: 0)
-        holder.type1bView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1bView.selectListener { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1bSpinnerSelection(holder.adapterPosition, it)) }
 
         holder.type1cSpinner((theme.type1c?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1c?.position ?: 0)
-        holder.type1cView.onPositionChange { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(holder.adapterPosition, it)) }
+        holder.type1cView.selectListener { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1cSpinnerSelection(holder.adapterPosition, it)) }
 
         holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type2?.position ?: 0)
-        holder.type2Spinner.selectListener { recyclerViewSimpleUIActions.onNext(DetailedSimpleUIAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
+        holder.type2Spinner.selectListener { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
 
         holder.card.setOnClickListener {
             val isChecked = holder.checkbox.isChecked
@@ -145,9 +154,9 @@ class DetailedAdapter(
 
         val upToDate: TextView by bindView(R.id.uptodate)
 
-        val type1aView: TypeView by bindView(R.id.type1aview)
-        val type1bView: TypeView by bindView(R.id.type1bview)
-        val type1cView: TypeView by bindView(R.id.type1cview)
+        val type1aView: Spinner by bindView(R.id.type1aview)
+        val type1bView: Spinner by bindView(R.id.type1bview)
+        val type1cView: Spinner by bindView(R.id.type1cview)
 
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
@@ -158,7 +167,7 @@ class DetailedAdapter(
                 type1aView.visibility = GONE
             } else {
                 type1aView.visibility = VISIBLE
-                type1aView.setType1(list)
+                type1aView.list =(list)
                 type1aView.setSelection(position)
             }
         }
@@ -168,7 +177,7 @@ class DetailedAdapter(
                 type1bView.visibility = GONE
             } else {
                 type1bView.visibility = VISIBLE
-                type1bView.setType1(list)
+                type1bView.list =(list)
                 type1bView.setSelection(position)
             }
         }
@@ -179,7 +188,7 @@ class DetailedAdapter(
                 type1cView.visibility = GONE
             } else {
                 type1cView.visibility = VISIBLE
-                type1cView.setType1(list)
+                type1cView.list =(list)
                 type1cView.setSelection(position)
             }
         }

@@ -6,8 +6,6 @@ import io.reactivex.Observable
 
 interface DetailedView: MvpView {
 
-    fun getSimpleUIActions(): Observable<DetailedSimpleUIAction>
-
     fun getActions(): Observable<DetailedAction>
 
     fun render(viewState: DetailedViewState)

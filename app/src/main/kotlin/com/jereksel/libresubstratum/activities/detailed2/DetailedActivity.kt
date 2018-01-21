@@ -27,7 +27,7 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
 
     lateinit var viewState: DetailedViewState
 
-    val simpleUiAction = BehaviorSubject.create<DetailedSimpleUIAction>()
+    val uiAction = BehaviorSubject.create<DetailedAction>()
 
     val log = getLogger()
 
@@ -51,12 +51,10 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     }
 
     override fun getActions(): Observable<DetailedAction> {
-        return (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions
+        return (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions.mergeWith(uiAction)
     }
 
-    override fun getSimpleUIActions(): Observable<DetailedSimpleUIAction> {
-        return (recyclerView.adapter as DetailedAdapter).recyclerViewSimpleUIActions.mergeWith(simpleUiAction)
-    }
+//    var initialized = false
 
     override fun render(viewState: DetailedViewState) {
 //        toast(viewState.toString())
@@ -70,11 +68,12 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         val type3 = viewState.themePack?.type3
 
         if (type3 != null && type3.data.isNotEmpty()) {
+//            initialized = true
             spinner.visibility = View.VISIBLE
             spinner.list = type3.data.map { Type3ExtensionToString(it) }
             spinner.setSelection(type3.position)
             spinner.selectListener {
-                simpleUiAction.onNext(DetailedSimpleUIAction.ChangeType3SpinnerSelection(it))
+                uiAction.onNext(DetailedAction.ChangeType3SpinnerSelection(it))
             }
         } else {
             spinner.visibility = View.GONE

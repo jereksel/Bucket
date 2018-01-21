@@ -26,25 +26,25 @@ class DetailedPresenter @Inject constructor(
 
         actionProcessor.appId = appId
 
-        val simpleProcessor = DetailedSimpleUIActionProcessor(appId, viewStateObservable)
-
-        val s1 = intent(DetailedView::getSimpleUIActions)
-                .compose(simpleProcessor.actionProcessor)
-
         val s2 = intent(DetailedView::getActions)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .startWith(DetailedAction.InitialAction(appId))
 
         val s3 = BehaviorSubject.create<DetailedAction>()
 
-        val states = Observable.merge(s1, s2, s3)
+        val states = Observable.merge(s2, s3.observeOn(Schedulers.io()).subscribeOn(Schedulers.io()))
                 .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .compose(actionProcessor.actionProcessor)
                 .scan(INITIAL, { t1, t2 ->
                     val result = DetailedReducer.apply(t1, t2)
                     result.second.forEach { s3.onNext(it) }
                     result.first
                 })
+//                .sample(1, TimeUnit.SECONDS)
                 .distinctUntilChanged()
+                .doOnNext { log.debug("New state") }
                 .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(states, DetailedView::render)
