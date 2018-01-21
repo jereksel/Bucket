@@ -5,11 +5,11 @@ import com.jereksel.libresubstratumlib.Type2Extension
 import com.jereksel.libresubstratumlib.Type3Extension
 
 data class DetailedViewState(
-        val themeAppId: String?,
         val themePack: ThemePack?
 ) {
 
     data class ThemePack(
+            val appId: String,
             val themes: List<Theme>,
             val type3: Type3?
     )
@@ -50,7 +50,7 @@ data class DetailedViewState(
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null, null)
+        val INITIAL = DetailedViewState(null)
     }
 
     enum class CompilationState {

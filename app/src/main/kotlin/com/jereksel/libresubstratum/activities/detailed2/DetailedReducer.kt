@@ -9,29 +9,34 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
     val log = getLogger()
 
     override fun apply(t1: DetailedViewState, t2: DetailedResult): Pair<DetailedViewState, List<DetailedAction>> {
+
+//        return t1 to emptyList()
+
         return when(t2) {
             is DetailedResult.ListLoaded -> {
 
                 t1.copy(
-                        themeAppId = t2.themeAppId,
-                        themePack = DetailedViewState.ThemePack(t2.themes.map {
+//                        themeAppId = t2.themeAppId,
+                        themePack = DetailedViewState.ThemePack(
+                                appId = t2.themeAppId,
+                                themes = t2.themes.map {
 
-                            DetailedViewState.Theme(
-                                    it.appId,
-                                    it.name,
-                                    "",
-                                    it.type1a?.let { DetailedViewState.Type1(it.data, 0) },
-                                    it.type1b?.let { DetailedViewState.Type1(it.data, 0) },
-                                    it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
-                                    it.type2?.let { DetailedViewState.Type2(it.data, 0) },
-                                    DetailedViewState.CompilationState.DEFAULT,
-                                    DetailedViewState.EnabledState.UNKNOWN,
-                                    DetailedViewState.InstalledState.Unknown,
-                                    checked = false
-                            )
+                                    DetailedViewState.Theme(
+                                            it.appId,
+                                            it.name,
+                                            "",
+                                            it.type1a?.let { DetailedViewState.Type1(it.data, 0) },
+                                            it.type1b?.let { DetailedViewState.Type1(it.data, 0) },
+                                            it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
+                                            it.type2?.let { DetailedViewState.Type2(it.data, 0) },
+                                            DetailedViewState.CompilationState.DEFAULT,
+                                            DetailedViewState.EnabledState.UNKNOWN,
+                                            DetailedViewState.InstalledState.Unknown,
+                                            checked = false
+                                    )
 
-                        },
-                                t2.type3?.let { DetailedViewState.Type3(it.data, 0) }
+                                },
+                                type3 = t2.type3?.let { DetailedViewState.Type3(it.data, 0) }
                         )
                 ) to emptyList()
 
@@ -40,7 +45,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 val oldThemes = t1.themePack!!.themes
 
-                when(t2) {
+                val state = when(t2) {
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
 
                         val themes = oldThemes.replace(t2.listPosition, {
@@ -55,7 +60,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        )  to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
+                        )
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
@@ -72,7 +77,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
+                        )
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
@@ -90,7 +95,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
+                        )
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
@@ -107,12 +112,13 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                         t1.copy(
                                 themePack = t1.themePack.copy(themes = themes)
-                        ) to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
+                        )
 
                     }
                 }
 
-//                state to emptyList()
+
+                state to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
 
             }
             is DetailedResult.InstalledStateResult.Result -> {
@@ -168,7 +174,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
 
                 val action = DetailedAction.GetInfoAction(
-                        appId = t1.themeAppId!!,
+                        appId = t1.themePack.appId,
                         targetAppId = theme.appId,
                         type1a = theme.type1a?.get(),
                         type1b = theme.type1b?.get(),
@@ -197,7 +203,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
 
                 val action = DetailedAction.LongClick(
-                        appId = t1.themeAppId!!,
+                        appId = t1.themePack.appId,
                         targetAppId = theme.appId,
                         type1a = theme.type1a?.get(),
                         type1b = theme.type1b?.get(),

@@ -35,10 +35,13 @@ sealed class DetailedResult {
     }
 
     sealed class ChangeSpinnerSelection: DetailedResult() {
-        class ChangeType1aSpinnerSelection(val listPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType1bSpinnerSelection(val listPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType1cSpinnerSelection(val listPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType2SpinnerSelection(val listPosition: Int, val position: Int): ChangeSpinnerSelection()
+        abstract val listPosition: Int
+        abstract val position: Int
+
+        class ChangeType1aSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        class ChangeType1bSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        class ChangeType1cSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        class ChangeType2SpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
     }
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedResult()
