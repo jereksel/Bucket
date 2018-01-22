@@ -33,8 +33,6 @@ class DetailedActionProcessorHolder @Inject constructor(
         private val clipboardManager: ClipboardManager
 ) {
 
-    lateinit var appId: String
-
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
 

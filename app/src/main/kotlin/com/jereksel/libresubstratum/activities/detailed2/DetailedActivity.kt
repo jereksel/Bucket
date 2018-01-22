@@ -31,8 +31,6 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     @Arg
     lateinit var appId : String
 
-    lateinit var viewState: DetailedViewState
-
     val uiAction = BehaviorSubject.create<DetailedAction>()
 
     val log = getLogger()
@@ -60,12 +58,8 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         return (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions.mergeWith(uiAction)
     }
 
-//    var initialized = false
-
     override fun render(viewState: DetailedViewState) {
 //        toast(viewState.toString())
-
-        this.viewState = viewState
 
         if (viewState.themePack != null) {
             (recyclerView.adapter as DetailedAdapter).update(viewState.themePack.themes)
@@ -79,7 +73,6 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         val type3 = viewState.themePack?.type3
 
         if (type3 != null && type3.data.isNotEmpty()) {
-//            initialized = true
             spinner.visibility = View.VISIBLE
             spinner.list = type3.data.map { Type3ExtensionToString(it) }
             spinner.setSelection(type3.position)

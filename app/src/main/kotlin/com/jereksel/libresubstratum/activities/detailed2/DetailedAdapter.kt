@@ -95,26 +95,6 @@ class DetailedAdapter(
             }
         }
 
-//        if (installedState is DetailedViewState.InstalledState.Outdated || installedState is DetailedViewState.InstalledState.Installed) {
-//
-//
-//        } else {
-//
-//        }
-/*
-
-        when(theme.installedState) {
-            is DetailedViewState.InstalledState.Unknown -> holder.upToDate.text = "LOADING"
-            is DetailedViewState.InstalledState.Installed -> holder.upToDate.text = "INSTALLED"
-            is DetailedViewState.InstalledState.Outdated -> holder.upToDate.text = "OUTDATED"
-            is DetailedViewState.InstalledState.Removed -> holder.upToDate.text = "REMOVED"
-        }
-*/
-
-//        holder.upToDate.text = theme.overlayId
-
-//        log.debug(applicative<DetailedViewState.ThemePack>().toString())
-
         holder.type1aSpinner((theme.type1a?.data ?: listOf()).map { Type1ExtensionToString(it) }, theme.type1a?.position ?: 0)
         holder.type1aView.onPositionChange { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType1aSpinnerSelection(holder.adapterPosition, it)) }
 

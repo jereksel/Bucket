@@ -26,8 +26,6 @@ class DetailedPresenter @Inject constructor(
 
     override fun bindIntents() {
 
-        actionProcessor.appId = appId
-
         val s2 = intent(DetailedView::getActions)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())

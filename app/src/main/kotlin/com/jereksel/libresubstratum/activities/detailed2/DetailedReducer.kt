@@ -3,7 +3,6 @@ package com.jereksel.libresubstratum.activities.detailed2
 import arrow.optics.modify
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
-import com.jereksel.libresubstratum.utils.ListUtils.replace
 
 object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<DetailedViewState, List<DetailedAction>>> {
 
