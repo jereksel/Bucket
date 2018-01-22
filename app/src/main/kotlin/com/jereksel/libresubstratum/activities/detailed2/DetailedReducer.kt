@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import arrow.optics.modify
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
 import com.jereksel.libresubstratum.utils.ListUtils.replace
@@ -48,71 +49,46 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val state = when(t2) {
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
 
-                        val themes = oldThemes.replace(t2.listPosition, {
-                            val type1a = it.type1a
-                            if (type1a == null) {
-                                it
-                            } else {
-                                it.copy(type1a = type1a.copy(position = t2.position))
-                            }
+                        val optional = detailedViewStateThemePackOptional() +
+                                themePackThemes() +
+                                listElementOptional(t2.listPosition) +
+                                themeType1aOptional() +
+                                type1Position()
 
-                        })
-
-                        t1.copy(
-                                themePack = t1.themePack.copy(themes = themes)
-                        )
+                        optional.modify(t1, { t2.position })
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1bSpinnerSelection -> {
 
-                        val themes = oldThemes.replace(t2.listPosition, {
-                            val type1b = it.type1b
-                            if (type1b == null) {
-                                it
-                            } else {
-                                it.copy(type1b = type1b.copy(position = t2.position))
-                            }
+                        val optional = detailedViewStateThemePackOptional() +
+                                themePackThemes() +
+                                listElementOptional(t2.listPosition) +
+                                themeType1bOptional() +
+                                type1Position()
 
-                        })
-
-                        t1.copy(
-                                themePack = t1.themePack.copy(themes = themes)
-                        )
+                        optional.modify(t1, { t2.position })
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1cSpinnerSelection -> {
 
+                        val optional = detailedViewStateThemePackOptional() +
+                                themePackThemes() +
+                                listElementOptional(t2.listPosition) +
+                                themeType1cOptional() +
+                                type1Position()
 
-                        val themes = oldThemes.replace(t2.listPosition, {
-                            val type1c = it.type1c
-                            if (type1c == null) {
-                                it
-                            } else {
-                                it.copy(type1c = type1c.copy(position = t2.position))
-                            }
-
-                        })
-
-                        t1.copy(
-                                themePack = t1.themePack.copy(themes = themes)
-                        )
+                        optional.modify(t1, { t2.position })
 
                     }
                     is DetailedResult.ChangeSpinnerSelection.ChangeType2SpinnerSelection -> {
 
-                        val themes = oldThemes.replace(t2.listPosition, {
-                            val type2 = it.type2
-                            if (type2 == null) {
-                                it
-                            } else {
-                                it.copy(type2 = type2.copy(position = t2.position))
-                            }
+                        val optional = detailedViewStateThemePackOptional() +
+                                themePackThemes() +
+                                listElementOptional(t2.listPosition) +
+                                themeType2Optional() +
+                                type2Position()
 
-                        })
-
-                        t1.copy(
-                                themePack = t1.themePack.copy(themes = themes)
-                        )
+                        optional.modify(t1, { t2.position })
 
                     }
                 }
@@ -128,46 +104,49 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 val themePack = t1.themePack
 
-                val themes = themePack?.themes
+                val position = themePack?.themes?.indexOfFirst { it.appId == targetApp } ?: -1
 
-                val newThemes = themes?.replace({it.appId == targetApp}, {
-                    it.copy(
-                            installedState = installedState,
-                            enabledState = t2.enabledState,
-                            overlayId = t2.targetOverlayId
-                    )
-                })
+                //Technically we don't have to add if here, but it's for readability
+                if (position != -1) {
 
-                if (newThemes != null) {
-                    t1.copy(
-                            themePack = themePack.copy(
-                                    themes = newThemes
-                            )
-                    ) to emptyList()
+                    val option = detailedViewStateThemePackOptional() +
+                            themePackThemes() +
+                            listElementOptional(position)
+
+                    option.modify(t1, {
+                        it.copy(
+                                installedState = installedState,
+                                enabledState = t2.enabledState,
+                                overlayId = t2.targetOverlayId
+                        )
+                    })
+
                 } else {
-                    t1 to emptyList()
-                }
+                    t1
+                } to emptyList()
 
             }
             is DetailedResult.ChangeType3SpinnerSelection -> {
 
                 val position = t2.position
 
-                t1.copy(
-                        themePack = t1.themePack?.copy(
-                                type3 = t1.themePack.type3?.copy(
-                                        position = position
-                                )
-                        )
-                ) to (t1.themePack?.themes ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
+                val optional = detailedViewStateThemePackOptional() +
+                        themePackType3Optional() +
+                        type3Position()
+
+                optional.modify(t1, { position }) to
+                        (t1.themePack?.themes ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
 
             }
             is DetailedResult.ToggleCheckbox -> {
-                t1.copy(
-                        themePack = t1.themePack?.copy(
-                                themes = t1.themePack.themes.replace(t2.position) { it.copy(checked = t2.state) }
-                        )
-                ) to emptyList()
+
+                val optional = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(t2.position) +
+                        themeChecked()
+
+                optional.modify(t1, { t2.state }) to emptyList()
+
             }
             is DetailedResult.InstalledStateResult.PositionResult -> {
 
@@ -213,6 +192,25 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 )
 
                 return t1 to listOf(action)
+
+            }
+            is DetailedResult.CompilationStatusResult -> {
+
+                val appId = t2.appId
+                val themeLocation = t1.themePack?.themes?.indexOfFirst { it.appId == appId } ?: -1
+
+                val compilationState = when(t2) {
+                    is DetailedResult.CompilationStatusResult.StartCompilation -> DetailedViewState.CompilationState.COMPILING
+                    is DetailedResult.CompilationStatusResult.StartInstallation -> DetailedViewState.CompilationState.INSTALLING
+                    is DetailedResult.CompilationStatusResult.EndCompilation -> DetailedViewState.CompilationState.DEFAULT
+                }
+
+                val optional = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(themeLocation) +
+                        themeCompilationState()
+
+                optional.modify(t1, { compilationState }) to listOf()
 
             }
         }

@@ -12,14 +12,19 @@ import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
+import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.asSingle
+import kotlinx.coroutines.experimental.rx2.awaitFirst
+import kotlinx.coroutines.experimental.rx2.awaitSingle
+import kotlinx.coroutines.experimental.rx2.rxObservable
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.coroutines.experimental.buildSequence
 
 class DetailedActionProcessorHolder @Inject constructor(
         private val packageManager: IPackageManager,
@@ -72,40 +77,10 @@ class DetailedActionProcessorHolder @Inject constructor(
                     .toObservable()
                     .flatMap {
 
-//                        val type3 = it.type3?.data?.get(0)
-//
-//                        val actions = it.themes.map {
-//
-//                            val type1a = it.type1a?.data?.get(0)
-//                            val type1b = it.type1b?.data?.get(0)
-//                            val type1c = it.type1c?.data?.get(0)
-//                            val type2 = it.type2?.data?.get(0)
-//
-//                            DetailedAction.GetInfoAction(
-//                                    appId = appId,
-//                                    targetAppId = it.appId,
-//                                    type1a = type1a,
-//                                    type1b = type1b,
-//                                    type1c = type1c,
-//                                    type2 = type2,
-//                                    type3 = type3
-//                            )
-//
-//                        }
-
                         val getInfoBasicActions = it.themes.indices.map { DetailedResult.InstalledStateResult.PositionResult(it) }
-
-//                        val getInfoBasicActions = actions.mapIndexed { index, _ -> DetailedAction.GetInfoBasicAction(index) }
-
-//                        DetailedAction.GetInfoBasicAction()
 
                         Observable.just(it as DetailedResult)
                                 .mergeWith(Observable.fromIterable(getInfoBasicActions))
-
-//                        Observable.merge(
-//                            Observable.just(it),
-//                            getInfoProcessor.apply(Observable.fromIterable(actions))
-//                        )
 
                     }
         }
@@ -203,7 +178,7 @@ class DetailedActionProcessorHolder @Inject constructor(
     val longClickProcessor = ObservableTransformer<DetailedAction.LongClick, DetailedResult> { actions ->
         actions.flatMap { selection ->
 
-            async {
+            rxObservable {
 
                 val themeName = packageManager.getAppName(selection.appId)
 
@@ -229,26 +204,45 @@ class DetailedActionProcessorHolder @Inject constructor(
                             overlayService.enableExclusive(overlayId).await()
                         }
 
+                        send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+
                     }
 
+                } else {
+
+                    val themePack = getThemeInfoUseCase.getThemeInfo(selection.appId)
+
+                    send(DetailedResult.CompilationStatusResult.StartCompilation(selection.targetAppId))
+
+                    val compilation = compileThemeUseCase.execute(
+                            themePack = themePack,
+                            themeId = selection.appId,
+                            destAppId = selection.targetAppId,
+                            type1aName = selection.type1a?.name,
+                            type1bName = selection.type1b?.name,
+                            type1cName = selection.type1c?.name,
+                            type2Name = selection.type2?.name,
+                            type3Name = selection.type3?.name
+                    )
+
+                    val themeApk = compilation.observeOn(Schedulers.computation()).observeOn(Schedulers.computation()).awaitSingle()
+
+                    send(DetailedResult.CompilationStatusResult.StartInstallation(selection.targetAppId))
+
+                    overlayService.installApk(themeApk).await()
+
+                    overlayService.enableExclusive(overlayId).await()
+
+                    send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
+
+                    send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+
                 }
-//
-//                val getInfoAction = DetailedAction.GetInfoAction(
-//                        appId = selection.appId,
-//                        targetAppId = selection.targetAppId,
-//                        type1a = selection.type1a,
-//                        type1b = selection.type1b,
-//                        type1c = selection.type1c,
-//                        type2 = selection.type2,
-//                        type3 = selection.type3
-//                )
 
-//                getInfoAction
-
-                DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId)
-
-            }.asSingle(CommonPool)
-                    .toObservable()
+            }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+//                    .toObservable()
 //                    .flatMap { getInfoProcessor.apply(Observable.just(it)) }
         }
     }

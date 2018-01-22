@@ -64,6 +64,14 @@ sealed class DetailedResult {
         ): InstalledStateResult()
     }
 
+    sealed class CompilationStatusResult: DetailedResult() {
+        abstract val appId: String
+
+        class StartCompilation(override val appId: String): CompilationStatusResult()
+        class StartInstallation(override val appId: String): CompilationStatusResult()
+        class EndCompilation(override val appId: String): CompilationStatusResult()
+    }
+
 
     data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 

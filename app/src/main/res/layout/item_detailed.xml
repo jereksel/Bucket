@@ -140,6 +140,7 @@
             android:background="#c0FFFFFF">
 
             <TextView
+                android:id="@+id/overlay_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

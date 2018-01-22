@@ -10,11 +10,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import arrow.core.Option
-import arrow.core.ev
-import arrow.core.monad
-import arrow.typeclasses.applicative
-import arrow.typeclasses.binding
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.detailed2.DetailedViewState.Theme
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
@@ -26,8 +21,10 @@ import com.jereksel.libresubstratum.views.TypeView
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
 import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import org.jetbrains.anko.textColor
+import org.jetbrains.anko.toast
 
 class DetailedAdapter(
         var themes: List<Theme>,
@@ -60,6 +57,7 @@ class DetailedAdapter(
 
         val installedState = theme.installedState
         val enabledState = theme.enabledState
+        val compilationState = theme.compilationState
 
         holder.upToDate.textColor = Color.BLACK
         holder.upToDate.text = ""
@@ -80,6 +78,20 @@ class DetailedAdapter(
             is DetailedViewState.InstalledState.Installed -> {
                 holder.upToDate.text = "Up to date"
                 holder.upToDate.textColor = Color.GREEN
+            }
+        }
+
+        when(compilationState) {
+            DetailedViewState.CompilationState.DEFAULT -> {
+                holder.overlay.visibility = GONE
+            }
+            DetailedViewState.CompilationState.COMPILING -> {
+                holder.overlay.visibility = VISIBLE
+                holder.overlayText.text = "Compiling"
+            }
+            DetailedViewState.CompilationState.INSTALLING -> {
+                holder.overlay.visibility = VISIBLE
+                holder.overlayText.text = "Installing"
             }
         }
 
@@ -115,7 +127,7 @@ class DetailedAdapter(
         holder.type2Spinner((theme.type2?.data ?: listOf()).map { Type2ExtensionToString(it) }, theme.type2?.position ?: 0)
         holder.type2Spinner.selectListener { recyclerViewDetailedActions.onNext(DetailedAction.ChangeSpinnerSelection.ChangeType2SpinnerSelection(holder.adapterPosition, it)) }
 
-        holder.card.setOnClickListener {
+        holder.card.onClick {
             val isChecked = holder.checkbox.isChecked
             recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, !isChecked))
         }
@@ -124,8 +136,14 @@ class DetailedAdapter(
             recyclerViewDetailedActions.onNext(DetailedAction.LongClickLocationAction(holder.adapterPosition))
         }
 
+        holder.appIcon.onLongClick(returnValue = true) { view ->
+            if (!detailedPresenter.openInSplit(theme.appId)) {
+                view?.context?.toast("Application cannot be opened")
+            }
+        }
+
         holder.checkbox.onCheckedChange { _, isChecked ->
-            recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, !isChecked))
+            recyclerViewDetailedActions.onNext(DetailedAction.ToggleCheckbox(holder.adapterPosition, isChecked))
         }
 
     }
@@ -161,6 +179,7 @@ class DetailedAdapter(
         val type2Spinner: Spinner by bindView(R.id.spinner_2)
 
         val overlay: RelativeLayout by bindView(R.id.overlay)
+        val overlayText: TextView by bindView(R.id.overlay_text)
 
         fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
             if (list.isEmpty()) {

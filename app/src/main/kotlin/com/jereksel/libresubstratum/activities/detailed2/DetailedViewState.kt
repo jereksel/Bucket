@@ -1,19 +1,25 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import arrow.core.Option
+import arrow.lenses
 import com.jereksel.libresubstratumlib.Type1Extension
 import com.jereksel.libresubstratumlib.Type2Extension
 import com.jereksel.libresubstratumlib.Type3Extension
 
+@lenses
 data class DetailedViewState(
-        val themePack: ThemePack?
+        val themePack: ThemePack?,
+        val test: Option<String>
 ) {
 
+    @lenses
     data class ThemePack(
             val appId: String,
             val themes: List<Theme>,
             val type3: Type3?
     )
 
+    @lenses
     data class Theme(
             val appId: String,
             val name: String,
@@ -28,6 +34,7 @@ data class DetailedViewState(
             val checked: Boolean
     )
 
+    @lenses
     data class Type1(
             val data: List<Type1Extension>,
             val position: Int
@@ -35,6 +42,7 @@ data class DetailedViewState(
         fun get() = data[position]
     }
 
+    @lenses
     data class Type2(
             val data: List<Type2Extension>,
             val position: Int
@@ -42,6 +50,7 @@ data class DetailedViewState(
         fun get() = data[position]
     }
 
+    @lenses
     data class Type3(
             val data: List<Type3Extension>,
             val position: Int
@@ -50,7 +59,7 @@ data class DetailedViewState(
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null)
+        val INITIAL = DetailedViewState(null, Option.empty())
     }
 
     enum class CompilationState {
