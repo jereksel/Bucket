@@ -237,7 +237,7 @@ class DetailedActionProcessorHolder @Inject constructor(
                             },
                             fa = {error ->
                                 send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, error))
-                                delay(1000)
+//                                delay(1000)
                                 send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, null))
                             }
                     )
