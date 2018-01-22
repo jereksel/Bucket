@@ -1,5 +1,6 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import arrow.data.Try
 import com.google.common.annotations.VisibleForTesting
 import com.jereksel.libresubstratum.domain.ClipboardManager
 import com.jereksel.libresubstratum.domain.IActivityProxy
@@ -12,19 +13,16 @@ import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.asSingle
-import kotlinx.coroutines.experimental.rx2.awaitFirst
 import kotlinx.coroutines.experimental.rx2.awaitSingle
 import kotlinx.coroutines.experimental.rx2.rxObservable
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.coroutines.experimental.buildSequence
 
 class DetailedActionProcessorHolder @Inject constructor(
         private val packageManager: IPackageManager,
@@ -225,17 +223,26 @@ class DetailedActionProcessorHolder @Inject constructor(
                             type3Name = selection.type3?.name
                     )
 
-                    val themeApk = compilation.observeOn(Schedulers.computation()).observeOn(Schedulers.computation()).awaitSingle()
+                    val themeApk = Try.invoke { compilation.observeOn(Schedulers.computation()).observeOn(Schedulers.computation()).awaitSingle() }
 
-                    send(DetailedResult.CompilationStatusResult.StartInstallation(selection.targetAppId))
+                    themeApk.fold(
+                            fb = { compiledApk ->
+                                send(DetailedResult.CompilationStatusResult.StartInstallation(selection.targetAppId))
 
-                    overlayService.installApk(themeApk).await()
+                                overlayService.installApk(compiledApk).await()
 
-                    overlayService.enableExclusive(overlayId).await()
+                                overlayService.enableExclusive(overlayId).await()
 
-                    send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
+                                send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
 
-                    send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+                                send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+                            },
+                            fa = {error ->
+                                send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, error))
+                                delay(1000)
+                                send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, null))
+                            }
+                    )
 
                 }
 

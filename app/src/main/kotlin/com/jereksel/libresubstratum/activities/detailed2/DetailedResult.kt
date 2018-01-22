@@ -70,6 +70,7 @@ sealed class DetailedResult {
         class StartCompilation(override val appId: String): CompilationStatusResult()
         class StartInstallation(override val appId: String): CompilationStatusResult()
         class EndCompilation(override val appId: String): CompilationStatusResult()
+        class FailedCompilation(override val appId: String, val error: Throwable?): CompilationStatusResult()
     }
 
 

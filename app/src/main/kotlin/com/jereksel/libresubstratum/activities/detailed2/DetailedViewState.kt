@@ -9,6 +9,7 @@ import com.jereksel.libresubstratumlib.Type3Extension
 @lenses
 data class DetailedViewState(
         val themePack: ThemePack?,
+        val compilationError: Throwable?,
         val test: Option<String>
 ) {
 
@@ -59,7 +60,7 @@ data class DetailedViewState(
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null, Option.empty())
+        val INITIAL = DetailedViewState(null, null, Option.empty())
     }
 
     enum class CompilationState {

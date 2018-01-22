@@ -3,8 +3,13 @@ package com.jereksel.libresubstratum.activities.detailed2
 import activitystarter.ActivityStarter
 import activitystarter.Arg
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.LENGTH_LONG
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import com.hannesdorfmann.mosby3.mvi.MviActivity
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
@@ -15,6 +20,7 @@ import com.jereksel.libresubstratum.extensions.selectListener
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
+import org.jetbrains.anko.find
 import javax.inject.Inject
 
 class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), DetailedView {
@@ -65,6 +71,11 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             (recyclerView.adapter as DetailedAdapter).update(viewState.themePack.themes)
         }
 
+        if (viewState.compilationError != null) {
+            val error = listOf(viewState.compilationError.toString())
+            showError(error)
+        }
+
         val type3 = viewState.themePack?.type3
 
         if (type3 != null && type3.data.isNotEmpty()) {
@@ -82,6 +93,28 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
 
 //        log.debug(viewState.toString())
 //        textView.text = viewState.number.toString()
+    }
+
+    fun showError(errors: List<String>) {
+        Snackbar.make(root, "Error occured during compilation", LENGTH_LONG)
+                .setAction("Show error", {
+                    val view = LayoutInflater.from(it.context).inflate(R.layout.dialog_compilationerror, null)
+                    val textView = view.find<TextView>(R.id.errorTextView)
+                    val errorText = errors.joinToString(separator = "\n")
+                    textView.text = errorText
+
+                    val builder = AlertDialog.Builder(it.context)
+                    builder.setTitle("Error")
+                    builder.setView(view)
+
+//                    builder.setPositiveButton("Copy to clipboard", { _, _ ->
+//                        presenter.setClipboard(errorText)
+//                        toast("Copied to clipboard")
+//                    })
+
+                    builder.show()
+                }).show()
+
     }
 
 }

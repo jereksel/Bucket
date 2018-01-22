@@ -203,6 +203,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                     is DetailedResult.CompilationStatusResult.StartCompilation -> DetailedViewState.CompilationState.COMPILING
                     is DetailedResult.CompilationStatusResult.StartInstallation -> DetailedViewState.CompilationState.INSTALLING
                     is DetailedResult.CompilationStatusResult.EndCompilation -> DetailedViewState.CompilationState.DEFAULT
+                    is DetailedResult.CompilationStatusResult.FailedCompilation -> DetailedViewState.CompilationState.DEFAULT
                 }
 
                 val optional = detailedViewStateThemePackOptional() +
@@ -210,7 +211,15 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         listElementOptional(themeLocation) +
                         themeCompilationState()
 
-                optional.modify(t1, { compilationState }) to listOf()
+                val state2 = optional.modify(t1, { compilationState })
+
+                val state3 = if (t2 is DetailedResult.CompilationStatusResult.FailedCompilation) {
+                    state2.copy(compilationError = t2.error)
+                } else {
+                    state2
+                }
+
+                state3 to listOf()
 
             }
         }
