@@ -239,13 +239,10 @@ dependencies {
         implementation lib
     }
 
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutines_version}", {
-    }
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_version}", {
-    }
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${coroutines_version}", {
-    }
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-guava:${coroutines_version}", {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutines_version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${coroutines_version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:${coroutines_version}", {
         exclude group: "com.google.guava"
     }
 
@@ -264,12 +261,7 @@ dependencies {
 //    testCompile 'com.rubylichtenstein:rxtest:1.0.5'
 
     api  "io.arrow-kt:arrow-optics:$arrow_version"
-    kapt ("io.arrow-kt:arrow-annotations-processor:$arrow_version") {
-        exclude group: "me.eugeniomarletti"
-    }
-    compileOnly ('me.eugeniomarletti:kotlin-metadata:1.2.1') {
-//        force = true
-    }
+    kapt ("io.arrow-kt:arrow-annotations-processor:$arrow_version")
 
     //Dagger
     implementation dagger
