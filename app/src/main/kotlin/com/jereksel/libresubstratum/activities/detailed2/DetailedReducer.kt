@@ -1,5 +1,7 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import arrow.optics.PLens
+import arrow.optics.POptional
 import arrow.optics.modify
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
@@ -105,24 +107,17 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 val position = themePack?.themes?.indexOfFirst { it.appId == targetApp } ?: -1
 
-                //Technically we don't have to add if here, but it's for readability
-                if (position != -1) {
+                val option = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(position)
 
-                    val option = detailedViewStateThemePackOptional() +
-                            themePackThemes() +
-                            listElementOptional(position)
-
-                    option.modify(t1, {
-                        it.copy(
-                                installedState = installedState,
-                                enabledState = t2.enabledState,
-                                overlayId = t2.targetOverlayId
-                        )
-                    })
-
-                } else {
-                    t1
-                } to emptyList()
+                t1.modify(option, {
+                    it.copy(
+                            installedState = installedState,
+                            enabledState = t2.enabledState,
+                            overlayId = t2.targetOverlayId
+                    )
+                }) to emptyList()
 
             }
             is DetailedResult.ChangeType3SpinnerSelection -> {
@@ -198,30 +193,60 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val appId = t2.appId
                 val themeLocation = t1.themePack?.themes?.indexOfFirst { it.appId == appId } ?: -1
 
-                val compilationState = when(t2) {
-                    is DetailedResult.CompilationStatusResult.StartCompilation -> DetailedViewState.CompilationState.COMPILING
-                    is DetailedResult.CompilationStatusResult.StartInstallation -> DetailedViewState.CompilationState.INSTALLING
-                    is DetailedResult.CompilationStatusResult.EndCompilation -> DetailedViewState.CompilationState.DEFAULT
-                    is DetailedResult.CompilationStatusResult.FailedCompilation -> DetailedViewState.CompilationState.DEFAULT
-                }
-
-                val optional = detailedViewStateThemePackOptional() +
+                val compilationStateOptional = detailedViewStateThemePackOptional() +
                         themePackThemes() +
                         listElementOptional(themeLocation) +
                         themeCompilationState()
 
-                val state2 = optional.modify(t1, { compilationState })
+                val allCompilationsOptional = detailedViewStateNumberOfAllCompilations()
+                val finishedCompilationsOptional = detailedViewStateNumberOfFinishedCompilations()
 
-                val state3 = if (t2 is DetailedResult.CompilationStatusResult.FailedCompilation) {
-                    state2.copy(compilationError = t2.error)
-                } else {
-                    state2
-                }
+                when(t2) {
+                    is DetailedResult.CompilationStatusResult.StartCompilation -> {
+                        t1
+                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.COMPILING})
+                                .modify(allCompilationsOptional, {it + 1})
+                    }
+                    is DetailedResult.CompilationStatusResult.StartInstallation -> {
+                        t1
+                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.INSTALLING})
+                    }
+                    is DetailedResult.CompilationStatusResult.FailedCompilation -> {
+                        val t = t1
+                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})
+                                .modify(finishedCompilationsOptional, {it + 1})
+                                .copy(compilationError = t2.error)
 
-                state3 to listOf()
+                        if (t.numberOfAllCompilations == t.numberOfFinishedCompilations) {
+                            t.copy(numberOfAllCompilations = 0, numberOfFinishedCompilations = 0)
+                        } else {
+                            t
+                        }
+
+                    }
+                    is DetailedResult.CompilationStatusResult.EndCompilation -> {
+                        val t = t1
+                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})
+                                .modify(finishedCompilationsOptional, {it + 1})
+
+                        if (t.numberOfAllCompilations == t.numberOfFinishedCompilations) {
+                            t.copy(numberOfAllCompilations = 0, numberOfFinishedCompilations = 0)
+                        } else {
+                            t
+                        }
+
+                    }
+                    is DetailedResult.CompilationStatusResult.CleanError -> {
+                        t1.copy(compilationError = null)
+                    }
+
+                } to emptyList()
 
             }
         }
     }
+
+    private inline fun <S, T, A, B> S.modify(optional: POptional<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
+    private inline fun <S, T, A, B> S.modify(optional: PLens<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
 
 }

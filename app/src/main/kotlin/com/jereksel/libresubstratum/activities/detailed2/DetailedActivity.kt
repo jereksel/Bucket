@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
 import com.hannesdorfmann.mosby3.mvi.MviActivity
 import com.jereksel.libresubstratum.App
@@ -21,6 +23,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
+import java.util.zip.GZIPOutputStream
 import javax.inject.Inject
 
 class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), DetailedView {
@@ -73,16 +76,23 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         val type3 = viewState.themePack?.type3
 
         if (type3 != null && type3.data.isNotEmpty()) {
-            spinner.visibility = View.VISIBLE
+            spinner.visibility = VISIBLE
             spinner.list = type3.data.map { Type3ExtensionToString(it) }
             spinner.setSelection(type3.position)
             spinner.selectListener {
                 uiAction.onNext(DetailedAction.ChangeType3SpinnerSelection(it))
             }
         } else {
-            spinner.visibility = View.GONE
+            spinner.visibility = GONE
         }
 
+        if (viewState.numberOfAllCompilations != 0) {
+            progressBar.visibility = VISIBLE
+            progressBar.progress = viewState.numberOfFinishedCompilations
+            progressBar.max = viewState.numberOfAllCompilations
+        } else {
+            progressBar.visibility = GONE
+        }
 
 //        log.debug(viewState.toString())
 //        textView.text = viewState.number.toString()

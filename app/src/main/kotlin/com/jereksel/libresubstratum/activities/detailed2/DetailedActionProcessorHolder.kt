@@ -90,7 +90,7 @@ class DetailedActionProcessorHolder @Inject constructor(
 
             async {
 
-                val themeName = packageManager.getAppName(selection.appId)
+                val themeName = packageManager.getInstalledTheme(selection.appId).name
 
                 val overlayId = ThemeNameUtils.getTargetOverlayName(
                         appId = selection.targetAppId,
@@ -176,7 +176,7 @@ class DetailedActionProcessorHolder @Inject constructor(
 
             rxObservable {
 
-                val themeName = packageManager.getAppName(selection.appId)
+                val themeName = packageManager.getInstalledTheme(selection.appId).name
 
                 val overlayId = ThemeNameUtils.getTargetOverlayName(
                         appId = selection.targetAppId,
@@ -235,10 +235,10 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                                 send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
                             },
-                            fa = {error ->
+                            fa = { error ->
                                 send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, error))
 //                                delay(1000)
-                                send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, null))
+                                send(DetailedResult.CompilationStatusResult.CleanError(selection.targetAppId))
                             }
                     )
 

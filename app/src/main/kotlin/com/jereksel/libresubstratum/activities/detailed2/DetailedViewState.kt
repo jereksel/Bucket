@@ -10,6 +10,8 @@ import com.jereksel.libresubstratumlib.Type3Extension
 data class DetailedViewState(
         val themePack: ThemePack?,
         val compilationError: Throwable?,
+        val numberOfFinishedCompilations: Int,
+        val numberOfAllCompilations: Int,
         val test: Option<String>
 ) {
 
@@ -60,7 +62,7 @@ data class DetailedViewState(
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null, null, Option.empty())
+        val INITIAL = DetailedViewState(null, null, 0,0, Option.empty())
     }
 
     enum class CompilationState {

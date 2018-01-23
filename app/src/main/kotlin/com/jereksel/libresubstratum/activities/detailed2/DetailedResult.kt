@@ -71,6 +71,7 @@ sealed class DetailedResult {
         class StartInstallation(override val appId: String): CompilationStatusResult()
         class EndCompilation(override val appId: String): CompilationStatusResult()
         class FailedCompilation(override val appId: String, val error: Throwable?): CompilationStatusResult()
+        class CleanError(override val appId: String): CompilationStatusResult()
     }
 
 
