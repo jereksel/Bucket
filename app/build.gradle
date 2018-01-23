@@ -261,7 +261,7 @@ dependencies {
 //    testCompile 'com.rubylichtenstein:rxtest:1.0.5'
 
     api  "io.arrow-kt:arrow-optics:$arrow_version"
-    kapt ("io.arrow-kt:arrow-annotations-processor:$arrow_version")
+    kapt "io.arrow-kt:arrow-annotations-processor:$arrow_version"
 
     //Dagger
     implementation dagger
