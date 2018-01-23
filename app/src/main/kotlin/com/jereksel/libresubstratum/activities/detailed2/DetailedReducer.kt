@@ -175,14 +175,15 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 val theme = t1.themePack?.themes?.get(t2.position) ?: return t1 to emptyList()
 
-                val action = DetailedAction.LongClick(
+                val action = DetailedAction.CompilationAction(
                         appId = t1.themePack.appId,
                         targetAppId = theme.appId,
                         type1a = theme.type1a?.get(),
                         type1b = theme.type1b?.get(),
                         type1c = theme.type1c?.get(),
                         type2 = theme.type2?.get(),
-                        type3 = t1.themePack.type3?.get()
+                        type3 = t1.themePack.type3?.get(),
+                        compileMode = t2.compileMode
                 )
 
                 return t1 to listOf(action)
@@ -242,6 +243,19 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 } to emptyList()
 
+            }
+            is DetailedResult.CompileSelectedResult -> {
+
+                val themeOptions = detailedViewStateThemePackOptional() + themePackThemes()
+
+                t1.modify(themeOptions, {it.map { it.copy(checked = false) }}) to
+                        (t1.themePack?.themes ?: listOf()).mapIndexedNotNull { index: Int, theme: DetailedViewState.Theme ->
+                            if (theme.checked) {
+                                DetailedAction.CompilationLocationAction(index, t2.compileMode)
+                            } else {
+                                null
+                            }
+                        }
             }
         }
     }

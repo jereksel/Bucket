@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.activities.detailed2
 
 import arrow.data.Try
 import com.google.common.annotations.VisibleForTesting
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.jereksel.libresubstratum.domain.ClipboardManager
 import com.jereksel.libresubstratum.domain.IActivityProxy
 import com.jereksel.libresubstratum.domain.IPackageManager
@@ -15,12 +16,13 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.asSingle
 import kotlinx.coroutines.experimental.rx2.awaitSingle
 import kotlinx.coroutines.experimental.rx2.rxObservable
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -32,6 +34,9 @@ class DetailedActionProcessorHolder @Inject constructor(
         private val compileThemeUseCase: ICompileThemeUseCase,
         private val clipboardManager: ClipboardManager
 ) {
+
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("detailed-action-processor-holder-thread-%d").build()!!
+    val actionCoroutineDispatcher = Executors.newFixedThreadPool(10, threadFactory).asCoroutineDispatcher()
 
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
@@ -118,7 +123,7 @@ class DetailedActionProcessorHolder @Inject constructor(
                 }
 
             }
-                    .asSingle(CommonPool)
+                    .asSingle(actionCoroutineDispatcher)
                     .toObservable()
 
                     //It's so fast, this is not required
@@ -171,7 +176,7 @@ class DetailedActionProcessorHolder @Inject constructor(
     }
 
     @VisibleForTesting
-    val longClickProcessor = ObservableTransformer<DetailedAction.LongClick, DetailedResult> { actions ->
+    val compileProcessor = ObservableTransformer<DetailedAction.CompilationAction, DetailedResult> { actions ->
         actions.flatMap { selection ->
 
             rxObservable {
@@ -188,68 +193,75 @@ class DetailedActionProcessorHolder @Inject constructor(
                         type3 = selection.type3
                 )
 
+                val compilationMode = selection.compileMode
+
+                //TODO: Check if package is up to date
                 if (packageManager.isPackageInstalled(overlayId)) {
 
-                    val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
-
-                    if (overlayInfo != null) {
-
-                        if (overlayInfo.enabled) {
-                            overlayService.disableOverlay(overlayId).await()
-                        } else {
-                            overlayService.enableExclusive(overlayId).await()
-                        }
-
-                        send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
-
+                    if (compilationMode == DetailedAction.CompileMode.COMPILE) {
+                        return@rxObservable
                     }
 
-                } else {
+//                    if (compilationMode == DetailedAction.CompileMode.COMPILE_AND_ENABLE
+//                            || compilationMode == DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE) {
 
-                    val themePack = getThemeInfoUseCase.getThemeInfo(selection.appId)
+                    //Crash violently on such errors
+                    val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
+                            ?: throw Exception("OverlayInfo is null for $overlayId")
 
-                    send(DetailedResult.CompilationStatusResult.StartCompilation(selection.targetAppId))
+                    if (overlayInfo.enabled) {
+                        overlayService.disableOverlay(overlayId).await()
+                    } else {
+                        overlayService.enableExclusive(overlayId).await()
+                    }
 
-                    val compilation = compileThemeUseCase.execute(
-                            themePack = themePack,
-                            themeId = selection.appId,
-                            destAppId = selection.targetAppId,
-                            type1aName = selection.type1a?.name,
-                            type1bName = selection.type1b?.name,
-                            type1cName = selection.type1c?.name,
-                            type2Name = selection.type2?.name,
-                            type3Name = selection.type3?.name
-                    )
+                    send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
 
-                    val themeApk = Try.invoke { compilation.observeOn(Schedulers.computation()).observeOn(Schedulers.computation()).awaitSingle() }
-
-                    themeApk.fold(
-                            fb = { compiledApk ->
-                                send(DetailedResult.CompilationStatusResult.StartInstallation(selection.targetAppId))
-
-                                overlayService.installApk(compiledApk).await()
-
-                                overlayService.enableExclusive(overlayId).await()
-
-                                send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
-
-                                send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
-                            },
-                            fa = { error ->
-                                send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, error))
-//                                delay(1000)
-                                send(DetailedResult.CompilationStatusResult.CleanError(selection.targetAppId))
-                            }
-                    )
+                    return@rxObservable
 
                 }
 
+                val themePack = getThemeInfoUseCase.getThemeInfo(selection.appId)
+
+                send(DetailedResult.CompilationStatusResult.StartCompilation(selection.targetAppId))
+
+                val compilation = compileThemeUseCase.execute(
+                        themePack = themePack,
+                        themeId = selection.appId,
+                        destAppId = selection.targetAppId,
+                        type1aName = selection.type1a?.name,
+                        type1bName = selection.type1b?.name,
+                        type1cName = selection.type1c?.name,
+                        type2Name = selection.type2?.name,
+                        type3Name = selection.type3?.name
+                )
+
+                val themeApk = Try.invoke { compilation.observeOn(Schedulers.computation()).observeOn(Schedulers.computation()).awaitSingle() }
+
+                themeApk.fold(
+                        fb = { compiledApk ->
+                            send(DetailedResult.CompilationStatusResult.StartInstallation(selection.targetAppId))
+                            overlayService.installApk(compiledApk).await()
+                            if (compilationMode == DetailedAction.CompileMode.COMPILE_AND_ENABLE
+                                    || compilationMode == DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE) {
+                                overlayService.enableExclusive(overlayId).await()
+                            }
+                            send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
+                            send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+                        },
+                        fa = { error ->
+                            send(DetailedResult.CompilationStatusResult.FailedCompilation(selection.targetAppId, error))
+                            send(DetailedResult.CompilationStatusResult.CleanError(selection.targetAppId))
+                        }
+                )
+
             }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
+
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
 //                    .toObservable()
 //                    .flatMap { getInfoProcessor.apply(Observable.just(it)) }
-        }
     }
 
     @VisibleForTesting
@@ -260,9 +272,9 @@ class DetailedActionProcessorHolder @Inject constructor(
     }
 
     @VisibleForTesting
-    val basicLongClickProcessor = ObservableTransformer<DetailedAction.LongClickLocationAction, DetailedResult> { actions ->
+    val basicCompileTransformer = ObservableTransformer<DetailedAction.CompilationLocationAction, DetailedResult> { actions ->
         actions.map {
-            DetailedResult.LongClickBasicResult(it.position)
+            DetailedResult.LongClickBasicResult(it.position, it.compileMode)
         }
     }
 
@@ -275,9 +287,10 @@ class DetailedActionProcessorHolder @Inject constructor(
                             shared.ofType(DetailedAction.GetInfoAction::class.java).compose(getInfoProcessor),
                             shared.ofType(DetailedAction.ChangeType3SpinnerSelection::class.java).compose(type3SpinnerProcessor),
                             shared.ofType(DetailedAction.ToggleCheckbox::class.java).compose(checkboxToggleProcessor),
-                            shared.ofType(DetailedAction.LongClick::class.java).compose(longClickProcessor),
+                            shared.ofType(DetailedAction.CompilationAction::class.java).compose(compileProcessor),
                             shared.ofType(DetailedAction.GetInfoBasicAction::class.java).compose(basicGetInfoProcessor),
-                            shared.ofType(DetailedAction.LongClickLocationAction::class.java).compose(basicLongClickProcessor)
+                            shared.ofType(DetailedAction.CompilationLocationAction::class.java).compose(basicCompileTransformer),
+                            shared.ofType(DetailedAction.CompileSelectedAction::class.java).compose { it.map { DetailedResult.CompileSelectedResult(it.compileMode) } }
                     )
                 }
             }

@@ -43,8 +43,10 @@ class OreoOverlayService(
 ) : OverlayService {
 
     val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-overlay-service-thread-%d").build()!!
+    val installationThreadFactory = ThreadFactoryBuilder().setNameFormat("oreo-overlay-service-thread-installation-%d").build()!!
 
     val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))!!
+    val installionExecutor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor(installationThreadFactory))
 
     override fun enableOverlay(id: String): ListenableFuture<*> = executor.submit {
         Shell.SU.run("cmd overlay enable $id")
@@ -82,12 +84,12 @@ class OreoOverlayService(
         Shell.SU.run("pkill -f com.android.systemui")
     }
 
-    override fun installApk(apk: File): ListenableFuture<*> = executor.submit {
+    override fun installApk(apk: File): ListenableFuture<*> = installionExecutor.submit {
         Shell.SU.run("pm install ${apk.absolutePath}")
         update.set(true)
     }
 
-    override fun uninstallApk(appId: String): ListenableFuture<*> = executor.submit {
+    override fun uninstallApk(appId: String): ListenableFuture<*> = installionExecutor.submit {
         Shell.SU.run("pm uninstall $appId")
         update.set(true)
     }

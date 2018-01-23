@@ -77,6 +77,8 @@ sealed class DetailedResult {
 
     data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 
-    data class LongClickBasicResult(val position: Int) : DetailedResult()
+    data class LongClickBasicResult(val position: Int, val compileMode: DetailedAction.CompileMode) : DetailedResult()
+
+    data class CompileSelectedResult(val compileMode: DetailedAction.CompileMode): DetailedResult()
 
 }

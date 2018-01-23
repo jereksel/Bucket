@@ -50,6 +50,9 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             itemAnimator = null
             adapter = DetailedAdapter(listOf(), detailedPresenter)
         }
+
+        fab_compile_install.setOnClickListener { fab.close(true); uiAction.onNext(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE))  }
+        fab_compile_install_activate.setOnClickListener { fab.close(true); uiAction.onNext(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE_AND_ENABLE))  }
     }
 
     override fun createPresenter(): DetailedPresenter {
@@ -57,9 +60,10 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         return detailedPresenter
     }
 
-    override fun getActions(): Observable<DetailedAction> {
-        return (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions.mergeWith(uiAction)
-    }
+    override fun getActions() = Observable.merge(
+            (recyclerView.adapter as DetailedAdapter).recyclerViewDetailedActions,
+            uiAction
+    )
 
     override fun render(viewState: DetailedViewState) {
 //        toast(viewState.toString())

@@ -113,7 +113,7 @@ class DetailedAdapter(
         }
 
         holder.card.onLongClick(returnValue = true) {
-            recyclerViewDetailedActions.onNext(DetailedAction.LongClickLocationAction(holder.adapterPosition))
+            recyclerViewDetailedActions.onNext(DetailedAction.CompilationLocationAction(holder.adapterPosition, DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE))
         }
 
         holder.appIcon.onLongClick(returnValue = true) { view ->

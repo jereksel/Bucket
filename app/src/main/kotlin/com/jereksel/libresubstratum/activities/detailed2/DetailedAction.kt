@@ -28,20 +28,32 @@ sealed class DetailedAction {
         class ChangeType2SpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
     }
 
-    class LongClick(
+    enum class CompileMode {
+        //Long press
+        DISABLE_COMPILE_AND_ENABLE,
+        //Compile selected
+        COMPILE,
+        //Compile and enable selected
+        COMPILE_AND_ENABLE
+    }
+
+    class CompilationAction(
             val appId: String,
             val targetAppId: String,
             val type1a: Type1Extension?,
             val type1b: Type1Extension?,
             val type1c: Type1Extension?,
             val type2: Type2Extension?,
-            val type3: Type3Extension?
+            val type3: Type3Extension?,
+            val compileMode: CompileMode
     ): DetailedAction()
 
-    class LongClickLocationAction(val position: Int): DetailedAction()
+    class CompilationLocationAction(val position: Int, val compileMode: CompileMode): DetailedAction()
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
 
     class ToggleCheckbox(val position: Int, val state: Boolean): DetailedAction()
+
+    class CompileSelectedAction(val compileMode: CompileMode): DetailedAction()
 
 }
