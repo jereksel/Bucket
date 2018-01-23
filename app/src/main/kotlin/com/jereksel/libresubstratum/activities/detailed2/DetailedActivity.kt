@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar.LENGTH_LONG
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -23,7 +22,6 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
-import java.util.zip.GZIPOutputStream
 import javax.inject.Inject
 
 class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), DetailedView {

@@ -256,10 +256,10 @@ class DetailedActionProcessorHolder @Inject constructor(
                 )
 
             }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
 
         }
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
 //                    .toObservable()
 //                    .flatMap { getInfoProcessor.apply(Observable.just(it)) }
     }
