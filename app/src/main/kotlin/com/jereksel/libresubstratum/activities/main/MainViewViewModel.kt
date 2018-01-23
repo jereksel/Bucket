@@ -108,7 +108,7 @@ class MainViewViewModel @Inject constructor(
 
         compositeDisposable += Schedulers.io().scheduleDirect {
 
-            val themes = packageManager.getInstalledThemes().sortedBy { it.name }
+            val themes = packageManager.getInstalledThemes().sortedBy { it.name.toLowerCase() }
 
             val models = themes.map { MainViewModel(it.appId, it.name) }
 
