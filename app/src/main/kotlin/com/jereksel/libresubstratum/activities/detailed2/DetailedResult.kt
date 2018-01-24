@@ -67,11 +67,12 @@ sealed class DetailedResult {
     sealed class CompilationStatusResult: DetailedResult() {
         abstract val appId: String
 
+        class StartFlow(override val appId: String): CompilationStatusResult()
         class StartCompilation(override val appId: String): CompilationStatusResult()
         class StartInstallation(override val appId: String): CompilationStatusResult()
-        class EndCompilation(override val appId: String): CompilationStatusResult()
         class FailedCompilation(override val appId: String, val error: Throwable?): CompilationStatusResult()
         class CleanError(override val appId: String): CompilationStatusResult()
+        class EndFlow(override val appId: String): CompilationStatusResult()
     }
 
 

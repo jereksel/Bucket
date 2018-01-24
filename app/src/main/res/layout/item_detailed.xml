@@ -66,6 +66,15 @@
                     android:layout_below="@+id/appId"
                     android:layout_toEndOf="@+id/imageView" />
 
+                <ImageView
+                    android:id="@+id/error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/checkbox"
+                    android:src="@drawable/ic_error_red_24dp" />
+
                 <CheckBox
                     android:id="@+id/checkbox"
                     android:layout_width="wrap_content"

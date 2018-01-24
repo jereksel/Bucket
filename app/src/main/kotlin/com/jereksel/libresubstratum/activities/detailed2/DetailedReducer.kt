@@ -203,44 +203,37 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val finishedCompilationsOptional = detailedViewStateNumberOfFinishedCompilations()
 
                 when(t2) {
+                    is DetailedResult.CompilationStatusResult.StartFlow -> {
+                        t1
+                                .modify(allCompilationsOptional, {it + 1})
+                    }
                     is DetailedResult.CompilationStatusResult.StartCompilation -> {
                         t1
                                 .modify(compilationStateOptional, {DetailedViewState.CompilationState.COMPILING})
-                                .modify(allCompilationsOptional, {it + 1})
                     }
                     is DetailedResult.CompilationStatusResult.StartInstallation -> {
                         t1
                                 .modify(compilationStateOptional, {DetailedViewState.CompilationState.INSTALLING})
                     }
                     is DetailedResult.CompilationStatusResult.FailedCompilation -> {
-                        val t = t1
-                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})
-                                .modify(finishedCompilationsOptional, {it + 1})
+                        t1
                                 .copy(compilationError = t2.error)
-
-                        if (t.numberOfAllCompilations == t.numberOfFinishedCompilations) {
-                            t.copy(numberOfAllCompilations = 0, numberOfFinishedCompilations = 0)
-                        } else {
-                            t
-                        }
-
-                    }
-                    is DetailedResult.CompilationStatusResult.EndCompilation -> {
-                        val t = t1
-                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})
-                                .modify(finishedCompilationsOptional, {it + 1})
-
-                        if (t.numberOfAllCompilations == t.numberOfFinishedCompilations) {
-                            t.copy(numberOfAllCompilations = 0, numberOfFinishedCompilations = 0)
-                        } else {
-                            t
-                        }
-
                     }
                     is DetailedResult.CompilationStatusResult.CleanError -> {
                         t1.copy(compilationError = null)
                     }
 
+                    is DetailedResult.CompilationStatusResult.EndFlow -> {
+                        val t = t1
+                                .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})
+                                .modify(finishedCompilationsOptional, {it + 1})
+
+                        if (t.numberOfAllCompilations == t.numberOfFinishedCompilations) {
+                            t.copy(numberOfAllCompilations = 0, numberOfFinishedCompilations = 0)
+                        } else {
+                            t
+                        }
+                    }
                 } to emptyList()
 
             }

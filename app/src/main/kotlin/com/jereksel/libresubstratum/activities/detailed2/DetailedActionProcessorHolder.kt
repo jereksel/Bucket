@@ -246,7 +246,6 @@ class DetailedActionProcessorHolder @Inject constructor(
                                     || compilationMode == DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE) {
                                 overlayService.enableExclusive(overlayId).await()
                             }
-                            send(DetailedResult.CompilationStatusResult.EndCompilation(selection.targetAppId))
                             send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
                         },
                         fa = { error ->
@@ -256,6 +255,8 @@ class DetailedActionProcessorHolder @Inject constructor(
                 )
 
             }
+                    .startWith(DetailedResult.CompilationStatusResult.StartFlow(selection.targetAppId))
+                    .concatWith(Observable.just(DetailedResult.CompilationStatusResult.EndFlow(selection.targetAppId)))
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
 

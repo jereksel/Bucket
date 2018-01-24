@@ -166,7 +166,7 @@ android {
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
 
         //Arrow
-//        debug.java.srcDirs += 'build/generated/source/kaptKotlin/fdroidDebug'
+        debug.java.srcDirs += 'build/generated/source/kaptKotlin/fdroidDebug'
 //        release.java.srcDirs += 'build/generated/source/kaptKotlin/release'
     }
     dataBinding {
