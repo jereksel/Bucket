@@ -70,7 +70,7 @@ sealed class DetailedResult {
         class StartFlow(override val appId: String): CompilationStatusResult()
         class StartCompilation(override val appId: String): CompilationStatusResult()
         class StartInstallation(override val appId: String): CompilationStatusResult()
-        class FailedCompilation(override val appId: String, val error: Throwable?): CompilationStatusResult()
+        class FailedCompilation(override val appId: String, val error: Throwable): CompilationStatusResult()
         class CleanError(override val appId: String): CompilationStatusResult()
         class EndFlow(override val appId: String): CompilationStatusResult()
     }

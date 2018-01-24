@@ -31,6 +31,7 @@ data class DetailedViewState(
             val type1b: Type1?,
             val type1c: Type1?,
             val type2: Type2?,
+            val compilationError: Throwable?,
             val compilationState: CompilationState,
             val enabledState: EnabledState,
             val installedState: InstalledState,

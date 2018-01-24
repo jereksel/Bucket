@@ -31,6 +31,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                                             it.type1b?.let { DetailedViewState.Type1(it.data, 0) },
                                             it.type1c?.let { DetailedViewState.Type1(it.data, 0) },
                                             it.type2?.let { DetailedViewState.Type2(it.data, 0) },
+                                            null,
                                             DetailedViewState.CompilationState.DEFAULT,
                                             DetailedViewState.EnabledState.UNKNOWN,
                                             DetailedViewState.InstalledState.Unknown,
@@ -46,6 +47,11 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
             is DetailedResult.ChangeSpinnerSelection -> {
 
                 val oldThemes = t1.themePack!!.themes
+
+                val errorOptional = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(t2.listPosition) +
+                        themeCompilationError()
 
                 val state = when(t2) {
                     is DetailedResult.ChangeSpinnerSelection.ChangeType1aSpinnerSelection -> {
@@ -92,7 +98,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         optional.modify(t1, { t2.position })
 
                     }
-                }
+                }.modify(errorOptional, { null })
 
 
                 state to listOf(DetailedAction.GetInfoBasicAction(t2.listPosition))
@@ -128,7 +134,12 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         themePackType3Optional() +
                         type3Position()
 
-                optional.modify(t1, { position }) to
+                val errorOptional = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(position) +
+                        themeCompilationError()
+
+                t1.modify(errorOptional, { null }).modify(optional, { position }) to
                         (t1.themePack?.themes ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
 
             }
@@ -199,6 +210,11 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         listElementOptional(themeLocation) +
                         themeCompilationState()
 
+                val compilationErrorOptional = detailedViewStateThemePackOptional() +
+                        themePackThemes() +
+                        listElementOptional(themeLocation) +
+                        themeCompilationError()
+
                 val allCompilationsOptional = detailedViewStateNumberOfAllCompilations()
                 val finishedCompilationsOptional = detailedViewStateNumberOfFinishedCompilations()
 
@@ -217,12 +233,12 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                     }
                     is DetailedResult.CompilationStatusResult.FailedCompilation -> {
                         t1
-                                .copy(compilationError = t2.error)
+                                .modify(compilationErrorOptional, { t2.error })
                     }
                     is DetailedResult.CompilationStatusResult.CleanError -> {
-                        t1.copy(compilationError = null)
+                        t1
+                                .copy(compilationError = null)
                     }
-
                     is DetailedResult.CompilationStatusResult.EndFlow -> {
                         val t = t1
                                 .modify(compilationStateOptional, {DetailedViewState.CompilationState.DEFAULT})

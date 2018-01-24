@@ -64,6 +64,8 @@ class DetailedAdapter(
 
         holder.appName.textColor = Color.BLACK
 
+        holder.errorIcon.visibility = if(theme.compilationError == null) GONE else VISIBLE
+
         when(enabledState) {
             DetailedViewState.EnabledState.ENABLED -> holder.appName.textColor = Color.GREEN
             DetailedViewState.EnabledState.DISABLED -> holder.appName.textColor = Color.RED
@@ -160,6 +162,8 @@ class DetailedAdapter(
 
         val overlay: RelativeLayout by bindView(R.id.overlay)
         val overlayText: TextView by bindView(R.id.overlay_text)
+
+        val errorIcon: ImageView by bindView(R.id.error)
 
         fun type1aSpinner(list: List<Type1ExtensionToString>, position: Int) {
             if (list.isEmpty()) {
