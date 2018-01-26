@@ -279,6 +279,13 @@ class DetailedActionProcessorHolder @Inject constructor(
         }
     }
 
+    val restartUiTransformer = ObservableTransformer<DetailedAction.RestartUIAction, DetailedResult> { actions ->
+        actions.flatMap {
+            overlayService.restartSystemUI()
+            Observable.empty<DetailedResult>()
+        }
+    }
+
     internal val actionProcessor =
             ObservableTransformer<DetailedAction, DetailedResult> { actions ->
                 actions.publish { shared ->
@@ -291,7 +298,10 @@ class DetailedActionProcessorHolder @Inject constructor(
                             shared.ofType(DetailedAction.CompilationAction::class.java).compose(compileProcessor),
                             shared.ofType(DetailedAction.GetInfoBasicAction::class.java).compose(basicGetInfoProcessor),
                             shared.ofType(DetailedAction.CompilationLocationAction::class.java).compose(basicCompileTransformer),
-                            shared.ofType(DetailedAction.CompileSelectedAction::class.java).compose { it.map { DetailedResult.CompileSelectedResult(it.compileMode) } }
+                            shared.ofType(DetailedAction.RestartUIAction::class.java).compose(restartUiTransformer),
+                            shared.ofType(DetailedAction.CompileSelectedAction::class.java).compose { it.flatMap { Observable.fromArray(DetailedResult.CompileSelectedResult(it.compileMode), DetailedResult.DeselectAllResult()) } },
+                            shared.ofType(DetailedAction.SelectAllAction::class.java).compose { it.map { DetailedResult.SelectAllResult() } },
+                            shared.ofType(DetailedAction.DeselectAllAction::class.java).compose { it.map { DetailedResult.DeselectAllResult() } }
                     )
                 }
             }

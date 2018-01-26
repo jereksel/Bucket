@@ -48,6 +48,12 @@ sealed class DetailedAction {
             val compileMode: CompileMode
     ): DetailedAction()
 
+    class SelectAllAction(): DetailedAction()
+
+    class DeselectAllAction(): DetailedAction()
+
+    class RestartUIAction(): DetailedAction()
+
     class CompilationLocationAction(val position: Int, val compileMode: CompileMode): DetailedAction()
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedAction()

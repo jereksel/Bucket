@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar.LENGTH_LONG
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -98,6 +100,31 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
 
 //        log.debug(viewState.toString())
 //        textView.text = viewState.number.toString()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+            when (item.itemId) {
+                R.id.action_selectall -> {
+                    uiAction.onNext(DetailedAction.SelectAllAction())
+//                    presenter.selectAll()
+                    true
+                }
+                R.id.action_deselectall -> {
+                    uiAction.onNext(DetailedAction.DeselectAllAction())
+                    true
+                }
+                R.id.action_restartui -> {
+                    uiAction.onNext(DetailedAction.RestartUIAction())
+                    true
+                }
+                else ->
+                    super.onOptionsItemSelected(item)
+            }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.detailed, menu)
+        return true
     }
 
     fun showError(errors: List<String>) {

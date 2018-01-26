@@ -46,8 +46,6 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
             }
             is DetailedResult.ChangeSpinnerSelection -> {
 
-                val oldThemes = t1.themePack!!.themes
-
                 val errorOptional = detailedViewStateThemePackOptional() +
                         themePackThemes() +
                         listElementOptional(t2.listPosition) +
@@ -265,6 +263,14 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                                 null
                             }
                         }
+            }
+            is DetailedResult.SelectAllResult -> {
+                val themesOptional = detailedViewStateThemePackOptional() + themePackThemes()
+                themesOptional.modify(t1, {it.map { it.copy(checked = true) }}) to emptyList()
+            }
+            is DetailedResult.DeselectAllResult -> {
+                val themesOptional = detailedViewStateThemePackOptional() + themePackThemes()
+                themesOptional.modify(t1, {it.map { it.copy(checked = false) }}) to emptyList()
             }
         }
     }

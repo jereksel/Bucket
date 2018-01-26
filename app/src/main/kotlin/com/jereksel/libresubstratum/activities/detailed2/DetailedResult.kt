@@ -75,6 +75,9 @@ sealed class DetailedResult {
         class EndFlow(override val appId: String): CompilationStatusResult()
     }
 
+    class SelectAllResult(): DetailedResult()
+
+    class DeselectAllResult(): DetailedResult()
 
     data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 
