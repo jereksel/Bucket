@@ -206,7 +206,6 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                 val compilationMode = selection.compileMode
 
-                //TODO: Check if package is up to date
                 if (packageManager.isPackageInstalled(overlayId)) {
 
                     val (installedOverlay, _) = packageManager.getAppVersion(overlayId)
