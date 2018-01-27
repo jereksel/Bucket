@@ -14,6 +14,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
 import com.hannesdorfmann.mosby3.mvi.MviActivity
+import com.jakewharton.rxrelay2.PublishRelay
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.Type3ExtensionToString
@@ -34,7 +35,7 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     @Arg
     lateinit var appId : String
 
-    val uiAction = BehaviorSubject.create<DetailedAction>()
+    val uiAction = PublishRelay.create<DetailedAction>()
 
     val log = getLogger()
 
@@ -51,8 +52,8 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             adapter = DetailedAdapter(listOf(), detailedPresenter)
         }
 
-        fab_compile_install.setOnClickListener { fab.close(true); uiAction.onNext(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE))  }
-        fab_compile_install_activate.setOnClickListener { fab.close(true); uiAction.onNext(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE_AND_ENABLE))  }
+        fab_compile_install.setOnClickListener { fab.close(true); uiAction.accept(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE))  }
+        fab_compile_install_activate.setOnClickListener { fab.close(true); uiAction.accept(DetailedAction.CompileSelectedAction(DetailedAction.CompileMode.COMPILE_AND_ENABLE))  }
     }
 
     override fun createPresenter(): DetailedPresenter {
@@ -84,7 +85,7 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             spinner.list = type3.data.map { Type3ExtensionToString(it) }
             spinner.setSelection(type3.position)
             spinner.selectListener {
-                uiAction.onNext(DetailedAction.ChangeType3SpinnerSelection(it))
+                uiAction.accept(DetailedAction.ChangeType3SpinnerSelection(it))
             }
         } else {
             spinner.visibility = GONE
@@ -105,16 +106,16 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
     override fun onOptionsItemSelected(item: MenuItem) =
             when (item.itemId) {
                 R.id.action_selectall -> {
-                    uiAction.onNext(DetailedAction.SelectAllAction())
+                    uiAction.accept(DetailedAction.SelectAllAction())
 //                    presenter.selectAll()
                     true
                 }
                 R.id.action_deselectall -> {
-                    uiAction.onNext(DetailedAction.DeselectAllAction())
+                    uiAction.accept(DetailedAction.DeselectAllAction())
                     true
                 }
                 R.id.action_restartui -> {
-                    uiAction.onNext(DetailedAction.RestartUIAction())
+                    uiAction.accept(DetailedAction.RestartUIAction())
                     true
                 }
                 else ->
