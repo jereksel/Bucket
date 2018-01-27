@@ -39,10 +39,10 @@ sealed class DetailedResult {
         abstract val listPosition: Int
         abstract val position: Int
 
-        class ChangeType1aSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
-        class ChangeType1bSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
-        class ChangeType1cSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
-        class ChangeType2SpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1aSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1bSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1cSpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
+        data class ChangeType2SpinnerSelection(override val listPosition: Int, override val position: Int): ChangeSpinnerSelection()
     }
 
     class ChangeType3SpinnerSelection(val position: Int): DetailedResult()
@@ -68,17 +68,17 @@ sealed class DetailedResult {
     sealed class CompilationStatusResult: DetailedResult() {
         abstract val appId: String
 
-        class StartFlow(override val appId: String): CompilationStatusResult()
-        class StartCompilation(override val appId: String): CompilationStatusResult()
-        class StartInstallation(override val appId: String): CompilationStatusResult()
-        class FailedCompilation(override val appId: String, val error: Throwable): CompilationStatusResult()
-        class CleanError(override val appId: String): CompilationStatusResult()
-        class EndFlow(override val appId: String): CompilationStatusResult()
+        data class StartFlow(override val appId: String): CompilationStatusResult()
+        data class StartCompilation(override val appId: String): CompilationStatusResult()
+        data class StartInstallation(override val appId: String): CompilationStatusResult()
+        data class FailedCompilation(override val appId: String, val error: Throwable): CompilationStatusResult()
+        data class CleanError(override val appId: String): CompilationStatusResult()
+        data class EndFlow(override val appId: String): CompilationStatusResult()
     }
 
-    class SelectAllResult(): DetailedResult()
+    class SelectAllResult: DetailedResult()
 
-    class DeselectAllResult(): DetailedResult()
+    class DeselectAllResult: DetailedResult()
 
     data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedResult()
 

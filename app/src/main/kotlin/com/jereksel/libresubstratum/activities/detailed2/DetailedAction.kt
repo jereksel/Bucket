@@ -5,9 +5,9 @@ import com.jereksel.libresubstratumlib.Type2Extension
 import com.jereksel.libresubstratumlib.Type3Extension
 
 sealed class DetailedAction {
-    class InitialAction(val appId: String) : DetailedAction()
+    data class InitialAction(val appId: String) : DetailedAction()
 
-    class GetInfoAction(
+    data class GetInfoAction(
             val appId: String,
             val targetAppId: String,
             val type1a: Type1Extension?,
@@ -17,15 +17,15 @@ sealed class DetailedAction {
             val type3: Type3Extension?
     ): DetailedAction()
 
-    class GetInfoBasicAction(
+    data class GetInfoBasicAction(
             val position: Int
     ): DetailedAction()
 
     sealed class ChangeSpinnerSelection: DetailedAction() {
-        class ChangeType1aSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType1bSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType1cSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
-        class ChangeType2SpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1aSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1bSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
+        data class ChangeType1cSpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
+        data class ChangeType2SpinnerSelection(val rvPosition: Int, val position: Int): ChangeSpinnerSelection()
     }
 
     enum class CompileMode {
@@ -37,7 +37,7 @@ sealed class DetailedAction {
         COMPILE_AND_ENABLE
     }
 
-    class CompilationAction(
+    data class CompilationAction(
             val appId: String,
             val targetAppId: String,
             val type1a: Type1Extension?,
@@ -48,18 +48,18 @@ sealed class DetailedAction {
             val compileMode: CompileMode
     ): DetailedAction()
 
-    class SelectAllAction(): DetailedAction()
+    class SelectAllAction : DetailedAction()
 
-    class DeselectAllAction(): DetailedAction()
+    class DeselectAllAction : DetailedAction()
 
-    class RestartUIAction(): DetailedAction()
+    class RestartUIAction : DetailedAction()
 
-    class CompilationLocationAction(val position: Int, val compileMode: CompileMode): DetailedAction()
+    data class CompilationLocationAction(val position: Int, val compileMode: CompileMode): DetailedAction()
 
-    class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
+    data class ChangeType3SpinnerSelection(val position: Int): DetailedAction()
 
-    class ToggleCheckbox(val position: Int, val state: Boolean): DetailedAction()
+    data class ToggleCheckbox(val position: Int, val state: Boolean): DetailedAction()
 
-    class CompileSelectedAction(val compileMode: CompileMode): DetailedAction()
+    data class CompileSelectedAction(val compileMode: CompileMode): DetailedAction()
 
 }

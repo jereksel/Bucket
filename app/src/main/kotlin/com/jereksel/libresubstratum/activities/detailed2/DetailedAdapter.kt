@@ -18,6 +18,7 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratum.extensions.selectListener
 import com.jereksel.libresubstratum.views.TypeView
+import eu.chainfire.libsuperuser.Application.toast
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
 import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
@@ -65,6 +66,10 @@ class DetailedAdapter(
         holder.appName.textColor = Color.BLACK
 
         holder.errorIcon.visibility = if(theme.compilationError == null) GONE else VISIBLE
+
+        holder.errorIcon.onClick {
+            holder.type1aView.context.toast(theme.compilationError?.localizedMessage.toString())
+        }
 
         when(enabledState) {
             DetailedViewState.EnabledState.ENABLED -> holder.appName.textColor = Color.GREEN

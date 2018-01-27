@@ -25,6 +25,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), DetailedView {
@@ -144,10 +145,10 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
                     builder.setTitle("Error")
                     builder.setView(view)
 
-//                    builder.setPositiveButton("Copy to clipboard", { _, _ ->
-//                        presenter.setClipboard(errorText)
-//                        toast("Copied to clipboard")
-//                    })
+                    builder.setPositiveButton("Copy to clipboard", { _, _ ->
+                        detailedPresenter.setClipboard(errorText)
+                        toast("Copied to clipboard")
+                    })
 
                     builder.show()
                 }).show()
