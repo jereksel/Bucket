@@ -74,7 +74,7 @@ class DetailedAdapter(
 
         when(installedState) {
             is DetailedViewState.InstalledState.Outdated -> {
-                holder.upToDate.text = "OUTDATED"
+                holder.upToDate.text = "${installedState.installedVersionName} (${installedState.installedVersionCode}) -> ${installedState.newestVersionName} (${installedState.newestVersionCode})"
                 holder.upToDate.textColor = Color.RED
             }
             is DetailedViewState.InstalledState.Installed -> {

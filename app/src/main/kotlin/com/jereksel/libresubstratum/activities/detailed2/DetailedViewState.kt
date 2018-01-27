@@ -18,6 +18,7 @@ data class DetailedViewState(
     @lenses
     data class ThemePack(
             val appId: String,
+            val themeName: String,
             val themes: List<Theme>,
             val type3: Type3?
     )
@@ -81,8 +82,8 @@ data class DetailedViewState(
         ): InstalledState()
 
         data class Outdated(
-                val currentVersionName: String,
-                val currentVersionCode: Int,
+                val installedVersionName: String,
+                val installedVersionCode: Int,
                 val newestVersionName: String,
                 val newestVersionCode: Int
         ): InstalledState()

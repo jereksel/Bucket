@@ -85,7 +85,7 @@ class OreoOverlayService(
     }
 
     override fun installApk(apk: File): ListenableFuture<*> = installionExecutor.submit {
-        Shell.SU.run("pm install ${apk.absolutePath}")
+        Shell.SU.run("pm install -r ${apk.absolutePath}")
         update.set(true)
     }
 

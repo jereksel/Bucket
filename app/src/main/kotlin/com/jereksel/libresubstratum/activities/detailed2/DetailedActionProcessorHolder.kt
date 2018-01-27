@@ -52,9 +52,11 @@ class DetailedActionProcessorHolder @Inject constructor(
                         //Remove apps that are not installed
                         val installedApps = it.themes.filter { packageManager.isPackageInstalled(it.application) }
                         val themePack = ThemePack(installedApps, it.type3)
+                        val themeName = packageManager.getInstalledTheme(appId).name
 
                         DetailedResult.ListLoaded(
                                 themeAppId = appId,
+                                themeName = themeName,
                                 themes = themePack.themes.map {
                                     DetailedResult.ListLoaded.Theme(
                                             appId = it.application,
@@ -117,7 +119,16 @@ class DetailedActionProcessorHolder @Inject constructor(
                     } else {
                         DetailedViewState.EnabledState.DISABLED
                     }
-                    DetailedResult.InstalledStateResult.Result(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Installed(versionName, versionCode), enabledState)
+
+                    val (themeVersionCode, themeVersionName) = packageManager.getAppVersion(selection.appId)
+
+                    val installedState = if (versionCode != themeVersionCode)  {
+                        DetailedViewState.InstalledState.Outdated(themeVersionName, themeVersionCode, versionName, versionCode)
+                    } else {
+                        DetailedViewState.InstalledState.Installed(versionName, versionCode)
+                    }
+
+                    DetailedResult.InstalledStateResult.Result(selection.targetAppId, overlayId, installedState, enabledState)
                 } else {
                     DetailedResult.InstalledStateResult.Result(selection.targetAppId, overlayId, DetailedViewState.InstalledState.Removed, DetailedViewState.EnabledState.UNKNOWN)
                 }
@@ -198,27 +209,33 @@ class DetailedActionProcessorHolder @Inject constructor(
                 //TODO: Check if package is up to date
                 if (packageManager.isPackageInstalled(overlayId)) {
 
-                    if (compilationMode == DetailedAction.CompileMode.COMPILE) {
-                        return@rxObservable
-                    }
+                    val (installedOverlay, _) = packageManager.getAppVersion(overlayId)
+                    val (installedTheme, _) = packageManager.getAppVersion(selection.appId)
+
+                    if (installedOverlay == installedTheme) {
+
+                        if (compilationMode == DetailedAction.CompileMode.COMPILE) {
+                            return@rxObservable
+                        }
 
 //                    if (compilationMode == DetailedAction.CompileMode.COMPILE_AND_ENABLE
 //                            || compilationMode == DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE) {
 
-                    //Crash violently on such errors
-                    val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
-                            ?: throw Exception("OverlayInfo is null for $overlayId")
+                        //Crash violently on such errors
+                        val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
+                                ?: throw Exception("OverlayInfo is null for $overlayId")
 
-                    if (overlayInfo.enabled) {
-                        overlayService.disableOverlay(overlayId).await()
-                    } else {
-                        overlayService.enableExclusive(overlayId).await()
+                        if (overlayInfo.enabled) {
+                            overlayService.disableOverlay(overlayId).await()
+                        } else {
+                            overlayService.enableExclusive(overlayId).await()
+                        }
+
+                        send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
+
+                        return@rxObservable
+
                     }
-
-                    send(DetailedResult.InstalledStateResult.AppIdResult(selection.targetAppId))
-
-                    return@rxObservable
-
                 }
 
                 val themePack = getThemeInfoUseCase.getThemeInfo(selection.appId)

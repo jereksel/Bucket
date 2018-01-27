@@ -73,6 +73,10 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             (recyclerView.adapter as DetailedAdapter).update(viewState.themePack.themes)
         }
 
+        if (viewState.themePack?.themeName != null) {
+            title = viewState.themePack.themeName
+        }
+
         if (viewState.compilationError != null) {
             val error = listOf(viewState.compilationError.toString())
             showError(error)

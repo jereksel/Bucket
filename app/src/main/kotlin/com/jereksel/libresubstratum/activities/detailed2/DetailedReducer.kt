@@ -21,6 +21,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 //                        themeAppId = t2.themeAppId,
                         themePack = DetailedViewState.ThemePack(
                                 appId = t2.themeAppId,
+                                themeName = t2.themeName,
                                 themes = t2.themes.map {
 
                                     DetailedViewState.Theme(

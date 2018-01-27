@@ -6,6 +6,7 @@ import com.jereksel.libresubstratumlib.Type3Extension
 
 sealed class DetailedResult {
     data class ListLoaded(
+            val themeName: String,
             val themeAppId: String,
             val themes: List<Theme>,
             val type3: Type3?
