@@ -86,6 +86,7 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         val type3 = viewState.themePack?.type3
 
         if (type3 != null && type3.data.isNotEmpty()) {
+            spinner.onItemSelectedListener = null
             spinner.visibility = VISIBLE
             spinner.list = type3.data.map { Type3ExtensionToString(it) }
             spinner.setSelection(type3.position)

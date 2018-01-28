@@ -1,8 +1,10 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
-import arrow.optics.PLens
-import arrow.optics.POptional
-import arrow.optics.modify
+import arrow.data.ListKWKind
+import arrow.data.Try
+import arrow.data.applicative
+import arrow.data.k
+import arrow.optics.*
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
 
@@ -133,13 +135,30 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                         themePackType3Optional() +
                         type3Position()
 
-                val errorOptional = detailedViewStateThemePackOptional() +
-                        themePackThemes() +
-                        listElementOptional(position) +
-                        themeCompilationError()
+                if (optional.getOption(t1).orNull() == position) {
+                    //Another spinner f**kup
+                    t1 to emptyList()
+                } else {
 
-                t1.modify(errorOptional, { null }).modify(optional, { position }) to
-                        (t1.themePack?.themes ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
+
+                    val listTraversal: Traversal<ListKWKind<Int>, Int> = Traversal.fromTraversable()
+
+                    listTraversal.modifyF(Try.applicative(), listOf(1, 2, 3).k()) {
+                        Try { it / 2 }
+                    }
+
+                    val errorsOptional = detailedViewStateThemePackOptional() +
+                            themePackThemes()
+
+                    val a = t1
+                            .modify(errorsOptional, { it.map { it.copy(compilationError = null) } })
+                            .modify(optional, { position })
+
+                    val b = (t1.themePack?.themes
+                            ?: listOf()).indices.map { DetailedAction.GetInfoBasicAction(it) }
+
+                    a to b
+                }
 
             }
             is DetailedResult.ToggleCheckbox -> {
@@ -278,5 +297,6 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
     private inline fun <S, T, A, B> S.modify(optional: POptional<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
     private inline fun <S, T, A, B> S.modify(optional: PLens<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
+    private inline fun <S, T, A, B> S.modify(optional: PTraversal<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
 
 }

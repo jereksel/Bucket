@@ -44,7 +44,6 @@ class DetailedPresenter @Inject constructor(
                     result.second.forEach { s3.onNext(it) }
                     result.first
                 })
-//                .sample(1, TimeUnit.SECONDS)
                 .distinctUntilChanged()
                 .doOnNext { log.debug("New state") }
                 .observeOn(AndroidSchedulers.mainThread())

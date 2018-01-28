@@ -1,6 +1,10 @@
 package com.jereksel.libresubstratum.activities.detailed2
 
+import android.content.Context
 import android.graphics.Color
+import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.LENGTH_LONG
+import android.support.v7.app.AlertDialog
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -21,6 +25,7 @@ import com.jereksel.libresubstratum.views.TypeView
 import eu.chainfire.libsuperuser.Application.toast
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
+import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.sdk25.coroutines.onLongClick
@@ -65,10 +70,13 @@ class DetailedAdapter(
 
         holder.appName.textColor = Color.BLACK
 
-        holder.errorIcon.visibility = if(theme.compilationError == null) GONE else VISIBLE
-
-        holder.errorIcon.onClick {
-            holder.type1aView.context.toast(theme.compilationError?.localizedMessage.toString())
+        if (theme.compilationError != null) {
+            holder.errorIcon.visibility = VISIBLE
+            holder.errorIcon.onClick {
+                showError(holder.itemView.context, theme.compilationError)
+            }
+        } else {
+            holder.errorIcon.visibility = GONE
         }
 
         when(enabledState) {
@@ -226,6 +234,25 @@ class DetailedAdapter(
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 oldList[oldItemPosition] == newList[newItemPosition]
+    }
+
+    fun showError(context: Context, error: Throwable) {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_compilationerror, null)
+        val textView = view.find<TextView>(R.id.errorTextView)
+        val message = error.message ?: ""
+        textView.text = message
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Error")
+        builder.setView(view)
+
+        builder.setPositiveButton("Copy to clipboard", { _, _ ->
+            detailedPresenter.setClipboard(message)
+            context.toast("Copied to clipboard")
+        })
+
+        builder.show()
+
     }
 
 }

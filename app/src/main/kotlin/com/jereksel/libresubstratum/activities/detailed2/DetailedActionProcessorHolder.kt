@@ -217,9 +217,6 @@ class DetailedActionProcessorHolder @Inject constructor(
                             return@rxObservable
                         }
 
-//                    if (compilationMode == DetailedAction.CompileMode.COMPILE_AND_ENABLE
-//                            || compilationMode == DetailedAction.CompileMode.DISABLE_COMPILE_AND_ENABLE) {
-
                         //Crash violently on such errors
                         val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
                                 ?: throw Exception("OverlayInfo is null for $overlayId")
