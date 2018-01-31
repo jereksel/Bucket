@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
+import arrow.syntax.option.toOption
 import com.hannesdorfmann.mosby3.mvi.MviActivity
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jereksel.libresubstratum.App
@@ -81,6 +82,10 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
         if (viewState.compilationError != null) {
             val error = listOf(viewState.compilationError.toString())
             showError(error)
+        }
+
+        viewState.toast.invoke().toOption().map {
+            toast(it)
         }
 
         val type3 = viewState.themePack?.type3

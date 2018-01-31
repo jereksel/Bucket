@@ -252,6 +252,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                     is DetailedResult.CompilationStatusResult.FailedCompilation -> {
                         t1
                                 .modify(compilationErrorOptional, { t2.error })
+                                .copy(toast = oneTimeFunction("Compilation failed for ${t2.appId}"))
                     }
                     is DetailedResult.CompilationStatusResult.CleanError -> {
                         t1
@@ -298,5 +299,20 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
     private inline fun <S, T, A, B> S.modify(optional: POptional<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
     private inline fun <S, T, A, B> S.modify(optional: PLens<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
     private inline fun <S, T, A, B> S.modify(optional: PTraversal<S, T, A, B>, crossinline f: (A) -> B) = optional.modify(this, f)
+
+    fun <T> oneTimeFunction(a: T): () -> T? {
+
+        var invoked = false
+
+        return {
+           if (invoked) {
+               null
+           } else {
+               invoked = true
+               a
+           }
+        }
+
+    }
 
 }

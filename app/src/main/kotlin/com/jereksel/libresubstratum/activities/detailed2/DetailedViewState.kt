@@ -12,6 +12,7 @@ data class DetailedViewState(
         val compilationError: Throwable?,
         val numberOfFinishedCompilations: Int,
         val numberOfAllCompilations: Int,
+        val toast: () -> String?,
         val test: Option<String>
 ) {
 
@@ -64,7 +65,7 @@ data class DetailedViewState(
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null, null, 0,0, Option.empty())
+        val INITIAL = DetailedViewState(null, null, 0,0, {null}, Option.empty())
     }
 
     enum class CompilationState {
