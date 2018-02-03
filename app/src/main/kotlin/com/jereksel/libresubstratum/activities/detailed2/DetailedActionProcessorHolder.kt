@@ -15,7 +15,6 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.await
@@ -123,7 +122,7 @@ class DetailedActionProcessorHolder @Inject constructor(
                     val (themeVersionCode, themeVersionName) = packageManager.getAppVersion(selection.appId)
 
                     val installedState = if (versionCode != themeVersionCode)  {
-                        DetailedViewState.InstalledState.Outdated(themeVersionName, themeVersionCode, versionName, versionCode)
+                        DetailedViewState.InstalledState.Outdated(versionName, versionCode, themeVersionName, themeVersionCode)
                     } else {
                         DetailedViewState.InstalledState.Installed(versionName, versionCode)
                     }

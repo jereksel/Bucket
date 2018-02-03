@@ -17,8 +17,27 @@
 
 package com.jereksel.libresubstratum.activities.detailed2
 
+import com.jereksel.libresubstratum.activities.detailed2.DetailedReducer.oneTimeFunction
+import io.kotlintest.properties.Gen
+import io.kotlintest.specs.StringSpec
 import org.junit.Assert.*
 
-class DetailedReducerTest {
+class DetailedReducerTest: StringSpec() {
+
+    init {
+
+        "oneTimeFunction test" {
+
+            forAll(Gen.string()) { s ->
+                val f = oneTimeFunction(s)
+                f() shouldBe s
+                f() shouldBe null
+                true
+            }
+
+        }
+
+
+    }
 
 }

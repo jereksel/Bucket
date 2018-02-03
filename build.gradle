@@ -9,7 +9,7 @@ buildscript {
         aa_version = "4.3.1"
         dagger_version = "2.10"
         room_version = "1.0.0"
-        arrow_version = "0.6.0"
+        arrow_version = "0.6.1"
         assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
         slf4j_version = "1.7.25"

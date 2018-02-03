@@ -2,6 +2,7 @@ package com.jereksel.libresubstratum.presenters
 
 import android.arch.core.executor.ArchTaskExecutor
 import android.arch.core.executor.TaskExecutor
+import io.kotlintest.TestBase
 import io.kotlintest.specs.FunSpec
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
@@ -9,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 object PresenterTestUtils {
 
-    fun FunSpec.initRxJava() {
+    fun TestBase.initRxJava() {
 
         RxJavaPlugins.reset()
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
@@ -19,7 +20,7 @@ object PresenterTestUtils {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
 
-    fun FunSpec.initLiveData() {
+    fun TestBase.initLiveData() {
         //Copied from LiveData rule
         ArchTaskExecutor.getInstance().setDelegate(object : TaskExecutor() {
             override fun executeOnDiskIO(runnable: Runnable) {

@@ -72,3 +72,6 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+#Warning: arrow.GlobalInstances: can't find referenced method 'java.util.concurrent.ConcurrentHashMap$KeySetView keySet()' in library class java.util.concurrent.ConcurrentHashMap
+-dontwarn arrow.GlobalInstances
