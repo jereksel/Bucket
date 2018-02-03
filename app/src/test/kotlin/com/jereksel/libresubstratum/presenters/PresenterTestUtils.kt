@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 object PresenterTestUtils {
 
-    fun TestBase.initRxJava() {
+    fun initRxJava() {
 
         RxJavaPlugins.reset()
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
@@ -20,7 +20,7 @@ object PresenterTestUtils {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
 
-    fun TestBase.initLiveData() {
+    fun initLiveData() {
         //Copied from LiveData rule
         ArchTaskExecutor.getInstance().setDelegate(object : TaskExecutor() {
             override fun executeOnDiskIO(runnable: Runnable) {
