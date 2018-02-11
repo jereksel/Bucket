@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
-apply from: rootProject.file('gradle/generated-kotlin-sources.gradle')
+//apply from: rootProject.file('gradle/generated-kotlin-sources.gradle')
 
 apply plugin: 'jacoco'
 apply plugin: 'com.getkeepsafe.dexcount'

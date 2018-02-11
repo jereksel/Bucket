@@ -2,11 +2,13 @@ package com.jereksel.libresubstratum.activities.detailed2
 
 import arrow.core.Option
 import arrow.lenses
+import arrow.optionals
 import com.jereksel.libresubstratumlib.Type1Extension
 import com.jereksel.libresubstratumlib.Type2Extension
 import com.jereksel.libresubstratumlib.Type3Extension
 
 @lenses
+@optionals
 data class DetailedViewState(
         val themePack: ThemePack?,
         val compilationError: Throwable?,
@@ -17,6 +19,7 @@ data class DetailedViewState(
 ) {
 
     @lenses
+    @optionals
     data class ThemePack(
             val appId: String,
             val themeName: String,
@@ -25,6 +28,7 @@ data class DetailedViewState(
     )
 
     @lenses
+    @optionals
     data class Theme(
             val appId: String,
             val name: String,
