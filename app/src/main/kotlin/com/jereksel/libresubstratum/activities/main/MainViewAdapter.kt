@@ -17,6 +17,7 @@
 
 package com.jereksel.libresubstratum.activities.main
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.DiffUtil.DiffResult
@@ -30,7 +31,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
 import com.jereksel.libresubstratum.data.DiffCallBack
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.squareup.picasso.Picasso
@@ -48,6 +48,7 @@ class MainViewAdapter(
 
     val log = getLogger()
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
 
@@ -75,10 +76,6 @@ class MainViewAdapter(
 
         holder.view.setOnClickListener {
             viewModel.getAppToOpen().postValue(app.appId)
-        }
-
-        holder.view.onLongClick(returnValue = true) {
-            DetailedViewStarter.start(holder.view.context, app.appId)
         }
 
         holder.lock.setOnClickListener {

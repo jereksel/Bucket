@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.detailed2
+package com.jereksel.libresubstratum.activities.detailed
 
 import com.jereksel.libresubstratum.Utils.initOS
 import com.jereksel.libresubstratum.data.InstalledTheme

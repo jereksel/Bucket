@@ -19,7 +19,7 @@ package com.jereksel.libresubstratum.dagger.components
 
 import com.jereksel.libresubstratum.activities.ErrorActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
-import com.jereksel.libresubstratum.activities.detailed2.DetailedActivity
+import com.jereksel.libresubstratum.activities.detailed.DetailedActivity
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.main.MainView
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView

@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.activities.detailed2
+package com.jereksel.libresubstratum.activities.detailed
 
 import arrow.core.Option
 import arrow.lenses

@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.activities.detailed2
+package com.jereksel.libresubstratum.activities.detailed
 
 import activitystarter.ActivityStarter
 import activitystarter.Arg
@@ -23,7 +23,6 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratum.extensions.selectListener
 import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_detailed.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast

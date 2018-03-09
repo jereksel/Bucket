@@ -1,4 +1,4 @@
-package com.jereksel.libresubstratum.activities.detailed2
+package com.jereksel.libresubstratum.activities.detailed
 
 import com.jereksel.libresubstratumlib.Type1Extension
 import com.jereksel.libresubstratumlib.Type2Extension

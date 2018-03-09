@@ -1,9 +1,7 @@
-package com.jereksel.libresubstratum.activities.detailed2
+package com.jereksel.libresubstratum.activities.detailed
 
 import android.content.Context
 import android.graphics.Color
-import android.support.design.widget.Snackbar
-import android.support.design.widget.Snackbar.LENGTH_LONG
 import android.support.v7.app.AlertDialog
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.CardView
@@ -15,14 +13,13 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.detailed2.DetailedViewState.Theme
+import com.jereksel.libresubstratum.activities.detailed.DetailedViewState.Theme
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
 import com.jereksel.libresubstratum.data.Type2ExtensionToString
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.list
 import com.jereksel.libresubstratum.extensions.selectListener
 import com.jereksel.libresubstratum.views.TypeView
-import eu.chainfire.libsuperuser.Application.toast
 import io.reactivex.subjects.BehaviorSubject
 import kotterknife.bindView
 import org.jetbrains.anko.find

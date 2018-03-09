@@ -30,8 +30,8 @@ import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.ResettableLazy
-import com.jereksel.libresubstratum.activities.detailed.DetailedView
-import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
+import com.jereksel.libresubstratum.activities.detailed.DetailedActivity
+import com.jereksel.libresubstratum.activities.detailed.DetailedActivityStarter
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -212,12 +212,12 @@ class MainViewTest : BaseRobolectricTest() {
         appToOpen.postValue("my.substratum.theme")
 
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertThat(nextIntent.getStringExtra(readStaticField(DetailedViewStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
-        assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedView::class.java))
+        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
+        assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedActivity::class.java))
     }
 
     @Test
-    fun `App is is pushed after clicking card`() {
+    fun `App is pushed after clicking card`() {
 
         apps.add(
                 MainViewModel("my.substratum.theme", "Theme 1", true)
@@ -231,8 +231,8 @@ class MainViewTest : BaseRobolectricTest() {
         recyclerView.getChildAt(0).performClick()
 
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertThat(nextIntent.getStringExtra(readStaticField(DetailedViewStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
-        assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedView::class.java))
+        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
+        assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedActivity::class.java))
 
     }
 
