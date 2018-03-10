@@ -34,9 +34,9 @@ class MockedApp : App() {
             @Provides
             fun installed(): InstalledContract.Presenter = mockedInstalledPresenter
             @Provides
-            fun prorities(): PrioritiesContract.Presenter = mockedPrioritiesPresenter
+            fun priorities(): PrioritiesContract.Presenter = mockedPrioritiesPresenter
             @Provides
-            fun proritiesdetail(): PrioritiesDetailContract.Presenter = mockedPrioritiesDetailPresenter
+            fun proritiesDetail(): PrioritiesDetailContract.Presenter = mockedPrioritiesDetailPresenter
             @Provides
             @Named("persistent")
             fun metrics(): Metrics = mock()
