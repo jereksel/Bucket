@@ -427,9 +427,7 @@ task testAll() {
     dependsOn(":sublib:compilerassetmanager:test")
     dependsOn(":sublib:themereaderassetmanager:test")
 
-    dependsOn("app:jacocoTestReport")
-    dependsOn("sublib:reader:jacocoTestReport")
-    dependsOn("sublib:compiler:jacocoTestReport")
-    dependsOn("sublib:themereaderassetmanager:jacocoTestReportDebug")
-    dependsOn("sublib:compilerassetmanager:jacocoTestReportDebug")
+    dependsOn(":app:jacocoTestReport")
+    dependsOn(":sublib:compilerassetmanager:jacocoTestReportDebug")
+    dependsOn(":sublib:themereaderassetmanager:jacocoTestReportDebug")
 }
