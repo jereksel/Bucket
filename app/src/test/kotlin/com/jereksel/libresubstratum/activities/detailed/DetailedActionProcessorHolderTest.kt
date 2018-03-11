@@ -270,6 +270,21 @@ class DetailedActionProcessorHolderTest : FreeSpec() {
 
         }
 
+        "ToggleCheckbox test" {
+            forAll(Gen.int(), Gen.bool()) { position, enabled ->
+
+                val l = Observable.just(DetailedAction.ToggleCheckbox(position, enabled))
+                        .compose(presenter.actionProcessor)
+                        .toList()
+                        .blockingGet()
+
+                assertThat(l).containsExactly(DetailedResult.ToggleCheckbox(position, enabled))
+
+                true
+
+            }
+        }
+
     }
 
 }
