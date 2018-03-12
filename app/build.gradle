@@ -324,7 +324,7 @@ dependencies {
 
     //So Proguard would shut up
     implementation 'com.google.j2objc:j2objc-annotations:1.3'
-    implementation 'com.google.errorprone:error_prone_annotations:2.1.2'
+    implementation 'com.google.errorprone:error_prone_annotations:2.1.3'
     implementation guava
     androidTestCompile guava
 //    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
@@ -426,7 +426,9 @@ task testAll() {
     dependsOn(":sublib:colorreader:test")
     dependsOn(":sublib:compilerassetmanager:test")
     dependsOn(":sublib:themereaderassetmanager:test")
+}
 
+task generateReports() {
     dependsOn(":app:jacocoTestReport")
     dependsOn(":sublib:compilerassetmanager:jacocoTestReportDebug")
     dependsOn(":sublib:themereaderassetmanager:jacocoTestReportDebug")
