@@ -409,3 +409,9 @@ task testAll() {
     dependsOn(":sublib:compilerassetmanager:test")
     dependsOn(":sublib:themereaderassetmanager:test")
 }
+
+task generateReports() {
+    dependsOn(":app:jacocoTestReport")
+    dependsOn(":sublib:compilerassetmanager:jacocoTestReportDebug")
+    dependsOn(":sublib:themereaderassetmanager:jacocoTestReportDebug")
+}
