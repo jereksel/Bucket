@@ -13,7 +13,7 @@ android:
     - extra-android-m2repository
 
 licenses:
-  - '*'
+  - ".+"
 
 script:
   - ./gradlew assembleDebug assembleDebugProguarded testAll generateReports
