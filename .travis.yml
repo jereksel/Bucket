@@ -12,10 +12,14 @@ android:
     - extra-google-m2repository
     - extra-android-m2repository
 
+licenses:
+  - '*'
+
 script:
   - ./gradlew assembleDebug assembleDebugProguarded testAll generateReports
-  - bash <(curl -s https://codecov.io/bash)
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
