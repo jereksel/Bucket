@@ -17,6 +17,9 @@ licenses:
 
 before_install:
   - yes | sdkmanager "platforms;android-27"
+  - echo y | sdkmanager 'ndk-bundle'
+  - echo y | sdkmanager 'cmake;3.6.4111459'
+  - export ANDROID_NDK_HOME=$HOME/android/sdk/ndk-bundle
 
 script:
   - ./gradlew assembleDebug assembleDebugProguarded testAll generateReports
