@@ -21,7 +21,8 @@ before_install:
   - unzip -q android-ndk-r16b-linux-x86_64.zip
   - rm android-ndk-r16b-linux-x86_64.zip
   - ls -al
-  - mv android-ndk-r16b /home/travis/android/sdk/ndk-bundle
+  - mv android-ndk-r16b /home/travis/ndk-bundle
+  - export ANDROID_NDK_HOME=/home/travis/ndk-bundle
   - echo y | sdkmanager 'cmake;3.6.4111459'
 
 script:
