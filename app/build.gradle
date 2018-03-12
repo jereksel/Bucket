@@ -217,10 +217,11 @@ task jacocoTestReport(type: JacocoReport) {
                       "**/*Module*.*" //Dagger2 generated code
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/fdroid/debug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/fdroidDebug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
     def kotlinSrc = "${project.projectDir}/src/main/kotlin"
     sourceDirectories = files([mainSrc, kotlinSrc])
-    classDirectories = files([debugTree])
+    classDirectories = files([debugTree, kotlinDebugTree])
     executionData = fileTree(dir: project.projectDir, includes:
             ["**/*.exec" , "**/*.ec"])
 }
