@@ -17,9 +17,11 @@ licenses:
 
 before_install:
   - yes | sdkmanager "platforms;android-27"
-  - echo y | sdkmanager 'ndk-bundle'
   - echo y | sdkmanager 'cmake;3.6.4111459'
-  - export ANDROID_NDK_HOME=$HOME/android/sdk/ndk-bundle
+  - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+  - unzip android-ndk-r16b-linux-x86_64.zip | grep -v inflating: | grep -v creating: | grep -v extracting:
+  - rm android-ndk-r16b-linux-x86_64.zip
+  - mv android-ndk-r16b /home/travis/android/sdk/ndk-bundle
 
 script:
   - ./gradlew assembleDebug assembleDebugProguarded testAll generateReports
