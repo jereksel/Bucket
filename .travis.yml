@@ -1,4 +1,6 @@
 language: android
+sudo: true
+
 android:
   components:
     - build-tools-26.0.2
