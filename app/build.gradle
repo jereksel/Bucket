@@ -48,15 +48,9 @@ kapt {
 
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
-def beta = true
-
 def ci = System.getenv("CI")
 def buildNumber = System.getenv("BUILD_NUMBER")
 def branch = System.getenv("BRANCH")
-
-if(branch == "develop") {
-    beta = false
-}
 
 android {
     playAccountConfigs {
@@ -67,7 +61,6 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        buildConfigField "boolean", "BETA", beta.toString()
         def version = "0.2.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
