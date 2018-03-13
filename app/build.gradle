@@ -50,7 +50,11 @@ def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 def beta = true
 
-if(System.getenv("CIRCLE_TAG")) {
+def ci = System.getenv("CI")
+def buildNumber = System.getenv("BUILD_NUMBER")
+def branch = System.getenv("BRANCH")
+
+if(branch == "develop") {
     beta = false
 }
 
@@ -64,26 +68,24 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         buildConfigField "boolean", "BETA", beta.toString()
-        def nextVersion = "0.2.1"
+        def version = "0.2.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 27
-        if (System.getenv("CIRCLECI")) {
-            def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
+        if (ci) {
+            def code = buildNumber
             versionCode code
-            if (System.getenv("CIRCLE_TAG")) {
-                //Remove "v" from beginning (https://www.codesd.com/item/remove-the-prefix-from-the-string-in-groovy.html)
-                def reg = ~/^v/
-                versionName System.getenv("CIRCLE_TAG") - reg
+            if (branch == "master") {
+                versionName version
             } else {
-                versionName "${nextVersion}-BETA-${code}-${shortTag}"
+                versionName "${version}-BETA-${code}-${shortTag}"
             }
         } else if (project.hasProperty("fdroid")) {
             versionCode 3
-            versionName nextVersion
+            versionName version
         } else {
             versionCode 9999
-            versionName "${nextVersion}-DEV"
+            versionName "${version}-DEV"
         }
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -385,7 +387,7 @@ dependencies {
 }
 
 play {
-    if (System.getenv("CIRCLE_TAG")) {
+    if (branch == "master") {
         track = 'production'
     } else {
         track = 'beta'
