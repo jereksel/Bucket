@@ -103,7 +103,7 @@ open class MainView : AppCompatActivity() {
 
         viewModel.init()
 
-        ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
+        ChangeLogDialog.show(this, Changelog.changelog)
     }
 
     override fun onResume() {
