@@ -35,11 +35,11 @@ before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
-deploy:
-  provider: script
-  script: bash deploy/travis.sh
-  on:
-    branch: develop
+#deploy:
+#  provider: script
+#  script: bash deploy/travis.sh
+#  on:
+#    branch: develop
 
 cache:
   directories:
