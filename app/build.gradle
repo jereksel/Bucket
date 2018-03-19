@@ -48,11 +48,9 @@ kapt {
 
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
-def beta = true
-
-if(System.getenv("CIRCLE_TAG")) {
-    beta = false
-}
+def ci = System.getenv("CI")
+def buildNumber = System.getenv("BUILD_NUMBER")
+def branch = System.getenv("BRANCH")
 
 android {
     playAccountConfigs {
@@ -63,27 +61,24 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        buildConfigField "boolean", "BETA", beta.toString()
-        def nextVersion = "0.2.1"
+        def version = "0.2.1"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 27
-        if (System.getenv("CIRCLECI")) {
-            def code = System.getenv("CIRCLE_BUILD_NUM").toInteger() - 250
+        if (ci) {
+            def code = buildNumber
             versionCode code
-            if (System.getenv("CIRCLE_TAG")) {
-                //Remove "v" from beginning (https://www.codesd.com/item/remove-the-prefix-from-the-string-in-groovy.html)
-                def reg = ~/^v/
-                versionName System.getenv("CIRCLE_TAG") - reg
+            if (branch == "master") {
+                versionName version
             } else {
-                versionName "${nextVersion}-BETA-${code}-${shortTag}"
+                versionName "${version}-BETA-${code}-${shortTag}"
             }
         } else if (project.hasProperty("fdroid")) {
             versionCode 3
-            versionName nextVersion
+            versionName version
         } else {
             versionCode 9999
-            versionName "${nextVersion}-DEV"
+            versionName "${version}-DEV"
         }
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -217,10 +212,11 @@ task jacocoTestReport(type: JacocoReport) {
                       "**/*Module*.*" //Dagger2 generated code
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/fdroid/debug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/fdroidDebug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
     def kotlinSrc = "${project.projectDir}/src/main/kotlin"
     sourceDirectories = files([mainSrc, kotlinSrc])
-    classDirectories = files([debugTree])
+    classDirectories = files([debugTree, kotlinDebugTree])
     executionData = fileTree(dir: project.projectDir, includes:
             ["**/*.exec" , "**/*.ec"])
 }
@@ -384,7 +380,7 @@ dependencies {
 }
 
 play {
-    if (System.getenv("CIRCLE_TAG")) {
+    if (branch == "master") {
         track = 'production'
     } else {
         track = 'beta'
@@ -408,4 +404,10 @@ task testAll() {
     dependsOn(":sublib:colorreader:test")
     dependsOn(":sublib:compilerassetmanager:test")
     dependsOn(":sublib:themereaderassetmanager:test")
+}
+
+task generateReports() {
+    dependsOn(":app:jacocoTestReport")
+    dependsOn(":sublib:compilerassetmanager:jacocoTestReportDebug")
+    dependsOn(":sublib:themereaderassetmanager:jacocoTestReportDebug")
 }

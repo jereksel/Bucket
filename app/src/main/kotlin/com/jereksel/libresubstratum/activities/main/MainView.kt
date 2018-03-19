@@ -31,7 +31,6 @@ import android.view.Menu
 import android.view.MenuItem
 import com.jereksel.changelogdialog.ChangeLogDialog
 import com.jereksel.libresubstratum.App
-import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
@@ -103,7 +102,7 @@ open class MainView : AppCompatActivity() {
 
         viewModel.init()
 
-        ChangeLogDialog.show(this, Changelog.changelog, BuildConfig.BETA)
+        ChangeLogDialog.show(this, Changelog.changelog)
     }
 
     override fun onResume() {
@@ -138,9 +137,9 @@ open class MainView : AppCompatActivity() {
             }
 
     private fun dismissDialog() {
-       if (dialog?.isShowing == true) {
-           dialog?.dismiss()
-       }
+        if (dialog?.isShowing == true) {
+            dialog?.dismiss()
+        }
     }
 
     private fun showUndismissableDialog(message: String) {

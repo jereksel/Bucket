@@ -11,7 +11,7 @@ import java.util.*
 
 object ChangeLogDialog {
 
-    fun show(context: Context, changeLog: ChangeLog, beta: Boolean) {
+    fun show(context: Context, changeLog: ChangeLog) {
 
         val manager = context.packageManager
 
