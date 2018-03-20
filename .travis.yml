@@ -1,0 +1,47 @@
+language: android
+sudo: true
+
+android:
+  components:
+    - build-tools-26.0.2
+    - build-tools-27.0.3
+
+    - android-27
+
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+licenses:
+  - ".+"
+
+before_install:
+  - yes | sdkmanager "platforms;android-27"
+  - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+  - unzip -q android-ndk-r16b-linux-x86_64.zip
+  - rm android-ndk-r16b-linux-x86_64.zip
+  - ls -al
+  - mv android-ndk-r16b /home/travis/ndk-bundle
+  - export ANDROID_NDK_HOME=/home/travis/ndk-bundle
+  - echo y | sdkmanager 'cmake;3.6.4111459'
+
+script:
+  - ./gradlew assembleDebug assembleDebugProguarded testAll generateReports
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+#deploy:
+#  provider: script
+#  script: bash deploy/travis.sh
+#  on:
+#    branch: develop
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
