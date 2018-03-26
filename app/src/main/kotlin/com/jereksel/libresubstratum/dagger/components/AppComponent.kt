@@ -17,13 +17,10 @@
 
 package com.jereksel.libresubstratum.dagger.components
 
-import com.jereksel.libresubstratum.dagger.modules.AppModule
-import com.jereksel.libresubstratum.dagger.modules.GroupMetricsModule
-import com.jereksel.libresubstratum.dagger.modules.MetricsModule
-import com.jereksel.libresubstratum.dagger.modules.ViewModelModule
+import com.jereksel.libresubstratum.dagger.modules.*
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, MetricsModule::class, GroupMetricsModule::class, ViewModelModule::class])
+@Component(modules = [AppModule::class, FlavorModule::class, GroupMetricsModule::class, ViewModelModule::class])
 interface AppComponent: BaseComponent

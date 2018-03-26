@@ -229,15 +229,16 @@ dependencies {
         implementation lib
     }
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.20'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.20', {
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.21.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.21.2', {
         exclude group: "com.google.guava"
     }
 
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    implementation "android.arch.lifecycle:reactivestreams:1.0.0"
-    testCompile "android.arch.core:core-testing:1.0.0"
+    implementation "android.arch.lifecycle:runtime:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:reactivestreams:1.1.1"
+    testCompile "android.arch.core:core-testing:1.1.1"
     kapt 'com.android.databinding:compiler:3.0.1'
 
     compile "org.funktionale:funktionale-option:1.2"
@@ -317,8 +318,6 @@ dependencies {
 //    implementation project(":sublib:reader")
     implementation project(":sublib:themereaderassetmanager")
     api project(':sublib:compilerassetmanager')
-
-    implementation "android.arch.lifecycle:runtime:1.0.3"
 
     //Testing
     testCompile junit
