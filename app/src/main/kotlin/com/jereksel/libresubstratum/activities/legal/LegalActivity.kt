@@ -21,12 +21,19 @@ class LegalActivity: AppCompatActivity() {
     @Inject
     lateinit var privacyPolicySettings: PrivacyPolicySettings
 
+    val spName = "legal"
+    val spStringName = "accepted"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         (application as App).getAppComponent(this).inject(this)
 
-        if(!privacyPolicySettings.isPrivacyPolicyRequired()) {
+        val sharedPreferences = getSharedPreferences(spName, MODE_PRIVATE)
+
+        val acc = sharedPreferences.getBoolean(spStringName, false)
+
+        if(!privacyPolicySettings.isPrivacyPolicyRequired() || acc) {
             startMainActivity()
         } else {
 
@@ -34,7 +41,10 @@ class LegalActivity: AppCompatActivity() {
                     .setTitle("Privacy Policy")
                     .setMessage(Html.fromHtml(resources.getString(R.string.privacy_policy_dialog)))
                     .setCancelable(false)
-                    .setPositiveButton("OK") { _, _ -> startMainActivity() }
+                    .setPositiveButton("OK") { _, _ ->
+                        sharedPreferences.edit().putBoolean(spStringName, true).apply()
+                        startMainActivity()
+                    }
                     .show()
 
             dialog.find<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
