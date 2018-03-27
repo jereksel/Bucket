@@ -8,6 +8,7 @@ import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.dagger.components.BaseComponent
 import com.jereksel.libresubstratum.domain.Metrics
+import com.jereksel.libresubstratum.domain.PrivacyPolicySettings
 import com.jereksel.libresubstratum.domain.usecases.ICleanUnusedOverlays
 import dagger.Component
 import dagger.Module
@@ -49,6 +50,10 @@ class MockedApp : App() {
             fun factory() = viewModelFactory
             @Provides
             fun iCleanUnusedOverlays(): ICleanUnusedOverlays = mock()
+            @Provides
+            fun privacySettings(): PrivacyPolicySettings = object: PrivacyPolicySettings {
+                override fun isPrivacyPolicyRequired() = TODO()
+            }
 
         }
 
