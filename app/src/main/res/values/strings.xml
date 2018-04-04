@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Bucket</string>
+    <string name="privacy_policy_dialog">Before using this app please read and accept &lt;a href="https://sites.google.com/view/bucketprivacypolicy/">privacy policy&lt;/a></string>
     <string name="settings_icons">Settings Icons</string>
     <string name="systemui_headers">System UI Headers</string>
     <string name="systemui_navigation">System UI Navigation</string>
