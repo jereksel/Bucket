@@ -14,8 +14,7 @@ data class DetailedViewState(
         val compilationError: Throwable?,
         val numberOfFinishedCompilations: Int,
         val numberOfAllCompilations: Int,
-        val toast: () -> String?,
-        val test: Option<String>
+        val toast: () -> String?
 ) {
 
     @lenses
@@ -44,32 +43,40 @@ data class DetailedViewState(
             val checked: Boolean
     )
 
+    interface Type {
+        fun getListPosition(): Int
+    }
+
     @lenses
     data class Type1(
             val data: List<Type1Extension>,
             val position: Int
-    ) {
+    ): Type {
         fun get() = data[position]
+
+        override fun getListPosition() = position
     }
 
     @lenses
     data class Type2(
             val data: List<Type2Extension>,
             val position: Int
-    ) {
+    ): Type {
         fun get() = data[position]
+        override fun getListPosition() = position
     }
 
     @lenses
     data class Type3(
             val data: List<Type3Extension>,
             val position: Int
-    ) {
+    ): Type {
         fun get() = data[position]
+        override fun getListPosition() = position
     }
 
     companion object {
-        val INITIAL = DetailedViewState(null, null, 0,0, {null}, Option.empty())
+        val INITIAL = DetailedViewState(null, null, 0,0, {null})
     }
 
     enum class CompilationState {

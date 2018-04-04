@@ -1,10 +1,9 @@
 package com.jereksel.libresubstratum.activities.detailed
 
-import arrow.data.ListKWKind
-import arrow.data.Try
-import arrow.data.applicative
-import arrow.data.k
-import arrow.optics.*
+import arrow.optics.PLens
+import arrow.optics.POptional
+import arrow.optics.PTraversal
+import arrow.optics.modify
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.functions.BiFunction
 
@@ -107,7 +106,6 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
             }
             is DetailedResult.InstalledStateResult.Result -> {
 
-                val installedState = t2.installedResult
                 val targetApp = t2.targetApp
 
                 val themePack = t1.themePack
@@ -120,7 +118,7 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
 
                 t1.modify(option, {
                     it.copy(
-                            installedState = installedState,
+                            installedState = t2.installedResult,
                             enabledState = t2.enabledState,
                             overlayId = t2.targetOverlayId
                     )
@@ -139,13 +137,6 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                     //Another spinner f**kup
                     t1 to emptyList()
                 } else {
-
-
-                    val listTraversal: Traversal<ListKWKind<Int>, Int> = Traversal.fromTraversable()
-
-                    listTraversal.modifyF(Try.applicative(), listOf(1, 2, 3).k()) {
-                        Try { it / 2 }
-                    }
 
                     val errorsOptional = detailedViewStateThemePackOptional() +
                             themePackThemes()
