@@ -83,7 +83,7 @@ class DetailedActivity: MviActivity<DetailedView, DetailedPresenter>(), Detailed
             showError(error)
         }
 
-        viewState.toast.invoke().toOption().map {
+        viewState.toast().toOption().map {
             toast(it)
         }
 
