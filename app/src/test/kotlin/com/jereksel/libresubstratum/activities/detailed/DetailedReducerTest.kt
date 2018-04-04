@@ -244,7 +244,6 @@ class DetailedReducerTest: FreeSpec() {
 
         "oneTimeFunction test" {
 
-
             forAll(Gen.string()) { s ->
                 val f = oneTimeFunction(s)
                 f() shouldBe s
@@ -253,7 +252,6 @@ class DetailedReducerTest: FreeSpec() {
             }
 
         }
-
 
     }
 
