@@ -16,12 +16,14 @@
         android:resizeableActivity="true"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.main.MainView"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".activities.legal.LegalActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.main.MainView"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
         <activity android:name=".activities.detailed.DetailedView" />
         <activity android:name=".activities.installed.InstalledView" />
@@ -35,6 +37,7 @@
         <activity android:name=".RecViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             />
+
         <receiver
             android:name=".receivers.UninstallReceiver"
             android:enabled="true"
