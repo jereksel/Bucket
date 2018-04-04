@@ -163,10 +163,83 @@ class DetailedReducerTest: FreeSpec() {
         }
 
         "ToggleCheckbox" {
+            assertThat(state.themePack!!.themes[0].checked).isFalse()
             val action = DetailedResult.ToggleCheckbox(0, true)
             val (newState, list) = reducer.apply(state, action)
             assertThat(newState.themePack!!.themes[0].checked).isTrue()
             assertThat(list).isEmpty()
+        }
+
+        "PositionResult" {
+
+            val action = DetailedResult.InstalledStateResult.PositionResult(0)
+            val (newState, list) = reducer.apply(state, action)
+            assertThat(newState).isEqualTo(state)
+            assertThat(list).hasSize(1)
+            assertThat(list[0]).isEqualTo(DetailedAction.GetInfoAction(
+                    appId = "appId",
+                    targetAppId = "app1",
+                    type1a = Type1Extension("a", true),
+                    type1b = Type1Extension("a", true),
+                    type1c = Type1Extension("a", true),
+                    type2 = Type2Extension("a", true),
+                    type3 = Type3Extension("a", true)
+            ))
+
+        }
+
+        "AppIdResult" - {
+
+            "App cannot be found" {
+                val action = DetailedResult.InstalledStateResult.AppIdResult("idontexist")
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(newState).isEqualTo(state)
+                assertThat(list).isEmpty()
+            }
+
+            "App is found" {
+                val action = DetailedResult.InstalledStateResult.AppIdResult("app1")
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(newState).isEqualTo(state)
+                assertThat(list).hasSize(1)
+                assertThat(list[0]).isEqualTo(DetailedAction.GetInfoBasicAction(0))
+            }
+
+
+        }
+
+        "CompilationStatusResult" - {
+
+            "Start Flow" {
+                val action = DetailedResult.CompilationStatusResult.StartFlow("app1")
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(list).isEmpty()
+                assertThat(newState.numberOfAllCompilations).isEqualTo(1)
+            }
+
+            "Start compilation" {
+                val action = DetailedResult.CompilationStatusResult.StartCompilation("app1")
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(list).isEmpty()
+                assertThat(newState.themePack!!.themes[0].compilationState).isEqualTo(DetailedViewState.CompilationState.COMPILING)
+            }
+
+            "Start installation" {
+                val action = DetailedResult.CompilationStatusResult.StartInstallation("app1")
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(list).isEmpty()
+                assertThat(newState.themePack!!.themes[0].compilationState).isEqualTo(DetailedViewState.CompilationState.INSTALLING)
+            }
+
+            "Failed compilation" {
+                val exception = RuntimeException("My awesome error message")
+                val action = DetailedResult.CompilationStatusResult.FailedCompilation("app1", exception)
+                val (newState, list) = reducer.apply(state, action)
+                assertThat(list).isEmpty()
+                assertThat(newState.themePack!!.themes[0].compilationError).isSameAs(exception)
+                assertThat(newState.toast()).isEqualTo("Compilation failed for app1")
+            }
+
         }
 
         "oneTimeFunction test" {
