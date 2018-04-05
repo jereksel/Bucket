@@ -2,9 +2,11 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.2.20'
+        kotlin_version = '1.2.31'
         anko_version = '0.10.1'
         support_library_version = "26.1.0"
+        coroutines_version = "0.22.5"
+        lifecycle_components_version = "1.1.1"
         aa_version = "4.3.1"
         dagger_version = "2.10"
         room_version = "1.0.0"
@@ -65,19 +67,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:1.1.0'
-//        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.5.0'
-//        classpath ('net.saliman:gradle-cobertura-plugin:2.4.0');
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
         classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.10.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
