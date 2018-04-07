@@ -1,2 +1,2 @@
 include ':app', ':sublib:models', ':zipsigner:combined', ':sublib:themereaderassetmanager', ':libs:changelogdialog', ':sublib:compilercommon', ':sublib:colorreader',
-        ":sublib:compilerassetmanager", ":aapt:lib"
+        ":sublib:compilerassetmanager"

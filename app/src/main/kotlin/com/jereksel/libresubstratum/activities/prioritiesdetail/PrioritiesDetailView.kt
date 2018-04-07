@@ -132,6 +132,8 @@ class PrioritiesDetailView: AppCompatActivity(), View {
 
     override fun hideFab() = fab.hide(true)
 
-    override fun notifyPrioritiesChanged() = toast(R.string.priorities_changed)
+    override fun notifyPrioritiesChanged() {
+        toast(R.string.priorities_changed)
+    }
 
 }
