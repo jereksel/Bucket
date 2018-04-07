@@ -282,7 +282,7 @@ dependencies {
     }
 
     implementation slf4japi
-    playImplementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true
     }
 
@@ -291,7 +291,7 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
     implementation "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
-    kapt "com.github.marcinmoskala.activitystarter:activitystarter-Implementationr:$activity_starter_version"
+    kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
 
     implementation anko
     implementation ankoRecyclerView
@@ -317,7 +317,7 @@ dependencies {
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
     implementation "android.arch.persistence.room:runtime:$room_version"
-    kapt "android.arch.persistence.room:Implementationr:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     implementation project(":sublib:models")
     implementation project(":sublib:themereaderassetmanager")
@@ -331,6 +331,8 @@ dependencies {
     testImplementation mockito
     testImplementation robolectric
 
+    testImplementation("com.android.support.test:runner:1.0.2-alpha1")
+
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
     testImplementation ("io.kotlintest:kotlintest:$kotlintest_version") {
         exclude group: "org.jetbrains.kotlin"
@@ -338,16 +340,6 @@ dependencies {
     testImplementation ("com.nhaarman:mockito-kotlin:$mockito_kotlin_version") {
         exclude group: "org.jetbrains.kotlin"
     }
-
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation ('com.android.support.test:runner:0.3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation ('com.android.support.test:rules:0.3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
     //assertj android
     testImplementation ("com.squareup.assertj:assertj-android:$assertj_android_version", {
@@ -362,20 +354,6 @@ dependencies {
     testImplementation "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
     testImplementation "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
     testImplementation "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
-
-
-    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    }
-    androidTestImplementation("com.android.support.test.espresso:espresso-intents:2.2.2", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    })
 }
 
 play {

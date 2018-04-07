@@ -2,8 +2,6 @@ package com.jereksel.libresubstratum.utils
 
 import com.jereksel.libresubstratum.utils.ZipUtils.extractZip
 import com.google.common.io.Files
-import com.nhaarman.mockito_kotlin.whenever
-import org.apache.commons.io.FileUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
@@ -29,7 +27,7 @@ class ZipUtilsTest {
                 .map { File(tempFolder, it) }
                 .sorted()
 
-        assertEquals(expectedFile, FileUtils.listFiles(tempFolder, null, true).sorted())
+        assertEquals(expectedFile, tempFolder.walk().filter { it.isFile }.toList().sorted())
         tempFolder.deleteRecursively()
 
     }
