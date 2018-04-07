@@ -550,7 +550,6 @@ class DetailedPresenterTest : FunSpec() {
             whenever(packageManager.isPackageInstalled("app1.MyTheme")).thenAnswer { installed }
 
             whenever(overlayService.installApk(File("/"))).then {
-                println("File")
                 installed = true
                 Unit.toFuture()
             }

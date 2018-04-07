@@ -2,20 +2,23 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.2.20'
-        anko_version = '0.10.1'
+        kotlin_version = '1.2.31'
+        anko_version = '0.10.4'
         support_library_version = "26.1.0"
+        coroutines_version = "0.22.5"
+        lifecycle_components_version = "1.1.1"
         aa_version = "4.3.1"
-        dagger_version = "2.10"
+        dagger_version = "2.15"
         room_version = "1.0.0"
         assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
         slf4j_version = "1.7.25"
-        activity_starter_version = "1.00-beta.2"
+        activity_starter_version = "1.00"
         logback_android_version = "1.1.1-6"
-        robolectric_version = "3.5.1"
+        //Robolectric 3.8 is buggy as hell: #3613, #3836
+        robolectric_version = "3.7.1"
         junit_version = "4.12"
-        guava_version = "20.0"
+        guava_version = "24.1-android"
         mockito_version = "2.10.0"
         //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
         kotlintest_version = "1.3.5"
@@ -38,9 +41,9 @@ buildscript {
         anko = "org.jetbrains.anko:anko:$anko_version"
         ankoRecyclerView = "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
 
-        rxjava = 'io.reactivex.rxjava2:rxjava:2.1.4'
-        rxkotlin = 'io.reactivex.rxjava2:rxkotlin:2.1.0'
-        rxandroid = 'io.reactivex.rxjava2:rxandroid:2.0.1'
+        rxjava = 'io.reactivex.rxjava2:rxjava:2.1.12'
+        rxkotlin = 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+        rxandroid = 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
         dagger = "com.google.dagger:dagger:$dagger_version"
         daggerCompiler = "com.google.dagger:dagger-compiler:$dagger_version"
@@ -65,19 +68,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:1.1.0'
-//        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.5.0'
-//        classpath ('net.saliman:gradle-cobertura-plugin:2.4.0');
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+        classpath ('com.dicedmelon.gradle:jacoco-android:0.1.2') {
+            exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+        }
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
         classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.10.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
