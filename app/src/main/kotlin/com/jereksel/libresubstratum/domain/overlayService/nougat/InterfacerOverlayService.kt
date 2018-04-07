@@ -63,9 +63,9 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     val enableExclusiveDispatcher = Executors.newFixedThreadPool(2, threadFactory).asCoroutineDispatcher()
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
-    val INTERFACER_SERVICE = INTERFACER_PACKAGE + ".services.JobService"
-    val INTERFACER_BINDED = INTERFACER_PACKAGE + ".INITIALIZE"
-    val STATUS_CHANGED = INTERFACER_PACKAGE + ".STATUS_CHANGED"
+    val INTERFACER_SERVICE = "$INTERFACER_PACKAGE.services.JobService"
+    val INTERFACER_BINDED = "$INTERFACER_PACKAGE.INITIALIZE"
+    val STATUS_CHANGED = "$INTERFACER_PACKAGE.STATUS_CHANGED"
 
     private val interfacerServiceConnection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {

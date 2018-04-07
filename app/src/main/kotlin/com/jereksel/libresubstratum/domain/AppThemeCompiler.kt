@@ -20,6 +20,7 @@ package com.jereksel.libresubstratum.domain
 import android.app.Application
 import android.os.Environment
 import com.google.common.io.Files
+import com.jereksel.aapt.AAPT.getAapt
 import com.jereksel.libresubstratum.data.KeyPair
 import com.jereksel.libresubstratum.extensions.getFile
 import com.jereksel.libresubstratum.extensions.getLogger
@@ -43,7 +44,7 @@ class AppThemeCompiler(
 
     val log = getLogger()
 
-    val aapt = getFile(File(app.applicationInfo.nativeLibraryDir), "libaaptcomplete.so")
+    val aapt = getAapt(app)
 
     init {
         //So unpack is forced

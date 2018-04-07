@@ -248,7 +248,7 @@ dependencies {
 
     implementation "org.funktionale:funktionale-option:1.2"
 
-    implementation "com.jereksel:aapt:1.0"
+    implementation "com.jereksel:aapt:1.0@aar"
 
     //RxStuff
     implementation rxjava

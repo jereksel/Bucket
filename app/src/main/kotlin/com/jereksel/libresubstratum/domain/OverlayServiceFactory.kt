@@ -27,6 +27,7 @@ import android.provider.Settings
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoSubstratumService
 import com.jereksel.libresubstratum.extensions.getLogger
 import eu.chainfire.libsuperuser.Shell
 import java.io.File
@@ -36,6 +37,8 @@ object OverlayServiceFactory {
     val log = getLogger()
 
     fun getOverlayService(context: Context): OverlayService {
+
+        return OreoSubstratumService(context)
 
         val o = listOf(O, O_MR1)
 
