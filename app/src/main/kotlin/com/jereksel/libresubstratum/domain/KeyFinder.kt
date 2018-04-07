@@ -93,7 +93,7 @@ class KeyFinder(
 
         val apkLocation = context.packageManager.getApplicationInfo(appId, 0).sourceDir
 
-        val abis = Build.SUPPORTED_ABIS
+        val abis = Build.SUPPORTED_32_BIT_ABIS
 
         val so = abis.asSequence()
                 .filter { ZipUtil.containsEntry(File(apkLocation), "lib/$it/libLoadingProcess.so") }
