@@ -50,10 +50,12 @@ class OreoSubstratumService(
 
     override fun enableOverlay(id: String): ListenableFuture<*> = executor.submit {
         service.switchOverlay(listOf(id), true, false)
+        update.set(true)
     }
 
     override fun disableOverlay(id: String): ListenableFuture<*> = executor.submit {
         service.switchOverlay(listOf(id), false, false)
+        update.set(true)
     }
 
     override fun enableExclusive(id: String): ListenableFuture<*> = executor.submit {
@@ -61,17 +63,18 @@ class OreoSubstratumService(
         val application = state.entries().find { it.value.packageName == id }?.key ?: return@submit
         val overlays = state.get(application)
         service.switchOverlay(overlays.map { it.packageName }, false, false)
-        service.switchOverlay(listOf(id), false, false)
+        service.switchOverlay(listOf(id), true, false)
+        update.set(true)
     }
 
     override fun getOverlayInfo(id: String): ListenableFuture<OverlayInfo?> = executor.sub {
         val state = getCurrentState()
-        state.values().find { it.packageName == id }
+        state.values().find { it.packageName == id }?.let { OverlayInfo(it) }
     }
 
     override fun getAllOverlaysForApk(appId: String): ListenableFuture<List<OverlayInfo>> = executor.sub {
         val state = getCurrentState()
-        state.get(appId).toList()
+        state.get(appId).toList().map { OverlayInfo(it) }
     }
 
     override fun restartSystemUI(): ListenableFuture<*> = executor.submit {
@@ -80,10 +83,12 @@ class OreoSubstratumService(
 
     override fun installApk(apk: File): ListenableFuture<*> = executor.submit {
         service.installOverlay(listOf(apk.absolutePath))
+        update.set(true)
     }
 
     override fun uninstallApk(appId: String): ListenableFuture<*> = executor.submit {
         service.uninstallOverlay(listOf(appId), false)
+        update.set(true)
     }
 
     override fun requiredPermissions(): List<String> {
@@ -107,6 +112,7 @@ class OreoSubstratumService(
 
     override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> = executor.submit {
         service.setPriority(overlayIds, false)
+        update.set(true)
     }
 
     var lastState: Multimap<String, android.content.om.OverlayInfo> = ArrayListMultimap.create()
