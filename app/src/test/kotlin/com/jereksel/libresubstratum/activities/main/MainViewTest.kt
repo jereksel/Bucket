@@ -38,7 +38,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.runBlocking
-import org.apache.commons.lang3.reflect.FieldUtils.readStaticField
 import org.assertj.android.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.anko.find
@@ -52,6 +51,7 @@ import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowToast
+import kotlin.reflect.KClass
 
 @Suppress("IllegalIdentifier")
 class MainViewTest : BaseRobolectricTest() {
@@ -212,7 +212,7 @@ class MainViewTest : BaseRobolectricTest() {
         appToOpen.postValue("my.substratum.theme")
 
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
+        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class, "APP_ID_KEY") as String)).isEqualTo("my.substratum.theme")
         assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedActivity::class.java))
     }
 
@@ -231,9 +231,15 @@ class MainViewTest : BaseRobolectricTest() {
         recyclerView.getChildAt(0).performClick()
 
         val nextIntent = Shadows.shadowOf(activity as AppCompatActivity).peekNextStartedActivity()
-        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class.java, "APP_ID_KEY", true) as String)).isEqualTo("my.substratum.theme")
+        assertThat(nextIntent.getStringExtra(readStaticField(DetailedActivityStarter::class, "APP_ID_KEY") as String)).isEqualTo("my.substratum.theme")
         assertThat(nextIntent.component).isEqualTo(ComponentName(activity as AppCompatActivity, DetailedActivity::class.java))
 
+    }
+
+    private fun <T> readStaticField(clz: KClass<T>, field: String): Any where T: Any {
+        val fld = clz.java.getDeclaredField(field)
+        fld.isAccessible = true
+        return fld.get(null)
     }
 
     @Test

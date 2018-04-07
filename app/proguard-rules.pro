@@ -25,7 +25,7 @@
 -keepattributes *Annotation*
 -dontwarn ch.qos.logback.core.net.*
 
--keep class com.allogy.android.logback.CrashlyticsAppender { *; }
+-keep class com.allogy.android.** { *; }
 
 # https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-guava.pro
 -keep class com.google.common.io.Resources {
@@ -43,21 +43,26 @@
     public ** join(...);
 }
 
--keep class com.google.common.collect.MapMakerInternalMap$ReferenceEntry
--keep class com.google.common.cache.LocalCache$ReferenceEntry
 
 # http://stackoverflow.com/questions/9120338/proguard-configuration-for-guava-with-obfuscation-and-optimization
 -dontwarn javax.annotation.**
 -dontwarn javax.inject.**
 -dontwarn sun.misc.Unsafe
+-dontwarn afu.org.checkerframework.**
+-dontwarn org.checkerframework.**
 
 # Guava 19.0
 -dontwarn java.lang.ClassValue
 -dontwarn com.google.j2objc.annotations.Weak
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
-# https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-square-picasso.pro
--dontwarn com.squareup.okhttp.**
+# okhttp
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 -dontwarn kotlin.reflect.jvm.internal.**
 

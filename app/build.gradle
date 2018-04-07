@@ -9,6 +9,8 @@ apply plugin: 'com.github.triplet.play'
 apply plugin: 'jacoco'
 apply plugin: 'com.getkeepsafe.dexcount'
 
+apply plugin: "com.github.ben-manes.versions"
+
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
 buildscript {
@@ -17,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.24.4'
+        classpath 'io.fabric.tools:gradle:1.25.2'
     }
 }
 
@@ -35,6 +37,9 @@ repositories {
         url "https://maven.google.com"
     }
     maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url "https://dl.bintray.com/jereksel/maven"
+    }
 }
 
 task copyTestClasses(type: Copy) {
@@ -188,7 +193,7 @@ android {
             }
         }
     }
-//    compileOptions {
+//    ImplementationOptions {
 //        sourceCompatibility JavaVersion.VERSION_1_8
 //        targetCompatibility JavaVersion.VERSION_1_8
 //    }
@@ -244,13 +249,15 @@ dependencies {
         exclude group: "com.google.guava"
     }
 
-    implementation "android.arch.lifecycle:extensions:1.1.0"
-    implementation "android.arch.lifecycle:reactivestreams:1.1.0"
-    testCompile "android.arch.core:core-testing:1.1.0"
+    implementation "android.arch.lifecycle:runtime:${lifecycle_components_version}"
+    implementation "android.arch.lifecycle:extensions:${lifecycle_components_version}"
+    implementation "android.arch.lifecycle:reactivestreams:${lifecycle_components_version}"
+    testImplementation "android.arch.core:core-testing:${lifecycle_components_version}"
+    kapt 'com.android.databinding:compiler:3.1.0'
 
-    kapt 'com.android.databinding:compiler:3.0.1'
+    implementation "org.funktionale:funktionale-option:1.2"
 
-    compile "org.funktionale:funktionale-option:1.2"
+    implementation "com.jereksel:aapt:1.0"
 
     //RxStuff
     implementation rxjava
@@ -266,7 +273,7 @@ dependencies {
     implementation dagger
     kapt daggerCompiler
     kaptTest daggerCompiler
-    testCompile group: 'javax.inject', name: 'javax.inject', version: '1'
+    testImplementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
     implementation 'eu.chainfire:libsuperuser:1.0.0.201704021214'
 
@@ -283,7 +290,7 @@ dependencies {
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
     implementation 'com.github.clans:fab:1.6.4'
-    implementation "com.github.akarnokd:rxjava2-extensions:0.18.1"
+    implementation "com.github.akarnokd:rxjava2-extensions:0.18.9"
     implementation 'org.zeroturnaround:zt-zip:1.12'
 
     //Logging
@@ -293,13 +300,13 @@ dependencies {
     }
 
     implementation slf4japi
-    playCompile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true
     }
 
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
-    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
     implementation "com.github.marcinmoskala.activitystarter:activitystarter:$activity_starter_version"
     kapt "com.github.marcinmoskala.activitystarter:activitystarter-compiler:$activity_starter_version"
@@ -307,95 +314,66 @@ dependencies {
     implementation anko
     implementation ankoRecyclerView
 
-    implementation 'com.github.kittinunf.result:result:1.2.0'
+    implementation 'com.github.kittinunf.result:result:1.3.0'
 
     //Signing
     implementation project(":zipsigner:combined")
-    implementation project(":aapt:lib")
 
     implementation project(":libs:changelogdialog")
 
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    api 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'com.jereksel:omslib:1.0.2'
 
     //So Proguard would shut up
     implementation 'com.google.j2objc:j2objc-annotations:1.3'
-    implementation 'com.google.errorprone:error_prone_annotations:2.1.3'
+    implementation 'com.google.errorprone:error_prone_annotations:2.2.0'
     implementation guava
-    androidTestCompile guava
-//    compile 'com.android.tools.build:apksig:2.3.0-alpha3'
+    androidTestImplementation guava
+//    Implementation 'com.android.tools.build:apksig:2.3.0-alpha3'
 
-    implementation 'cat.ereza:customactivityoncrash:2.1.0'
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
     implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
 
-//    implementation project(":sublib:compiler")
     implementation project(":sublib:models")
-//    implementation project(":sublib:reader")
     implementation project(":sublib:themereaderassetmanager")
-    api project(':sublib:compilerassetmanager')
+    implementation project(path: ':sublib:compilercommon')
+    implementation project(':sublib:compilerassetmanager')
 
-    implementation "android.arch.lifecycle:runtime:1.1.0"
+    implementation "android.arch.lifecycle:runtime:1.1.1"
 
     //Testing
-    testCompile junit
+    testImplementation junit
 
-    testCompile kotlinReflect
-    testCompile mockito
-    testCompile robolectric
+    testImplementation kotlinReflect
+    testImplementation mockito
+    testImplementation robolectric
+
+    testImplementation("com.android.support.test:runner:1.0.2-alpha1")
 
     //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
-    testCompile ("io.kotlintest:kotlintest:$kotlintest_version") {
+    testImplementation ("io.kotlintest:kotlintest:$kotlintest_version") {
         exclude group: "org.jetbrains.kotlin"
     }
-    testCompile ("com.nhaarman:mockito-kotlin:$mockito_kotlin_version") {
+    testImplementation ("com.nhaarman:mockito-kotlin:$mockito_kotlin_version") {
         exclude group: "org.jetbrains.kotlin"
     }
-
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestCompile ('com.android.support.test:runner:0.3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestCompile ('com.android.support.test:rules:0.3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
-    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
-    androidTestCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 
     //assertj android
-    testCompile ("com.squareup.assertj:assertj-android:$assertj_android_version", {
+    testImplementation ("com.squareup.assertj:assertj-android:$assertj_android_version", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
-    testCompile "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
-
-
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    }
-    androidTestCompile("com.android.support.test.espresso:espresso-intents:2.2.2", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    })
-    compile project(path: ':sublib:compilercommon')
+    testImplementation "com.squareup.assertj:assertj-android-support-v4:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-play-services:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-appcompat-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-design:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-mediarouter-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-gridlayout-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-cardview-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-recyclerview-v7:$assertj_android_version@aar"
+    testImplementation "com.squareup.assertj:assertj-android-palette-v7:$assertj_android_version@aar"
 }
 
 play {

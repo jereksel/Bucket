@@ -56,9 +56,10 @@ class MainViewAdapter(
 
         holder.appName.text = app.appName
         if (app.heroImage != null) {
-            Picasso.with(holder.view.context).load(File(app.heroImage)).noFade().fit().centerCrop().into(holder.heroImage)
+            Picasso.get().load(File(app.heroImage)).noFade().fit().centerCrop().into(holder.heroImage)
         } else {
-            holder.heroImage.setImageDrawable(ColorDrawable(android.R.color.black))
+            val context = holder.view.context
+            holder.heroImage.setImageDrawable(ColorDrawable(context.getColor(android.R.color.black)))
         }
 
         if (key == null) {
@@ -89,7 +90,7 @@ class MainViewAdapter(
     }
 
     fun updateItems(apps: List<MainViewModel>) {
-        verifyMainThread();
+        verifyMainThread()
 
         val oldList = this.apps
         val newList = apps
