@@ -18,8 +18,6 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
