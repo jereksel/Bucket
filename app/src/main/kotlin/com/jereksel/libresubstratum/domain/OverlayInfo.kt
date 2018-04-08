@@ -17,8 +17,12 @@
 
 package com.jereksel.libresubstratum.domain
 
+import android.content.om.OverlayInfo
+
 data class OverlayInfo(
         val overlayId: String,
         val targetId: String,
         val enabled: Boolean
-)
+) {
+    constructor(overlayInfo: OverlayInfo) : this(overlayInfo.packageName, overlayInfo.targetPackageName, overlayInfo.isEnabled)
+}

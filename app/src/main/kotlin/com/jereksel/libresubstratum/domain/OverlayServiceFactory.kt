@@ -17,18 +17,19 @@
 
 package com.jereksel.libresubstratum.domain
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
+import android.content.substratum.ISubstratumService
 import android.os.Build.VERSION.RELEASE
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.*
-import android.provider.Settings
+import android.os.IBinder
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoSubstratumService
 import com.jereksel.libresubstratum.extensions.getLogger
-import eu.chainfire.libsuperuser.Shell
 import java.io.File
 
 object OverlayServiceFactory {
@@ -37,12 +38,15 @@ object OverlayServiceFactory {
 
     fun getOverlayService(context: Context): OverlayService {
 
+
         val o = listOf(O, O_MR1)
 
-        if (o.contains(SDK_INT) && suExists()) {
-            if (suExists()) {
+        if (o.contains(SDK_INT)) {
+            if (isOreoSubstratumServiceAvailable(context)) {
+                return OreoSubstratumService(context)
+            } else if (suExists()) {
                 return OreoOverlayService(context)
-            } else {
+            } else  {
                 return InvalidOverlayService("Root is required for Oreo support")
             }
         }
@@ -82,6 +86,22 @@ object OverlayServiceFactory {
         } catch (e: Exception) {
             return false
         }
+
+    }
+
+    private fun isOreoSubstratumServiceAvailable(context: Context): Boolean {
+
+        try {
+            @SuppressLint("PrivateApi")
+            val serviceServiceClass = Class.forName("android.os.ServiceManager")
+            val binder = serviceServiceClass.getMethod("getService", String::class.java)
+                    .invoke(null, "substratum")
+            return ISubstratumService.Stub.asInterface(binder as IBinder?) != null
+        } catch (e: Exception) {
+            log.debug("Oreo Substratum Service is not available", e)
+            return false
+        }
+
 
     }
 
