@@ -108,7 +108,10 @@ class OreoSubstratumService(
         }
     }
 
-    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> = getAllOverlaysForApk(targetAppId)
+    override fun getOverlaysPrioritiesForTarget(targetAppId: String): ListenableFuture<List<OverlayInfo>> = executor.sub {
+        val state = getCurrentState()
+        state.get(targetAppId).toList().map { OverlayInfo(it) }.reversed()
+    }
 
     override fun updatePriorities(overlayIds: List<String>): ListenableFuture<*> = executor.submit {
         service.setPriority(overlayIds, false)
