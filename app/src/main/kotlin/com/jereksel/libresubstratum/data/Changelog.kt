@@ -23,6 +23,7 @@ object Changelog {
     val changelog = changelog {
         betaVersion("0.3") {
             +"Stability fixes"
+            +"Support for Substratum Service on Oreo"
             +"Support for rooted Oreo"
             +"Show disabled overlays in priorities"
             +"Rewrite activity with theme packs (now it properly support rotating and resizing)"

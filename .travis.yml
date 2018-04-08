@@ -17,7 +17,7 @@ licenses:
 
 before_install:
   - yes | sdkmanager "platforms;android-27"
-  - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+  - wget -q https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
   - unzip -q android-ndk-r16b-linux-x86_64.zip
   - rm android-ndk-r16b-linux-x86_64.zip
   - ls -al
@@ -35,11 +35,12 @@ before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
-#deploy:
-#  provider: script
-#  script: bash deploy/travis.sh
-#  on:
-#    branch: develop
+deploy:
+  provider: script
+  skip-cleanup: true
+  script: bash deploy/travis.sh
+  on:
+    branch: develop
 
 cache:
   directories:

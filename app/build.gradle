@@ -56,7 +56,7 @@ kapt {
 def shortTag = "git rev-parse --short HEAD".execute().text.trim()
 
 def ci = System.getenv("CI")
-def buildNumber = System.getenv("BUILD_NUMBER")
+def buildNumber = System.getenv("BUILD_NUMBER") ?: "0"
 def branch = System.getenv("BRANCH")
 
 android {
@@ -73,7 +73,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 27
         if (ci) {
-            def code = buildNumber
+            def code = buildNumber.toInteger()
             versionCode code
             if (branch == "master") {
                 versionName version
@@ -333,9 +333,6 @@ dependencies {
 //    Implementation 'com.android.tools.build:apksig:2.3.0-alpha3'
 
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
-
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
 
     implementation project(":sublib:models")
     implementation project(":sublib:themereaderassetmanager")

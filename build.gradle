@@ -9,7 +9,6 @@ buildscript {
         lifecycle_components_version = "1.1.1"
         aa_version = "4.3.1"
         dagger_version = "2.15"
-        room_version = "1.0.0"
         arrow_version = "0.6.1"
         assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
