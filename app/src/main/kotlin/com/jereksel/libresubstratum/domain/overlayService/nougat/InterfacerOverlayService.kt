@@ -27,6 +27,9 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.support.v4.content.ContextCompat
+import arrow.core.Option
+import arrow.core.Option.Companion.empty
+import arrow.core.Some
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.jereksel.libresubstratum.domain.OverlayInfo
 import com.jereksel.libresubstratum.domain.OverlayService
@@ -41,9 +44,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.guava.asListenableFuture
 import kotlinx.coroutines.experimental.guava.await
 import kotlinx.coroutines.experimental.rx2.await
-import org.funktionale.option.Option
-import org.funktionale.option.Option.*
-import org.funktionale.option.Option.Companion.empty
 import java.io.File
 import java.util.concurrent.Executors
 
