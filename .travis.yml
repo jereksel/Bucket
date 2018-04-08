@@ -40,7 +40,7 @@ deploy:
   skip-cleanup: true
   script: bash deploy/travis.sh
   on:
-    branch: feature/play_store_deploy
+    branch: develop
 
 cache:
   directories:
