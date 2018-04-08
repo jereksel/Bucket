@@ -9,6 +9,7 @@ import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
 import com.jereksel.libresubstratum.domain.usecases.ICompileThemeUseCase
 import com.jereksel.libresubstratum.domain.usecases.IGetThemeInfoUseCase
+import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.ThemeNameUtils
 import com.jereksel.libresubstratumlib.ThemePack
 import io.reactivex.Observable
@@ -36,6 +37,8 @@ class DetailedActionProcessorHolder @Inject constructor(
 
     val threadFactory = ThreadFactoryBuilder().setNameFormat("detailed-action-processor-holder-thread-%d").build()!!
     val actionCoroutineDispatcher = Executors.newFixedThreadPool(10, threadFactory).asCoroutineDispatcher()
+
+    val log = getLogger()
 
     @VisibleForTesting
     val loadListProcessor = ObservableTransformer<DetailedAction.InitialAction, DetailedResult> { actions ->
@@ -218,7 +221,13 @@ class DetailedActionProcessorHolder @Inject constructor(
 
                         //Crash violently on such errors
                         val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
-                                ?: throw Exception("OverlayInfo is null for $overlayId")
+
+                        if (overlayInfo == null) {
+                            log.error("Overlay {} has null overlayInfo", overlayId)
+                            send(DetailedResult.ShowErrorResult("Overlay cannot be enabled/disabled"))
+                            return@rxObservable
+                        }
+
 
                         if (overlayInfo.enabled) {
                             overlayService.disableOverlay(overlayId).await()

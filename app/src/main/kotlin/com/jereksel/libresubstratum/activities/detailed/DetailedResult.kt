@@ -86,4 +86,6 @@ sealed class DetailedResult {
 
     data class CompileSelectedResult(val compileMode: DetailedAction.CompileMode): DetailedResult()
 
+    data class ShowErrorResult(val message: String): DetailedResult()
+
 }

@@ -284,6 +284,9 @@ object DetailedReducer: BiFunction<DetailedViewState, DetailedResult, Pair<Detai
                 val themesOptional = detailedViewStateThemePackOptional() + themePackThemes()
                 themesOptional.modify(t1, {it.map { it.copy(checked = false) }}) to emptyList()
             }
+            is DetailedResult.ShowErrorResult -> {
+                t1.copy(toast = oneTimeFunction(t2.message)) to emptyList()
+            }
         }
     }
 
