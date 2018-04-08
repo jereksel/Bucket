@@ -19,6 +19,7 @@ package com.jereksel.libresubstratum.dagger.components
 
 import com.jereksel.libresubstratum.activities.ErrorActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedView
+import com.jereksel.libresubstratum.activities.detailed.DetailedActivity
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.legal.LegalActivity
 import com.jereksel.libresubstratum.activities.main.MainView
@@ -30,6 +31,7 @@ interface BaseComponent {
     fun inject(view: LegalActivity)
     fun inject(view: MainView)
     fun inject(view: DetailedView)
+    fun inject(view: DetailedActivity)
     fun inject(view: InstalledView)
     fun inject(view: ErrorActivity)
     fun inject(view: PrioritiesView)

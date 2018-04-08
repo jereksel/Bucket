@@ -17,14 +17,7 @@ object Reader {
 
         val apps = am.list("overlays")
 
-        val list = Observable.fromArray(*apps)
-                .flatMap {
-                    Observable.fromCallable { readTheme(am, it, transformer) }
-                            .observeOn(Schedulers.io())
-                            .subscribeOn(Schedulers.io())
-                }
-                .toList()
-                .blockingGet()
+        val list = apps.map { readTheme(am, it, transformer) }
 
         val type3Data: Type3Data?
 

@@ -33,7 +33,7 @@ import com.jereksel.changelogdialog.ChangeLogDialog
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.activities.about.AboutActivity
-import com.jereksel.libresubstratum.activities.detailed.DetailedViewStarter
+import com.jereksel.libresubstratum.activities.detailed.DetailedActivityStarter
 import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
 import com.jereksel.libresubstratum.data.Changelog
@@ -96,7 +96,7 @@ open class MainView : AppCompatActivity() {
         viewModel.getAppToOpen().observe(this) { appId ->
             if (!appId.isNullOrEmpty()) {
                 viewModel.getAppToOpen().postValue(null)
-                DetailedViewStarter.start(this, appId)
+                DetailedActivityStarter.start(this, appId)
             }
         }
 

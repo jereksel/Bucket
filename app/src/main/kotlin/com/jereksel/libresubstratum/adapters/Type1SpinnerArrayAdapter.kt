@@ -22,13 +22,16 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import arrow.syntax.validated.valid
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.Type1ExtensionToString
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.textColor
@@ -51,48 +54,80 @@ class Type1SpinnerArrayAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
+        val holder = if (convertView != null) {
+            convertView.tag as ViewHolder
+        } else {
+            val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
+
+            val holder = ViewHolder(
+                    row = view,
+                    textView = view.find(R.id.textView)
+            )
+
+            view.tag = holder
+            holder
+        }
+
         val type1Extension = objects[position]
 
-        val textView = view.find<TextView>(R.id.textView)
-
-        textView.text = type1Extension.toString()
+        holder.textView.text = type1Extension.toString()
 
         if (type1Extension.type1.color.isNotEmpty()) {
             val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
             val swatch = Palette.Swatch(type1Color, 1)
-            textView.textColor = swatch.titleTextColor
-            view.background = ColorDrawable(type1Color)
+            holder.textView.textColor = swatch.titleTextColor
+            holder.row.backgroundColor = type1Color
         } else {
             val type1Color = Color.WHITE
-            textView.textColor = Color.BLACK
-            view.background = ColorDrawable(type1Color)
+            holder.textView.textColor = Color.BLACK
+            holder.row.backgroundColor = type1Color
         }
 
-        return view
+        return holder.row
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
+
+        val holder = if (convertView != null) {
+            convertView.tag as ViewHolder
+        } else {
+            val view = context.layoutInflater.inflate(R.layout.item_type1spinner_dropdown, null)
+
+            val holder = ViewHolder(
+                    row = view,
+                    textView = view.find(R.id.textView)
+            )
+
+            view.tag = holder
+            holder
+        }
+
         val type1Extension = objects[position]
 
-        val textView = view.find<TextView>(R.id.textView)
+        val textView = holder.textView
+        val view = holder.row
 
-        textView.text = type1Extension.toString()
+        holder.textView.text = type1Extension.toString()
 
         if (type1Extension.type1.color.isNotEmpty()) {
             val type1Color = ColorUtils.setAlphaComponent(Color.parseColor(type1Extension.type1.color), 0xFF)
             val swatch = Palette.Swatch(type1Color, 1)
             textView.textColor = swatch.titleTextColor
-            view.background = ColorDrawable(type1Color)
+            view.backgroundColor = type1Color
         } else {
             val type1Color = Color.WHITE
             textView.textColor = Color.BLACK
-            view.background = ColorDrawable(type1Color)
+            view.backgroundColor = type1Color
         }
 
-        return view
+        return holder.row
+
     }
+
+    data class ViewHolder(
+            val textView: TextView,
+            val row: View
+    )
 
 }
 

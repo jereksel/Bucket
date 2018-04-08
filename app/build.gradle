@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
+//apply from: rootProject.file('gradle/generated-kotlin-sources.gradle')
+
 apply plugin: 'jacoco'
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -162,6 +164,12 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
+
+        //Arrow
+        if (!System.getenv("CI")) {
+            debug.java.srcDirs += 'build/generated/source/kaptKotlin/fdroidDebug'
+        }
+//        release.java.srcDirs += 'build/generated/source/kaptKotlin/release'
     }
     dataBinding {
         enabled = true
@@ -227,7 +235,7 @@ task jacocoTestReport(type: JacocoReport) {
 }
 
 dependencies {
-    implementation kotlinLib
+    api kotlinLib
 
     //Support library
     supportLibrary.each { name, lib ->
@@ -235,6 +243,7 @@ dependencies {
     }
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutines_version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_version}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${coroutines_version}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:${coroutines_version}", {
         exclude group: "com.google.guava"
@@ -246,14 +255,17 @@ dependencies {
     testImplementation "android.arch.core:core-testing:${lifecycle_components_version}"
     kapt 'com.android.databinding:compiler:3.1.0'
 
-    implementation "org.funktionale:funktionale-option:1.2"
-
     implementation "com.jereksel:aapt:1.0@aar"
 
     //RxStuff
     implementation rxjava
     implementation rxkotlin
     implementation rxandroid
+
+//    testCompile 'com.rubylichtenstein:rxtest:1.0.5'
+
+    api  "io.arrow-kt:arrow-optics:$arrow_version"
+    kapt "io.arrow-kt:arrow-annotations-processor:$arrow_version"
 
     //Dagger
     implementation dagger
@@ -262,6 +274,10 @@ dependencies {
     testImplementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
     implementation 'eu.chainfire:libsuperuser:1.0.0.201704021214'
+
+    compile 'com.hannesdorfmann.mosby3:mvi:3.1.0'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     //Kotterknife
     implementation 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
@@ -320,6 +336,8 @@ dependencies {
     implementation project(":sublib:themereaderassetmanager")
     implementation project(path: ':sublib:compilercommon')
     implementation project(':sublib:compilerassetmanager')
+
+    implementation "android.arch.lifecycle:runtime:1.1.1"
 
     //Testing
     testImplementation junit

@@ -17,6 +17,7 @@
 
 package com.jereksel.libresubstratum.activities.main
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.DiffUtil.DiffResult
@@ -36,6 +37,7 @@ import com.squareup.picasso.Picasso
 import io.reactivex.android.MainThreadDisposable.verifyMainThread
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import java.io.File
 
 class MainViewAdapter(
@@ -46,6 +48,7 @@ class MainViewAdapter(
 
     val log = getLogger()
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = apps[position]
 

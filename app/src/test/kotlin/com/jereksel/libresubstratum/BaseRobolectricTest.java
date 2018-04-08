@@ -25,6 +25,7 @@ import static org.robolectric.shadows.ShadowLooper.runUiThreadTasksIncludingDela
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = MockedApp.class,
+        shadows = ShadowSnackbar.class,
         sdk = Build.VERSION_CODES.N)
 public class BaseRobolectricTest {
 

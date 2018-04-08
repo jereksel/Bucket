@@ -2,7 +2,6 @@ package com.jereksel.libresubstratum
 
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
@@ -22,8 +21,6 @@ class MockedApp : App() {
 
     companion object {
         @JvmStatic
-        val mockedDetailedPresenter: DetailedContract.Presenter = Mockito.mock(DetailedContract.Presenter::class.java)
-        @JvmStatic
         val mockedInstalledPresenter: InstalledContract.Presenter = Mockito.mock(InstalledContract.Presenter::class.java)
         @JvmStatic
         val mockedPrioritiesPresenter: PrioritiesContract.Presenter = Mockito.mock(PrioritiesContract.Presenter::class.java)
@@ -36,13 +33,11 @@ class MockedApp : App() {
         class TestModule {
 
             @Provides
-            fun detailed(): DetailedContract.Presenter = mockedDetailedPresenter
-            @Provides
             fun installed(): InstalledContract.Presenter = mockedInstalledPresenter
             @Provides
-            fun prorities(): PrioritiesContract.Presenter = mockedPrioritiesPresenter
+            fun priorities(): PrioritiesContract.Presenter = mockedPrioritiesPresenter
             @Provides
-            fun proritiesdetail(): PrioritiesDetailContract.Presenter = mockedPrioritiesDetailPresenter
+            fun proritiesDetail(): PrioritiesDetailContract.Presenter = mockedPrioritiesDetailPresenter
             @Provides
             @Named("persistent")
             fun metrics(): Metrics = mock()
@@ -54,6 +49,9 @@ class MockedApp : App() {
             fun privacySettings(): PrivacyPolicySettings = object: PrivacyPolicySettings {
                 override fun isPrivacyPolicyRequired() = TODO()
             }
+
+            @Provides
+            fun detailedPresenter(): com.jereksel.libresubstratum.activities.detailed.DetailedPresenter = mock()
 
         }
 

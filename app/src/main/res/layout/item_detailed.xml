@@ -66,6 +66,15 @@
                     android:layout_below="@+id/appId"
                     android:layout_toEndOf="@+id/imageView" />
 
+                <ImageView
+                    android:id="@+id/error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/checkbox"
+                    android:src="@drawable/ic_error_red_24dp" />
+
                 <CheckBox
                     android:id="@+id/checkbox"
                     android:layout_width="wrap_content"
@@ -89,6 +98,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:visibility="gone" />
+
+                <!--<Spinner-->
+                    <!--android:id="@+id/type1aview"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp"/>-->
+
+                <!--<Spinner-->
+                    <!--android:id="@+id/type1bview"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp" />-->
+
+                <!--<Spinner-->
+                    <!--android:id="@+id/type1cview"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:layout_height="40dp" />-->
+
 
                 <com.jereksel.libresubstratum.views.TypeView
                     android:id="@+id/type1aview"
@@ -121,6 +149,7 @@
             android:background="#c0FFFFFF">
 
             <TextView
+                android:id="@+id/overlay_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

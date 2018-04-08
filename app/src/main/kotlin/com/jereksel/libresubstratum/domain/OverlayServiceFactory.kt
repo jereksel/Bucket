@@ -27,8 +27,8 @@ import android.os.Build.VERSION_CODES.*
 import android.os.IBinder
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WDUCommitsOverlayService
 import com.jereksel.libresubstratum.domain.overlayService.nougat.WODUCommitsOverlayService
-import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoOverlayService
-import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoSubstratumService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoRootOverlayService
+import com.jereksel.libresubstratum.domain.overlayService.oreo.OreoSubstratumServiceOverlayService
 import com.jereksel.libresubstratum.extensions.getLogger
 import java.io.File
 
@@ -43,9 +43,9 @@ object OverlayServiceFactory {
 
         if (o.contains(SDK_INT)) {
             if (isOreoSubstratumServiceAvailable(context)) {
-                return OreoSubstratumService(context)
+                return OreoSubstratumServiceOverlayService(context)
             } else if (suExists()) {
-                return OreoOverlayService(context)
+                return OreoRootOverlayService(context)
             } else  {
                 return InvalidOverlayService("Root is required for Oreo support")
             }

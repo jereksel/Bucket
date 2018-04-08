@@ -32,9 +32,6 @@ import org.robolectric.annotation.Config
 import org.robolectric.fakes.RoboMenuItem
 
 @Suppress("IllegalIdentifier")
-@Config(
-        shadows = arrayOf(ShadowSnackbar::class)
-)
 class InstalledViewTest: BaseRobolectricTest() {
 
     lateinit var activityController: ActivityController<InstalledView>

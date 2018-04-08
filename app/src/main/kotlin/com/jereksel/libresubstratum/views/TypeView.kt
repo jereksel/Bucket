@@ -47,7 +47,7 @@ class TypeView : RelativeLayout, ITypeView {
     override fun getSpinner() = spinner
     private val seekbar: SeekBar
     override fun getSeekBar() = seekbar
-    private val colorview: ColorView
+//    private val colorview: ColorView
     private var listener: ITypeView.TypeViewSelectionListener? = null
 
     init {
@@ -56,7 +56,7 @@ class TypeView : RelativeLayout, ITypeView {
 
         spinner = find(R.id.spinner)
         seekbar = find(R.id.seekBar)
-        colorview = find(R.id.colorview)
+//        colorview = find(R.id.colorview)
 
     }
 
@@ -65,21 +65,28 @@ class TypeView : RelativeLayout, ITypeView {
     }
 
     override fun setSelection(position: Int) {
-        spinner.setSelection(position)
+//        if (spinner.selectedItemPosition != position) {
+            spinner.setSelection(position)
+//        }
 /*        seekbar.post {
             seekbar.progress = position
         }*/
     }
 
     override fun setType1(list: List<Type1ExtensionToString>) {
-        spinner.adapter = Type1SpinnerArrayAdapter(context, list)
+
+//        spinner.selectListener {  }
+
+//        if (spinner.adapter == null || (spinner.adapter as Type1SpinnerArrayAdapter).objects != list) {
+            spinner.adapter = Type1SpinnerArrayAdapter(context, list)
+//        }
 //        type1aSpinner.setSelection(position)
-        val colors = list.map { it.type1.color }.map { if (it.isNotEmpty()) { it } else {"white"} }.map { Color.parseColor(it) }
+//        val colors = list.map { it.type1.color }.map { if (it.isNotEmpty()) { it } else {"white"} }.map { Color.parseColor(it) }
 
         //ColorView is hidden for now. It was bad idea, I'll prepare something like this:
         //https://github.com/dmfs/color-picker
 
-        colorview.visibility = View.GONE
+//        colorview.visibility = View.GONE
         seekbar.visibility = View.GONE
 
 /*

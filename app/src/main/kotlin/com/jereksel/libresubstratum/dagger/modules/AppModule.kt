@@ -18,8 +18,6 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
-import com.jereksel.libresubstratum.activities.detailed.DetailedContract
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
@@ -91,19 +89,6 @@ open class AppModule(private val application: Application) {
     @Provides
     @Singleton
     open fun provideThemeExtractor(): ThemeExtractor = BaseThemeExtractor()
-
-    @Provides
-    open fun providesDetailedPresenter(
-            packageManager: IPackageManager,
-            getThemeInfoUseCase: IGetThemeInfoUseCase,
-            @Named("logged") overlayService: OverlayService,
-            activityProxy: IActivityProxy,
-            compileThemeUseCase: ICompileThemeUseCase,
-            clipboardManager: ClipboardManager,
-            @Named("group") metrics: Metrics
-    ): DetailedContract.Presenter {
-        return DetailedPresenter(packageManager, getThemeInfoUseCase, overlayService, activityProxy, compileThemeUseCase, clipboardManager, metrics)
-    }
 
     @Provides
     open fun providesInstalledPresenter(
