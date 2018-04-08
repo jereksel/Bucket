@@ -26,7 +26,7 @@ class GetThemeInfoUseCaseTest: FunSpec() {
 
     lateinit var usecase: GetThemeInfoUseCase
 
-    val resources = File(File(javaClass.classLoader.getResource("a").path).parentFile, "usecases/getthemeinfo")
+    val resources = File(File(javaClass.classLoader.getResource("Themeapp.apk").path).parentFile, "usecases/getthemeinfo")
 
     val appId = "app"
 
