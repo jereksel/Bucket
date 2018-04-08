@@ -18,9 +18,8 @@
 package com.jereksel.libresubstratum.dagger.modules
 
 import android.app.Application
-import android.content.om.IOverlayManager
-import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.detailed.DetailedContract
+import com.jereksel.libresubstratum.activities.detailed.DetailedPresenter
 import com.jereksel.libresubstratum.activities.installed.InstalledContract
 import com.jereksel.libresubstratum.activities.installed.InstalledPresenter
 import com.jereksel.libresubstratum.activities.priorities.PrioritiesContract
@@ -29,9 +28,7 @@ import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetail
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailPresenter
 import com.jereksel.libresubstratum.domain.*
 import com.jereksel.libresubstratum.domain.db.themeinfo.guavacache.ThemeInfoGuavaCache
-import com.jereksel.libresubstratum.domain.db.themeinfo.room.RoomThemePackDatabase
 import com.jereksel.libresubstratum.domain.usecases.*
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
