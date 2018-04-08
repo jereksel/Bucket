@@ -219,7 +219,6 @@ class DetailedActionProcessorHolder @Inject constructor(
                             return@rxObservable
                         }
 
-                        //Crash violently on such errors
                         val overlayInfo = overlayService.getOverlayInfo(overlayId).await()
 
                         if (overlayInfo == null) {
