@@ -38,7 +38,6 @@ object OverlayServiceFactory {
 
     fun getOverlayService(context: Context): OverlayService {
 
-
         val o = listOf(O, O_MR1)
 
         if (o.contains(SDK_INT)) {
@@ -47,7 +46,7 @@ object OverlayServiceFactory {
             } else if (suExists()) {
                 return OreoRootOverlayService(context)
             } else  {
-                return InvalidOverlayService("Root is required for Oreo support")
+                return InvalidOverlayService("Root or custom rom is required for Oreo support")
             }
         }
 

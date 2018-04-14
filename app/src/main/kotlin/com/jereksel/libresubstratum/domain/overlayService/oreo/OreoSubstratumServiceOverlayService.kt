@@ -26,9 +26,8 @@ class OreoSubstratumServiceOverlayService(
         val context: Context
 ) : OverlayService {
 
-    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-substratum-service-thread-%d").build()!!
-
-    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))!!
+    private val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-substratum-service-overlay-service-thread-%d").build()!!
+    private val executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor(threadFactory))!!
 
     val log = getLogger()
 
