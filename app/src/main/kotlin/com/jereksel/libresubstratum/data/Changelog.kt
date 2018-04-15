@@ -21,7 +21,7 @@ import com.jereksel.changelogdialog.changelog
 
 object Changelog {
     val changelog = changelog {
-        betaVersion("0.3") {
+        version("0.3") {
             +"Stability fixes"
             +"Support for Substratum Service on Oreo"
             +"Support for rooted Oreo"

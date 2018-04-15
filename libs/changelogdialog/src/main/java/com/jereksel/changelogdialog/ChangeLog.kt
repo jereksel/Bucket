@@ -4,12 +4,7 @@ data class ChangeLog(
         val versions: MutableList<ChangeLogVersion> = mutableListOf()
 ) {
     fun version(name: String, init: ChangeLogVersion.() -> Unit) {
-        val version = ChangeLogVersion(false, name)
-        version.init()
-        versions += version
-    }
-    fun betaVersion(name: String, init: ChangeLogVersion.() -> Unit) {
-        val version = ChangeLogVersion(true, name)
+        val version = ChangeLogVersion( name)
         version.init()
         versions += version
     }

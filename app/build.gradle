@@ -68,7 +68,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        def version = "0.2.1"
+        def version = "0.3"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 27
