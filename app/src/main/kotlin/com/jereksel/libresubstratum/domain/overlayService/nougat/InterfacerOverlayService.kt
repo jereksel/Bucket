@@ -56,11 +56,8 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
 
     private val oms: IOverlayManager = OMSLib.getOMS()
 
-    val threadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-%d").build()
-    val enableExclusiveThreadFactory = ThreadFactoryBuilder().setNameFormat("interfacer-thread-enable-exclusive-%d").build()
-
-    val dispatcher = Executors.newFixedThreadPool(5, threadFactory).asCoroutineDispatcher()
-    val enableExclusiveDispatcher = Executors.newFixedThreadPool(2, threadFactory).asCoroutineDispatcher()
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("nougat-interfacer-overlay-service-thread-%d").build()
+    val dispatcher = Executors.newFixedThreadPool(2, threadFactory).asCoroutineDispatcher()
 
     val INTERFACER_PACKAGE = "projekt.interfacer"
     val INTERFACER_SERVICE = "$INTERFACER_PACKAGE.services.JobService"
@@ -94,43 +91,59 @@ abstract class InterfacerOverlayService(val context: Context): OverlayService {
     }
 
     override fun enableOverlay(id: String) = async(dispatcher) {
-        val interfacer = interfacerRx.firstOrError().await()
-        interfacer.enableOverlay(listOf(id), false)
+        enableOverlay0(id)
     }.asListenableFuture()
 
+    private suspend fun enableOverlay0(id: String) {
+        val interfacer = interfacerRx.firstOrError().await()
+        interfacer.enableOverlay(listOf(id), false)
+    }
+
     override fun disableOverlay(id: String) = async(dispatcher) {
+        disableOverlay0(id)
+    }.asListenableFuture()
+
+    private suspend fun disableOverlay0(id: String) {
         val interfacer = interfacerRx.firstOrError().await()
         interfacer.disableOverlay(listOf(id), false)
-    }.asListenableFuture()
+    }
 
     //When we use CommonPool on everything we have possibility of deadlock
     //enableExclusive is only method that uses other async methods
-    override fun enableExclusive(id: String) = async(enableExclusiveDispatcher) {
+    override fun enableExclusive(id: String) = async(dispatcher) {
 
-        val overlayInfo = getOverlayInfo(id).await() ?: return@async
+        val overlayInfo = getOverlayInfo0(id) ?: return@async
 
-        getAllOverlaysForApk(overlayInfo.targetId).await()
+        getAllOverlaysForApk0(overlayInfo.targetId)
                 .filter { it.enabled }
-                .forEach { disableOverlay(it.overlayId).await() }
+                .forEach { disableOverlay0(it.overlayId) }
 
-        enableOverlay(id).get()
+        enableOverlay0(id)
 
     }.asListenableFuture()
 
     override fun getOverlayInfo(id: String) = async(dispatcher) {
+        getOverlayInfo0(id)
+    }.asListenableFuture()
+
+    private fun getOverlayInfo0(id: String): OverlayInfo? {
         val info = oms.getOverlayInfo(id, 0)
-        if (info != null) {
+        return if (info != null) {
             OverlayInfo(id, info.targetPackageName, info.isEnabled)
         } else {
             null
         }
-    }.asListenableFuture()
+    }
 
     override fun getAllOverlaysForApk(appId: String) = async(dispatcher) {
+        getAllOverlaysForApk0(appId)
+    }.asListenableFuture()
+
+    private fun getAllOverlaysForApk0(appId: String): List<OverlayInfo> {
         @Suppress("UNCHECKED_CAST")
         val map = oms.getOverlayInfosForTarget(appId, 0) as List<android.content.om.OverlayInfo>
-        map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
-    }.asListenableFuture()
+        return map.map { OverlayInfo(it.packageName, it.targetPackageName, it.isEnabled) }
+    }
 
     override fun getOverlaysPrioritiesForTarget(targetAppId: String) = async(dispatcher) {
         @Suppress("UNCHECKED_CAST")

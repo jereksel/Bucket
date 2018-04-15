@@ -42,10 +42,10 @@ class OreoRootOverlayService(
         val context: Context
 ) : OverlayService {
 
-    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-overlay-service-thread-%d").build()!!
-    val installationThreadFactory = ThreadFactoryBuilder().setNameFormat("oreo-overlay-service-thread-installation-%d").build()!!
+    val threadFactory = ThreadFactoryBuilder().setNameFormat("oreo-root-overlay-service-thread-%d").build()!!
+    val installationThreadFactory = ThreadFactoryBuilder().setNameFormat("oreo-root-overlay-service-thread-installation-%d").build()!!
 
-    val executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5, threadFactory))!!
+    val executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor(threadFactory))!!
     val installionExecutor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor(installationThreadFactory))
 
     override fun enableOverlay(id: String): ListenableFuture<*> = executor.submit {
