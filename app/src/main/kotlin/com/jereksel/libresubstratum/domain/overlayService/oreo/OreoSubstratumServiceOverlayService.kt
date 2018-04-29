@@ -82,6 +82,8 @@ class OreoSubstratumServiceOverlayService(
 
     override fun installApk(apk: File): ListenableFuture<*> = executor.submit {
         service.installOverlay(listOf(apk.absolutePath))
+        //FIXME: After installing OMS doesn't update fast enough
+        Thread.sleep(500)
         update.set(true)
     }
 
@@ -117,7 +119,9 @@ class OreoSubstratumServiceOverlayService(
         update.set(true)
     }
 
+    @Volatile
     var lastState: Multimap<String, android.content.om.OverlayInfo> = ArrayListMultimap.create()
+
     val lock = java.lang.Object()
 
     val update = AtomicBoolean(true)
