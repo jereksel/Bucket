@@ -17,21 +17,21 @@
 
 package com.jereksel.libresubstratum.dagger.modules
 
-import com.jereksel.libresubstratum.activities.main.MainViewViewModel
+import com.jereksel.libresubstratum.activities.themelist.ThemeListViewViewModel
 import dagger.Binds
 import dagger.multibindings.IntoMap
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.jereksel.libresubstratum.activities.main.MainViewModel
 import dagger.Module
+import javax.inject.Singleton
 
 @Module
 abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MainViewViewModel::class)
-    abstract fun bindUserViewModel(mainViewModel: MainViewViewModel): ViewModel
+    @ViewModelKey(ThemeListViewViewModel::class)
+    abstract fun bindUserViewModel(mainViewModel: ThemeListViewViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory

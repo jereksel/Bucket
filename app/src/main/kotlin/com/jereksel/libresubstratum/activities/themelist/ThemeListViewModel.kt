@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
-data class MainViewModel(
+data class ThemeListViewModel(
         val appId: String,
         val appName: String,
         val keyAvailable: Boolean? = null,

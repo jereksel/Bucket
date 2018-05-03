@@ -15,49 +15,128 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
 import android.app.Dialog
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AlertDialog.Builder
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
-import android.view.MenuItem
-import com.jereksel.changelogdialog.ChangeLogDialog
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.about.AboutActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedActivityStarter
-import com.jereksel.libresubstratum.activities.installed.InstalledView
-import com.jereksel.libresubstratum.activities.priorities.PrioritiesView
-import com.jereksel.libresubstratum.data.Changelog
-import com.jereksel.libresubstratum.databinding.ActivityMainBinding
+import com.jereksel.libresubstratum.databinding.ActivityThemeListBinding
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.utils.LiveDataUtils.observe
 import com.jereksel.libresubstratum.utils.ViewModelUtils.get
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.startActivity
+import kotlinx.android.synthetic.main.activity_theme_list.*
+import kotlinx.android.synthetic.main.activity_theme_list.view.*
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
-open class MainView : AppCompatActivity() {
+open class ThemeListView : Fragment() {
 
     val log = getLogger()
 
-    @Inject lateinit var factory: ViewModelProvider.Factory
+//    @Inject lateinit var factory: ViewModelProvider.Factory
 
-    lateinit var viewModel: IMainViewViewModel
+//    lateinit var viewModel: IThemeListViewViewModel
 
-    lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityThemeListBinding
 
     private var dialog: Dialog? = null
+
+    lateinit var provider: WeakReference<ThemeListViewViewModelProvider>
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        provider = WeakReference(context as ThemeListViewViewModelProvider)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.activity_theme_list, container, false);
+
+        with(binding.recyclerView) {
+            layoutManager = LinearLayoutManager(this@ThemeListView.activity)
+            itemAnimator = DefaultItemAnimator()
+//            adapter = ThemeListViewAdapter(viewModel)
+        }
+
+        return binding.root
+    }
+
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+//        binding = DataBindingUtil.inflate(
+//                inflater, R.layout.activity_theme_list, container, false);
+
+//        val view = binding.root
+
+        val viewModelProvider = provider.get() ?: return
+
+        val viewModel = viewModelProvider.getThemeListViewViewModel()
+
+//        val view = inflater.inflate(R.layout.activity_theme_list, container, false)
+//
+//        binding = DataBindingUtil.findBinding(view)!!
+
+        binding.viewModel = viewModel
+
+        binding.recyclerView.adapter = ThemeListViewAdapter(viewModel)
+
+//        with(view.recyclerView) {
+//            layoutManager = LinearLayoutManager(this@ThemeListView.activity)
+//            itemAnimator = DefaultItemAnimator()
+//            adapter = ThemeListViewAdapter(viewModel)
+//        }
+//
+//        viewModel.getDialogContent().observe(this) { message ->
+//            dismissDialog()
+//            if (!message.isNullOrEmpty()) {
+//                showUndismissableDialog(message!!)
+//            }
+//        }
+
+//        viewModel.getPermissions().observe(this) { permissions ->
+//            if (permissions == null || permissions.isEmpty()) {
+//                return@observe
+//            }
+//
+//            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), 123)
+//
+//        }
+
+        viewModel.getAppToOpen().observe(this) { appId ->
+            if (!appId.isNullOrEmpty()) {
+                viewModel.getAppToOpen().postValue(null)
+                DetailedActivityStarter.start(context, appId)
+            }
+        }
+
+        viewModel.init()
+
+//        return view
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        provider.clear()
+    }
+
+/*
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +153,7 @@ open class MainView : AppCompatActivity() {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainView)
             itemAnimator = DefaultItemAnimator()
-            adapter = MainViewAdapter(viewModel)
+            adapter = ThemeListViewAdapter(viewModel)
         }
 
         viewModel.getDialogContent().observe(this) { message ->
@@ -125,7 +204,7 @@ open class MainView : AppCompatActivity() {
                     true
                 }
                 R.id.action_about -> {
-                    startActivity<AboutActivity>()
+                    startActivity<AboutFragment>()
                     true
                 }
                 R.id.action_priorities -> {
@@ -162,6 +241,7 @@ open class MainView : AppCompatActivity() {
             }
         }
     }
+*/
 
 }
 

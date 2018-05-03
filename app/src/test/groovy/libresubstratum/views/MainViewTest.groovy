@@ -6,7 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import com.jereksel.libresubstratum.BuildConfig
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.main.MainView
+import com.jereksel.libresubstratum.activities.themelist.MainView
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.views.MockedApp
 import org.junit.Before

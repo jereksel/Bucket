@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_theme_list"
+        android:enabled="true"
+        android:title="Theme list"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:title="About"
+        android:id="@+id/action_about"
+        app:showAsAction="ifRoom" />
+
+    <!--<item-->
+        <!--android:id="@+id/action_installed"-->
+        <!--android:enabled="true"-->
+        <!--android:title="Installed"-->
+        <!--app:showAsAction="ifRoom" />-->
+
+    <!--<item-->
+        <!--android:id="@+id/action_priorities"-->
+        <!--android:enabled="true"-->
+        <!--android:title="Priorities"-->
+        <!--app:showAsAction="ifRoom" />-->
+
+</menu>

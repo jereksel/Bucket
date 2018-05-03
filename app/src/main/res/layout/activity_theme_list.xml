@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <import type="com.jereksel.libresubstratum.activities.main.IMainViewViewModel" />
+        <import type="com.jereksel.libresubstratum.activities.themelist.IThemeListViewViewModel" />
         <variable
             name="viewModel"
-            type="IMainViewViewModel" />
+            type="com.jereksel.libresubstratum.activities.themelist.IThemeListViewViewModel" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,27 +13,19 @@
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.jereksel.libresubstratum.activities.main.MainView">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        tools:context="com.jereksel.libresubstratum.activities.themelist.ThemeListView">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:refreshing="@{viewModel.getSwipeToRefreshObservable()}"
-            app:onRefreshListener="@{() -> viewModel.reset()}"
-            android:layout_below="@id/toolbar">
+            android:layout_below="@id/textView"
+            app:onRefreshListener="@{() -> viewModel.reset()}">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 app:items="@{viewModel.getAppsObservable()}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

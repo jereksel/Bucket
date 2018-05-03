@@ -20,8 +20,8 @@ package com.jereksel.libresubstratum.utils
 import android.support.v7.util.DiffUtil
 
 class SimpleDiffCallback<out T>(
-        val oldList: List<T>,
-        val newList: List<T>
+        private val oldList: List<T>,
+        private val newList: List<T>
 ): DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             oldList[oldItemPosition] == newList[newItemPosition]

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
@@ -31,20 +31,19 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.data.DiffCallBack
 import com.jereksel.libresubstratum.extensions.getLogger
+import com.jereksel.libresubstratum.utils.DiffCallBack
 import com.squareup.picasso.Picasso
 import io.reactivex.android.MainThreadDisposable.verifyMainThread
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.sdk25.coroutines.onLongClick
 import java.io.File
 
-class MainViewAdapter(
-        val viewModel: IMainViewViewModel
-) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+class ThemeListViewAdapter(
+        val viewModel: IThemeListViewViewModel
+) : RecyclerView.Adapter<ThemeListViewAdapter.ViewHolder>() {
 
-    var apps: List<MainViewModel> = listOf()
+    var apps: List<ThemeListViewModel> = listOf()
 
     val log = getLogger()
 
@@ -89,13 +88,13 @@ class MainViewAdapter(
         return ViewHolder(v)
     }
 
-    fun updateItems(apps: List<MainViewModel>) {
+    fun updateItems(apps: List<ThemeListViewModel>) {
         verifyMainThread()
 
         val oldList = this.apps
         val newList = apps
 
-        MainViewModelDiffCallBack(oldList, newList)
+        DiffCallBack(oldList, newList)
                 .calculate()
                 .dispatchUpdatesTo(this)
 
@@ -111,7 +110,7 @@ class MainViewAdapter(
         val progressBar: ProgressBar by bindView(R.id.progressBar)
     }
 
-    private fun <E> DiffCallBack<E>.calculate(): DiffResult {
+    private fun DiffUtil.Callback.calculate(): DiffResult {
         return DiffUtil.calculateDiff(this)
     }
 

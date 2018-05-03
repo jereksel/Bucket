@@ -1,16 +1,14 @@
 package com.jereksel.libresubstratum.activities.legal
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
 import android.text.method.LinkMovementMethod
-import android.view.View
 import android.widget.TextView
 import com.jereksel.libresubstratum.App
 import com.jereksel.libresubstratum.R
-import com.jereksel.libresubstratum.activities.main.MainView
+import com.jereksel.libresubstratum.activities.bottom.BottomActivity
 import com.jereksel.libresubstratum.domain.PrivacyPolicySettings
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
@@ -54,7 +52,7 @@ class LegalActivity: AppCompatActivity() {
     }
 
     private fun startMainActivity() {
-        startActivity<MainView>()
+        startActivity<BottomActivity>()
         finish()
     }
 

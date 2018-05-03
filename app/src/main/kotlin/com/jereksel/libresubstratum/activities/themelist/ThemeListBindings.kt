@@ -15,17 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
 import android.databinding.BindingAdapter
 import android.support.v7.widget.RecyclerView
 
-object MainBindings {
+object ThemeListBindings {
 
     @JvmStatic
     @BindingAdapter("app:items")
-    fun setItems(recyclerView: RecyclerView, items: List<MainViewModel>) {
-        (recyclerView.adapter as? MainViewAdapter)?.updateItems(ArrayList(items))
+    fun setItems(recyclerView: RecyclerView, items: List<ThemeListViewModel>) {
+        (recyclerView.adapter as? ThemeListViewAdapter)?.updateItems(ArrayList(items))
     }
 
 }

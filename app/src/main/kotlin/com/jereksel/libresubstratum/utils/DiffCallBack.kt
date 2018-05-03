@@ -15,11 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.utils
 
+import com.jereksel.libresubstratum.activities.themelist.ThemeListViewModel
 import com.jereksel.libresubstratum.data.DiffCallBack
 
-class MainViewModelDiffCallBack(oldList: List<MainViewModel>, newList: List<MainViewModel>) : DiffCallBack<MainViewModel>(oldList, newList) {
+class DiffCallBack(oldList: List<ThemeListViewModel>, newList: List<ThemeListViewModel>) : DiffCallBack<ThemeListViewModel>(oldList, newList) {
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldList[oldItemPosition] == newList[newItemPosition]

@@ -18,23 +18,23 @@
 package com.jereksel.libresubstratum.activities.about
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
 import android.view.View
-import com.jereksel.libresubstratum.R
+import android.view.ViewGroup
 import com.jereksel.libresubstratum.adapters.AboutLibrariesAdapter
 import com.jereksel.libresubstratum.data.libraries.Author
 import com.jereksel.libresubstratum.data.libraries.Library
 import com.jereksel.libresubstratum.data.libraries.LicenseType.*
-import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.verticalLayout
 
-class AboutActivity: AppCompatActivity() {
+class AboutFragment: Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setTitle(R.string.about)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val maven = Library("Maven", APACHE2, Author("Maven contributors", "2014"))
 
@@ -89,13 +89,15 @@ class AboutActivity: AppCompatActivity() {
                 rx2Extensions)
                 .sortedBy { it.name }
 
-        verticalLayout {
-            recyclerView {
-                adapter = AboutLibrariesAdapter(libraries)
-                layoutManager = LinearLayoutManager(this@AboutActivity)
-                itemAnimator = DefaultItemAnimator()
+        return UI {
+            verticalLayout {
+                recyclerView {
+                    adapter = AboutLibrariesAdapter(libraries)
+                    layoutManager = LinearLayoutManager(context)
+                    itemAnimator = DefaultItemAnimator()
+                }
             }
-        }
+        }.view
     }
 
 }

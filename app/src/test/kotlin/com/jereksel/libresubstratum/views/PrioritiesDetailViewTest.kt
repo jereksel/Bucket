@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import com.jereksel.libresubstratum.BaseRobolectricTest
 import com.jereksel.libresubstratum.MockedApp
 import com.jereksel.libresubstratum.ResettableLazy
-import com.jereksel.libresubstratum.activities.installed.InstalledView
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailContract
 import com.jereksel.libresubstratum.activities.prioritiesdetail.PrioritiesDetailView
 import com.jereksel.libresubstratum.data.InstalledOverlay

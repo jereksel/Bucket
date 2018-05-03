@@ -32,6 +32,7 @@ import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.ResettableLazy
 import com.jereksel.libresubstratum.activities.detailed.DetailedActivity
 import com.jereksel.libresubstratum.activities.detailed.DetailedActivityStarter
+import com.jereksel.libresubstratum.activities.themelist.IThemeListViewViewModel
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify

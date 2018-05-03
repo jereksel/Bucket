@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableArrayList
@@ -26,23 +26,25 @@ import com.jereksel.libresubstratum.data.SingleLiveEvent
 import com.jereksel.libresubstratum.domain.IKeyFinder
 import com.jereksel.libresubstratum.domain.IPackageManager
 import com.jereksel.libresubstratum.domain.OverlayService
-import com.jereksel.libresubstratum.domain.usecases.CleanUnusedOverlays
 import com.jereksel.libresubstratum.domain.usecases.ICleanUnusedOverlays
 import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.guava.await
-import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Named
 
-class MainViewViewModel @Inject constructor(
+interface ThemeListViewViewModelProvider {
+    fun getThemeListViewViewModel(): IThemeListViewViewModel
+}
+
+class ThemeListViewViewModel @Inject constructor(
         val packageManager: IPackageManager,
         @Named("logged") val overlayService: OverlayService,
         val keyFinder: IKeyFinder,
         val cleanUnusedOverlays: ICleanUnusedOverlays
-): IMainViewViewModel() {
+): IThemeListViewViewModel() {
 
     sealed class Change {
         data class Key(val id: Int, val keyAvailable: Boolean) : Change()
@@ -51,7 +53,7 @@ class MainViewViewModel @Inject constructor(
 
     val log = getLogger()
 
-    private val apps: ObservableList<MainViewModel> = ObservableArrayList()
+    private val apps: ObservableList<ThemeListViewModel> = ObservableArrayList()
     override fun getAppsObservable() = apps
 
     private val swipeToRefresh = ObservableBoolean(true)
@@ -110,7 +112,7 @@ class MainViewViewModel @Inject constructor(
 
             val themes = packageManager.getInstalledThemes().sortedBy { it.name.toLowerCase() }
 
-            val models = themes.map { MainViewModel(it.appId, it.name) }
+            val models = themes.map { ThemeListViewModel(it.appId, it.name) }
 
             apps.addAll(models)
 

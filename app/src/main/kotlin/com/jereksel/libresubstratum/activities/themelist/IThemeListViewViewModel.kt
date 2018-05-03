@@ -15,17 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.jereksel.libresubstratum.activities.main
+package com.jereksel.libresubstratum.activities.themelist
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
-import com.jereksel.libresubstratum.data.SingleLiveEvent
 
-abstract class IMainViewViewModel: ViewModel() {
-    abstract fun getAppsObservable(): ObservableList<MainViewModel>
+abstract class IThemeListViewViewModel: ViewModel() {
+    abstract fun getAppsObservable(): ObservableList<ThemeListViewModel>
     abstract fun getSwipeToRefreshObservable(): ObservableBoolean
     abstract fun getDialogContent(): LiveData<String>
     abstract fun getPermissions(): LiveData<List<String>>
