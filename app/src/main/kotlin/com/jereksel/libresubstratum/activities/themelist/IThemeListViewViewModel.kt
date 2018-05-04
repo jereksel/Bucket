@@ -26,13 +26,10 @@ import android.databinding.ObservableList
 abstract class IThemeListViewViewModel: ViewModel() {
     abstract fun getAppsObservable(): ObservableList<ThemeListViewModel>
     abstract fun getSwipeToRefreshObservable(): ObservableBoolean
-    abstract fun getDialogContent(): LiveData<String>
-    abstract fun getPermissions(): LiveData<List<String>>
 
     //Mutable because Adapter is writing to it
     abstract fun getAppToOpen(): MutableLiveData<String>
 
     abstract fun reset()
     abstract fun init()
-    abstract suspend fun tickChecks()
 }

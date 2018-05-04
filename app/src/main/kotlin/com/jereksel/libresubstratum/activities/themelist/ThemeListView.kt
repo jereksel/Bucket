@@ -22,7 +22,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +41,7 @@ open class ThemeListView : Fragment() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
-    lateinit var binding: ActivityThemeListBinding
+    private lateinit var binding: ActivityThemeListBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,7 +50,7 @@ open class ThemeListView : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.activity_theme_list, container, false);
+                inflater, R.layout.activity_theme_list, container, false)
 
         return binding.root
     }
@@ -59,7 +58,7 @@ open class ThemeListView : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val viewModel  = ViewModelProviders.of(this, factory).get(IThemeListViewViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, factory).get(IThemeListViewViewModel::class.java)
 
         binding.viewModel = viewModel
 

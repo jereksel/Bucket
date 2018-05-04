@@ -17,7 +17,6 @@
 
 package com.jereksel.libresubstratum.activities.themelist
 
-import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableList
@@ -31,7 +30,8 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.guava.await
+import kotlinx.coroutines.experimental.cancelAndJoin
+import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -58,12 +58,6 @@ class ThemeListViewViewModel @Inject constructor(
 
     private val swipeToRefresh = ObservableBoolean(true)
     override fun getSwipeToRefreshObservable() = swipeToRefresh
-
-    private val _dialogContent = MutableLiveData<String>()
-    override fun getDialogContent() = _dialogContent
-
-    private val _permissionsToRequest = SingleLiveEvent<List<String>>()
-    override fun getPermissions() = _permissionsToRequest
 
     private val _appToOpen = SingleLiveEvent<String>()
     override fun getAppToOpen() = _appToOpen
@@ -148,21 +142,6 @@ class ThemeListViewViewModel @Inject constructor(
         swipeToRefresh.set(true)
         apps.clear()
         init()
-    }
-
-    override suspend fun tickChecks() {
-        val perms = overlayService.requiredPermissions()
-        if (perms.isNotEmpty()) {
-            _permissionsToRequest.postValue(perms)
-            return
-        }
-        _dialogContent.postValue("Checking system...")
-        val message = overlayService.additionalSteps().await()
-        if (message != null) {
-            _dialogContent.postValue(message)
-            return
-        }
-        _dialogContent.postValue("")
     }
 
     override fun onCleared() {
