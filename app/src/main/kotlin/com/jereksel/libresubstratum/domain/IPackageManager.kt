@@ -18,6 +18,7 @@
 package com.jereksel.libresubstratum.domain
 
 import android.graphics.drawable.Drawable
+import com.google.common.util.concurrent.ListenableFuture
 import com.jereksel.libresubstratum.data.InstalledOverlay
 import com.jereksel.libresubstratum.data.InstalledTheme
 import java.io.File
@@ -29,6 +30,7 @@ interface IPackageManager {
     fun getAppVersion(appId: String): Pair<Int, String>
     fun getAppIcon(appId: String): Drawable?
     fun getAppName(appId: String): String
+    fun getHeroImage(appId: String): ListenableFuture<File?>
     fun isPackageInstalled(appId: String): Boolean
     fun getAppLocation(appId: String): File
     fun getCacheFolder(): File
