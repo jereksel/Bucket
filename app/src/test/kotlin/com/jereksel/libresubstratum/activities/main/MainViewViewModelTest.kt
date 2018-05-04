@@ -29,8 +29,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.kotlintest.mock.mock
 import io.kotlintest.specs.FunSpec
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.TestScheduler
 import kotlinx.coroutines.experimental.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.ArgumentMatchers.anyString
@@ -69,26 +67,24 @@ class MainViewViewModelTest: FunSpec() {
 
         test("Values from PackageManager is passed to ObservableList") {
 
-            val test = TestScheduler()
-
-            RxJavaPlugins.reset()
-            RxJavaPlugins.setComputationSchedulerHandler { TestScheduler() }
-            RxJavaPlugins.setIoSchedulerHandler { test }
-
             whenever(packageManager.getInstalledThemes()).thenReturn(listOf(
-                    InstalledTheme("app0", "theme 0", "", false, ""),
                     InstalledTheme("app1", "Theme 1", "", false, ""),
-                    InstalledTheme("app2", "Theme 2", "", false, "")
+                    InstalledTheme("app2", "Theme 2", "", false, ""),
+                    InstalledTheme("app3", "Theme 3", "", false, "")
             ))
 
             whenever(packageManager.getHeroImage(anyString())).thenReturn(null.toFuture())
 
             mainViewViewModel.init()
 
+            runBlocking {
+                mainViewViewModel.job.join()
+            }
+
             assertThat(mainViewViewModel.getAppsObservable()).containsExactly(
-                    MainViewModel("app0", "theme 0", keyAvailable = false, heroImage = null),
                     MainViewModel("app1", "Theme 1", keyAvailable = false, heroImage = null),
-                    MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = null)
+                    MainViewModel("app2", "Theme 2", keyAvailable = false, heroImage = null),
+                    MainViewModel("app3", "Theme 3", keyAvailable = false, heroImage = null)
             )
 
         }
