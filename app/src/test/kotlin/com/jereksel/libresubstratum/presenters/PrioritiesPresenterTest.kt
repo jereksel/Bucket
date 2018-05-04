@@ -56,8 +56,8 @@ class PrioritiesPresenterTest: FunSpec() {
             whenever(overlayService.getOverlayInfo("appb3")).thenReturn(OverlayInfo("", "",true).toFuture())
             whenever(overlayService.getOverlayInfo("appc1")).thenReturn(OverlayInfo("", "",true).toFuture())
 
-            val installedThemea = InstalledTheme("", "", "", true, "", FutureTask { null })
-            val installedThemeb = InstalledTheme("", "", "", true, "", FutureTask { null })
+            val installedThemea = InstalledTheme("", "", "", true, "")
+            val installedThemeb = InstalledTheme("", "", "", true, "")
 
             whenever(packageManager.getAppName("appa")).thenReturn("Z")
             whenever(packageManager.getAppName("appb")).thenReturn("A")

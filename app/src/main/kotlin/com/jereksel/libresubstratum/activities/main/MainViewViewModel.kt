@@ -32,7 +32,10 @@ import com.jereksel.libresubstratum.extensions.getLogger
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.cancelAndJoin
 import kotlinx.coroutines.experimental.guava.await
+import kotlinx.coroutines.experimental.launch
 import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Named
@@ -43,11 +46,6 @@ class MainViewViewModel @Inject constructor(
         val keyFinder: IKeyFinder,
         val cleanUnusedOverlays: ICleanUnusedOverlays
 ): IMainViewViewModel() {
-
-    sealed class Change {
-        data class Key(val id: Int, val keyAvailable: Boolean) : Change()
-        data class Image(val id: Int, val location: String) : Change()
-    }
 
     val log = getLogger()
 
@@ -69,7 +67,7 @@ class MainViewViewModel @Inject constructor(
     @Volatile
     var initialized = false
 
-    var compositeDisposable = CompositeDisposable()
+    lateinit var job: Job
 
     override fun init() {
         if (initialized) {
@@ -80,33 +78,7 @@ class MainViewViewModel @Inject constructor(
 
         initialized = true
 
-        val subject = ReplayRelay.create<Change>()
-
-        compositeDisposable += subject
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe { change ->
-
-                    log.debug("Received change: {}", change)
-
-                    when(change) {
-                        is Change.Key -> {
-                            val (id, keyAvailable) = change
-                            val theme = apps[id]
-                            val newTheme = theme.copy(keyAvailable = keyAvailable)
-                            apps[id] = newTheme
-                        }
-                        is Change.Image -> {
-                            val (id, image) = change
-                            val theme = apps[id]
-                            val newTheme = theme.copy(heroImage = image)
-                            apps[id] = newTheme
-                        }
-                    }
-
-                }
-
-        compositeDisposable += Schedulers.io().scheduleDirect {
+        job = launch {
 
             val themes = packageManager.getInstalledThemes().sortedBy { it.name.toLowerCase() }
 
@@ -118,33 +90,36 @@ class MainViewViewModel @Inject constructor(
 
             themes.forEachIndexed { index, installedTheme ->
 
-                compositeDisposable += Schedulers.io().scheduleDirect {
-                    installedTheme.heroImage.run()
-                    try {
-                        val image = installedTheme.heroImage.get()!!
-                        subject.accept(Change.Image(index, image.absolutePath))
-                    } catch (ignored: InterruptedException) {
-                    }
-                }
+                val key = keyFinder.getKey(installedTheme.appId)
 
-                compositeDisposable += Schedulers.io().scheduleDirect {
-                    val key = keyFinder.getKey(installedTheme.appId)
-                    log.debug("Key for {}: {}", installedTheme.appId, key)
-                    subject.accept(Change.Key(index, key != null))
-                }
+                log.debug("Key for {}: {}", installedTheme.appId, key)
+
+                val theme = apps[index]
+                val newTheme = theme.copy(keyAvailable = key != null)
+                apps[index] = newTheme
+
+            }
+
+            themes.forEachIndexed { index, _ ->
+
+                val theme = apps[index]
+
+                val image = packageManager.getHeroImage(theme.appId).await()
+
+                val newTheme = theme.copy(heroImage = image?.absolutePath)
+                apps[index] = newTheme
+
 
             }
 
         }
-
     }
 
     override fun reset() {
-        compositeDisposable.clear()
-        compositeDisposable = CompositeDisposable()
         initialized = false
         swipeToRefresh.set(true)
         apps.clear()
+        job.cancel()
         init()
     }
 
@@ -164,7 +139,7 @@ class MainViewViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        compositeDisposable.clear()
+        job.cancel()
     }
 
 }
