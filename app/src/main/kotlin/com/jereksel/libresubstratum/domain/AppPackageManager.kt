@@ -49,6 +49,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 "com.android.systemui.statusbars" to "Statusbars",
                 "com.android.systemui.tiles" to "Tiles"
         )
+        private val SETTINGS = mapOf(
+                "com.android.settings.icons" to "Settings icons"
+        )
     }
 
     val SUBSTRATUM_LEGACY = "Substratum_Legacy"
@@ -208,6 +211,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
         if (SYSTEMUI.contains(appId)) {
             getAppLocation("com.android.systemui")
+        } else if (SETTINGS.contains(appId)) {
+                getAppLocation("com.android.settings")
         } else {
             File(context.packageManager.getApplicationInfo(appId, 0)!!.sourceDir)
         }
@@ -217,6 +222,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
     override fun isPackageInstalled(appId: String): Boolean {
 
         if (SYSTEMUI.contains(appId)) {
+            return true
+        }
+
+        if (SETTINGS.contains(appId)) {
             return true
         }
 
@@ -238,6 +247,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return SYSTEMUI[appId]!!
         }
 
+        if (SETTINGS.contains(appId)) {
+            return SETTINGS[appId]!!
+        }
+
         try {
             val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
             return context.packageManager.getApplicationLabel(appInfo).toString()
@@ -255,6 +268,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
         if (SYSTEMUI.contains(appId)) {
             return getAppIcon("android")
+        }
+
+        if (SETTINGS.contains(appId)) {
+            return getAppIcon("com.android.settings")
         }
 
         try {
