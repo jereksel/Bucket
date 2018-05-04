@@ -27,6 +27,9 @@ class BottomActivity: AppCompatActivity(), ThemeListViewViewModelProvider {
 
     lateinit var _themeListViewViewModel: IThemeListViewViewModel
 
+    lateinit var fragment1: ThemeListView
+    lateinit var fragment2: AboutFragment
+
     override fun getThemeListViewViewModel(): IThemeListViewViewModel {
         return _themeListViewViewModel
     }
@@ -39,6 +42,14 @@ class BottomActivity: AppCompatActivity(), ThemeListViewViewModelProvider {
 
         val fragmentManager = supportFragmentManager
 
+//        if (savedInstanceState != null) {
+//            fragment1 = fragmentManager.getFragment(savedInstanceState, "fragment1") as ThemeListView
+//            fragment2 = fragmentManager.getFragment(savedInstanceState, "fragment2") as AboutFragment
+//        } else {
+            fragment1 = ThemeListView()
+            fragment2 = AboutFragment()
+//        }
+
 //        val fragment1 = ThemeListView()
 //
 //        if (savedInstanceState != null) {
@@ -49,8 +60,10 @@ class BottomActivity: AppCompatActivity(), ThemeListViewViewModelProvider {
 
         _themeListViewViewModel = ViewModelProviders.of(this, factory).get(IThemeListViewViewModel::class.java)
 
-        val fragment1 = ThemeListView()
-        val fragment2 = AboutFragment()
+
+//        val fragment1 = ThemeListView()
+//
+//        val fragment2 = AboutFragment()
 
 //        if (fragment1 == null) {
 //            fragment1 = ThemeListView()
@@ -80,6 +93,12 @@ class BottomActivity: AppCompatActivity(), ThemeListViewViewModelProvider {
         }
 
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+//        supportFragmentManager.putFragment(outState, "fragment1", fragment1)
+//        supportFragmentManager.putFragment(outState, "fragment2", fragment2)
     }
 
 }
