@@ -1,14 +1,12 @@
 Bucket is UNOFFICIAL app for Substratum Theme Engine
 
-THIS APP REQUIRES NOUGAT ROM WITH OMS SUPPORT
-
-ROOTED OREO SUPPORT IS NOW AVAILABLE IN BETA
+THIS APP REQUIRES NOUGAT ROM WITH OMS SUPPORT OR OREO (ROOTED OR WITH SUBSTRATUM SERVICE)
 
 NOTE: This app is not affiliate with Substratum team. Please don't post bug reports to official Substratum groups/chats.
 
-For now this app contains only basic overlay support (compiling and enabling/disabling overlays). Setting priorities (Mix and Match from Substratum app) and support for bootanimation, sounds and wallpaper will come in next versions.
+For now this app contains only overlay support.
 
-Source code: https://github.com/jereksel/LibreSubstratum
+Source code: https://github.com/jereksel/Bucket
 
 Credits:
 Icon made by Freepik from www.flaticon.com
