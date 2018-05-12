@@ -55,7 +55,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        def version = "0.3"
+        def version = "0.4"
         applicationId "com.jereksel.libresubstratum"
         minSdkVersion 24
         targetSdkVersion 27
@@ -68,7 +68,7 @@ android {
                 versionName "${version}-BETA-${code}-${shortTag}"
             }
         } else if (project.hasProperty("fdroid")) {
-            versionCode 3
+            versionCode 5
             versionName version
         } else {
             versionCode 9999
