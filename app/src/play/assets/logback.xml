@@ -7,11 +7,6 @@
             <pattern>[%-20thread] %msg</pattern>
         </encoder>
     </appender>
-    <appender name="Crashlytics" class="com.allogy.android.logback.CrashlyticsAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
 
     <root level="DEBUG">
         <appender-ref ref="logcat" />
