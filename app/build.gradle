@@ -240,7 +240,6 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:${lifecycle_components_version}"
     implementation "android.arch.lifecycle:reactivestreams:${lifecycle_components_version}"
     testImplementation "android.arch.core:core-testing:${lifecycle_components_version}"
-    kapt 'com.android.databinding:compiler:3.1.2'
 
     implementation "com.jereksel:aapt:1.0@aar"
 
@@ -264,7 +263,7 @@ dependencies {
 
     compile 'com.hannesdorfmann.mosby3:mvi:3.1.0'
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0'
 
     //Kotterknife
     implementation 'com.jakewharton:kotterknife:0.1.0-20170921.134610-22', {
@@ -275,8 +274,8 @@ dependencies {
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
     implementation 'com.github.clans:fab:1.6.4'
-    implementation "com.github.akarnokd:rxjava2-extensions:0.18.9"
-    implementation 'org.zeroturnaround:zt-zip:1.12'
+    implementation "com.github.akarnokd:rxjava2-extensions:0.19.1"
+    implementation 'org.zeroturnaround:zt-zip:1.13'
 
     //Logging
     implementation "com.github.tony19:logback-android-core:$logback_android_version"
@@ -295,8 +294,6 @@ dependencies {
 
     implementation anko
     implementation ankoRecyclerView
-
-    implementation 'com.github.kittinunf.result:result:1.3.0'
 
     //Signing
     implementation project(":zipsigner:combined")

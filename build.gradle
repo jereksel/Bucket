@@ -3,12 +3,12 @@
 buildscript {
     ext {
         kotlin_version = '1.2.31'
-        anko_version = '0.10.4'
+        anko_version = '0.10.5'
         support_library_version = "26.1.0"
         coroutines_version = "0.22.5"
         lifecycle_components_version = "1.1.1"
         aa_version = "4.3.1"
-        dagger_version = "2.15"
+        dagger_version = "2.16"
         arrow_version = "0.6.1"
         assertj_version = "3.8.0"
         assertj_android_version = "1.2.0"
@@ -19,10 +19,10 @@ buildscript {
         robolectric_version = "3.7.1"
         junit_version = "4.12"
         guava_version = "24.1-android"
-        mockito_version = "2.10.0"
+        mockito_version = "2.18.3"
         //DON'T UPDATE: https://github.com/kotlintest/kotlintest/issues/174
         kotlintest_version = "1.3.5"
-        mockito_kotlin_version = "1.3.0"
+        mockito_kotlin_version = "1.5.0"
 
         //Libs
 
