@@ -13,18 +13,6 @@ apply plugin: "com.github.ben-manes.versions"
 
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.2'
-    }
-}
-
-apply plugin: 'io.fabric'
-
 repositories {
     mavenCentral()
     maven {
@@ -36,7 +24,6 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
-    maven { url 'https://maven.fabric.io/public' }
     maven {
         url "https://dl.bintray.com/jereksel/maven"
     }
@@ -92,7 +79,7 @@ android {
         multiDexEnabled true
 
 //        testInstrumentationRunner "com.jereksel.libresubstratum.TestAppAndroidJUnitRunner"
-        manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
+//        manifestPlaceholders = [crashlytics: System.getenv("CRASHLYTICS_TOKEN") ?: ""]
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         ndk {
             abiFilters 'armeabi-v7a'
@@ -120,12 +107,12 @@ android {
         }
         debug {
             testCoverageEnabled true
-            ext.enableCrashlytics = false
+//            ext.enableCrashlytics = false
         }
         debugProguarded {
             initWith(buildTypes.debug)
             minifyEnabled true
-            ext.enableCrashlytics = false
+//            ext.enableCrashlytics = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             matchingFallbacks = ['debug']
         }
@@ -297,9 +284,6 @@ dependencies {
     }
 
     implementation slf4japi
-    playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
-        transitive = true
-    }
 
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
