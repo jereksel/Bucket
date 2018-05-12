@@ -25,6 +25,9 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.ListeningExecutorService
+import com.google.common.util.concurrent.MoreExecutors
 import com.jereksel.libresubstratum.R
 import com.jereksel.libresubstratum.data.Application
 import com.jereksel.libresubstratum.data.InstalledOverlay
@@ -32,6 +35,7 @@ import com.jereksel.libresubstratum.data.InstalledTheme
 import com.jereksel.libresubstratum.extensions.getLogger
 import com.jereksel.libresubstratum.extensions.has
 import java.io.File
+import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
 
 class AppPackageManager(val context: Context) : IPackageManager {
@@ -44,6 +48,9 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 "com.android.systemui.navbars" to "Navbars",
                 "com.android.systemui.statusbars" to "Statusbars",
                 "com.android.systemui.tiles" to "Tiles"
+        )
+        private val SETTINGS = mapOf(
+                "com.android.settings.icons" to "Settings icons"
         )
     }
 
@@ -59,6 +66,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
     val metadataOverlayType1c = "Substratum_Type1c"
     val metadataOverlayType2 = "Substratum_Type2"
     val metadataOverlayType3 = "Substratum_Type3"
+
+    val executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
 
     val lock = java.lang.Object()
 
@@ -108,7 +117,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
                     val author = it.metadata.getString(SUBSTRATUM_AUTHOR)
                     val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
                     val pluginVersion = it.metadata.getString("Substratum_Plugin")
-                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
+                    InstalledTheme(it.appId, name, author, encrypted, pluginVersion)
                 }
                 .toList()
     }
@@ -126,7 +135,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
             val author = it.metadata.getString(SUBSTRATUM_AUTHOR)
             val encrypted = it.metadata.getString("Substratum_Encryption") == "onCompileVerify"
             val pluginVersion = it.metadata.getString("Substratum_Plugin")
-            InstalledTheme(it.appId, name, author, encrypted, pluginVersion, FutureTask { getHeroImage(it.appId) })
+            InstalledTheme(it.appId, name, author, encrypted, pluginVersion)
         }
 
     }
@@ -141,18 +150,23 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 .map { Application(it.packageName, it.applicationInfo.metaData) }
     }
 
-    fun getHeroImage(appId: String): File? {
+    override fun getHeroImage(appId: String): ListenableFuture<File?> {
 
-        val res = context.packageManager.getResourcesForApplication(appId)
-        val resId = res.getIdentifier("heroimage", "drawable", appId)
-        if (resId == 0) {
-            return null
+        return executor.sub {
+
+            val res = context.packageManager.getResourcesForApplication(appId)
+            val resId = res.getIdentifier("heroimage", "drawable", appId)
+            if (resId == 0) {
+                return@sub null
+            }
+            val drawable = ResourcesCompat.getDrawable(res, resId, null) ?: return@sub null
+
+            val bitmap = drawableToBitmap(drawable)
+
+            saveBitmap(bitmap, appId)
+
         }
-        val drawable = ResourcesCompat.getDrawable(res, resId, null) ?: return null
 
-        val bitmap = drawableToBitmap(drawable)
-
-        return saveBitmap(bitmap, appId)
     }
 
     fun saveBitmap(bitmap: Bitmap, appId: String) : File {
@@ -197,6 +211,8 @@ class AppPackageManager(val context: Context) : IPackageManager {
 
         if (SYSTEMUI.contains(appId)) {
             getAppLocation("com.android.systemui")
+        } else if (SETTINGS.contains(appId)) {
+                getAppLocation("com.android.settings")
         } else {
             File(context.packageManager.getApplicationInfo(appId, 0)!!.sourceDir)
         }
@@ -206,6 +222,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
     override fun isPackageInstalled(appId: String): Boolean {
 
         if (SYSTEMUI.contains(appId)) {
+            return true
+        }
+
+        if (SETTINGS.contains(appId)) {
             return true
         }
 
@@ -227,6 +247,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return SYSTEMUI[appId]!!
         }
 
+        if (SETTINGS.contains(appId)) {
+            return SETTINGS[appId]!!
+        }
+
         try {
             val appInfo = context.packageManager.getApplicationInfo(appId, GET_META_DATA)
             return context.packageManager.getApplicationLabel(appInfo).toString()
@@ -246,6 +270,10 @@ class AppPackageManager(val context: Context) : IPackageManager {
             return getAppIcon("android")
         }
 
+        if (SETTINGS.contains(appId)) {
+            return getAppIcon("com.android.settings")
+        }
+
         try {
             return context.packageManager.getApplicationIcon(appId)
         } catch (e: PackageManager.NameNotFoundException) {
@@ -262,4 +290,7 @@ class AppPackageManager(val context: Context) : IPackageManager {
                 overlayId.startsWith("com.android.settings.icons") -> stringIdToString(R.string.settings_icons)
                 else -> getAppName(targetId)
             }
+
+    private inline fun <T> ListeningExecutorService.sub(crossinline function: () -> T): ListenableFuture<T> =
+            this.submit(java.util.concurrent.Callable { function() })
 }

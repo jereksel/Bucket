@@ -75,7 +75,12 @@ class CompileThemeUseCase(
         val type3 = themePack.type3?.extensions?.firstOrNull { it.name == type3Name }
 
         val originalTargetApp = theme.application
-        val fixedTargetApp = if (originalTargetApp.startsWith("com.android.systemui.")) "com.android.systemui" else originalTargetApp
+
+        val fixedTargetApp = when {
+            originalTargetApp.startsWith("com.android.systemui.") -> "com.android.systemui"
+            originalTargetApp.startsWith("com.android.settings.") -> "com.android.settings"
+            else -> originalTargetApp
+        }
 
         val themeName = packageManager.getInstalledTheme(themeId).name
 

@@ -26,8 +26,7 @@ data class InstalledTheme(
         val name: String,
         val author: String,
         val encrypted: Boolean,
-        val pluginVersion: String,
-        val heroImage: FutureTask<File?>
+        val pluginVersion: String
 ) {
 //    constructor(appId: String, name: String, author: String, file: File?) : this(appId, name, author, FutureTask { file })
 }

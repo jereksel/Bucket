@@ -27,29 +27,32 @@ class LegalActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        (application as App).getAppComponent(this).inject(this)
+        startMainActivity()
 
-        val sharedPreferences = getSharedPreferences(spName, MODE_PRIVATE)
-
-        val acc = sharedPreferences.getBoolean(spStringName, false)
-
-        if(!privacyPolicySettings.isPrivacyPolicyRequired() || acc) {
-            startMainActivity()
-        } else {
-
-            val dialog = AlertDialog.Builder(this)
-                    .setTitle("Privacy Policy")
-                    .setMessage(Html.fromHtml(resources.getString(R.string.privacy_policy_dialog)))
-                    .setCancelable(false)
-                    .setPositiveButton("OK") { _, _ ->
-                        sharedPreferences.edit().putBoolean(spStringName, true).apply()
-                        startMainActivity()
-                    }
-                    .show()
-
-            dialog.find<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
-
-        }
+//
+//        (application as App).getAppComponent(this).inject(this)
+//
+//        val sharedPreferences = getSharedPreferences(spName, MODE_PRIVATE)
+//
+//        val acc = sharedPreferences.getBoolean(spStringName, false)
+//
+//        if(!privacyPolicySettings.isPrivacyPolicyRequired() || acc) {
+//            startMainActivity()
+//        } else {
+//
+//            val dialog = AlertDialog.Builder(this)
+//                    .setTitle("Privacy Policy")
+//                    .setMessage(Html.fromHtml(resources.getString(R.string.privacy_policy_dialog)))
+//                    .setCancelable(false)
+//                    .setPositiveButton("OK") { _, _ ->
+//                        sharedPreferences.edit().putBoolean(spStringName, true).apply()
+//                        startMainActivity()
+//                    }
+//                    .show()
+//
+//            dialog.find<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
+//
+//        }
 
     }
 

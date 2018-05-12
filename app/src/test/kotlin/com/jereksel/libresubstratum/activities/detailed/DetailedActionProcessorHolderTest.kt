@@ -71,7 +71,7 @@ class DetailedActionProcessorHolderTest : FreeSpec() {
                 val appName = "appName"
                 val theme = ThemePack(listOf(), null)
                 whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
-                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, "", FutureTask { null }))
+                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, ""))
 
                 val list = Observable.just(DetailedAction.InitialAction(appId))
                         .compose(presenter.actionProcessor)
@@ -88,7 +88,7 @@ class DetailedActionProcessorHolderTest : FreeSpec() {
                 val theme = ThemePack(listOf(), Type3Data(listOf(Type3Extension("Default", true), Type3Extension("Oreo", false))))
                 whenever(getThemeInfoUseCase.getThemeInfo(appId)).thenReturn(theme)
                 whenever(packageManager.getAppName(appId)).thenReturn(appName)
-                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, "", FutureTask { null }))
+                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, ""))
 
                 val expected = DetailedResult.ListLoaded(
                         appId,
@@ -142,7 +142,7 @@ class DetailedActionProcessorHolderTest : FreeSpec() {
                 whenever(packageManager.getAppName(appId)).thenReturn(appName)
                 whenever(packageManager.isPackageInstalled("app1")).thenReturn(true)
                 whenever(packageManager.getAppName("app1")).thenReturn("My app")
-                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, "", FutureTask { null }))
+                whenever(packageManager.getInstalledTheme(appId)).thenReturn(InstalledTheme(appId, appName, "", true, ""))
 
                 val expected = DetailedResult.ListLoaded(
                         appId,
